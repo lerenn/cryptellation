@@ -3,11 +3,14 @@ FROM golang:alpine
 WORKDIR /app
 
 # Code
-COPY / .
+COPY /services/ ./services
+COPY go.* .
 
 # Build from code
 WORKDIR /app/services/backtests
-RUN go build ./cmd/backtests-server
+RUN --mount=type=cache,mode=0755,target=/root/.cache/go-build \
+    --mount=type=cache,mode=0755,target=/root/go \
+    go build ./cmd/backtests-server
 
 ENV CGO_ENABLED 0
 
