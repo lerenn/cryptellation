@@ -1,0 +1,26 @@
+version: "3.5"
+
+services:
+    redis:
+        container_name: cryptellation-backtests-tests-redis
+        image: redis:alpine
+        hostname: redis
+        networks:
+            - cryptellation-backtests-tests-network
+    tests:
+        depends_on:
+            - redis
+        build:
+            context: ../../..
+            dockerfile: services/backtests/tests/Dockerfile
+        image: cryptellation-backtests-tests
+        container_name: cryptellation-backtests-tests-instance
+        env_file:
+            - ../../../.env
+        volumes:
+            - ../../..:/code
+        networks:
+            - cryptellation-backtests-tests-network
+
+networks:
+    cryptellation-backtests-tests-network:

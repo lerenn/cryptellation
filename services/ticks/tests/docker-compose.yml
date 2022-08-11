@@ -1,0 +1,26 @@
+version: "3.5"
+
+services:
+    redis:
+        container_name: cryptellation-ticks-tests-redis
+        image: redis:alpine
+        hostname: redis
+        networks:
+            - cryptellation-ticks-tests-network
+    tests:
+        depends_on:
+            - redis
+        build:
+            context: ../../..
+            dockerfile: services/ticks/tests/Dockerfile
+        image: cryptellation-ticks-tests
+        container_name: cryptellation-ticks-tests-instance
+        env_file:
+            - ../../../.env
+        volumes:
+            - ../../..:/code
+        networks:
+            - cryptellation-ticks-tests-network
+
+networks:
+    cryptellation-ticks-tests-network:

@@ -2,6 +2,7 @@
 
 set -eo pipefail
 
-# TODO: Wait for Redis
+# Wait for Redis
+# TODO
 
 $@

@@ -5,7 +5,7 @@ jobs:
       - image: golangci/golangci-lint:latest-alpine
     steps:
       - checkout
-      - run: golangci-lint run
+      - run: make lint/golang
 
 workflows:
   pre-tests:

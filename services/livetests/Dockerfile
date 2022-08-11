@@ -4,7 +4,6 @@ WORKDIR /app
 
 # Code
 COPY /services/ ./services
-COPY go.* .
 
 # Build from code
 WORKDIR /app/services/livetests

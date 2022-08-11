@@ -2,12 +2,11 @@ FROM golang:alpine
 
 # Install required running dependencies
 RUN apk update \
-    && apk add bash \
-    && apk add postgresql-client
+    && apk add bash postgresql-client
 
 # Do not use gcc
 ENV CGO_ENABLED 0
 
 # Set testing dir/entrypoint
-WORKDIR /code
-ENTRYPOINT [ "/bin/bash", "/code/tests/integration/entrypoint.sh" ]
+WORKDIR /code/services/exchanges
+ENTRYPOINT [ "/bin/bash", "./tests/entrypoint.sh" ]

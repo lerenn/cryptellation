@@ -1,0 +1,36 @@
+version: "3.5"
+
+services:
+    cockroachdb:
+        container_name: cryptellation-exchanges-tests-cockroachdb
+        image: cockroachdb/cockroach
+        ports:
+            - 26257:26257
+            - 26256:8080
+        networks:
+            - cryptellation-exchanges-tests-network
+        ulimits:
+            nofile:
+                soft: 65536
+                hard: 65536
+        command: start-single-node --insecure
+        restart: unless-stopped
+        volumes:
+            - ../../../services/exchanges/configs:/docker-entrypoint-initdb.d
+    tests:
+        depends_on:
+            - cockroachdb
+        build:
+            context: ../../..
+            dockerfile: services/exchanges/tests/Dockerfile
+        image: cryptellation-exchanges-tests
+        container_name: cryptellation-exchanges-tests-instance
+        env_file:
+            - ../../../.env
+        volumes:
+            - ../../..:/code
+        networks:
+            - cryptellation-exchanges-tests-network
+
+networks:
+    cryptellation-exchanges-tests-network:

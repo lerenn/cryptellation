@@ -1,0 +1,26 @@
+version: "3.5"
+
+services:
+    redis:
+        container_name: cryptellation-livetests-tests-redis
+        image: redis:alpine
+        hostname: redis
+        networks:
+            - cryptellation-livetests-tests-network
+    tests:
+        depends_on:
+            - redis
+        build:
+            context: ../../..
+            dockerfile: services/livetests/tests/Dockerfile
+        image: cryptellation-livetests-tests
+        container_name: cryptellation-livetests-tests-instance
+        env_file:
+            - ../../../.env
+        volumes:
+            - ../../..:/code
+        networks:
+            - cryptellation-livetests-tests-network
+
+networks:
+    cryptellation-livetests-tests-network:
