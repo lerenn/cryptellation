@@ -14,7 +14,7 @@ type OrderTypeTestSuite struct {
 	suite.Suite
 }
 
-func (suite OrderTypeTestSuite) TestValidate() {
+func (suite *OrderTypeTestSuite) TestValidate() {
 	correct := Type("market")
 	suite.Assert().NoError(correct.Validate())
 	incorrect := Type("unknown")

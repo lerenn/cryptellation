@@ -10,7 +10,7 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 )
 
-func Newclient() (client proto.LivetestsServiceClient, close func() error, err error) {
+func New() (client proto.LivetestsServiceClient, close func() error, err error) {
 	grpcAddr := os.Getenv("CRYPTELLATION_LIVETESTS_GRPC_URL")
 	if grpcAddr == "" {
 		return nil, func() error { return nil }, xerrors.New("no grpc url provided")

@@ -14,7 +14,7 @@ type OrderSideTestSuite struct {
 	suite.Suite
 }
 
-func (suite OrderSideTestSuite) TestValidate() {
+func (suite *OrderSideTestSuite) TestValidate() {
 	correct1 := Side("buy")
 	suite.Assert().NoError(correct1.Validate())
 	correct2 := Side("sell")

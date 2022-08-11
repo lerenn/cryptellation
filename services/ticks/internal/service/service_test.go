@@ -46,7 +46,7 @@ func (suite *ServiceSuite) SetupTest() {
 		log.Println("Timed out waiting for trainer gRPC to come up")
 	}
 
-	client, closeClient, err := client.Newclient()
+	client, closeClient, err := client.New()
 	suite.Require().NoError(err)
 	suite.client = client
 

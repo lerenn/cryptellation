@@ -13,7 +13,7 @@ import (
 )
 
 func NewApplication() (app.Application, func(), error) {
-	csClient, closeCsClient, err := candlesticksGrpc.Newclient()
+	csClient, closeCsClient, err := candlesticksGrpc.New()
 	if err != nil {
 		return app.Application{}, func() {}, err
 	}

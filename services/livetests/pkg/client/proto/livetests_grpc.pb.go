@@ -23,8 +23,6 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type LivetestsServiceClient interface {
 	CreateLivetest(ctx context.Context, in *CreateLivetestRequest, opts ...grpc.CallOption) (*CreateLivetestResponse, error)
-	SubscribeToLivetestEvents(ctx context.Context, in *SubscribeToLivetestEventsRequest, opts ...grpc.CallOption) (*SubscribeToLivetestEventsResponse, error)
-	ListenLivetest(ctx context.Context, opts ...grpc.CallOption) (LivetestsService_ListenLivetestClient, error)
 }
 
 type livetestsServiceClient struct {
@@ -44,53 +42,11 @@ func (c *livetestsServiceClient) CreateLivetest(ctx context.Context, in *CreateL
 	return out, nil
 }
 
-func (c *livetestsServiceClient) SubscribeToLivetestEvents(ctx context.Context, in *SubscribeToLivetestEventsRequest, opts ...grpc.CallOption) (*SubscribeToLivetestEventsResponse, error) {
-	out := new(SubscribeToLivetestEventsResponse)
-	err := c.cc.Invoke(ctx, "/livetests.LivetestsService/SubscribeToLivetestEvents", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *livetestsServiceClient) ListenLivetest(ctx context.Context, opts ...grpc.CallOption) (LivetestsService_ListenLivetestClient, error) {
-	stream, err := c.cc.NewStream(ctx, &LivetestsService_ServiceDesc.Streams[0], "/livetests.LivetestsService/ListenLivetest", opts...)
-	if err != nil {
-		return nil, err
-	}
-	x := &livetestsServiceListenLivetestClient{stream}
-	return x, nil
-}
-
-type LivetestsService_ListenLivetestClient interface {
-	Send(*LivetestEventRequest) error
-	Recv() (*LivetestEventResponse, error)
-	grpc.ClientStream
-}
-
-type livetestsServiceListenLivetestClient struct {
-	grpc.ClientStream
-}
-
-func (x *livetestsServiceListenLivetestClient) Send(m *LivetestEventRequest) error {
-	return x.ClientStream.SendMsg(m)
-}
-
-func (x *livetestsServiceListenLivetestClient) Recv() (*LivetestEventResponse, error) {
-	m := new(LivetestEventResponse)
-	if err := x.ClientStream.RecvMsg(m); err != nil {
-		return nil, err
-	}
-	return m, nil
-}
-
 // LivetestsServiceServer is the server API for LivetestsService service.
 // All implementations should embed UnimplementedLivetestsServiceServer
 // for forward compatibility
 type LivetestsServiceServer interface {
 	CreateLivetest(context.Context, *CreateLivetestRequest) (*CreateLivetestResponse, error)
-	SubscribeToLivetestEvents(context.Context, *SubscribeToLivetestEventsRequest) (*SubscribeToLivetestEventsResponse, error)
-	ListenLivetest(LivetestsService_ListenLivetestServer) error
 }
 
 // UnimplementedLivetestsServiceServer should be embedded to have forward compatible implementations.
@@ -99,12 +55,6 @@ type UnimplementedLivetestsServiceServer struct {
 
 func (UnimplementedLivetestsServiceServer) CreateLivetest(context.Context, *CreateLivetestRequest) (*CreateLivetestResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateLivetest not implemented")
-}
-func (UnimplementedLivetestsServiceServer) SubscribeToLivetestEvents(context.Context, *SubscribeToLivetestEventsRequest) (*SubscribeToLivetestEventsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SubscribeToLivetestEvents not implemented")
-}
-func (UnimplementedLivetestsServiceServer) ListenLivetest(LivetestsService_ListenLivetestServer) error {
-	return status.Errorf(codes.Unimplemented, "method ListenLivetest not implemented")
 }
 
 // UnsafeLivetestsServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -136,50 +86,6 @@ func _LivetestsService_CreateLivetest_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
-func _LivetestsService_SubscribeToLivetestEvents_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SubscribeToLivetestEventsRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(LivetestsServiceServer).SubscribeToLivetestEvents(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/livetests.LivetestsService/SubscribeToLivetestEvents",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(LivetestsServiceServer).SubscribeToLivetestEvents(ctx, req.(*SubscribeToLivetestEventsRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _LivetestsService_ListenLivetest_Handler(srv interface{}, stream grpc.ServerStream) error {
-	return srv.(LivetestsServiceServer).ListenLivetest(&livetestsServiceListenLivetestServer{stream})
-}
-
-type LivetestsService_ListenLivetestServer interface {
-	Send(*LivetestEventResponse) error
-	Recv() (*LivetestEventRequest, error)
-	grpc.ServerStream
-}
-
-type livetestsServiceListenLivetestServer struct {
-	grpc.ServerStream
-}
-
-func (x *livetestsServiceListenLivetestServer) Send(m *LivetestEventResponse) error {
-	return x.ServerStream.SendMsg(m)
-}
-
-func (x *livetestsServiceListenLivetestServer) Recv() (*LivetestEventRequest, error) {
-	m := new(LivetestEventRequest)
-	if err := x.ServerStream.RecvMsg(m); err != nil {
-		return nil, err
-	}
-	return m, nil
-}
-
 // LivetestsService_ServiceDesc is the grpc.ServiceDesc for LivetestsService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -191,18 +97,7 @@ var LivetestsService_ServiceDesc = grpc.ServiceDesc{
 			MethodName: "CreateLivetest",
 			Handler:    _LivetestsService_CreateLivetest_Handler,
 		},
-		{
-			MethodName: "SubscribeToLivetestEvents",
-			Handler:    _LivetestsService_SubscribeToLivetestEvents_Handler,
-		},
 	},
-	Streams: []grpc.StreamDesc{
-		{
-			StreamName:    "ListenLivetest",
-			Handler:       _LivetestsService_ListenLivetest_Handler,
-			ServerStreams: true,
-			ClientStreams: true,
-		},
-	},
+	Streams:  []grpc.StreamDesc{},
 	Metadata: "livetests.proto",
 }
