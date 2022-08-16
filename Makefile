@@ -12,7 +12,7 @@ docker/run: docker/build ## Run with docker
 	@echo -e "\e[94m[Running locally]\e[0m"
 	@docker-compose up
 
-docker/clean: test/clean ## Clean remaining docker containers
+docker/clean: ## Clean remaining docker containers
 	@echo -e "\e[94m[Cleaning remaining containers]\e[0m"
 	@docker-compose down
 

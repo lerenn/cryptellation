@@ -41,7 +41,7 @@ services:
       - cryptellation-network
   candlesticks:
     build:
-      context: services/exchanges
+      context: services/candlesticks
     volumes:
       - .:/code
       - /root/.cache/go-build
@@ -59,7 +59,7 @@ services:
       - cryptellation-network
   backtests:
     build:
-      context: services/exchanges
+      context: services/backtests
     volumes:
       - .:/code
       - /root/.cache/go-build
@@ -77,7 +77,7 @@ services:
       - cryptellation-network
   ticks:
     build:
-      context: services/exchanges
+      context: services/ticks
     volumes:
       - .:/code
       - /root/.cache/go-build
@@ -94,7 +94,7 @@ services:
       - cryptellation-network
   livetests:
     build:
-      context: services/exchanges
+      context: services/livetests
     volumes:
       - .:/code
       - /root/.cache/go-build
