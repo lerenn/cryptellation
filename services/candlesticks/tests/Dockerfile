@@ -7,6 +7,6 @@ RUN apk update \
 # Do not use gcc
 ENV CGO_ENABLED 0
 
-# Set testing dir/entrypoint
-WORKDIR /code/services/candlesticks
+# Set entrypoint
+WORKDIR /code
 ENTRYPOINT [ "/bin/bash", "./tests/entrypoint.sh" ]

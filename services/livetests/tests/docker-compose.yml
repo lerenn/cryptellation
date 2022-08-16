@@ -10,15 +10,13 @@ services:
     tests:
         depends_on:
             - redis
-        build:
-            context: ../../..
-            dockerfile: services/livetests/tests/Dockerfile
+        build: .
         image: cryptellation-livetests-tests
         container_name: cryptellation-livetests-tests-instance
         env_file:
             - ../../../.env
         volumes:
-            - ../../..:/code
+            - ../:/code
         networks:
             - cryptellation-livetests-tests-network
 

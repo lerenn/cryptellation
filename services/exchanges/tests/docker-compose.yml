@@ -20,15 +20,13 @@ services:
     tests:
         depends_on:
             - cockroachdb
-        build:
-            context: ../../..
-            dockerfile: services/exchanges/tests/Dockerfile
+        build: .
         image: cryptellation-exchanges-tests
         container_name: cryptellation-exchanges-tests-instance
         env_file:
             - ../../../.env
         volumes:
-            - ../../..:/code
+            - ../:/code
         networks:
             - cryptellation-exchanges-tests-network
 

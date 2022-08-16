@@ -1,17 +1,14 @@
 FROM golang:alpine
 
-WORKDIR /app
-
 # Code
-COPY /services/ ./services
+WORKDIR /app
+COPY ./ /app
 
 # Build from code
-WORKDIR /app/services/ticks
+ENV CGO_ENABLED 0
 RUN --mount=type=cache,mode=0755,target=/root/.cache/go-build \
     --mount=type=cache,mode=0755,target=/root/go \
     go build ./cmd/ticks-server
-
-ENV CGO_ENABLED 0
 
 FROM alpine
 
@@ -20,8 +17,8 @@ RUN apk update \
     && apk add bash
 
 # Install running files
-COPY services/ticks/entrypoint.sh .
-COPY --from=0 /app/services/ticks/ticks-server /usr/local/bin
+COPY entrypoint.sh .
+COPY --from=0 /app/ticks-server /usr/local/bin
 
 ENTRYPOINT [ "/bin/bash", "/entrypoint.sh" ]
 CMD [ "ticks-server" ]

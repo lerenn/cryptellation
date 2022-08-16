@@ -1,17 +1,11 @@
 module github.com/digital-feather/cryptellation/services/livetests
 
-replace github.com/digital-feather/cryptellation/services/backtests => ../backtests
-
-replace github.com/digital-feather/cryptellation/services/candlesticks => ../candlesticks
-
-replace github.com/digital-feather/cryptellation/services/ticks => ../ticks
-
 go 1.18
 
 require (
-	github.com/digital-feather/cryptellation/services/backtests v0.0.0-00010101000000-000000000000
-	github.com/digital-feather/cryptellation/services/candlesticks v0.0.0-00010101000000-000000000000
-	github.com/digital-feather/cryptellation/services/ticks v0.0.0-00010101000000-000000000000
+	github.com/digital-feather/cryptellation/services/backtests v0.0.0-20220814124538-e03f2c2803d1
+	github.com/digital-feather/cryptellation/services/candlesticks v0.0.0-20220814124538-e03f2c2803d1
+	github.com/digital-feather/cryptellation/services/ticks v0.0.0-20220814124538-e03f2c2803d1
 	github.com/go-redis/redis/v8 v8.11.5
 	github.com/go-redsync/redsync/v4 v4.5.1
 	github.com/stretchr/testify v1.8.0

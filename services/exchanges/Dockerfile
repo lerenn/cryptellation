@@ -1,17 +1,14 @@
 FROM golang:alpine
 
-WORKDIR /app
-
 # Code
-COPY /services/ ./services
+WORKDIR /app
+COPY ./ /app
 
 # Build from code
-WORKDIR /app/services/exchanges
+ENV CGO_ENABLED 0
 RUN --mount=type=cache,mode=0755,target=/root/.cache/go-build \
     --mount=type=cache,mode=0755,target=/root/go \
     go build ./cmd/exchanges-server
-
-ENV CGO_ENABLED 0
 
 FROM alpine
 
@@ -21,9 +18,9 @@ RUN apk update \
     && apk add postgresql-client
 
 # Install running files
-COPY services/exchanges/entrypoint.sh .
-COPY services/exchanges/scripts /scripts/
-COPY --from=0 /app/services/exchanges/exchanges-server /usr/local/bin
+COPY scripts/ /scripts/
+COPY entrypoint.sh .
+COPY --from=0 /app/exchanges-server /usr/local/bin
 
 ENTRYPOINT [ "/bin/bash", "/entrypoint.sh" ]
 CMD [ "exchanges-server" ]

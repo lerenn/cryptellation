@@ -10,15 +10,13 @@ services:
     tests:
         depends_on:
             - redis
-        build:
-            context: ../../..
-            dockerfile: services/ticks/tests/Dockerfile
+        build: .
         image: cryptellation-ticks-tests
         container_name: cryptellation-ticks-tests-instance
         env_file:
             - ../../../.env
         volumes:
-            - ../../..:/code
+            - ../:/code
         networks:
             - cryptellation-ticks-tests-network
 

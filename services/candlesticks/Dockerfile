@@ -1,17 +1,15 @@
 FROM golang:alpine
 
-WORKDIR /app
-
 # Code
-COPY /services/ ./services
+WORKDIR /app
+COPY ./ /app
 
 # Build from code
-WORKDIR /app/services/candlesticks
+ENV CGO_ENABLED 0
 RUN --mount=type=cache,mode=0755,target=/root/.cache/go-build \
     --mount=type=cache,mode=0755,target=/root/go \
     go build ./cmd/candlesticks-server
 
-ENV CGO_ENABLED 0
 
 FROM alpine
 
@@ -21,9 +19,9 @@ RUN apk update \
     && apk add postgresql-client
 
 # Install running files
-COPY services/candlesticks/entrypoint.sh .
-COPY services/candlesticks/scripts /scripts/
-COPY --from=0 /app/services/candlesticks/candlesticks-server /usr/local/bin
+COPY scripts/ /scripts/
+COPY entrypoint.sh .
+COPY --from=0 /app/candlesticks-server /usr/local/bin
 
 ENTRYPOINT [ "/bin/bash", "/entrypoint.sh" ]
 CMD [ "candlesticks-server" ]

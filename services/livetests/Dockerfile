@@ -1,17 +1,14 @@
 FROM golang:alpine
 
-WORKDIR /app
-
 # Code
-COPY /services/ ./services
+WORKDIR /app
+COPY ./ /app
 
 # Build from code
-WORKDIR /app/services/livetests
+ENV CGO_ENABLED 0
 RUN --mount=type=cache,mode=0755,target=/root/.cache/go-build \
     --mount=type=cache,mode=0755,target=/root/go \
     go build ./cmd/livetests-server
-
-ENV CGO_ENABLED 0
 
 FROM alpine
 
@@ -20,8 +17,8 @@ RUN apk update \
     && apk add bash
 
 # Install running files
-COPY services/livetests/entrypoint.sh .
-COPY --from=0 /app/services/livetests/livetests-server /usr/local/bin
+COPY entrypoint.sh .
+COPY --from=0 /app/livetests-server /usr/local/bin
 
 ENTRYPOINT [ "/bin/bash", "/entrypoint.sh" ]
 CMD [ "livetests-server" ]
