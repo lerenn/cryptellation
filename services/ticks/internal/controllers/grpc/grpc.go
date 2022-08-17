@@ -76,7 +76,7 @@ func (g GrpcController) ListenSymbol(req *proto.ListenSymbolRequest, srv proto.T
 	ctx := srv.Context()
 
 	// Start listening before registration to avoid missing ticks
-	ticksChanRecv, err := g.application.Queries.ListenSymbol.Handle(ctx, req.Exchange, req.PairSymbol)
+	ticksChanRecv, err := g.application.Queries.ListenSymbol.Handle(req.Exchange, req.PairSymbol)
 	if err != nil {
 		return err
 	}

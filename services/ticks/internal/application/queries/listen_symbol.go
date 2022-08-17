@@ -1,8 +1,6 @@
 package queries
 
 import (
-	"context"
-
 	"github.com/digital-feather/cryptellation/services/ticks/internal/adapters/pubsub"
 	"github.com/digital-feather/cryptellation/services/ticks/internal/domain/tick"
 )
@@ -21,6 +19,6 @@ func NewListenSymbolsHandler(ps pubsub.Port) ListenSymbolsHandler {
 	}
 }
 
-func (h ListenSymbolsHandler) Handle(ctx context.Context, exchange, pairSymbol string) (<-chan tick.Tick, error) {
-	return h.pubsub.Subscribe(ctx, pairSymbol)
+func (h ListenSymbolsHandler) Handle(exchange, pairSymbol string) (<-chan tick.Tick, error) {
+	return h.pubsub.Subscribe(pairSymbol)
 }

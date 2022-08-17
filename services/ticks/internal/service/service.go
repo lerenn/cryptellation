@@ -5,8 +5,8 @@ import (
 
 	"github.com/digital-feather/cryptellation/services/ticks/internal/adapters/exchanges"
 	"github.com/digital-feather/cryptellation/services/ticks/internal/adapters/exchanges/binance"
-	pubsubRedis "github.com/digital-feather/cryptellation/services/ticks/internal/adapters/pubsub/redis"
-	vdbRedis "github.com/digital-feather/cryptellation/services/ticks/internal/adapters/vdb/redis"
+	"github.com/digital-feather/cryptellation/services/ticks/internal/adapters/pubsub/nats"
+	"github.com/digital-feather/cryptellation/services/ticks/internal/adapters/vdb/redis"
 	app "github.com/digital-feather/cryptellation/services/ticks/internal/application"
 	"github.com/digital-feather/cryptellation/services/ticks/internal/application/commands"
 	"github.com/digital-feather/cryptellation/services/ticks/internal/application/queries"
@@ -46,7 +46,7 @@ func NewMockedApplication() (app.Application, func(), error) {
 }
 
 func newApplication(exchanges map[string]exchanges.Port) (app.Application, func(), error) {
-	repository, err := vdbRedis.New()
+	repository, err := redis.New()
 	if err != nil {
 		return app.Application{}, func() {}, err
 	}
@@ -55,7 +55,7 @@ func newApplication(exchanges map[string]exchanges.Port) (app.Application, func(
 		return app.Application{}, func() {}, err
 	}
 
-	ps, err := pubsubRedis.New()
+	ps, err := nats.New()
 	if err != nil {
 		return app.Application{}, func() {}, err
 	}

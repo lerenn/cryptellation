@@ -7,9 +7,16 @@ services:
         hostname: redis
         networks:
             - cryptellation-ticks-tests-network
+    nats:
+        container_name: cryptellation-ticks-tests-nats
+        image: nats:alpine
+        hostname: nats
+        networks:
+            - cryptellation-ticks-tests-network
     tests:
         depends_on:
             - redis
+            - nats
         build: .
         image: cryptellation-ticks-tests
         container_name: cryptellation-ticks-tests-instance

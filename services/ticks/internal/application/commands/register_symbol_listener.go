@@ -91,7 +91,7 @@ const checkInterval = 10 * time.Second
 func newListener(payload newListenerPayload) {
 	ctx := context.Background()
 	nextCheckTime := time.Now().Add(checkInterval)
-	lastPrice := 0.0
+	lastPrice := float32(0.0)
 
 	for {
 		t := <-payload.ticksChan
@@ -100,7 +100,7 @@ func newListener(payload newListenerPayload) {
 		}
 		lastPrice = t.Price
 
-		err := payload.ps.Publish(ctx, t)
+		err := payload.ps.Publish(t)
 		if err != nil {
 			log.Println("Publish error:", err)
 			continue
