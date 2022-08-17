@@ -69,7 +69,7 @@ func (h AdvanceHandler) Handle(ctx context.Context, backtestId uint) error {
 		evts = append(evts, event.NewStatusEvent(bt.CurrentCsTick.Time, status.Status{
 			Finished: finished,
 		}))
-		h.broadcastEvents(ctx, backtestId, evts)
+		h.broadcastEvents(backtestId, evts)
 
 		if len(evts) > 1 {
 			if err := h.repository.UpdateBacktest(ctx, bt); err != nil {
@@ -111,10 +111,10 @@ func (h AdvanceHandler) readActualEvents(ctx context.Context, bt backtest.Backte
 	return evts, nil
 }
 
-func (h AdvanceHandler) broadcastEvents(ctx context.Context, backtestId uint, evts []event.Event) {
+func (h AdvanceHandler) broadcastEvents(backtestId uint, evts []event.Event) {
 	var count uint
 	for _, evt := range evts {
-		if err := h.pubsub.Publish(ctx, backtestId, evt); err != nil {
+		if err := h.pubsub.Publish(backtestId, evt); err != nil {
 			log.Println("WARNING: error when publishing event", evt)
 			continue
 		}

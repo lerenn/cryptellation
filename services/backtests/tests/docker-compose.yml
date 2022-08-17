@@ -7,9 +7,16 @@ services:
         hostname: redis
         networks:
             - cryptellation-backtests-tests-network
+    nats:
+        container_name: cryptellation-backtests-tests-nats
+        image: nats:alpine
+        hostname: nats
+        networks:
+            - cryptellation-backtests-tests-network
     tests:
         depends_on:
             - redis
+            - nats
         build: .
         image: cryptellation-backtests-tests
         container_name: cryptellation-backtests-tests-instance

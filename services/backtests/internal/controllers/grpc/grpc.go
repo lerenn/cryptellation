@@ -155,7 +155,7 @@ func (g GrpcController) ListenBacktest(srv proto.BacktestsService_ListenBacktest
 
 			// If if it's the first request, then listen to events
 			if firstRequest {
-				eventChan, err = g.application.Queries.Backtest.ListenEvents.Handle(ctx, backtestId)
+				eventChan, err = g.application.Queries.Backtest.ListenEvents.Handle(backtestId)
 				if err != nil {
 					return err
 				}

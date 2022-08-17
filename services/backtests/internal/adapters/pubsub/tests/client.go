@@ -1,11 +1,11 @@
-package redis
+package tests
 
 import (
-	"context"
 	"os"
 	"testing"
 	"time"
 
+	"github.com/digital-feather/cryptellation/services/backtests/internal/adapters/pubsub"
 	"github.com/digital-feather/cryptellation/services/backtests/pkg/models/event"
 	"github.com/digital-feather/cryptellation/services/backtests/pkg/models/status"
 	"github.com/digital-feather/cryptellation/services/backtests/pkg/models/tick"
@@ -17,25 +17,16 @@ func TestRedisPubSubSuite(t *testing.T) {
 		t.Skip()
 	}
 
-	suite.Run(t, new(RedisPubSubSuite))
+	suite.Run(t, new(PubSubClientSuite))
 }
 
-type RedisPubSubSuite struct {
+type PubSubClientSuite struct {
 	suite.Suite
-	client *Client
+	Client pubsub.Port
 }
 
-func (suite *RedisPubSubSuite) SetupTest() {
-	client, err := New()
-	suite.Require().NoError(err)
-	suite.client = client
-}
-
-func (suite *RedisPubSubSuite) TestOnePubOneSubObject() {
+func (suite *PubSubClientSuite) TestOnePubOneSubObject() {
 	as := suite.Require()
-
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
 
 	backtestID := uint(1)
 	ts := time.Unix(60, 0).UTC()
@@ -48,10 +39,10 @@ func (suite *RedisPubSubSuite) TestOnePubOneSubObject() {
 		Finished: true,
 	}
 
-	ch, err := suite.client.Subscribe(ctx, backtestID)
+	ch, err := suite.Client.Subscribe(backtestID)
 	as.NoError(err)
 
-	as.NoError(suite.client.Publish(ctx, backtestID, event.NewTickEvent(ts, t)))
+	as.NoError(suite.Client.Publish(backtestID, event.NewTickEvent(ts, t)))
 	select {
 	case recvEvent := <-ch:
 		suite.checkTick(recvEvent, ts, t)
@@ -59,7 +50,7 @@ func (suite *RedisPubSubSuite) TestOnePubOneSubObject() {
 		as.FailNow("Timeout")
 	}
 
-	as.NoError(suite.client.Publish(ctx, backtestID, event.NewStatusEvent(ts, st)))
+	as.NoError(suite.Client.Publish(backtestID, event.NewStatusEvent(ts, st)))
 	select {
 	case recvEvent := <-ch:
 		suite.checkEnd(recvEvent, ts, st)
@@ -68,11 +59,8 @@ func (suite *RedisPubSubSuite) TestOnePubOneSubObject() {
 	}
 }
 
-func (suite *RedisPubSubSuite) TestOnePubTwoSub() {
+func (suite *PubSubClientSuite) TestOnePubTwoSub() {
 	as := suite.Require()
-
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
 
 	backtestID := uint(2)
 	ts := time.Unix(0, 0).UTC()
@@ -82,13 +70,13 @@ func (suite *RedisPubSubSuite) TestOnePubTwoSub() {
 		Exchange:   "exchange",
 	}
 
-	ch1, err := suite.client.Subscribe(ctx, backtestID)
+	ch1, err := suite.Client.Subscribe(backtestID)
 	as.NoError(err)
 
-	ch2, err := suite.client.Subscribe(ctx, backtestID)
+	ch2, err := suite.Client.Subscribe(backtestID)
 	as.NoError(err)
 
-	as.NoError(suite.client.Publish(ctx, backtestID, event.NewTickEvent(ts, t)))
+	as.NoError(suite.Client.Publish(backtestID, event.NewTickEvent(ts, t)))
 
 	for i := 0; i < 2; i++ {
 		select {
@@ -102,7 +90,7 @@ func (suite *RedisPubSubSuite) TestOnePubTwoSub() {
 	}
 }
 
-func (suite *RedisPubSubSuite) TestCheckClose() {
+func (suite *PubSubClientSuite) TestCheckClose() {
 	as := suite.Require()
 
 	backtestID := uint(3)
@@ -112,19 +100,17 @@ func (suite *RedisPubSubSuite) TestCheckClose() {
 		Price:      float64(time.Now().UnixNano()),
 		Exchange:   "exchange",
 	}
-
-	ctx, cancel := context.WithCancel(context.Background())
-	ch, err := suite.client.Subscribe(ctx, backtestID)
+	ch, err := suite.Client.Subscribe(backtestID)
 	as.NoError(err)
 
-	cancel()
-	as.NoError(suite.client.Publish(context.Background(), backtestID, event.NewTickEvent(ts, t)))
+	suite.Client.Close()
+	as.Error(suite.Client.Publish(backtestID, event.NewTickEvent(ts, t)))
 
 	_, open := <-ch
 	suite.False(open)
 }
 
-func (suite *RedisPubSubSuite) checkTick(evt event.Event, t time.Time, ti tick.Tick) {
+func (suite *PubSubClientSuite) checkTick(evt event.Event, t time.Time, ti tick.Tick) {
 	as := suite.Require()
 
 	as.Equal(event.TypeIsTick, evt.Type)
@@ -134,7 +120,7 @@ func (suite *RedisPubSubSuite) checkTick(evt event.Event, t time.Time, ti tick.T
 	as.Equal(ti, rt)
 }
 
-func (suite *RedisPubSubSuite) checkEnd(evt event.Event, t time.Time, st status.Status) {
+func (suite *PubSubClientSuite) checkEnd(evt event.Event, t time.Time, st status.Status) {
 	as := suite.Require()
 
 	as.Equal(event.TypeIsStatus, evt.Type)

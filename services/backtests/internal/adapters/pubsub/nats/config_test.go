@@ -1,4 +1,4 @@
-package redis
+package nats
 
 import (
 	"os"
@@ -17,27 +17,25 @@ type ConfigSuite struct {
 
 func (suite *ConfigSuite) TestLoadValidate() {
 	cases := []struct {
-		Address, Password string
-		Err               error
+		URL string
+		Err error
 	}{
 		{
-			Address:  "address",
-			Password: "password",
+			URL: "url",
 		},
 	}
 
 	var config Config
 	for i, c := range cases {
-		setEnv(c.Address, c.Password)
+		setEnv(c.URL)
 
 		err := config.Load().Validate()
 		suite.Require().Equal(c.Err, err, i)
 
-		setEnv("", "")
+		setEnv("")
 	}
 }
 
-func setEnv(address, password string) {
-	os.Setenv("REDIS_ADDRESS", address)
-	os.Setenv("REDIS_PASSWORD", password)
+func setEnv(url string) {
+	os.Setenv("NATS_URL", url)
 }

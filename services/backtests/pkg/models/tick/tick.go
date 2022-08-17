@@ -10,6 +10,12 @@ type Tick struct {
 	Exchange   string  `json:"exchange"`
 }
 
+func FromJSON(content []byte) (Tick, error) {
+	var t Tick
+	err := json.Unmarshal(content, &t)
+	return t, err
+}
+
 func (t Tick) MarshalBinary() ([]byte, error) {
 	return json.Marshal(t)
 }

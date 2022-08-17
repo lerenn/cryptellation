@@ -1,6 +1,12 @@
 package event
 
+import "errors"
+
 type Type string
+
+var (
+	ErrUnknownType = errors.New("unknown-type")
+)
 
 const (
 	TypeIsTick Type = "tick"

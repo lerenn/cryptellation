@@ -3,6 +3,10 @@ package event
 import (
 	"encoding/json"
 	"time"
+
+	"github.com/digital-feather/cryptellation/services/backtests/pkg/client/proto"
+	"github.com/digital-feather/cryptellation/services/backtests/pkg/models/status"
+	"github.com/digital-feather/cryptellation/services/backtests/pkg/models/tick"
 )
 
 type Event struct {
@@ -17,6 +21,53 @@ func (e Event) MarshalBinary() ([]byte, error) {
 
 func (e *Event) UnmarshalBinary(data []byte) error {
 	return json.Unmarshal(data, e)
+}
+
+func (e *Event) ToProtoBuff() (*proto.BacktestEventResponse, error) {
+	content, err := json.Marshal(e.Content)
+	if err != nil {
+		return nil, err
+	}
+
+	return &proto.BacktestEventResponse{
+		Time:    e.Time.Format(time.RFC3339Nano),
+		Type:    e.Type.String(),
+		Content: string(content),
+	}, nil
+}
+
+func FromProtoBuff(pb *proto.BacktestEventResponse) (Event, error) {
+	t, err := time.Parse(time.RFC3339Nano, pb.Time)
+	if err != nil {
+		return Event{}, err
+	}
+
+	switch pb.Type {
+	case TypeIsTick.String():
+		content, err := tick.FromJSON([]byte(pb.Content))
+		if err != nil {
+			return Event{}, err
+		}
+
+		return Event{
+			Time:    t,
+			Type:    Type(pb.Type),
+			Content: content,
+		}, nil
+	case TypeIsStatus.String():
+		content, err := status.FromJSON([]byte(pb.Content))
+		if err != nil {
+			return Event{}, err
+		}
+
+		return Event{
+			Time:    t,
+			Type:    Type(pb.Type),
+			Content: content,
+		}, nil
+	default:
+		return Event{}, ErrUnknownType
+	}
 }
 
 func OnlyKeepEarliestSameTimeEvents(evts []Event, endTime time.Time) (earliestTime time.Time, filtered []Event) {

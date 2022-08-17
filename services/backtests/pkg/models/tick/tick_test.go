@@ -15,6 +15,37 @@ type TickSuite struct {
 	suite.Suite
 }
 
+func (suite *TickSuite) TestFromJSON() {
+	tests := []struct {
+		Input       []byte
+		Output      Tick
+		OutputError bool
+	}{
+		{
+			Input:       []byte("{\"pair_symbol\":\"ETH-USDC\",\"price\":1.2,\"exchange\":\"exchange\"}"),
+			Output:      Tick{PairSymbol: "ETH-USDC", Price: 1.2, Exchange: "exchange"},
+			OutputError: false,
+		},
+		{
+			Input:       []byte("{\"pair_symbol\":\"ETH-USDC\",\"price\":\"1.2\",\"exchange\":\"exchange\"}"),
+			Output:      Tick{},
+			OutputError: true,
+		},
+	}
+
+	for i, t := range tests {
+		output, err := FromJSON(t.Input)
+		if t.OutputError {
+			suite.Require().Error(err, i)
+			continue
+		} else {
+			suite.Require().NoError(err, i)
+		}
+
+		suite.Require().Equal(t.Output, output, i)
+	}
+}
+
 func (suite *TickSuite) TestMarshalingJSON() {
 	as := suite.Require()
 

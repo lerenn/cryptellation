@@ -1,8 +1,6 @@
 package queriesBacktest
 
 import (
-	"context"
-
 	"github.com/digital-feather/cryptellation/services/backtests/internal/adapters/pubsub"
 	"github.com/digital-feather/cryptellation/services/backtests/pkg/models/event"
 )
@@ -21,6 +19,6 @@ func NewListenEventsHandler(ps pubsub.Port) ListenEventsHandler {
 	}
 }
 
-func (h ListenEventsHandler) Handle(ctx context.Context, backtestId uint64) (<-chan event.Event, error) {
-	return h.pubsub.Subscribe(ctx, uint(backtestId))
+func (h ListenEventsHandler) Handle(backtestId uint64) (<-chan event.Event, error) {
+	return h.pubsub.Subscribe(uint(backtestId))
 }

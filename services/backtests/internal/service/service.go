@@ -3,8 +3,8 @@ package service
 import (
 	"log"
 
-	pubsubRedis "github.com/digital-feather/cryptellation/services/backtests/internal/adapters/pubsub/redis"
-	vdbRedis "github.com/digital-feather/cryptellation/services/backtests/internal/adapters/vdb/redis"
+	"github.com/digital-feather/cryptellation/services/backtests/internal/adapters/pubsub/nats"
+	"github.com/digital-feather/cryptellation/services/backtests/internal/adapters/vdb/redis"
 	app "github.com/digital-feather/cryptellation/services/backtests/internal/application"
 	cmdBacktest "github.com/digital-feather/cryptellation/services/backtests/internal/application/commands/backtest"
 	queriesBacktest "github.com/digital-feather/cryptellation/services/backtests/internal/application/queries/backtest"
@@ -33,12 +33,12 @@ func NewMockedApplication() (app.Application, func(), error) {
 }
 
 func newApplication(client candlesticksProto.CandlesticksServiceClient) (app.Application, func(), error) {
-	repository, err := vdbRedis.New()
+	repository, err := redis.New()
 	if err != nil {
 		return app.Application{}, func() {}, err
 	}
 
-	ps, err := pubsubRedis.New()
+	ps, err := nats.New()
 	if err != nil {
 		return app.Application{}, func() {}, err
 	}
