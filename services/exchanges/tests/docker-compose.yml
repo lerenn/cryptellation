@@ -4,9 +4,9 @@ services:
     cockroachdb:
         container_name: cryptellation-exchanges-tests-cockroachdb
         image: cockroachdb/cockroach
-        ports:
-            - 26257:26257
-            - 26256:8080
+        # ports:
+        #     - 26257:26257
+        #     - 26256:8080
         networks:
             - cryptellation-exchanges-tests-network
         ulimits:
@@ -26,9 +26,15 @@ services:
         env_file:
             - ../../../.env
         volumes:
+            - gocache:/go/pkg/mod
+            - gobuild:/root/.cache/go-build
             - ../:/code
         networks:
             - cryptellation-exchanges-tests-network
+
+volumes:
+    gocache:
+    gobuild:
 
 networks:
     cryptellation-exchanges-tests-network:

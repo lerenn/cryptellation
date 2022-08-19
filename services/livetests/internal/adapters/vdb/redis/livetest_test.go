@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"os"
 	"testing"
 	"time"
 
@@ -14,10 +13,6 @@ import (
 )
 
 func TestRedisVdbSuite(t *testing.T) {
-	if os.Getenv("REDIS_ADDRESS") == "" {
-		t.Skip()
-	}
-
 	suite.Run(t, new(RedisVdbSuite))
 }
 

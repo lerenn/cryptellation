@@ -1,7 +1,6 @@
 package tests
 
 import (
-	"os"
 	"testing"
 	"time"
 
@@ -12,11 +11,7 @@ import (
 	"github.com/stretchr/testify/suite"
 )
 
-func TestRedisPubSubSuite(t *testing.T) {
-	if os.Getenv("REDIS_ADDRESS") == "" {
-		t.Skip()
-	}
-
+func TestPubSubClientSuite(t *testing.T) {
 	suite.Run(t, new(PubSubClientSuite))
 }
 
@@ -26,8 +21,6 @@ type PubSubClientSuite struct {
 }
 
 func (suite *PubSubClientSuite) TestOnePubOneSubObject() {
-	as := suite.Require()
-
 	backtestID := uint(1)
 	ts := time.Unix(60, 0).UTC()
 	t := tick.Tick{
@@ -40,28 +33,26 @@ func (suite *PubSubClientSuite) TestOnePubOneSubObject() {
 	}
 
 	ch, err := suite.Client.Subscribe(backtestID)
-	as.NoError(err)
+	suite.Require().NoError(err)
 
-	as.NoError(suite.Client.Publish(backtestID, event.NewTickEvent(ts, t)))
+	suite.Require().NoError(suite.Client.Publish(backtestID, event.NewTickEvent(ts, t)))
 	select {
 	case recvEvent := <-ch:
 		suite.checkTick(recvEvent, ts, t)
 	case <-time.After(1 * time.Second):
-		as.FailNow("Timeout")
+		suite.Require().FailNow("Timeout")
 	}
 
-	as.NoError(suite.Client.Publish(backtestID, event.NewStatusEvent(ts, st)))
+	suite.Require().NoError(suite.Client.Publish(backtestID, event.NewStatusEvent(ts, st)))
 	select {
 	case recvEvent := <-ch:
 		suite.checkEnd(recvEvent, ts, st)
 	case <-time.After(1 * time.Second):
-		as.FailNow("Timeout")
+		suite.Require().FailNow("Timeout")
 	}
 }
 
 func (suite *PubSubClientSuite) TestOnePubTwoSub() {
-	as := suite.Require()
-
 	backtestID := uint(2)
 	ts := time.Unix(0, 0).UTC()
 	t := tick.Tick{
@@ -71,12 +62,12 @@ func (suite *PubSubClientSuite) TestOnePubTwoSub() {
 	}
 
 	ch1, err := suite.Client.Subscribe(backtestID)
-	as.NoError(err)
+	suite.Require().NoError(err)
 
 	ch2, err := suite.Client.Subscribe(backtestID)
-	as.NoError(err)
+	suite.Require().NoError(err)
 
-	as.NoError(suite.Client.Publish(backtestID, event.NewTickEvent(ts, t)))
+	suite.Require().NoError(suite.Client.Publish(backtestID, event.NewTickEvent(ts, t)))
 
 	for i := 0; i < 2; i++ {
 		select {
@@ -85,14 +76,12 @@ func (suite *PubSubClientSuite) TestOnePubTwoSub() {
 		case recvEvent := <-ch2:
 			suite.checkTick(recvEvent, ts, t)
 		case <-time.After(1 * time.Second):
-			as.FailNow("Timeout")
+			suite.Require().FailNow("Timeout")
 		}
 	}
 }
 
 func (suite *PubSubClientSuite) TestCheckClose() {
-	as := suite.Require()
-
 	backtestID := uint(3)
 	ts := time.Unix(0, 0).UTC()
 	t := tick.Tick{
@@ -101,31 +90,27 @@ func (suite *PubSubClientSuite) TestCheckClose() {
 		Exchange:   "exchange",
 	}
 	ch, err := suite.Client.Subscribe(backtestID)
-	as.NoError(err)
+	suite.Require().NoError(err)
 
 	suite.Client.Close()
-	as.Error(suite.Client.Publish(backtestID, event.NewTickEvent(ts, t)))
+	suite.Require().Error(suite.Client.Publish(backtestID, event.NewTickEvent(ts, t)))
 
 	_, open := <-ch
 	suite.False(open)
 }
 
 func (suite *PubSubClientSuite) checkTick(evt event.Event, t time.Time, ti tick.Tick) {
-	as := suite.Require()
-
-	as.Equal(event.TypeIsTick, evt.Type)
-	as.Equal(t, evt.Time)
+	suite.Require().Equal(event.TypeIsTick, evt.Type)
+	suite.Require().Equal(t, evt.Time)
 	rt, ok := evt.Content.(tick.Tick)
-	as.True(ok)
-	as.Equal(ti, rt)
+	suite.Require().True(ok)
+	suite.Require().Equal(ti, rt)
 }
 
 func (suite *PubSubClientSuite) checkEnd(evt event.Event, t time.Time, st status.Status) {
-	as := suite.Require()
-
-	as.Equal(event.TypeIsStatus, evt.Type)
-	as.Equal(t, evt.Time)
+	suite.Require().Equal(event.TypeIsStatus, evt.Type)
+	suite.Require().Equal(t, evt.Time)
 	rt, ok := evt.Content.(status.Status)
-	as.True(ok)
-	as.Equal(st, rt)
+	suite.Require().True(ok)
+	suite.Require().Equal(st, rt)
 }

@@ -15,6 +15,10 @@ type Event struct {
 	Content interface{}
 }
 
+func toto() {
+
+}
+
 func (e Event) MarshalBinary() ([]byte, error) {
 	return json.Marshal(e)
 }

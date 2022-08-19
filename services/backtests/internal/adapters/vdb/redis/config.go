@@ -16,8 +16,8 @@ type Config struct {
 }
 
 func (c *Config) Load() *Config {
-	c.Address = os.Getenv("REDIS_ADDRESS")
-	c.Password = os.Getenv("REDIS_PASSWORD")
+	c.Address = os.Getenv("REDIS_BACKTESTS_URL")
+	c.Password = os.Getenv("REDIS_BACKTESTS_PASSWORD")
 
 	return c
 }

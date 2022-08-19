@@ -11,7 +11,7 @@ import (
 )
 
 const (
-	redisKeySymbolListenerPrefix = "ticks-listeners-count"
+	redisKeySymbolListenerPrefix = "symbol-listeners-count"
 	redisKeySymbolListener       = redisKeySymbolListenerPrefix + "-%s-%s"
 )
 

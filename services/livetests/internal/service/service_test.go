@@ -17,10 +17,6 @@ import (
 )
 
 func TestServiceSuite(t *testing.T) {
-	if os.Getenv("REDIS_ADDRESS") == "" {
-		t.Skip()
-	}
-
 	suite.Run(t, new(ServiceSuite))
 }
 

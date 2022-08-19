@@ -38,6 +38,6 @@ func (suite *ConfigSuite) TestLoadValidate() {
 }
 
 func setEnv(address, password string) {
-	os.Setenv("REDIS_ADDRESS", address)
-	os.Setenv("REDIS_PASSWORD", password)
+	os.Setenv("REDIS_BACKTESTS_URL", address)
+	os.Setenv("REDIS_BACKTESTS_PASSWORD", password)
 }

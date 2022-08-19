@@ -1,7 +1,6 @@
 package cockroach
 
 import (
-	"os"
 	"testing"
 
 	"github.com/stretchr/testify/suite"
@@ -32,19 +31,13 @@ func (suite *ConfigSuite) TestLoadValidate() {
 
 	var config Config
 	for i, c := range cases {
-		setEnv(c.Host, c.Port, c.User, c.Password, c.Database)
+		defer tmpEnvVar("COCKROACHDB_HOST", c.Host)()
+		defer tmpEnvVar("COCKROACHDB_PORT", c.Port)()
+		defer tmpEnvVar("COCKROACHDB_USER", c.User)()
+		defer tmpEnvVar("COCKROACHDB_PASSWORD", c.Password)()
+		defer tmpEnvVar("COCKROACHDB_DATABASE", c.Database)()
 
 		err := config.Load().Validate()
 		suite.Require().Equal(c.Err, err, i)
-
-		setEnv("", "", "", "", "")
 	}
-}
-
-func setEnv(host, port, user, password, database string) {
-	os.Setenv("COCKROACHDB_HOST", host)
-	os.Setenv("COCKROACHDB_PORT", port)
-	os.Setenv("COCKROACHDB_USER", user)
-	os.Setenv("COCKROACHDB_PASSWORD", password)
-	os.Setenv("COCKROACHDB_DATABASE", database)
 }

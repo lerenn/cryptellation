@@ -6,9 +6,7 @@ COPY ./ /app
 
 # Build from code
 ENV CGO_ENABLED 0
-RUN --mount=type=cache,mode=0755,target=/root/.cache/go-build \
-    --mount=type=cache,mode=0755,target=/root/go \
-    go build ./cmd/livetests-server
+RUN go build ./cmd/livetests-server
 
 FROM alpine
 

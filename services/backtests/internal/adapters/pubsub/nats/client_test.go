@@ -1,7 +1,6 @@
 package nats
 
 import (
-	"os"
 	"testing"
 
 	"github.com/digital-feather/cryptellation/services/backtests/internal/adapters/pubsub/tests"
@@ -9,10 +8,6 @@ import (
 )
 
 func TestNATSClientSuite(t *testing.T) {
-	if os.Getenv("NATS_URL") == "" {
-		t.Skip()
-	}
-
 	suite.Run(t, new(NATSClientSuite))
 }
 

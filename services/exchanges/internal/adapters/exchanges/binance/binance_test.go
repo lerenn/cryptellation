@@ -2,7 +2,6 @@ package binance
 
 import (
 	"context"
-	"os"
 	"testing"
 	"time"
 
@@ -10,10 +9,6 @@ import (
 )
 
 func TestBinanceSuite(t *testing.T) {
-	if os.Getenv("BINANCE_API_KEY") == "" {
-		t.Skip()
-	}
-
 	suite.Run(t, new(BinanceSuite))
 }
 

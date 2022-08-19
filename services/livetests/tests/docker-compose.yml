@@ -6,7 +6,9 @@ services:
         image: redis:alpine
         hostname: redis
         networks:
-            - cryptellation-livetests-tests-network
+            cryptellation-livetests-tests-network:
+                aliases:
+                    - livetests-redis
     tests:
         depends_on:
             - redis
@@ -16,9 +18,15 @@ services:
         env_file:
             - ../../../.env
         volumes:
+            - gocache:/go/pkg/mod
+            - gobuild:/root/.cache/go-build
             - ../:/code
         networks:
             - cryptellation-livetests-tests-network
+
+volumes:
+    gocache:
+    gobuild:
 
 networks:
     cryptellation-livetests-tests-network:
