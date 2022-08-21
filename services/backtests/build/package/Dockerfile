@@ -6,20 +6,17 @@ COPY ./ /app
 
 # Build from code
 ENV CGO_ENABLED 0
-RUN go build ./cmd/candlesticks-server
-
+RUN go build ./cmd/backtests-server
 
 FROM alpine
 
 # Install required running dependencies
 RUN apk update \
-    && apk add bash \
-    && apk add postgresql-client
+    && apk add bash
 
 # Install running files
-COPY scripts/ /scripts/
-COPY entrypoint.sh .
-COPY --from=0 /app/candlesticks-server /usr/local/bin
+COPY build/package/entrypoint.sh .
+COPY --from=0 /app/backtests-server /usr/local/bin
 
 ENTRYPOINT [ "/bin/bash", "/entrypoint.sh" ]
-CMD [ "candlesticks-server" ]
+CMD [ "backtests-server" ]

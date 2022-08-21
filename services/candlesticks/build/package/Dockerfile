@@ -6,7 +6,8 @@ COPY ./ /app
 
 # Build from code
 ENV CGO_ENABLED 0
-RUN go build ./cmd/exchanges-server
+RUN go build ./cmd/candlesticks-server
+
 
 FROM alpine
 
@@ -17,8 +18,8 @@ RUN apk update \
 
 # Install running files
 COPY scripts/ /scripts/
-COPY entrypoint.sh .
-COPY --from=0 /app/exchanges-server /usr/local/bin
+COPY build/package/entrypoint.sh .
+COPY --from=0 /app/candlesticks-server /usr/local/bin
 
 ENTRYPOINT [ "/bin/bash", "/entrypoint.sh" ]
-CMD [ "exchanges-server" ]
+CMD [ "candlesticks-server" ]

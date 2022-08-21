@@ -6,7 +6,7 @@ COPY ./ /app
 
 # Build from code
 ENV CGO_ENABLED 0
-RUN go build ./cmd/livetests-server
+RUN go build ./cmd/ticks-server
 
 FROM alpine
 
@@ -15,8 +15,8 @@ RUN apk update \
     && apk add bash
 
 # Install running files
-COPY entrypoint.sh .
-COPY --from=0 /app/livetests-server /usr/local/bin
+COPY build/package/entrypoint.sh .
+COPY --from=0 /app/ticks-server /usr/local/bin
 
 ENTRYPOINT [ "/bin/bash", "/entrypoint.sh" ]
-CMD [ "livetests-server" ]
+CMD [ "ticks-server" ]
