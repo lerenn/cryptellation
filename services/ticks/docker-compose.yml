@@ -17,17 +17,17 @@ services:
         depends_on:
             - redis
             - nats
-        build: .
+        build: ./tests
         image: cryptellation-ticks-tests
         container_name: cryptellation-ticks-tests-instance
         env_file:
-            - ../../../.env
+            - ../../.env
         environment:
             - REDIS_URL=redis:6379
         volumes:
             - gocache:/go/pkg/mod
             - gobuild:/root/.cache/go-build
-            - ../:/code
+            - .:/code
         networks:
             - cryptellation-ticks-tests-network
 

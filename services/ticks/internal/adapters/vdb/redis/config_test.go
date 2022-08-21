@@ -28,16 +28,18 @@ func (suite *ConfigSuite) TestLoadValidate() {
 
 	var config Config
 	for i, c := range cases {
-		setEnv(c.Address, c.Password)
+		defer tmpEnvVar("REDIS_URL", c.Address)()
+		defer tmpEnvVar("REDIS_PASSWORD", c.Password)()
 
 		err := config.Load().Validate()
 		suite.Require().Equal(c.Err, err, i)
-
-		setEnv("", "")
 	}
 }
 
-func setEnv(address, password string) {
-	os.Setenv("REDIS_URL", address)
-	os.Setenv("REDIS_PASSWORD", password)
+func tmpEnvVar(key, value string) (reset func()) {
+	originalValue := os.Getenv(key)
+	os.Setenv(key, value)
+	return func() {
+		os.Setenv(key, originalValue)
+	}
 }

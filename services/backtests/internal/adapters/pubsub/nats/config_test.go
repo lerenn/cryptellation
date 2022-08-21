@@ -27,15 +27,17 @@ func (suite *ConfigSuite) TestLoadValidate() {
 
 	var config Config
 	for i, c := range cases {
-		setEnv(c.URL)
+		defer tmpEnvVar("NATS_URL", c.URL)()
 
 		err := config.Load().Validate()
 		suite.Require().Equal(c.Err, err, i)
-
-		setEnv("")
 	}
 }
 
-func setEnv(url string) {
-	os.Setenv("NATS_URL", url)
+func tmpEnvVar(key, value string) (reset func()) {
+	originalValue := os.Getenv(key)
+	os.Setenv(key, value)
+	return func() {
+		os.Setenv(key, originalValue)
+	}
 }

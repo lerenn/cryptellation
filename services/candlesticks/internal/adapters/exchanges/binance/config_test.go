@@ -28,16 +28,18 @@ func (suite *ConfigSuite) TestLoadValidate() {
 
 	var config Config
 	for i, c := range cases {
-		setEnv(c.Api, c.Secret)
+		defer tmpEnvVar("BINANCE_API_KEY", c.Api)()
+		defer tmpEnvVar("BINANCE_SECRET_KEY", c.Secret)()
 
 		err := config.Load().Validate()
 		suite.Require().Equal(c.Err, err, i)
-
-		setEnv("", "")
 	}
 }
 
-func setEnv(api, secret string) {
-	os.Setenv("BINANCE_API_KEY", api)
-	os.Setenv("BINANCE_SECRET_KEY", secret)
+func tmpEnvVar(key, value string) (reset func()) {
+	originalValue := os.Getenv(key)
+	os.Setenv(key, value)
+	return func() {
+		os.Setenv(key, originalValue)
+	}
 }

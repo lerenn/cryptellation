@@ -23,12 +23,15 @@ ifeq ($(shell which golangci-lint &> /dev/null; echo $$?),1)
 endif
 	@LOG_LEVEL=error golangci-lint run
 
+test/build:
+	@docker-compose build
+
 test/clean:
-	@docker-compose -f tests/docker-compose.yml down
+	@docker-compose down
 	@rm -f cover.out
 
 test/run:
-	@docker-compose -f tests/docker-compose.yml run tests
+	@docker-compose run tests
 
 test: test/run ## Run tests
 
