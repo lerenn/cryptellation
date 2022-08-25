@@ -1,16 +1,22 @@
 package client
 
 import (
+	"context"
 	"fmt"
 	"os"
 
+	"github.com/digital-feather/cryptellation/services/backtests/pkg/models/account"
 	"github.com/digital-feather/cryptellation/services/livetests/pkg/client/proto"
 	"golang.org/x/xerrors"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
 
-func New() (client proto.LivetestsServiceClient, close func() error, err error) {
+type GrpcClient struct {
+	grpcClient proto.LivetestsServiceClient
+}
+
+func New() (client *GrpcClient, close func() error, err error) {
 	grpcAddr := os.Getenv("CRYPTELLATION_LIVETESTS_GRPC_URL")
 	if grpcAddr == "" {
 		return nil, func() error { return nil }, xerrors.New("no grpc url provided")
@@ -21,7 +27,22 @@ func New() (client proto.LivetestsServiceClient, close func() error, err error) 
 		return nil, func() error { return nil }, fmt.Errorf("dialing livetests grpc server: %w", err)
 	}
 
-	return proto.NewLivetestsServiceClient(conn), conn.Close, nil
+	return &GrpcClient{
+		grpcClient: proto.NewLivetestsServiceClient(conn),
+	}, conn.Close, nil
+}
+
+func (c *GrpcClient) CreateLivetest(ctx context.Context, accounts map[string]account.Account) (id uint, err error) {
+	pbAccounts := make(map[string]*proto.Account)
+	for n, a := range accounts {
+		pbAccounts[n] = accountToProtoBuff(a)
+	}
+
+	resp, err := c.grpcClient.CreateLivetest(ctx, &proto.CreateLivetestRequest{
+		Accounts: pbAccounts,
+	})
+
+	return uint(resp.Id), err
 }
 
 func grpcDialOpts(grpcAddr string) []grpc.DialOption {

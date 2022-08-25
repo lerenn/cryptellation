@@ -8,11 +8,11 @@ import (
 	"testing"
 	"time"
 
+	"github.com/digital-feather/cryptellation/services/backtests/pkg/models/account"
 	"github.com/digital-feather/cryptellation/services/livetests/internal/adapters/vdb"
 	"github.com/digital-feather/cryptellation/services/livetests/internal/adapters/vdb/redis"
 	"github.com/digital-feather/cryptellation/services/livetests/internal/controllers/grpc"
 	"github.com/digital-feather/cryptellation/services/livetests/pkg/client"
-	"github.com/digital-feather/cryptellation/services/livetests/pkg/client/proto"
 	"github.com/stretchr/testify/suite"
 )
 
@@ -23,7 +23,7 @@ func TestServiceSuite(t *testing.T) {
 type ServiceSuite struct {
 	suite.Suite
 	vdb       vdb.Port
-	client    proto.LivetestsServiceClient
+	client    client.Client
 	closeTest func() error
 }
 
@@ -64,20 +64,16 @@ func (suite *ServiceSuite) TearDownSuite() {
 }
 
 func (suite *ServiceSuite) TestCreateLivetest() {
-	req := proto.CreateLivetestRequest{
-		Accounts: map[string]*proto.Account{
-			"exchange": {
-				Assets: map[string]float32{
-					"DAI": 1000,
-				},
+	id, err := suite.client.CreateLivetest(context.Background(), map[string]account.Account{
+		"exchange": {
+			Balances: map[string]float64{
+				"DAI": 1000,
 			},
 		},
-	}
-
-	resp, err := suite.client.CreateLivetest(context.Background(), &req)
+	})
 	suite.Require().NoError(err)
 
-	recvBT, err := suite.vdb.ReadLivetest(context.Background(), uint(resp.Id))
+	recvBT, err := suite.vdb.ReadLivetest(context.Background(), id)
 	suite.Require().NoError(err)
 	suite.Require().Len(recvBT.Accounts, 1)
 	suite.Require().Len(recvBT.Accounts["exchange"].Balances, 1)

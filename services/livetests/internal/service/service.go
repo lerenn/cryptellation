@@ -1,35 +1,23 @@
 package service
 
 import (
-	"log"
-
 	vdbRedis "github.com/digital-feather/cryptellation/services/livetests/internal/adapters/vdb/redis"
 	app "github.com/digital-feather/cryptellation/services/livetests/internal/application"
 	cmdLivetest "github.com/digital-feather/cryptellation/services/livetests/internal/application/commands/livetest"
-	ticksGrpc "github.com/digital-feather/cryptellation/services/ticks/pkg/client"
-	ticksProto "github.com/digital-feather/cryptellation/services/ticks/pkg/client/proto"
 )
 
 func NewApplication() (app.Application, func(), error) {
-	ticksClient, closeTicksClient, err := ticksGrpc.New()
-	if err != nil {
-		return app.Application{}, func() {}, err
-	}
-
-	app, closeApp, err := newApplication(ticksClient)
+	app, closeApp, err := newApplication()
 	return app, func() {
 		closeApp()
-		if err := closeTicksClient(); err != nil {
-			log.Println("error when closing ticks client:", err)
-		}
 	}, err
 }
 
 func NewMockedApplication() (app.Application, func(), error) {
-	return newApplication(MockedTicksClient{})
+	return newApplication()
 }
 
-func newApplication(client ticksProto.TicksServiceClient) (app.Application, func(), error) {
+func newApplication() (app.Application, func(), error) {
 	repository, err := vdbRedis.New()
 	if err != nil {
 		return app.Application{}, func() {}, err
