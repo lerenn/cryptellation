@@ -23,7 +23,7 @@ func TestServiceSuite(t *testing.T) {
 type ServiceSuite struct {
 	suite.Suite
 	vdb       vdb.Port
-	client    proto.TicksServiceClient
+	client    *client.GrpcClient
 	closeTest func() error
 }
 
@@ -64,22 +64,24 @@ func (suite *ServiceSuite) AfterTest(suiteName, testName string) {
 }
 
 func (suite *ServiceSuite) TestListenSymbol() {
-	stream, err := suite.client.ListenSymbol(context.Background(),
-		&proto.ListenSymbolRequest{
+	ch, err := suite.client.ListenTicks("SYMBOL")
+	suite.Require().NoError(err)
+
+	resp, err := suite.client.Register(context.Background(),
+		&proto.RegisterRequest{
 			Exchange:   "mock_exchange",
 			PairSymbol: "SYMBOL",
 		})
 	suite.Require().NoError(err)
+	suite.Require().Equal(int64(1), resp.RegisteredCount)
 
 	for i := int64(0); i < 50; i++ {
-		t, err := stream.Recv()
-		suite.Require().NoError(err)
+		t, ok := <-ch
+		suite.Require().True(ok)
 		suite.Require().Equal("mock_exchange", t.Exchange)
 		suite.Require().Equal("SYMBOL", t.PairSymbol)
 		suite.Require().Equal(float32(100+i), t.Price)
-		ti, err := time.Parse(time.RFC3339Nano, t.Time)
-		suite.Require().NoError(err)
-		suite.Require().WithinDuration(time.Unix(i, 0), ti, time.Microsecond)
+		suite.Require().WithinDuration(time.Unix(i, 0), t.Time, time.Microsecond)
 	}
 }
 

@@ -6,10 +6,8 @@ import (
 	"log"
 	"net"
 	"os"
-	"time"
 
 	app "github.com/digital-feather/cryptellation/services/ticks/internal/application"
-	"github.com/digital-feather/cryptellation/services/ticks/internal/domain/tick"
 	"github.com/digital-feather/cryptellation/services/ticks/pkg/client/proto"
 	"golang.org/x/xerrors"
 	"google.golang.org/grpc"
@@ -72,57 +70,24 @@ func (g *GrpcController) Stop() {
 	g.server = nil
 }
 
-func (g GrpcController) ListenSymbol(req *proto.ListenSymbolRequest, srv proto.TicksService_ListenSymbolServer) error {
-	ctx := srv.Context()
-
-	// Start listening before registration to avoid missing ticks
-	ticksChanRecv, err := g.application.Queries.ListenSymbol.Handle(req.Exchange, req.PairSymbol)
+func (g GrpcController) Register(ctx context.Context, req *proto.RegisterRequest) (*proto.RegisterResponse, error) {
+	count, err := g.application.Commands.RegisterSymbolListener.Handle(ctx, req.Exchange, req.PairSymbol)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	err = g.application.Commands.RegisterSymbolListener.Handle(ctx, req.Exchange, req.PairSymbol)
-	if err != nil {
-		return err
-	}
-
-	loopErr := loopOverNewTicks(ctx, srv, ticksChanRecv)
-	unregisterErr := g.application.Commands.UnregisterSymbolListener.Handle(context.Background(), req.Exchange, req.PairSymbol)
-
-	if loopErr == nil {
-		return unregisterErr
-	}
-
-	log.Println(unregisterErr)
-	return loopErr
+	return &proto.RegisterResponse{
+		RegisteredCount: count,
+	}, nil
 }
 
-func loopOverNewTicks(ctx context.Context, srv proto.TicksService_ListenSymbolServer, ticksChanRecv <-chan tick.Tick) error {
-	for {
-		// exit if context is done
-		// or continue
-		select {
-		case <-ctx.Done():
-			return ctx.Err()
-		default:
-		}
-
-		t, ok := <-ticksChanRecv
-		if !ok {
-			return nil
-		}
-
-		if err := srv.Send(toGrpcTick(t)); err != nil {
-			return err
-		}
+func (g GrpcController) Unregister(ctx context.Context, req *proto.UnregisterRequest) (*proto.UnregisterResponse, error) {
+	count, err := g.application.Commands.UnregisterSymbolListener.Handle(ctx, req.Exchange, req.PairSymbol)
+	if err != nil {
+		return nil, err
 	}
-}
 
-func toGrpcTick(t tick.Tick) *proto.Tick {
-	return &proto.Tick{
-		Time:       t.Time.Format(time.RFC3339Nano),
-		Exchange:   t.Exchange,
-		PairSymbol: t.PairSymbol,
-		Price:      float32(t.Price),
-	}
+	return &proto.UnregisterResponse{
+		RegisteredCount: count,
+	}, nil
 }

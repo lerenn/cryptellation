@@ -14,18 +14,42 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0bticks.proto\x12\x05ticks\"<\n\x13ListenSymbolRequest\x12\x10\n\x08\x65xchange\x18\x01 \x01(\t\x12\x13\n\x0bpair_symbol\x18\x02 \x01(\t\"J\n\x04Tick\x12\x0c\n\x04time\x18\x01 \x01(\t\x12\x10\n\x08\x65xchange\x18\x02 \x01(\t\x12\x13\n\x0bpair_symbol\x18\x03 \x01(\t\x12\r\n\x05price\x18\x04 \x01(\x02\x32K\n\x0cTicksService\x12;\n\x0cListenSymbol\x12\x1a.ticks.ListenSymbolRequest\x1a\x0b.ticks.Tick\"\x00\x30\x01\x42 Z\x1e/services/ticks/pkg/grpc/protob\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0bticks.proto\x12\x05ticks\"8\n\x0fRegisterRequest\x12\x10\n\x08\x65xchange\x18\x01 \x01(\t\x12\x13\n\x0bpair_symbol\x18\x02 \x01(\t\",\n\x10RegisterResponse\x12\x18\n\x10registered_count\x18\x01 \x01(\x03\":\n\x11UnregisterRequest\x12\x10\n\x08\x65xchange\x18\x01 \x01(\t\x12\x13\n\x0bpair_symbol\x18\x02 \x01(\t\".\n\x12UnregisterResponse\x12\x18\n\x10registered_count\x18\x01 \x01(\x03\"J\n\x04Tick\x12\x0c\n\x04time\x18\x01 \x01(\t\x12\x10\n\x08\x65xchange\x18\x02 \x01(\t\x12\x13\n\x0bpair_symbol\x18\x03 \x01(\t\x12\r\n\x05price\x18\x04 \x01(\x02\x32\x92\x01\n\x0cTicksService\x12=\n\x08Register\x12\x16.ticks.RegisterRequest\x1a\x17.ticks.RegisterResponse\"\x00\x12\x43\n\nUnregister\x12\x18.ticks.UnregisterRequest\x1a\x19.ticks.UnregisterResponse\"\x00\x42 Z\x1e/services/ticks/pkg/grpc/protob\x06proto3')
 
 
 
-_LISTENSYMBOLREQUEST = DESCRIPTOR.message_types_by_name['ListenSymbolRequest']
+_REGISTERREQUEST = DESCRIPTOR.message_types_by_name['RegisterRequest']
+_REGISTERRESPONSE = DESCRIPTOR.message_types_by_name['RegisterResponse']
+_UNREGISTERREQUEST = DESCRIPTOR.message_types_by_name['UnregisterRequest']
+_UNREGISTERRESPONSE = DESCRIPTOR.message_types_by_name['UnregisterResponse']
 _TICK = DESCRIPTOR.message_types_by_name['Tick']
-ListenSymbolRequest = _reflection.GeneratedProtocolMessageType('ListenSymbolRequest', (_message.Message,), {
-  'DESCRIPTOR' : _LISTENSYMBOLREQUEST,
+RegisterRequest = _reflection.GeneratedProtocolMessageType('RegisterRequest', (_message.Message,), {
+  'DESCRIPTOR' : _REGISTERREQUEST,
   '__module__' : 'ticks_pb2'
-  # @@protoc_insertion_point(class_scope:ticks.ListenSymbolRequest)
+  # @@protoc_insertion_point(class_scope:ticks.RegisterRequest)
   })
-_sym_db.RegisterMessage(ListenSymbolRequest)
+_sym_db.RegisterMessage(RegisterRequest)
+
+RegisterResponse = _reflection.GeneratedProtocolMessageType('RegisterResponse', (_message.Message,), {
+  'DESCRIPTOR' : _REGISTERRESPONSE,
+  '__module__' : 'ticks_pb2'
+  # @@protoc_insertion_point(class_scope:ticks.RegisterResponse)
+  })
+_sym_db.RegisterMessage(RegisterResponse)
+
+UnregisterRequest = _reflection.GeneratedProtocolMessageType('UnregisterRequest', (_message.Message,), {
+  'DESCRIPTOR' : _UNREGISTERREQUEST,
+  '__module__' : 'ticks_pb2'
+  # @@protoc_insertion_point(class_scope:ticks.UnregisterRequest)
+  })
+_sym_db.RegisterMessage(UnregisterRequest)
+
+UnregisterResponse = _reflection.GeneratedProtocolMessageType('UnregisterResponse', (_message.Message,), {
+  'DESCRIPTOR' : _UNREGISTERRESPONSE,
+  '__module__' : 'ticks_pb2'
+  # @@protoc_insertion_point(class_scope:ticks.UnregisterResponse)
+  })
+_sym_db.RegisterMessage(UnregisterResponse)
 
 Tick = _reflection.GeneratedProtocolMessageType('Tick', (_message.Message,), {
   'DESCRIPTOR' : _TICK,
@@ -39,10 +63,16 @@ if _descriptor._USE_C_DESCRIPTORS == False:
 
   DESCRIPTOR._options = None
   DESCRIPTOR._serialized_options = b'Z\036/services/ticks/pkg/grpc/proto'
-  _LISTENSYMBOLREQUEST._serialized_start=22
-  _LISTENSYMBOLREQUEST._serialized_end=82
-  _TICK._serialized_start=84
-  _TICK._serialized_end=158
-  _TICKSSERVICE._serialized_start=160
-  _TICKSSERVICE._serialized_end=235
+  _REGISTERREQUEST._serialized_start=22
+  _REGISTERREQUEST._serialized_end=78
+  _REGISTERRESPONSE._serialized_start=80
+  _REGISTERRESPONSE._serialized_end=124
+  _UNREGISTERREQUEST._serialized_start=126
+  _UNREGISTERREQUEST._serialized_end=184
+  _UNREGISTERRESPONSE._serialized_start=186
+  _UNREGISTERRESPONSE._serialized_end=232
+  _TICK._serialized_start=234
+  _TICK._serialized_end=308
+  _TICKSSERVICE._serialized_start=311
+  _TICKSSERVICE._serialized_end=457
 # @@protoc_insertion_point(module_scope)

@@ -20,11 +20,13 @@ func NewUnregisterSymbolListener(db vdb.Port) UnregisterSymbolListenerHandler {
 	}
 }
 
-func (h UnregisterSymbolListenerHandler) Handle(ctx context.Context, exchange, pairSymbol string) error {
-	_, err := h.vdb.DecrementSymbolListenerCount(ctx, exchange, pairSymbol)
+func (h UnregisterSymbolListenerHandler) Handle(ctx context.Context, exchange, pairSymbol string) (int64, error) {
+	count, err := h.vdb.DecrementSymbolListenerCount(ctx, exchange, pairSymbol)
 	if err != nil {
-		return err
+		return count, err
 	}
 
-	return nil
+	// TODO Unregister listener
+
+	return count, nil
 }

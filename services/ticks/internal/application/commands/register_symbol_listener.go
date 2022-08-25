@@ -38,20 +38,20 @@ func NewRegisterSymbolListener(ps pubsub.Port, db vdb.Port, exchanges map[string
 	}
 }
 
-func (h RegisterSymbolListenerHandler) Handle(ctx context.Context, exchange, pairSymbol string) error {
+func (h RegisterSymbolListenerHandler) Handle(ctx context.Context, exchange, pairSymbol string) (int64, error) {
 	count, err := h.vdb.IncrementSymbolListenerCount(ctx, exchange, pairSymbol)
 	if err != nil {
-		return err
+		return count, err
 	}
 
 	if count == 1 {
 		err := h.launchListener(exchange, pairSymbol)
 		if err != nil {
-			return err
+			return count, err
 		}
 	}
 
-	return nil
+	return count, nil
 }
 
 func (h RegisterSymbolListenerHandler) launchListener(exchange, pairSymbol string) error {

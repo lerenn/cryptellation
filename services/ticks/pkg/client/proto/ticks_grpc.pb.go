@@ -22,7 +22,8 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type TicksServiceClient interface {
-	ListenSymbol(ctx context.Context, in *ListenSymbolRequest, opts ...grpc.CallOption) (TicksService_ListenSymbolClient, error)
+	Register(ctx context.Context, in *RegisterRequest, opts ...grpc.CallOption) (*RegisterResponse, error)
+	Unregister(ctx context.Context, in *UnregisterRequest, opts ...grpc.CallOption) (*UnregisterResponse, error)
 }
 
 type ticksServiceClient struct {
@@ -33,51 +34,41 @@ func NewTicksServiceClient(cc grpc.ClientConnInterface) TicksServiceClient {
 	return &ticksServiceClient{cc}
 }
 
-func (c *ticksServiceClient) ListenSymbol(ctx context.Context, in *ListenSymbolRequest, opts ...grpc.CallOption) (TicksService_ListenSymbolClient, error) {
-	stream, err := c.cc.NewStream(ctx, &TicksService_ServiceDesc.Streams[0], "/ticks.TicksService/ListenSymbol", opts...)
+func (c *ticksServiceClient) Register(ctx context.Context, in *RegisterRequest, opts ...grpc.CallOption) (*RegisterResponse, error) {
+	out := new(RegisterResponse)
+	err := c.cc.Invoke(ctx, "/ticks.TicksService/Register", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &ticksServiceListenSymbolClient{stream}
-	if err := x.ClientStream.SendMsg(in); err != nil {
-		return nil, err
-	}
-	if err := x.ClientStream.CloseSend(); err != nil {
-		return nil, err
-	}
-	return x, nil
+	return out, nil
 }
 
-type TicksService_ListenSymbolClient interface {
-	Recv() (*Tick, error)
-	grpc.ClientStream
-}
-
-type ticksServiceListenSymbolClient struct {
-	grpc.ClientStream
-}
-
-func (x *ticksServiceListenSymbolClient) Recv() (*Tick, error) {
-	m := new(Tick)
-	if err := x.ClientStream.RecvMsg(m); err != nil {
+func (c *ticksServiceClient) Unregister(ctx context.Context, in *UnregisterRequest, opts ...grpc.CallOption) (*UnregisterResponse, error) {
+	out := new(UnregisterResponse)
+	err := c.cc.Invoke(ctx, "/ticks.TicksService/Unregister", in, out, opts...)
+	if err != nil {
 		return nil, err
 	}
-	return m, nil
+	return out, nil
 }
 
 // TicksServiceServer is the server API for TicksService service.
 // All implementations should embed UnimplementedTicksServiceServer
 // for forward compatibility
 type TicksServiceServer interface {
-	ListenSymbol(*ListenSymbolRequest, TicksService_ListenSymbolServer) error
+	Register(context.Context, *RegisterRequest) (*RegisterResponse, error)
+	Unregister(context.Context, *UnregisterRequest) (*UnregisterResponse, error)
 }
 
 // UnimplementedTicksServiceServer should be embedded to have forward compatible implementations.
 type UnimplementedTicksServiceServer struct {
 }
 
-func (UnimplementedTicksServiceServer) ListenSymbol(*ListenSymbolRequest, TicksService_ListenSymbolServer) error {
-	return status.Errorf(codes.Unimplemented, "method ListenSymbol not implemented")
+func (UnimplementedTicksServiceServer) Register(context.Context, *RegisterRequest) (*RegisterResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Register not implemented")
+}
+func (UnimplementedTicksServiceServer) Unregister(context.Context, *UnregisterRequest) (*UnregisterResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Unregister not implemented")
 }
 
 // UnsafeTicksServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -91,25 +82,40 @@ func RegisterTicksServiceServer(s grpc.ServiceRegistrar, srv TicksServiceServer)
 	s.RegisterService(&TicksService_ServiceDesc, srv)
 }
 
-func _TicksService_ListenSymbol_Handler(srv interface{}, stream grpc.ServerStream) error {
-	m := new(ListenSymbolRequest)
-	if err := stream.RecvMsg(m); err != nil {
-		return err
+func _TicksService_Register_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RegisterRequest)
+	if err := dec(in); err != nil {
+		return nil, err
 	}
-	return srv.(TicksServiceServer).ListenSymbol(m, &ticksServiceListenSymbolServer{stream})
+	if interceptor == nil {
+		return srv.(TicksServiceServer).Register(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ticks.TicksService/Register",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TicksServiceServer).Register(ctx, req.(*RegisterRequest))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
-type TicksService_ListenSymbolServer interface {
-	Send(*Tick) error
-	grpc.ServerStream
-}
-
-type ticksServiceListenSymbolServer struct {
-	grpc.ServerStream
-}
-
-func (x *ticksServiceListenSymbolServer) Send(m *Tick) error {
-	return x.ServerStream.SendMsg(m)
+func _TicksService_Unregister_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UnregisterRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TicksServiceServer).Unregister(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ticks.TicksService/Unregister",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TicksServiceServer).Unregister(ctx, req.(*UnregisterRequest))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 // TicksService_ServiceDesc is the grpc.ServiceDesc for TicksService service.
@@ -118,13 +124,16 @@ func (x *ticksServiceListenSymbolServer) Send(m *Tick) error {
 var TicksService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "ticks.TicksService",
 	HandlerType: (*TicksServiceServer)(nil),
-	Methods:     []grpc.MethodDesc{},
-	Streams: []grpc.StreamDesc{
+	Methods: []grpc.MethodDesc{
 		{
-			StreamName:    "ListenSymbol",
-			Handler:       _TicksService_ListenSymbol_Handler,
-			ServerStreams: true,
+			MethodName: "Register",
+			Handler:    _TicksService_Register_Handler,
+		},
+		{
+			MethodName: "Unregister",
+			Handler:    _TicksService_Unregister_Handler,
 		},
 	},
+	Streams:  []grpc.StreamDesc{},
 	Metadata: "ticks.proto",
 }
