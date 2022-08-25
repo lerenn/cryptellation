@@ -1,5 +1,11 @@
 package candlestick
 
+import (
+	"time"
+
+	"github.com/digital-feather/cryptellation/services/candlesticks/pkg/client/proto"
+)
+
 type Candlestick struct {
 	Open       float64 `bson:"open"     json:"open,omitempty"`
 	High       float64 `bson:"high"     json:"high,omitempty"`
@@ -17,4 +23,19 @@ func (cs Candlestick) Equal(b Candlestick) bool {
 	v := cs.Volume == b.Volume
 	u := cs.Uncomplete == b.Uncomplete
 	return o && h && l && c && v && u
+}
+
+func FromProtoBuff(pbc *proto.Candlestick) (time.Time, Candlestick, error) {
+	t, err := time.Parse(time.RFC3339, pbc.Time)
+	if err != nil {
+		return time.Time{}, Candlestick{}, err
+	}
+
+	return t, Candlestick{
+		Open:   float64(pbc.Open),
+		High:   float64(pbc.High),
+		Low:    float64(pbc.Low),
+		Close:  float64(pbc.Close),
+		Volume: float64(pbc.Volume),
+	}, nil
 }

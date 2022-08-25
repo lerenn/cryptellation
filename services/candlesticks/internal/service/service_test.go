@@ -12,7 +12,6 @@ import (
 	"github.com/digital-feather/cryptellation/services/candlesticks/internal/adapters/db/cockroach"
 	"github.com/digital-feather/cryptellation/services/candlesticks/internal/controllers/grpc"
 	"github.com/digital-feather/cryptellation/services/candlesticks/pkg/client"
-	"github.com/digital-feather/cryptellation/services/candlesticks/pkg/client/proto"
 	"github.com/digital-feather/cryptellation/services/candlesticks/pkg/models/candlestick"
 	"github.com/digital-feather/cryptellation/services/candlesticks/pkg/models/period"
 	"github.com/stretchr/testify/suite"
@@ -29,7 +28,7 @@ func TestServiceSuite(t *testing.T) {
 type ServiceSuite struct {
 	suite.Suite
 	db        db.Port
-	client    proto.CandlesticksServiceClient
+	client    client.Client
 	closeTest func() error
 }
 
@@ -79,21 +78,25 @@ func (suite *ServiceSuite) TestGetCandlesticksAllExistWithNoneInDB() {
 	// Provided before
 
 	// When a request is made
-	resp, err := suite.client.ReadCandlesticks(context.Background(), &proto.ReadCandlesticksRequest{
+	l, err := suite.client.ReadCandlesticks(context.Background(), client.ReadCandlestickPayload{
 		ExchangeName: "mock_exchange",
 		PairSymbol:   "ETH-USDC",
-		PeriodSymbol: period.M1.String(),
-		Start:        time.Unix(0, 0).Format(time.RFC3339),
-		End:          time.Unix(540, 0).Format(time.RFC3339),
+		Period:       period.M1,
+		Start:        time.Unix(0, 0),
+		End:          time.Unix(540, 0),
 	})
 
 	// Then all candlesticks are retrieved
 	suite.Require().NoError(err)
-	suite.Require().Len(resp.Candlesticks, 10)
-	for i, cs := range resp.Candlesticks {
-		suite.Require().Equal(float32(60*i), cs.Open)
-		suite.Require().Equal(time.Unix(int64(60*i), 0).Format(time.RFC3339Nano), cs.Time)
-	}
+	suite.Require().Equal(10, l.Len())
+	i := 0
+	l.Loop(func(t time.Time, cs candlestick.Candlestick) (bool, error) {
+		suite.Require().Equal(float64(60*i), cs.Open)
+		suite.Require().WithinDuration(time.Unix(int64(60*i), 0), t, time.Millisecond)
+		i++
+
+		return false, nil
+	})
 }
 
 func (suite *ServiceSuite) TestGetCandlesticksAllInexistantWithNoneInDB() {
@@ -101,17 +104,17 @@ func (suite *ServiceSuite) TestGetCandlesticksAllInexistantWithNoneInDB() {
 	// Provided before
 
 	// When a request is made
-	resp, err := suite.client.ReadCandlesticks(context.Background(), &proto.ReadCandlesticksRequest{
+	l, err := suite.client.ReadCandlesticks(context.Background(), client.ReadCandlestickPayload{
 		ExchangeName: "mock_exchange",
 		PairSymbol:   "ETH-USDC",
-		PeriodSymbol: period.M1.String(),
-		Start:        time.Unix(60000, 0).Format(time.RFC3339),
-		End:          time.Unix(60600, 0).Format(time.RFC3339),
+		Period:       period.M1,
+		Start:        time.Unix(60000, 0),
+		End:          time.Unix(60600, 0),
 	})
 
 	// Then all candlesticks are retrieved
 	suite.Require().NoError(err)
-	suite.Require().Len(resp.Candlesticks, 0)
+	suite.Require().Equal(0, l.Len())
 }
 
 func (suite *ServiceSuite) TestGetCandlesticksFromDBAndService() {
@@ -134,25 +137,28 @@ func (suite *ServiceSuite) TestGetCandlesticksFromDBAndService() {
 	suite.Require().NoError(suite.db.CreateCandlesticks(context.Background(), cl))
 
 	// When a request is made
-	resp, err := suite.client.ReadCandlesticks(context.Background(), &proto.ReadCandlesticksRequest{
+	l, err := suite.client.ReadCandlesticks(context.Background(), client.ReadCandlestickPayload{
 		ExchangeName: "mock_exchange",
 		PairSymbol:   "ETH-USDC",
-		PeriodSymbol: period.M1.String(),
-		Start:        time.Unix(0, 0).Format(time.RFC3339),
-		End:          time.Unix(1140, 0).Format(time.RFC3339),
+		Period:       period.M1,
+		Start:        time.Unix(0, 0),
+		End:          time.Unix(1140, 0),
 	})
 
 	// Then all candlesticks are retrieved
 	suite.Require().NoError(err)
-	suite.Require().Len(resp.Candlesticks, 20)
-	for i, cs := range resp.Candlesticks {
-		suite.Require().Equal(time.Unix(int64(60*i), 0).Format(time.RFC3339Nano), cs.Time)
+	suite.Require().Equal(20, l.Len())
+	i := 0
+	l.Loop(func(t time.Time, cs candlestick.Candlestick) (bool, error) {
+		suite.Require().WithinDuration(time.Unix(int64(60*i), 0), t, time.Millisecond)
 		if i < 10 {
-			suite.Require().Equal(float32(4321), cs.Close, i)
+			suite.Require().Equal(float64(4321), cs.Close, i)
 		} else {
-			suite.Require().Equal(float32(1234), cs.Close, i)
+			suite.Require().Equal(float64(1234), cs.Close, i)
 		}
-	}
+		i++
+		return false, nil
+	})
 }
 
 func (suite *ServiceSuite) TestGetCandlesticksFromDBAndServiceWithUncomplete() {
@@ -181,21 +187,24 @@ func (suite *ServiceSuite) TestGetCandlesticksFromDBAndServiceWithUncomplete() {
 	suite.Require().NoError(suite.db.CreateCandlesticks(context.Background(), cl))
 
 	// When a request is made
-	resp, err := suite.client.ReadCandlesticks(context.Background(), &proto.ReadCandlesticksRequest{
+	l, err := suite.client.ReadCandlesticks(context.Background(), client.ReadCandlestickPayload{
 		ExchangeName: "mock_exchange",
 		PairSymbol:   "ETH-USDC",
-		PeriodSymbol: period.M1.String(),
-		Start:        time.Unix(0, 0).Format(time.RFC3339),
-		End:          time.Unix(1140, 0).Format(time.RFC3339),
+		Period:       period.M1,
+		Start:        time.Unix(0, 0),
+		End:          time.Unix(1140, 0),
 	})
 
 	// Then all candlesticks are retrieved from mock
 	suite.Require().NoError(err)
-	suite.Require().Len(resp.Candlesticks, 20)
-	for i, cs := range resp.Candlesticks {
-		suite.Require().Equal(time.Unix(int64(60*i), 0).Format(time.RFC3339Nano), cs.Time)
-		suite.Require().Equal(float32(1234), cs.Close, i)
-	}
+	suite.Require().Equal(20, l.Len())
+	i := 0
+	l.Loop(func(t time.Time, cs candlestick.Candlestick) (bool, error) {
+		suite.Require().WithinDuration(time.Unix(int64(60*i), 0), t, time.Millisecond)
+		suite.Require().Equal(float64(1234), cs.Close, i)
+		i++
+		return false, nil
+	})
 }
 
 func tmpEnvVar(key, value string) (reset func()) {

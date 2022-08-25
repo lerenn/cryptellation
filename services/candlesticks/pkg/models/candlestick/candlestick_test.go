@@ -2,67 +2,88 @@ package candlestick
 
 import (
 	"testing"
+	"time"
+
+	"github.com/digital-feather/cryptellation/services/candlesticks/pkg/client/proto"
+	"github.com/stretchr/testify/suite"
 )
 
-func TestCandlestickEqual(t *testing.T) {
+func TestCandlestickSuite(t *testing.T) {
+	suite.Run(t, new(CandlestickSuite))
+}
+
+type CandlestickSuite struct {
+	suite.Suite
+}
+
+func (suite *CandlestickSuite) TestCandlestickEqual() {
 	a := Candlestick{0, 1, 2, 3, 1000, false}
 	b := Candlestick{0, 1, 2, 3, 1000, false}
 
-	if a.Equal(b) == false {
-		t.Error("Candlesticks should be equal")
-	}
+	suite.Require().True(a.Equal(b))
 }
 
-func TestCandlestickNotEqualOpen(t *testing.T) {
+func (suite *CandlestickSuite) TestCandlestickNotEqualOpen() {
 	a := Candlestick{0, 1, 2, 3, 1000, false}
 	b := Candlestick{1, 1, 2, 3, 1000, false}
 
-	if a.Equal(b) {
-		t.Error("Candlesticks should not be equal")
-	}
+	suite.Require().False(a.Equal(b))
 }
 
-func TestCandlestickNotEqualHigh(t *testing.T) {
+func (suite *CandlestickSuite) TestCandlestickNotEqualHigh() {
 	a := Candlestick{0, 1, 2, 3, 1000, false}
 	b := Candlestick{0, 2, 2, 3, 1000, false}
 
-	if a.Equal(b) {
-		t.Error("Candlesticks should not be equal")
-	}
+	suite.Require().False(a.Equal(b))
 }
 
-func TestCandlestickNotEqualLow(t *testing.T) {
+func (suite *CandlestickSuite) TestCandlestickNotEqualLow() {
 	a := Candlestick{0, 1, 2, 3, 1000, false}
 	b := Candlestick{0, 1, 3, 3, 1000, false}
 
-	if a.Equal(b) {
-		t.Error("Candlesticks should not be equal")
-	}
+	suite.Require().False(a.Equal(b))
 }
 
-func TestCandlestickNotEqualClose(t *testing.T) {
+func (suite *CandlestickSuite) TestCandlestickNotEqualClose() {
 	a := Candlestick{0, 1, 2, 3, 1000, false}
 	b := Candlestick{0, 1, 2, 4, 1000, false}
 
-	if a.Equal(b) {
-		t.Error("Candlesticks should not be equal")
-	}
+	suite.Require().False(a.Equal(b))
 }
 
-func TestCandlestickNotEqualVolume(t *testing.T) {
+func (suite *CandlestickSuite) TestCandlestickNotEqualVolume() {
 	a := Candlestick{0, 1, 2, 3, 1000, false}
 	b := Candlestick{0, 1, 2, 3, 2000, false}
 
-	if a.Equal(b) {
-		t.Error("Candlesticks should not be equal")
-	}
+	suite.Require().False(a.Equal(b))
 }
 
-func TestCandlestickNotEqualUncomplete(t *testing.T) {
+func (suite *CandlestickSuite) TestCandlestickNotEqualUncomplete() {
 	a := Candlestick{0, 1, 2, 3, 1000, false}
 	b := Candlestick{0, 1, 2, 3, 1000, true}
 
-	if a.Equal(b) {
-		t.Error("Candlesticks should not be equal")
+	suite.Require().False(a.Equal(b))
+}
+
+func (suite *CandlestickSuite) TestCandlestickFromProtobuff() {
+	originalCs := Candlestick{
+		Open:   1,
+		Low:    0.5,
+		High:   2,
+		Close:  1.5,
+		Volume: 1000,
 	}
+
+	t, cs, err := FromProtoBuff(&proto.Candlestick{
+		Time:   "1970-01-01T00:01:00Z",
+		Open:   1,
+		Low:    0.5,
+		High:   2,
+		Close:  1.5,
+		Volume: 1000,
+	})
+
+	suite.Require().NoError(err)
+	suite.Require().WithinDuration(time.Unix(60, 0), t, time.Second)
+	suite.Require().True(originalCs.Equal(cs))
 }
