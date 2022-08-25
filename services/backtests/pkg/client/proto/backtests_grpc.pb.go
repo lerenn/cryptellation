@@ -24,7 +24,7 @@ const _ = grpc.SupportPackageIsVersion7
 type BacktestsServiceClient interface {
 	CreateBacktest(ctx context.Context, in *CreateBacktestRequest, opts ...grpc.CallOption) (*CreateBacktestResponse, error)
 	SubscribeToBacktestEvents(ctx context.Context, in *SubscribeToBacktestEventsRequest, opts ...grpc.CallOption) (*SubscribeToBacktestEventsResponse, error)
-	ListenBacktest(ctx context.Context, opts ...grpc.CallOption) (BacktestsService_ListenBacktestClient, error)
+	AdvanceBacktest(ctx context.Context, in *AdvanceBacktestRequest, opts ...grpc.CallOption) (*AdvanceBacktestResponse, error)
 	CreateBacktestOrder(ctx context.Context, in *CreateBacktestOrderRequest, opts ...grpc.CallOption) (*CreateBacktestOrderResponse, error)
 	Accounts(ctx context.Context, in *AccountsRequest, opts ...grpc.CallOption) (*AccountsResponse, error)
 	Orders(ctx context.Context, in *OrdersRequest, opts ...grpc.CallOption) (*OrdersResponse, error)
@@ -56,35 +56,13 @@ func (c *backtestsServiceClient) SubscribeToBacktestEvents(ctx context.Context, 
 	return out, nil
 }
 
-func (c *backtestsServiceClient) ListenBacktest(ctx context.Context, opts ...grpc.CallOption) (BacktestsService_ListenBacktestClient, error) {
-	stream, err := c.cc.NewStream(ctx, &BacktestsService_ServiceDesc.Streams[0], "/backtests.BacktestsService/ListenBacktest", opts...)
+func (c *backtestsServiceClient) AdvanceBacktest(ctx context.Context, in *AdvanceBacktestRequest, opts ...grpc.CallOption) (*AdvanceBacktestResponse, error) {
+	out := new(AdvanceBacktestResponse)
+	err := c.cc.Invoke(ctx, "/backtests.BacktestsService/AdvanceBacktest", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &backtestsServiceListenBacktestClient{stream}
-	return x, nil
-}
-
-type BacktestsService_ListenBacktestClient interface {
-	Send(*BacktestEventRequest) error
-	Recv() (*BacktestEventResponse, error)
-	grpc.ClientStream
-}
-
-type backtestsServiceListenBacktestClient struct {
-	grpc.ClientStream
-}
-
-func (x *backtestsServiceListenBacktestClient) Send(m *BacktestEventRequest) error {
-	return x.ClientStream.SendMsg(m)
-}
-
-func (x *backtestsServiceListenBacktestClient) Recv() (*BacktestEventResponse, error) {
-	m := new(BacktestEventResponse)
-	if err := x.ClientStream.RecvMsg(m); err != nil {
-		return nil, err
-	}
-	return m, nil
+	return out, nil
 }
 
 func (c *backtestsServiceClient) CreateBacktestOrder(ctx context.Context, in *CreateBacktestOrderRequest, opts ...grpc.CallOption) (*CreateBacktestOrderResponse, error) {
@@ -120,7 +98,7 @@ func (c *backtestsServiceClient) Orders(ctx context.Context, in *OrdersRequest, 
 type BacktestsServiceServer interface {
 	CreateBacktest(context.Context, *CreateBacktestRequest) (*CreateBacktestResponse, error)
 	SubscribeToBacktestEvents(context.Context, *SubscribeToBacktestEventsRequest) (*SubscribeToBacktestEventsResponse, error)
-	ListenBacktest(BacktestsService_ListenBacktestServer) error
+	AdvanceBacktest(context.Context, *AdvanceBacktestRequest) (*AdvanceBacktestResponse, error)
 	CreateBacktestOrder(context.Context, *CreateBacktestOrderRequest) (*CreateBacktestOrderResponse, error)
 	Accounts(context.Context, *AccountsRequest) (*AccountsResponse, error)
 	Orders(context.Context, *OrdersRequest) (*OrdersResponse, error)
@@ -136,8 +114,8 @@ func (UnimplementedBacktestsServiceServer) CreateBacktest(context.Context, *Crea
 func (UnimplementedBacktestsServiceServer) SubscribeToBacktestEvents(context.Context, *SubscribeToBacktestEventsRequest) (*SubscribeToBacktestEventsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SubscribeToBacktestEvents not implemented")
 }
-func (UnimplementedBacktestsServiceServer) ListenBacktest(BacktestsService_ListenBacktestServer) error {
-	return status.Errorf(codes.Unimplemented, "method ListenBacktest not implemented")
+func (UnimplementedBacktestsServiceServer) AdvanceBacktest(context.Context, *AdvanceBacktestRequest) (*AdvanceBacktestResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AdvanceBacktest not implemented")
 }
 func (UnimplementedBacktestsServiceServer) CreateBacktestOrder(context.Context, *CreateBacktestOrderRequest) (*CreateBacktestOrderResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateBacktestOrder not implemented")
@@ -196,30 +174,22 @@ func _BacktestsService_SubscribeToBacktestEvents_Handler(srv interface{}, ctx co
 	return interceptor(ctx, in, info, handler)
 }
 
-func _BacktestsService_ListenBacktest_Handler(srv interface{}, stream grpc.ServerStream) error {
-	return srv.(BacktestsServiceServer).ListenBacktest(&backtestsServiceListenBacktestServer{stream})
-}
-
-type BacktestsService_ListenBacktestServer interface {
-	Send(*BacktestEventResponse) error
-	Recv() (*BacktestEventRequest, error)
-	grpc.ServerStream
-}
-
-type backtestsServiceListenBacktestServer struct {
-	grpc.ServerStream
-}
-
-func (x *backtestsServiceListenBacktestServer) Send(m *BacktestEventResponse) error {
-	return x.ServerStream.SendMsg(m)
-}
-
-func (x *backtestsServiceListenBacktestServer) Recv() (*BacktestEventRequest, error) {
-	m := new(BacktestEventRequest)
-	if err := x.ServerStream.RecvMsg(m); err != nil {
+func _BacktestsService_AdvanceBacktest_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AdvanceBacktestRequest)
+	if err := dec(in); err != nil {
 		return nil, err
 	}
-	return m, nil
+	if interceptor == nil {
+		return srv.(BacktestsServiceServer).AdvanceBacktest(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/backtests.BacktestsService/AdvanceBacktest",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BacktestsServiceServer).AdvanceBacktest(ctx, req.(*AdvanceBacktestRequest))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _BacktestsService_CreateBacktestOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -292,6 +262,10 @@ var BacktestsService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _BacktestsService_SubscribeToBacktestEvents_Handler,
 		},
 		{
+			MethodName: "AdvanceBacktest",
+			Handler:    _BacktestsService_AdvanceBacktest_Handler,
+		},
+		{
 			MethodName: "CreateBacktestOrder",
 			Handler:    _BacktestsService_CreateBacktestOrder_Handler,
 		},
@@ -304,13 +278,6 @@ var BacktestsService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _BacktestsService_Orders_Handler,
 		},
 	},
-	Streams: []grpc.StreamDesc{
-		{
-			StreamName:    "ListenBacktest",
-			Handler:       _BacktestsService_ListenBacktest_Handler,
-			ServerStreams: true,
-			ClientStreams: true,
-		},
-	},
+	Streams:  []grpc.StreamDesc{},
 	Metadata: "backtests.proto",
 }

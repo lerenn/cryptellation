@@ -18,6 +18,9 @@ proto: ## Generate protobuff code from services
 
 lint: ## Lint the code
 
+format: ## Format the code
+	@black $(PWD) --exclude="_genproto/"
+
 help: ## Display this help message
 	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_\/-]+:.*?## / {printf "\033[34m%-30s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST) | \
 		sort | \

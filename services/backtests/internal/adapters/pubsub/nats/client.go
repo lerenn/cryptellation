@@ -62,7 +62,7 @@ func (c *Client) Subscribe(backtestID uint) (<-chan event.Event, error) {
 
 	subject := fmt.Sprintf(SubjectFormat, backtestID)
 	sub, err := c.natsConn.Subscribe(subject, func(msg *nats.Msg) {
-		pbEvent := &pb.BacktestEventResponse{}
+		pbEvent := &pb.BacktestEvent{}
 		if err := proto.Unmarshal(msg.Data, pbEvent); err != nil {
 			log.Printf("error when receiving tick from %s: %s\n", subject, err)
 			return

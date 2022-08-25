@@ -8,6 +8,7 @@ from cryptellation.config import Config
 import cryptellation._genproto.livetests_pb2 as livetests
 import cryptellation._genproto.livetests_pb2_grpc as livetests_grpc
 
+
 class Livetest(object):
     def __init__(
         self,
@@ -36,6 +37,7 @@ class Livetest(object):
                 pair_symbol=pair_symbol,
             )
         )
+
 
 if __name__ == "__main__":
     t = Livetest()

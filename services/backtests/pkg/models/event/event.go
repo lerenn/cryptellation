@@ -23,20 +23,20 @@ func (e *Event) UnmarshalBinary(data []byte) error {
 	return json.Unmarshal(data, e)
 }
 
-func (e *Event) ToProtoBuff() (*proto.BacktestEventResponse, error) {
+func (e *Event) ToProtoBuff() (*proto.BacktestEvent, error) {
 	content, err := json.Marshal(e.Content)
 	if err != nil {
 		return nil, err
 	}
 
-	return &proto.BacktestEventResponse{
+	return &proto.BacktestEvent{
 		Time:    e.Time.Format(time.RFC3339Nano),
 		Type:    e.Type.String(),
 		Content: string(content),
 	}, nil
 }
 
-func FromProtoBuff(pb *proto.BacktestEventResponse) (Event, error) {
+func FromProtoBuff(pb *proto.BacktestEvent) (Event, error) {
 	t, err := time.Parse(time.RFC3339Nano, pb.Time)
 	if err != nil {
 		return Event{}, err

@@ -74,7 +74,7 @@ func (suite *EventSuite) TestToProtoBuffWithTickEvent() {
 }
 
 func (suite *EventSuite) TestFromProtoBuffWithTickEvent() {
-	pbTick := &proto.BacktestEventResponse{
+	pbTick := &proto.BacktestEvent{
 		Time:    "1970-01-01T00:01:00Z",
 		Type:    TypeIsTick.String(),
 		Content: "{\"pair_symbol\":\"BTC-USDC\",\"price\":1.01,\"exchange\":\"exchange\"}",
@@ -110,7 +110,7 @@ func (suite *EventSuite) TestToProtoBuffWithStatusEvent() {
 }
 
 func (suite *EventSuite) TestFromProtoBuffWithStatusEvent() {
-	pbTick := &proto.BacktestEventResponse{
+	pbTick := &proto.BacktestEvent{
 		Time:    "1970-01-01T00:01:00Z",
 		Type:    TypeIsStatus.String(),
 		Content: "{\"finished\":true}",

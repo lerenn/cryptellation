@@ -3,6 +3,8 @@ import threading
 import queue
 from typing import Dict, List
 import iso8601
+import nats
+import asyncio
 import json
 from datetime import datetime
 
@@ -20,26 +22,32 @@ import cryptellation._genproto.backtests_pb2_grpc as backtests_grpc
 
 
 class BacktestEvents(threading.Thread):
-    def __init__(self, id, stub: backtests_grpc.BacktestsServiceStub):
+    def __init__(self, id, pubsub_url):
         threading.Thread.__init__(self)
         self._id = id
-        self._next_queue = queue.Queue(maxsize=0)
+        self._pubsub_url = pubsub_url
         self._events_queue = queue.Queue(maxsize=0)
-        queue_iterator = iter(self._next_queue.get, None)
-        self._generator = stub.ListenBacktest(queue_iterator)
         self.start()
 
+    async def _receive(self, pubsub_url):
+        nc = await nats.connect(pubsub_url)
+        sub = await nc.subscribe("Backtests.%d" % (self._id,))
+
+        async for msg in sub.messages:
+            self._events_queue.put(msg)
+
     def run(self):
-        for event in self._generator:
-            self._events_queue.put(event)
+        asyncio.run(self._receive(self._pubsub_url))
 
     def get(self) -> Event:
         e = self._events_queue.get()
-        return Event(iso8601.parse_date(e.time), e.type, json.loads(e.content))
-
-    def next(self):
-        req = backtests.BacktestEventRequest(id=self._id)
-        self._next_queue.put(req)
+        backtest_event = backtests.BacktestEvent()
+        backtest_event.ParseFromString(e.data)
+        return Event(
+            iso8601.parse_date(backtest_event.time),
+            backtest_event.type,
+            json.loads(backtest_event.content),
+        )
 
 
 class Backtest(object):
@@ -90,8 +98,15 @@ class Backtest(object):
             )
         )
 
+    def advance(self):
+        self._stub.AdvanceBacktest(
+            backtests.AdvanceBacktestRequest(
+                id=self._id,
+            )
+        )
+
     def listen(self) -> BacktestEvents:
-        return BacktestEvents(self._id, self._stub)
+        return BacktestEvents(self._id, self._config.pubsub_url)
 
     def order(self, type: str, exchange: str, pair: str, side: str, quantity: float):
         req = backtests.CreateBacktestOrderRequest(
@@ -166,7 +181,7 @@ class Backtest(object):
         events = self.listen()
         finished = False
         while finished is False:
-            events.next()
+            self.advance()
 
             while True:
                 event = events.get()

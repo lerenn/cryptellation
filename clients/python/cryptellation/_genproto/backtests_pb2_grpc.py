@@ -24,10 +24,10 @@ class BacktestsServiceStub(object):
                 request_serializer=backtests__pb2.SubscribeToBacktestEventsRequest.SerializeToString,
                 response_deserializer=backtests__pb2.SubscribeToBacktestEventsResponse.FromString,
                 )
-        self.ListenBacktest = channel.stream_stream(
-                '/backtests.BacktestsService/ListenBacktest',
-                request_serializer=backtests__pb2.BacktestEventRequest.SerializeToString,
-                response_deserializer=backtests__pb2.BacktestEventResponse.FromString,
+        self.AdvanceBacktest = channel.unary_unary(
+                '/backtests.BacktestsService/AdvanceBacktest',
+                request_serializer=backtests__pb2.AdvanceBacktestRequest.SerializeToString,
+                response_deserializer=backtests__pb2.AdvanceBacktestResponse.FromString,
                 )
         self.CreateBacktestOrder = channel.unary_unary(
                 '/backtests.BacktestsService/CreateBacktestOrder',
@@ -61,7 +61,7 @@ class BacktestsServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def ListenBacktest(self, request_iterator, context):
+    def AdvanceBacktest(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -98,10 +98,10 @@ def add_BacktestsServiceServicer_to_server(servicer, server):
                     request_deserializer=backtests__pb2.SubscribeToBacktestEventsRequest.FromString,
                     response_serializer=backtests__pb2.SubscribeToBacktestEventsResponse.SerializeToString,
             ),
-            'ListenBacktest': grpc.stream_stream_rpc_method_handler(
-                    servicer.ListenBacktest,
-                    request_deserializer=backtests__pb2.BacktestEventRequest.FromString,
-                    response_serializer=backtests__pb2.BacktestEventResponse.SerializeToString,
+            'AdvanceBacktest': grpc.unary_unary_rpc_method_handler(
+                    servicer.AdvanceBacktest,
+                    request_deserializer=backtests__pb2.AdvanceBacktestRequest.FromString,
+                    response_serializer=backtests__pb2.AdvanceBacktestResponse.SerializeToString,
             ),
             'CreateBacktestOrder': grpc.unary_unary_rpc_method_handler(
                     servicer.CreateBacktestOrder,
@@ -163,7 +163,7 @@ class BacktestsService(object):
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
-    def ListenBacktest(request_iterator,
+    def AdvanceBacktest(request,
             target,
             options=(),
             channel_credentials=None,
@@ -173,9 +173,9 @@ class BacktestsService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.stream_stream(request_iterator, target, '/backtests.BacktestsService/ListenBacktest',
-            backtests__pb2.BacktestEventRequest.SerializeToString,
-            backtests__pb2.BacktestEventResponse.FromString,
+        return grpc.experimental.unary_unary(request, target, '/backtests.BacktestsService/AdvanceBacktest',
+            backtests__pb2.AdvanceBacktestRequest.SerializeToString,
+            backtests__pb2.AdvanceBacktestResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 

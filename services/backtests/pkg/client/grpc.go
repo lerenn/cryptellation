@@ -4,13 +4,21 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/digital-feather/cryptellation/services/backtests/internal/adapters/pubsub"
+	"github.com/digital-feather/cryptellation/services/backtests/internal/adapters/pubsub/nats"
 	"github.com/digital-feather/cryptellation/services/backtests/pkg/client/proto"
+	"github.com/digital-feather/cryptellation/services/backtests/pkg/models/event"
 	"golang.org/x/xerrors"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
 
-func New() (client proto.BacktestsServiceClient, close func() error, err error) {
+type GrpcClient struct {
+	proto.BacktestsServiceClient
+	natsClient pubsub.Port
+}
+
+func New() (client *GrpcClient, close func() error, err error) {
 	grpcAddr := os.Getenv("CRYPTELLATION_BACKTESTS_GRPC_URL")
 	if grpcAddr == "" {
 		return nil, func() error { return nil }, xerrors.New("no grpc url provided")
@@ -21,7 +29,22 @@ func New() (client proto.BacktestsServiceClient, close func() error, err error) 
 		return nil, func() error { return nil }, fmt.Errorf("dialing backtests grpc server: %w", err)
 	}
 
-	return proto.NewBacktestsServiceClient(conn), conn.Close, nil
+	natsClient, err := nats.New()
+	if err != nil {
+		return nil, conn.Close, fmt.Errorf("creating NATs Client: %w", err)
+	}
+
+	return &GrpcClient{
+			BacktestsServiceClient: proto.NewBacktestsServiceClient(conn),
+			natsClient:             natsClient,
+		}, func() error {
+			natsClient.Close()
+			return conn.Close()
+		}, nil
+}
+
+func (c *GrpcClient) ListenBacktest(backtestID uint) (<-chan event.Event, error) {
+	return c.natsClient.Subscribe(backtestID)
 }
 
 func grpcDialOpts(grpcAddr string) []grpc.DialOption {

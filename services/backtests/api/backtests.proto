@@ -7,7 +7,7 @@ package backtests;
 service BacktestsService {
     rpc CreateBacktest(CreateBacktestRequest) returns (CreateBacktestResponse) {}
     rpc SubscribeToBacktestEvents(SubscribeToBacktestEventsRequest) returns (SubscribeToBacktestEventsResponse){}
-    rpc ListenBacktest(stream BacktestEventRequest) returns (stream BacktestEventResponse) {}
+    rpc AdvanceBacktest(AdvanceBacktestRequest) returns (AdvanceBacktestResponse) {}
     rpc CreateBacktestOrder(CreateBacktestOrderRequest) returns (CreateBacktestOrderResponse) {}
     rpc Accounts(AccountsRequest) returns (AccountsResponse) {}
     rpc Orders(OrdersRequest) returns (OrdersResponse) {}
@@ -37,11 +37,14 @@ message SubscribeToBacktestEventsRequest {
 message SubscribeToBacktestEventsResponse{
 }
 
-message BacktestEventRequest {
+message AdvanceBacktestRequest {
     uint64 id = 1;
 }
 
-message BacktestEventResponse {
+message AdvanceBacktestResponse {
+}
+
+message BacktestEvent {
     string type = 1;
     string time = 2;
     string content = 3;
