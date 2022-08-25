@@ -1,21 +1,22 @@
 package client
 
 import (
+	"context"
 	"fmt"
 	"os"
 
 	"github.com/digital-feather/cryptellation/services/ticks/internal/adapters/pubsub"
 	"github.com/digital-feather/cryptellation/services/ticks/internal/adapters/pubsub/nats"
-	"github.com/digital-feather/cryptellation/services/ticks/internal/domain/tick"
 	"github.com/digital-feather/cryptellation/services/ticks/pkg/client/proto"
+	"github.com/digital-feather/cryptellation/services/ticks/pkg/models/tick"
 	"golang.org/x/xerrors"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
 
 type GrpcClient struct {
-	proto.TicksServiceClient
-	natsClient pubsub.Port
+	grpcClient proto.TicksServiceClient
+	psClient   pubsub.Port
 }
 
 func New() (client *GrpcClient, close func() error, err error) {
@@ -35,16 +36,32 @@ func New() (client *GrpcClient, close func() error, err error) {
 	}
 
 	return &GrpcClient{
-			TicksServiceClient: proto.NewTicksServiceClient(conn),
-			natsClient:         natsClient,
+			grpcClient: proto.NewTicksServiceClient(conn),
+			psClient:   natsClient,
 		}, func() error {
 			natsClient.Close()
 			return conn.Close()
 		}, nil
 }
 
-func (c *GrpcClient) ListenTicks(symbol string) (<-chan tick.Tick, error) {
-	return c.natsClient.Subscribe(symbol)
+func (c *GrpcClient) Register(ctx context.Context, exchange, symbol string) error {
+	_, err := c.grpcClient.Register(ctx, &proto.RegisterRequest{
+		Exchange:   exchange,
+		PairSymbol: symbol,
+	})
+	return err
+}
+
+func (c *GrpcClient) Unregister(ctx context.Context, exchange, symbol string) error {
+	_, err := c.grpcClient.Register(ctx, &proto.RegisterRequest{
+		Exchange:   exchange,
+		PairSymbol: symbol,
+	})
+	return err
+}
+
+func (c *GrpcClient) Listen(symbol string) (<-chan tick.Tick, error) {
+	return c.psClient.Subscribe(symbol)
 }
 
 func grpcDialOpts(grpcAddr string) []grpc.DialOption {

@@ -9,7 +9,7 @@ import (
 	"github.com/digital-feather/cryptellation/services/ticks/internal/adapters/exchanges"
 	"github.com/digital-feather/cryptellation/services/ticks/internal/adapters/pubsub"
 	"github.com/digital-feather/cryptellation/services/ticks/internal/adapters/vdb"
-	"github.com/digital-feather/cryptellation/services/ticks/internal/domain/tick"
+	"github.com/digital-feather/cryptellation/services/ticks/pkg/models/tick"
 )
 
 type RegisterSymbolListenerHandler struct {

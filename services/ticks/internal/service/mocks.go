@@ -3,7 +3,7 @@ package service
 import (
 	"time"
 
-	"github.com/digital-feather/cryptellation/services/ticks/internal/domain/tick"
+	"github.com/digital-feather/cryptellation/services/ticks/pkg/models/tick"
 )
 
 const MockExchangeName = "mock_exchange"

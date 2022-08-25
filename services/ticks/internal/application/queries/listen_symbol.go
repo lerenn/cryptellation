@@ -2,7 +2,7 @@ package queries
 
 import (
 	"github.com/digital-feather/cryptellation/services/ticks/internal/adapters/pubsub"
-	"github.com/digital-feather/cryptellation/services/ticks/internal/domain/tick"
+	"github.com/digital-feather/cryptellation/services/ticks/pkg/models/tick"
 )
 
 type ListenSymbolsHandler struct {

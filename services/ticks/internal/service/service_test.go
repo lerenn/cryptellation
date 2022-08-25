@@ -12,7 +12,6 @@ import (
 	"github.com/digital-feather/cryptellation/services/ticks/internal/adapters/vdb/redis"
 	"github.com/digital-feather/cryptellation/services/ticks/internal/controllers/grpc"
 	"github.com/digital-feather/cryptellation/services/ticks/pkg/client"
-	"github.com/digital-feather/cryptellation/services/ticks/pkg/client/proto"
 	"github.com/stretchr/testify/suite"
 )
 
@@ -64,16 +63,11 @@ func (suite *ServiceSuite) AfterTest(suiteName, testName string) {
 }
 
 func (suite *ServiceSuite) TestListenSymbol() {
-	ch, err := suite.client.ListenTicks("SYMBOL")
+	ch, err := suite.client.Listen("SYMBOL")
 	suite.Require().NoError(err)
 
-	resp, err := suite.client.Register(context.Background(),
-		&proto.RegisterRequest{
-			Exchange:   "mock_exchange",
-			PairSymbol: "SYMBOL",
-		})
+	err = suite.client.Register(context.Background(), "mock_exchange", "SYMBOL")
 	suite.Require().NoError(err)
-	suite.Require().Equal(int64(1), resp.RegisteredCount)
 
 	for i := int64(0); i < 50; i++ {
 		t, ok := <-ch

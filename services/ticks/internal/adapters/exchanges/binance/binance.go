@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/digital-feather/cryptellation/services/candlesticks/pkg/models/pairs"
-	"github.com/digital-feather/cryptellation/services/ticks/internal/domain/tick"
+	"github.com/digital-feather/cryptellation/services/ticks/pkg/models/tick"
 
 	client "github.com/adshao/go-binance/v2"
 )

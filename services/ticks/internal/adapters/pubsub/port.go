@@ -1,7 +1,7 @@
 package pubsub
 
 import (
-	"github.com/digital-feather/cryptellation/services/ticks/internal/domain/tick"
+	"github.com/digital-feather/cryptellation/services/ticks/pkg/models/tick"
 )
 
 type Port interface {
