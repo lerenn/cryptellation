@@ -11,7 +11,6 @@ import (
 	"github.com/digital-feather/cryptellation/services/exchanges/internal/adapters/db/cockroach"
 	"github.com/digital-feather/cryptellation/services/exchanges/internal/controllers/grpc"
 	"github.com/digital-feather/cryptellation/services/exchanges/pkg/client"
-	"github.com/digital-feather/cryptellation/services/exchanges/pkg/client/proto"
 	"github.com/stretchr/testify/suite"
 )
 
@@ -26,7 +25,7 @@ func TestServiceSuite(t *testing.T) {
 type ServiceSuite struct {
 	suite.Suite
 	db        *cockroach.DB
-	client    proto.ExchangesServiceClient
+	client    client.Client
 	closeTest func() error
 }
 
@@ -73,38 +72,32 @@ func (suite *ServiceSuite) TearDownSuite() {
 
 func (suite *ServiceSuite) TestReadExchanges() {
 	// When requesting an exchange for the first time
-	resp, err := suite.client.ReadExchanges(context.Background(), &proto.ReadExchangesRequest{
-		Names: []string{
-			"mock_exchange",
-		},
-	})
+	exchanges, err := suite.client.ReadExchanges(context.Background(), []string{
+		"mock_exchange",
+	}...)
 
 	// Then the request is successful
 	suite.Require().NoError(err)
 
 	// And the exchange is correct
-	suite.Require().Len(resp.Exchanges, 1)
-	suite.Require().Equal("mock_exchange", resp.Exchanges[0].Name)
+	suite.Require().Len(exchanges, 1)
+	suite.Require().Equal("mock_exchange", exchanges[0].Name)
 
 	// And the last sync time is now
-	firstTime := resp.Exchanges[0].LastSyncTime
-	t, err := time.Parse(time.RFC3339, firstTime)
-	suite.Require().NoError(err)
-	suite.Require().WithinDuration(time.Now().UTC(), t, 2*time.Second)
+	firstTime := exchanges[0].LastSyncTime
+	suite.Require().WithinDuration(time.Now().UTC(), firstTime, 2*time.Second)
 
 	// When the second request is made
-	resp, err = suite.client.ReadExchanges(context.Background(), &proto.ReadExchangesRequest{
-		Names: []string{
-			"mock_exchange",
-		},
-	})
+	exchanges, err = suite.client.ReadExchanges(context.Background(), []string{
+		"mock_exchange",
+	}...)
 
 	// Then the request is successful
 	suite.Require().NoError(err)
 
 	// And the last sync time is the same as previous
-	suite.Require().Len(resp.Exchanges, 1)
-	suite.Require().Equal(firstTime, resp.Exchanges[0].LastSyncTime)
+	suite.Require().Len(exchanges, 1)
+	suite.Require().Equal(firstTime, exchanges[0].LastSyncTime)
 }
 
 func tmpEnvVar(key, value string) (reset func()) {

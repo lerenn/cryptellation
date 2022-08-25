@@ -3,9 +3,21 @@ package exchange
 import (
 	"reflect"
 	"testing"
+	"time"
+
+	"github.com/digital-feather/cryptellation/services/exchanges/pkg/client/proto"
+	"github.com/stretchr/testify/suite"
 )
 
-func TestMerge(t *testing.T) {
+func TestExchangeSuite(t *testing.T) {
+	suite.Run(t, new(ExchangeSuite))
+}
+
+type ExchangeSuite struct {
+	suite.Suite
+}
+
+func (suite *ExchangeSuite) TestMerge() {
 	cases := []struct {
 		Exchange1 Exchange
 		Exchange2 Exchange
@@ -56,7 +68,28 @@ func TestMerge(t *testing.T) {
 	for i, c := range cases {
 		merged := c.Exchange1.Merge(c.Exchange2)
 		if !reflect.DeepEqual(c.Expected, merged) {
-			t.Errorf("Difference with expectation for case %d: %+v", i, merged)
+			suite.Require().Fail("Difference with expectation for case %d: %+v", i, merged)
 		}
 	}
+}
+
+func (suite *ExchangeSuite) TestFromProtoBuff() {
+	exch, err := FromProtoBuff(&proto.Exchange{
+		Name: "exchange",
+		Periods: []string{
+			"M1",
+		},
+		Pairs: []string{
+			"UTC-USDC",
+		},
+		Fees:         1,
+		LastSyncTime: "1970-01-01T00:00:00Z",
+	})
+	suite.Require().NoError(err)
+
+	suite.Require().Equal("exchange", exch.Name)
+	suite.Require().Equal([]string{"M1"}, exch.PeriodsSymbols)
+	suite.Require().Equal([]string{"UTC-USDC"}, exch.PairsSymbols)
+	suite.Require().Equal(1.0, exch.Fees)
+	suite.Require().WithinDuration(time.Unix(0, 0), exch.LastSyncTime, time.Second)
 }

@@ -7,7 +7,7 @@ import (
 
 	client "github.com/adshao/go-binance/v2"
 	"github.com/digital-feather/cryptellation/services/exchanges/internal/adapters/exchanges"
-	"github.com/digital-feather/cryptellation/services/exchanges/internal/domain/exchange"
+	"github.com/digital-feather/cryptellation/services/exchanges/pkg/models/exchange"
 )
 
 type Service struct {

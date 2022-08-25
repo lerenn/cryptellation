@@ -2,16 +2,18 @@ package exchange
 
 import (
 	"time"
+
+	"github.com/digital-feather/cryptellation/services/exchanges/pkg/models/exchange"
 )
 
 const DefaultExpirationDuration = time.Hour
 
 func GetExpiredExchangesNames(
 	expectedExchanges []string,
-	exchangesFromDB []Exchange,
+	exchangesFromDB []exchange.Exchange,
 	expirationDuration *time.Duration,
 ) (toSync []string, err error) {
-	mappedExchanges := ArrayToMap(exchangesFromDB)
+	mappedExchanges := exchange.ArrayToMap(exchangesFromDB)
 
 	if expirationDuration == nil {
 		d := DefaultExpirationDuration

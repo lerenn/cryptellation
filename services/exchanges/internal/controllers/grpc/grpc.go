@@ -9,8 +9,8 @@ import (
 	"time"
 
 	app "github.com/digital-feather/cryptellation/services/exchanges/internal/application"
-	"github.com/digital-feather/cryptellation/services/exchanges/internal/domain/exchange"
 	"github.com/digital-feather/cryptellation/services/exchanges/pkg/client/proto"
+	"github.com/digital-feather/cryptellation/services/exchanges/pkg/models/exchange"
 	"golang.org/x/xerrors"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"

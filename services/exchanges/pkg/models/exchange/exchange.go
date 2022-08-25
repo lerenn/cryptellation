@@ -1,6 +1,10 @@
 package exchange
 
-import "time"
+import (
+	"time"
+
+	"github.com/digital-feather/cryptellation/services/exchanges/pkg/client/proto"
+)
 
 // swagger:model Exchange
 type Exchange struct {
@@ -63,4 +67,19 @@ func MapToArray(mappedExchanges map[string]Exchange) []Exchange {
 		exchanges = append(exchanges, exch)
 	}
 	return exchanges
+}
+
+func FromProtoBuff(pb *proto.Exchange) (Exchange, error) {
+	lastSyncTime, err := time.Parse(time.RFC3339Nano, pb.LastSyncTime)
+	if err != nil {
+		return Exchange{}, err
+	}
+
+	return Exchange{
+		Name:           pb.Name,
+		PeriodsSymbols: pb.Periods,
+		PairsSymbols:   pb.Pairs,
+		Fees:           float64(pb.Fees),
+		LastSyncTime:   lastSyncTime,
+	}, nil
 }

@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/digital-feather/cryptellation/services/exchanges/internal/adapters/db"
-	"github.com/digital-feather/cryptellation/services/exchanges/internal/domain/exchange"
+	"github.com/digital-feather/cryptellation/services/exchanges/pkg/models/exchange"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )

@@ -3,7 +3,7 @@ package cockroach
 import (
 	"time"
 
-	"github.com/digital-feather/cryptellation/services/exchanges/internal/domain/exchange"
+	"github.com/digital-feather/cryptellation/services/exchanges/pkg/models/exchange"
 )
 
 type Pair struct {
