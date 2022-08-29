@@ -50,3 +50,7 @@ func (cs Candlestick) ToProfoBuff(t time.Time) *proto.Candlestick {
 		Volume: float32(cs.Volume),
 	}
 }
+
+func (cs Candlestick) PriceByType(pt PriceType) float64 {
+	return PriceByType(cs.Open, cs.High, cs.Low, cs.Close, pt)
+}
