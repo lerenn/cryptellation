@@ -4,23 +4,22 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"time"
 
 	"github.com/digital-feather/cryptellation/services/backtests/internal/adapters/pubsub"
 	"github.com/digital-feather/cryptellation/services/backtests/internal/adapters/vdb"
 	"github.com/digital-feather/cryptellation/services/backtests/internal/domain/backtest"
 	"github.com/digital-feather/cryptellation/services/backtests/pkg/models/event"
 	"github.com/digital-feather/cryptellation/services/backtests/pkg/models/status"
-	candlesticksProto "github.com/digital-feather/cryptellation/services/candlesticks/pkg/client/proto"
+	candlesticksClient "github.com/digital-feather/cryptellation/services/candlesticks/pkg/client"
 )
 
 type AdvanceHandler struct {
 	repository vdb.Port
 	pubsub     pubsub.Port
-	csClient   candlesticksProto.CandlesticksServiceClient
+	csClient   candlesticksClient.Client
 }
 
-func NewAdvanceHandler(repository vdb.Port, ps pubsub.Port, csClient candlesticksProto.CandlesticksServiceClient) AdvanceHandler {
+func NewAdvanceHandler(repository vdb.Port, ps pubsub.Port, csClient candlesticksClient.Client) AdvanceHandler {
 	if repository == nil {
 		panic("nil repository")
 	}
@@ -84,23 +83,24 @@ func (h AdvanceHandler) Handle(ctx context.Context, backtestId uint) error {
 func (h AdvanceHandler) readActualEvents(ctx context.Context, bt backtest.Backtest) ([]event.Event, error) {
 	evts := make([]event.Event, 0, len(bt.TickSubscribers))
 	for _, sub := range bt.TickSubscribers {
-		resp, err := h.csClient.ReadCandlesticks(ctx, &candlesticksProto.ReadCandlesticksRequest{
+		list, err := h.csClient.ReadCandlesticks(ctx, candlesticksClient.ReadCandlestickPayload{
 			ExchangeName: sub.ExchangeName,
 			PairSymbol:   sub.PairSymbol,
-			PeriodSymbol: bt.PeriodBetweenEvents.String(),
-			Start:        bt.CurrentCsTick.Time.Format(time.RFC3339),
-			End:          bt.EndTime.Format(time.RFC3339),
+			Period:       bt.PeriodBetweenEvents,
+			Start:        bt.CurrentCsTick.Time,
+			End:          bt.EndTime,
 			Limit:        1,
 		})
 		if err != nil {
 			return nil, fmt.Errorf("could not get candlesticks from service: %w", err)
 		}
 
-		if len(resp.Candlesticks) == 0 {
+		t, cs, exists := list.First()
+		if !exists {
 			continue
 		}
 
-		evt, err := event.TickEventFromCandlestick(sub.ExchangeName, sub.PairSymbol, bt.CurrentCsTick.PriceType, resp.Candlesticks[0])
+		evt, err := event.TickEventFromCandlestick(sub.ExchangeName, sub.PairSymbol, bt.CurrentCsTick.PriceType, t, cs)
 		if err != nil {
 			return nil, fmt.Errorf("turning candlestick into event: %w", err)
 		}

@@ -10,7 +10,6 @@ import (
 	"github.com/digital-feather/cryptellation/services/backtests/pkg/models/account"
 	"github.com/digital-feather/cryptellation/services/backtests/pkg/models/event"
 	"github.com/digital-feather/cryptellation/services/backtests/pkg/models/order"
-	candlesticksProto "github.com/digital-feather/cryptellation/services/candlesticks/pkg/client/proto"
 	"github.com/digital-feather/cryptellation/services/candlesticks/pkg/models/candlestick"
 	"github.com/digital-feather/cryptellation/services/candlesticks/pkg/models/pairs"
 	"github.com/digital-feather/cryptellation/services/candlesticks/pkg/models/period"
@@ -163,7 +162,7 @@ func (bt *Backtest) CreateTickSubscription(exchangeName string, pairSymbol strin
 	return s, nil
 }
 
-func (bt *Backtest) AddOrder(ord order.Order, cs *candlesticksProto.Candlestick) error {
+func (bt *Backtest) AddOrder(ord order.Order, cs candlestick.Candlestick) error {
 	exchangeAccount, ok := bt.Accounts[ord.ExchangeName]
 	if !ok {
 		return fmt.Errorf("error with orders exchange %q: %w", ord.ExchangeName, ErrInvalidExchange)
@@ -174,20 +173,7 @@ func (bt *Backtest) AddOrder(ord order.Order, cs *candlesticksProto.Candlestick)
 		return fmt.Errorf("error when parsing order pair symbol: %w", err)
 	}
 
-	var price float64
-	switch bt.CurrentCsTick.PriceType {
-	case candlestick.PriceTypeIsOpen:
-		price = float64(cs.Open)
-	case candlestick.PriceTypeIsHigh:
-		price = float64(cs.High)
-	case candlestick.PriceTypeIsLow:
-		price = float64(cs.Low)
-	case candlestick.PriceTypeIsClose:
-		fallthrough
-	default:
-		price = float64(cs.Close)
-	}
-
+	price := cs.PriceByType(bt.CurrentCsTick.PriceType)
 	quoteEquivalentQty := price * ord.Quantity
 	if ord.Side == order.SideIsBuy {
 		available, ok := exchangeAccount.Balances[quoteSymbol]

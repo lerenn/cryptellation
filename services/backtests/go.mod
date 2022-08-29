@@ -3,7 +3,7 @@ module github.com/digital-feather/cryptellation/services/backtests
 go 1.18
 
 require (
-	github.com/digital-feather/cryptellation/services/candlesticks v0.0.0-20220814124538-e03f2c2803d1
+	github.com/digital-feather/cryptellation/services/candlesticks v0.0.0-20220829122843-38940ac90250
 	github.com/go-redis/redis/v8 v8.11.5
 	github.com/go-redsync/redsync/v4 v4.5.1
 	github.com/stretchr/testify v1.8.0

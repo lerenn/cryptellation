@@ -3,20 +3,19 @@ package cmdBacktest
 import (
 	"context"
 	"fmt"
-	"time"
 
 	"github.com/digital-feather/cryptellation/services/backtests/internal/adapters/vdb"
 	"github.com/digital-feather/cryptellation/services/backtests/internal/domain/backtest"
 	"github.com/digital-feather/cryptellation/services/backtests/pkg/models/order"
-	candlesticksProto "github.com/digital-feather/cryptellation/services/candlesticks/pkg/client/proto"
+	candlesticksClient "github.com/digital-feather/cryptellation/services/candlesticks/pkg/client"
 )
 
 type CreateOrderHandler struct {
 	repository vdb.Port
-	csClient   candlesticksProto.CandlesticksServiceClient
+	csClient   candlesticksClient.Client
 }
 
-func NewCreateOrderHandler(repository vdb.Port, csClient candlesticksProto.CandlesticksServiceClient) CreateOrderHandler {
+func NewCreateOrderHandler(repository vdb.Port, csClient candlesticksClient.Client) CreateOrderHandler {
 	if repository == nil {
 		panic("nil repository")
 	}
@@ -38,21 +37,24 @@ func (h CreateOrderHandler) Handle(ctx context.Context, backtestId uint, order o
 			return fmt.Errorf("cannot get backtest: %w", err)
 		}
 
-		resp, err := h.csClient.ReadCandlesticks(ctx, &candlesticksProto.ReadCandlesticksRequest{
+		list, err := h.csClient.ReadCandlesticks(ctx, candlesticksClient.ReadCandlestickPayload{
 			ExchangeName: order.ExchangeName,
 			PairSymbol:   order.PairSymbol,
-			PeriodSymbol: bt.PeriodBetweenEvents.String(),
-			Start:        bt.CurrentCsTick.Time.Format(time.RFC3339),
-			End:          bt.CurrentCsTick.Time.Format(time.RFC3339),
+			Period:       bt.PeriodBetweenEvents,
+			Start:        bt.CurrentCsTick.Time,
+			End:          bt.CurrentCsTick.Time,
 			Limit:        0,
 		})
 		if err != nil {
 			return fmt.Errorf("could not get candlesticks from service: %w", err)
-		} else if len(resp.Candlesticks) == 0 {
+		}
+
+		_, cs, notEmpty := list.First()
+		if !notEmpty {
 			return backtest.ErrNoDataForOrderValidation
 		}
 
-		if err := bt.AddOrder(order, resp.Candlesticks[0]); err != nil {
+		if err := bt.AddOrder(order, cs); err != nil {
 			return err
 		}
 

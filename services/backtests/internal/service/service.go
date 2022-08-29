@@ -8,8 +8,8 @@ import (
 	app "github.com/digital-feather/cryptellation/services/backtests/internal/application"
 	cmdBacktest "github.com/digital-feather/cryptellation/services/backtests/internal/application/commands/backtest"
 	queriesBacktest "github.com/digital-feather/cryptellation/services/backtests/internal/application/queries/backtest"
+	candlesticksClient "github.com/digital-feather/cryptellation/services/candlesticks/pkg/client"
 	candlesticksGrpc "github.com/digital-feather/cryptellation/services/candlesticks/pkg/client"
-	candlesticksProto "github.com/digital-feather/cryptellation/services/candlesticks/pkg/client/proto"
 )
 
 func NewApplication() (app.Application, func(), error) {
@@ -31,7 +31,7 @@ func NewMockedApplication() (app.Application, func(), error) {
 	return newApplication(MockedCandlesticksClient{})
 }
 
-func newApplication(client candlesticksProto.CandlesticksServiceClient) (app.Application, func(), error) {
+func newApplication(client candlesticksClient.Client) (app.Application, func(), error) {
 	repository, err := redis.New()
 	if err != nil {
 		return app.Application{}, func() {}, err
