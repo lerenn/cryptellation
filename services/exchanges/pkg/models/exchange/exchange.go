@@ -83,3 +83,13 @@ func FromProtoBuff(pb *proto.Exchange) (Exchange, error) {
 		LastSyncTime:   lastSyncTime,
 	}, nil
 }
+
+func (e Exchange) ToProfoBuff() *proto.Exchange {
+	return &proto.Exchange{
+		Name:         e.Name,
+		Periods:      e.PeriodsSymbols,
+		Pairs:        e.PairsSymbols,
+		Fees:         float32(e.Fees),
+		LastSyncTime: e.LastSyncTime.UTC().Format(time.RFC3339Nano),
+	}
+}

@@ -9,7 +9,7 @@ set -eo pipefail
 # TODO
 
 # Launch tests
-go test ./... -coverprofile cover.out
+go test -p 1 ./... -coverprofile cover.out
 
 # Displaying result
 go tool cover -func cover.out

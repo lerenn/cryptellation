@@ -90,7 +90,7 @@ func (suite *ServiceSuite) TestGetCandlesticksAllExistWithNoneInDB() {
 	suite.Require().NoError(err)
 	suite.Require().Equal(10, l.Len())
 	i := 0
-	l.Loop(func(t time.Time, cs candlestick.Candlestick) (bool, error) {
+	_ = l.Loop(func(t time.Time, cs candlestick.Candlestick) (bool, error) {
 		suite.Require().Equal(float64(60*i), cs.Open)
 		suite.Require().WithinDuration(time.Unix(int64(60*i), 0), t, time.Millisecond)
 		i++
@@ -149,7 +149,7 @@ func (suite *ServiceSuite) TestGetCandlesticksFromDBAndService() {
 	suite.Require().NoError(err)
 	suite.Require().Equal(20, l.Len())
 	i := 0
-	l.Loop(func(t time.Time, cs candlestick.Candlestick) (bool, error) {
+	_ = l.Loop(func(t time.Time, cs candlestick.Candlestick) (bool, error) {
 		suite.Require().WithinDuration(time.Unix(int64(60*i), 0), t, time.Millisecond)
 		if i < 10 {
 			suite.Require().Equal(float64(4321), cs.Close, i)
@@ -199,7 +199,7 @@ func (suite *ServiceSuite) TestGetCandlesticksFromDBAndServiceWithUncomplete() {
 	suite.Require().NoError(err)
 	suite.Require().Equal(20, l.Len())
 	i := 0
-	l.Loop(func(t time.Time, cs candlestick.Candlestick) (bool, error) {
+	_ = l.Loop(func(t time.Time, cs candlestick.Candlestick) (bool, error) {
 		suite.Require().WithinDuration(time.Unix(int64(60*i), 0), t, time.Millisecond)
 		suite.Require().Equal(float64(1234), cs.Close, i)
 		i++

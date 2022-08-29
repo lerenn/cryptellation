@@ -88,8 +88,15 @@ func (g GrpcController) ReadCandlesticks(ctx context.Context, req *proto.ReadCan
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 
+	gcandlesticks := make([]*proto.Candlestick, 0, list.Len())
+	_ = list.Loop(func(t time.Time, cs candlestick.Candlestick) (bool, error) {
+		gcandlesticks = append(gcandlesticks, cs.ToProfoBuff(t))
+
+		return false, nil
+	})
+
 	return &proto.ReadCandlesticksResponse{
-		Candlesticks: toGrpcCandlesticks(list),
+		Candlesticks: gcandlesticks,
 	}, nil
 }
 
@@ -123,21 +130,4 @@ func fromReadCandlesticksRequest(req *proto.ReadCandlesticksRequest) (commands.C
 	}
 
 	return payload, nil
-}
-
-func toGrpcCandlesticks(cl *candlestick.List) []*proto.Candlestick {
-	gcandlesticks := make([]*proto.Candlestick, 0, cl.Len())
-	_ = cl.Loop(func(t time.Time, cs candlestick.Candlestick) (bool, error) {
-		gcandlesticks = append(gcandlesticks, &proto.Candlestick{
-			Time:   t.Format(time.RFC3339Nano),
-			Open:   float32(cs.Open),
-			High:   float32(cs.High),
-			Low:    float32(cs.Low),
-			Close:  float32(cs.Close),
-			Volume: float32(cs.Volume),
-		})
-
-		return false, nil
-	})
-	return gcandlesticks
 }

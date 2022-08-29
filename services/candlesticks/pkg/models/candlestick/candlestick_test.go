@@ -87,3 +87,21 @@ func (suite *CandlestickSuite) TestCandlestickFromProtobuff() {
 	suite.Require().WithinDuration(time.Unix(60, 0), t, time.Second)
 	suite.Require().True(originalCs.Equal(cs))
 }
+
+func (suite *CandlestickSuite) TestCandlestickToProtoBuff() {
+	cs := Candlestick{
+		Open:   1,
+		Low:    0.5,
+		High:   2,
+		Close:  1.5,
+		Volume: 1000,
+	}
+
+	pb := cs.ToProfoBuff(time.Unix(60, 0))
+	suite.Require().Equal("1970-01-01T00:01:00Z", pb.Time)
+	suite.Require().Equal(float32(1), pb.Open)
+	suite.Require().Equal(float32(0.5), pb.Low)
+	suite.Require().Equal(float32(2), pb.High)
+	suite.Require().Equal(float32(1.5), pb.Close)
+	suite.Require().Equal(float32(1000), pb.Volume)
+}

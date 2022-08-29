@@ -93,3 +93,22 @@ func (suite *ExchangeSuite) TestFromProtoBuff() {
 	suite.Require().Equal(1.0, exch.Fees)
 	suite.Require().WithinDuration(time.Unix(0, 0), exch.LastSyncTime, time.Second)
 }
+
+func (suite *ExchangeSuite) TestToProtoBuff() {
+	e := Exchange{
+		Name:           "exchange",
+		PairsSymbols:   []string{"ABC-DEF"},
+		PeriodsSymbols: []string{"M1"},
+		Fees:           0.1,
+		LastSyncTime:   time.Unix(60, 0),
+	}
+
+	pb := e.ToProfoBuff()
+	suite.Require().Equal("exchange", pb.Name)
+	suite.Require().Len(pb.Pairs, 1)
+	suite.Require().Equal("ABC-DEF", pb.Pairs[0])
+	suite.Require().Equal("M1", pb.Periods[0])
+	suite.Require().Len(pb.Periods, 1)
+	suite.Require().Equal(float32(0.1), pb.Fees)
+	suite.Require().Equal("1970-01-01T00:01:00Z", pb.LastSyncTime)
+}

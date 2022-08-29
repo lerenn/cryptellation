@@ -165,21 +165,10 @@ func (g GrpcController) BacktestAccounts(ctx context.Context, req *proto.Backtes
 	}
 
 	for exch, acc := range accounts {
-		resp.Accounts[exch] = toGrpcAccount(exch, acc)
+		resp.Accounts[exch] = acc.ToProtoBuff()
 	}
 
 	return &resp, nil
-}
-
-func toGrpcAccount(exchange string, account account.Account) *proto.Account {
-	assets := make(map[string]float32, len(account.Balances))
-	for asset, qty := range account.Balances {
-		assets[asset] = float32(qty)
-	}
-
-	return &proto.Account{
-		Assets: assets,
-	}
 }
 
 func (g GrpcController) BacktestOrders(ctx context.Context, req *proto.BacktestOrdersRequest) (*proto.BacktestOrdersResponse, error) {
@@ -188,15 +177,12 @@ func (g GrpcController) BacktestOrders(ctx context.Context, req *proto.BacktestO
 		return nil, err
 	}
 
-	return &proto.BacktestOrdersResponse{
-		Orders: toGrpcOrders(orders),
-	}, nil
-}
-
-func toGrpcOrders(orders []order.Order) []*proto.Order {
 	formattedOrders := make([]*proto.Order, len(orders))
 	for i, o := range orders {
 		formattedOrders[i] = o.ToProtoBuff()
 	}
-	return formattedOrders
+
+	return &proto.BacktestOrdersResponse{
+		Orders: formattedOrders,
+	}, nil
 }
