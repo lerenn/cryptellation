@@ -44,7 +44,7 @@ func (suite *TickSuite) TestToProtoBuf() {
 	pb := tick.ToProtoBuf()
 	suite.Require().Equal(tick.Time.Format(time.RFC3339Nano), pb.Time)
 	suite.Require().Equal(tick.PairSymbol, pb.PairSymbol)
-	suite.Require().Equal(float32(tick.Price), pb.Price)
+	suite.Require().Equal(float64(tick.Price), pb.Price)
 	suite.Require().Equal(tick.Exchange, pb.Exchange)
 }
 
@@ -60,6 +60,6 @@ func (suite *TickSuite) TestFromProtoBuf() {
 	suite.Require().NoError(err)
 	suite.Require().WithinDuration(time.Unix(60, 0).UTC(), t.Time, time.Millisecond)
 	suite.Require().Equal(pbTick.PairSymbol, t.PairSymbol)
-	suite.Require().Equal(pbTick.Price, float32(t.Price))
+	suite.Require().Equal(pbTick.Price, float64(t.Price))
 	suite.Require().Equal(pbTick.Exchange, t.Exchange)
 }

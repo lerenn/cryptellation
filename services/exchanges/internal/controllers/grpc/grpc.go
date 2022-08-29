@@ -93,7 +93,7 @@ func toGrpcExchanges(ps []exchange.Exchange) []*proto.Exchange {
 			Name:         p.Name,
 			Pairs:        p.PairsSymbols,
 			Periods:      p.PeriodsSymbols,
-			Fees:         float32(p.Fees),
+			Fees:         float64(p.Fees),
 			LastSyncTime: p.LastSyncTime.Format(time.RFC3339),
 		}
 	}

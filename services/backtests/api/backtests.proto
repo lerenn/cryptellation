@@ -14,7 +14,7 @@ service BacktestsService {
 }
 
 message Account {
-    map<string, float> assets = 1;
+    map<string, double> assets = 1;
 }
 
 message CreateBacktestRequest {
@@ -77,8 +77,8 @@ message Order {
     string exchange_name = 4;
     string pair_symbol = 5;
     string side = 6;
-    float quantity = 7;
-    float price = 8;
+    double quantity = 7;
+    double price = 8;
 }
 
 message BacktestOrdersResponse {

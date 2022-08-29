@@ -99,9 +99,9 @@ func (suite *CandlestickSuite) TestCandlestickToProtoBuf() {
 
 	pb := cs.ToProfoBuff(time.Unix(60, 0))
 	suite.Require().Equal("1970-01-01T00:01:00Z", pb.Time)
-	suite.Require().Equal(float32(1), pb.Open)
-	suite.Require().Equal(float32(0.5), pb.Low)
-	suite.Require().Equal(float32(2), pb.High)
-	suite.Require().Equal(float32(1.5), pb.Close)
-	suite.Require().Equal(float32(1000), pb.Volume)
+	suite.Require().Equal(float64(1), pb.Open)
+	suite.Require().Equal(float64(0.5), pb.Low)
+	suite.Require().Equal(float64(2), pb.High)
+	suite.Require().Equal(float64(1.5), pb.Close)
+	suite.Require().Equal(float64(1000), pb.Volume)
 }

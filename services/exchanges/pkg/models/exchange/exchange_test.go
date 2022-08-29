@@ -109,6 +109,6 @@ func (suite *ExchangeSuite) TestToProtoBuf() {
 	suite.Require().Equal("ABC-DEF", pb.Pairs[0])
 	suite.Require().Equal("M1", pb.Periods[0])
 	suite.Require().Len(pb.Periods, 1)
-	suite.Require().Equal(float32(0.1), pb.Fees)
+	suite.Require().Equal(float64(0.1), pb.Fees)
 	suite.Require().Equal("1970-01-01T00:01:00Z", pb.LastSyncTime)
 }

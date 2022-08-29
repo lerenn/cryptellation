@@ -52,8 +52,8 @@ func (o Order) ToProtoBuf() *proto.Order {
 		ExchangeName:  o.ExchangeName,
 		PairSymbol:    o.PairSymbol,
 		Side:          o.Side.String(),
-		Quantity:      float32(o.Quantity),
-		Price:         float32(o.Price),
+		Quantity:      float64(o.Quantity),
+		Price:         float64(o.Price),
 	}
 }
 

@@ -20,7 +20,7 @@ func (suite *PubSubClientSuite) TestOnePubOneSubObject() {
 	t := tick.Tick{
 		Time:       time.Unix(0, 0).UTC(),
 		PairSymbol: pairSymbol,
-		Price:      float32(time.Now().UnixNano()),
+		Price:      float64(time.Now().UnixNano()),
 		Exchange:   "exchange",
 	}
 	ch, err := suite.Client.Subscribe(pairSymbol)
@@ -42,7 +42,7 @@ func (suite *PubSubClientSuite) TestOnePubTwoSub() {
 	t := tick.Tick{
 		Time:       time.Unix(0, 0).UTC(),
 		PairSymbol: pairSymbol,
-		Price:      float32(time.Now().UnixNano()),
+		Price:      float64(time.Now().UnixNano()),
 		Exchange:   "exchange",
 	}
 
@@ -73,7 +73,7 @@ func (suite *PubSubClientSuite) TestCheckClose() {
 	t := tick.Tick{
 		Time:       time.Unix(0, 0).UTC(),
 		PairSymbol: pairSymbol,
-		Price:      float32(time.Now().UnixNano()),
+		Price:      float64(time.Now().UnixNano()),
 		Exchange:   "exchange",
 	}
 

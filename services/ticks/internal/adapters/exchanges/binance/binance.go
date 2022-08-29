@@ -45,7 +45,7 @@ func (s *Service) ListenSymbol(symbol string) (chan tick.Tick, chan struct{}, er
 			Time:       time.Now().UTC(),
 			Exchange:   "binance",
 			PairSymbol: symbol,
-			Price:      float32(ask+bid) / 2,
+			Price:      float64(ask+bid) / 2,
 		}
 
 		tickChan <- t

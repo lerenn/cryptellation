@@ -14,7 +14,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0flivetests.proto\x12\tlivetests\"h\n\x07\x41\x63\x63ount\x12.\n\x06\x61ssets\x18\x01 \x03(\x0b\x32\x1e.livetests.Account.AssetsEntry\x1a-\n\x0b\x41ssetsEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x02:\x02\x38\x01\"\x9e\x01\n\x15\x43reateLivetestRequest\x12@\n\x08\x61\x63\x63ounts\x18\x01 \x03(\x0b\x32..livetests.CreateLivetestRequest.AccountsEntry\x1a\x43\n\rAccountsEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12!\n\x05value\x18\x02 \x01(\x0b\x32\x12.livetests.Account:\x02\x38\x01\"$\n\x16\x43reateLivetestResponse\x12\n\n\x02id\x18\x01 \x01(\x04\x32k\n\x10LivetestsService\x12W\n\x0e\x43reateLivetest\x12 .livetests.CreateLivetestRequest\x1a!.livetests.CreateLivetestResponse\"\x00\x42$Z\"/services/livetests/pkg/grpc/protob\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0flivetests.proto\x12\tlivetests\"h\n\x07\x41\x63\x63ount\x12.\n\x06\x61ssets\x18\x01 \x03(\x0b\x32\x1e.livetests.Account.AssetsEntry\x1a-\n\x0b\x41ssetsEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x01:\x02\x38\x01\"\x9e\x01\n\x15\x43reateLivetestRequest\x12@\n\x08\x61\x63\x63ounts\x18\x01 \x03(\x0b\x32..livetests.CreateLivetestRequest.AccountsEntry\x1a\x43\n\rAccountsEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12!\n\x05value\x18\x02 \x01(\x0b\x32\x12.livetests.Account:\x02\x38\x01\"$\n\x16\x43reateLivetestResponse\x12\n\n\x02id\x18\x01 \x01(\x04\x32k\n\x10LivetestsService\x12W\n\x0e\x43reateLivetest\x12 .livetests.CreateLivetestRequest\x1a!.livetests.CreateLivetestResponse\"\x00\x42$Z\"/services/livetests/pkg/grpc/protob\x06proto3')
 
 
 

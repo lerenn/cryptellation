@@ -12,7 +12,7 @@ message Exchange {
     string name = 1;
     repeated string periods = 2;
     repeated string pairs = 3;
-    float fees = 4;
+    double fees = 4;
     string last_sync_time = 5;
 }
 

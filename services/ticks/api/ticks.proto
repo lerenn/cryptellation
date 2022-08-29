@@ -31,5 +31,5 @@ message Tick {
     string time = 1;
     string exchange = 2;
     string pair_symbol = 3;
-    float price = 4;
+    double price = 4;
 }

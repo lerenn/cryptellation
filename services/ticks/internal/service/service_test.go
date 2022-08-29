@@ -74,7 +74,7 @@ func (suite *ServiceSuite) TestListenSymbol() {
 		suite.Require().True(ok)
 		suite.Require().Equal("mock_exchange", t.Exchange)
 		suite.Require().Equal("SYMBOL", t.PairSymbol)
-		suite.Require().Equal(float32(100+i), t.Price)
+		suite.Require().Equal(float64(100+i), t.Price)
 		suite.Require().WithinDuration(time.Unix(i, 0), t.Time, time.Microsecond)
 	}
 }

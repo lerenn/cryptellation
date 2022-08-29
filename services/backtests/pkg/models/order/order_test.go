@@ -59,8 +59,8 @@ func (suite *OrderTestSuite) TestToProtoBuf() {
 	suite.Require().Equal("exchange", pb.ExchangeName)
 	suite.Require().Equal("ETC-USDT", pb.PairSymbol)
 	suite.Require().Equal(SideIsBuy.String(), pb.Side)
-	suite.Require().Equal(float32(2.0), pb.Quantity)
-	suite.Require().Equal(float32(3.0), pb.Price)
+	suite.Require().Equal(float64(2.0), pb.Quantity)
+	suite.Require().Equal(float64(3.0), pb.Price)
 }
 
 func OptTime(t time.Time) *time.Time {

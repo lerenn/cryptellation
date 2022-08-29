@@ -10,7 +10,7 @@ import (
 type Tick struct {
 	Time       time.Time `json:"time"`
 	PairSymbol string    `json:"pair_symbol"`
-	Price      float32   `json:"price"`
+	Price      float64   `json:"price"`
 	Exchange   string    `json:"exchange"`
 }
 
@@ -27,7 +27,7 @@ func (t Tick) ToProtoBuf() *proto.Tick {
 		Time:       t.Time.Format(time.RFC3339Nano),
 		Exchange:   t.Exchange,
 		PairSymbol: t.PairSymbol,
-		Price:      float32(t.Price),
+		Price:      float64(t.Price),
 	}
 }
 

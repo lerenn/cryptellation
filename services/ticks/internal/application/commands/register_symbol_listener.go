@@ -91,7 +91,7 @@ const checkInterval = 10 * time.Second
 func newListener(payload newListenerPayload) {
 	ctx := context.Background()
 	nextCheckTime := time.Now().Add(checkInterval)
-	lastPrice := float32(0.0)
+	lastPrice := float64(0.0)
 
 	for {
 		t := <-payload.ticksChan

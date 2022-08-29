@@ -43,11 +43,11 @@ func FromProtoBuf(pbc *proto.Candlestick) (time.Time, Candlestick, error) {
 func (cs Candlestick) ToProfoBuff(t time.Time) *proto.Candlestick {
 	return &proto.Candlestick{
 		Time:   t.UTC().Format(time.RFC3339Nano),
-		Open:   float32(cs.Open),
-		High:   float32(cs.High),
-		Low:    float32(cs.Low),
-		Close:  float32(cs.Close),
-		Volume: float32(cs.Volume),
+		Open:   float64(cs.Open),
+		High:   float64(cs.High),
+		Low:    float64(cs.Low),
+		Close:  float64(cs.Close),
+		Volume: float64(cs.Volume),
 	}
 }
 

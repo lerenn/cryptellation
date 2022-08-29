@@ -19,7 +19,7 @@ func (mes *MockExchangeService) ListenSymbol(symbol string) (chan tick.Tick, cha
 			Time:       time.Unix(i, 0),
 			PairSymbol: symbol,
 			Exchange:   MockExchangeName,
-			Price:      float32(100 + i),
+			Price:      float64(100 + i),
 		}
 	}
 

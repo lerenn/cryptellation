@@ -9,7 +9,7 @@ service LivetestsService {
 }
 
 message Account {
-    map<string, float> assets = 1;
+    map<string, double> assets = 1;
 }
 
 message CreateLivetestRequest {

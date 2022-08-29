@@ -147,7 +147,7 @@ class Backtest(object):
         for o in resp.orders:
             orders.append(
                 Order(
-                    iso8601.parse_date(o.time),
+                    iso8601.parse_date(o.execution_time),
                     o.type,
                     o.exchange_name,
                     o.pair_symbol,

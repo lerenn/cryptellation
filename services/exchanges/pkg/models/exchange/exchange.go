@@ -89,7 +89,7 @@ func (e Exchange) ToProfoBuff() *proto.Exchange {
 		Name:         e.Name,
 		Periods:      e.PeriodsSymbols,
 		Pairs:        e.PairsSymbols,
-		Fees:         float32(e.Fees),
+		Fees:         float64(e.Fees),
 		LastSyncTime: e.LastSyncTime.UTC().Format(time.RFC3339Nano),
 	}
 }

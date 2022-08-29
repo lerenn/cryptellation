@@ -6,9 +6,9 @@ import (
 )
 
 func accountToProtoBuf(a account.Account) *proto.Account {
-	assets := make(map[string]float32)
+	assets := make(map[string]float64)
 	for n, a := range a.Balances {
-		assets[n] = float32(a)
+		assets[n] = float64(a)
 	}
 
 	return &proto.Account{
