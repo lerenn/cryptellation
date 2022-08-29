@@ -9,8 +9,8 @@ service BacktestsService {
     rpc SubscribeToBacktestEvents(SubscribeToBacktestEventsRequest) returns (SubscribeToBacktestEventsResponse){}
     rpc AdvanceBacktest(AdvanceBacktestRequest) returns (AdvanceBacktestResponse) {}
     rpc CreateBacktestOrder(CreateBacktestOrderRequest) returns (CreateBacktestOrderResponse) {}
-    rpc Accounts(AccountsRequest) returns (AccountsResponse) {}
-    rpc Orders(OrdersRequest) returns (OrdersResponse) {}
+    rpc BacktestAccounts(BacktestAccountsRequest) returns (BacktestAccountsResponse) {}
+    rpc BacktestOrders(BacktestOrdersRequest) returns (BacktestOrdersResponse) {}
 }
 
 message Account {
@@ -52,38 +52,35 @@ message BacktestEvent {
 
 message CreateBacktestOrderRequest {
     uint64 backtest_id = 1;
-    string type = 2;
-    string exchange_name = 3;
-    string pair_symbol = 4;
-    string side = 5;
-    float quantity = 6;
+    Order order = 2;
 }
 
 message CreateBacktestOrderResponse {
 }
 
-message AccountsRequest {
+message BacktestAccountsRequest {
     uint64 backtest_id = 1;
 }
 
-message AccountsResponse {
+message BacktestAccountsResponse {
     map<string, Account> accounts = 1;
 }
 
-message OrdersRequest {
+message BacktestOrdersRequest {
     uint64 backtest_id = 1;
 }
 
 message Order {
-    string time = 1;
-    string type = 2;
-    string exchange_name = 3;
-    string pair_symbol = 4;
-    string side = 5;
-    float quantity = 6;
-    float price = 7;
+    uint64 id = 1;
+    optional string execution_time = 2;
+    string type = 3;
+    string exchange_name = 4;
+    string pair_symbol = 5;
+    string side = 6;
+    float quantity = 7;
+    float price = 8;
 }
 
-message OrdersResponse {
+message BacktestOrdersResponse {
     repeated Order orders = 1;
 }

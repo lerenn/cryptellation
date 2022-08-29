@@ -7,7 +7,7 @@ import (
 
 	"github.com/digital-feather/cryptellation/services/backtests/internal/adapters/vdb"
 	"github.com/digital-feather/cryptellation/services/backtests/internal/domain/backtest"
-	"github.com/digital-feather/cryptellation/services/backtests/internal/domain/order"
+	"github.com/digital-feather/cryptellation/services/backtests/pkg/models/order"
 	candlesticksProto "github.com/digital-feather/cryptellation/services/candlesticks/pkg/client/proto"
 )
 
@@ -31,40 +31,16 @@ func NewCreateOrderHandler(repository vdb.Port, csClient candlesticksProto.Candl
 	}
 }
 
-type CreateOrderPayload struct {
-	BacktestId   uint
-	Type         order.Type
-	ExchangeName string
-	PairSymbol   string
-	Side         order.Side
-	Quantity     float64
-}
-
-func (p CreateOrderPayload) ToOrder() order.Order {
-	return order.Order{
-		Type:         p.Type,
-		ExchangeName: p.ExchangeName,
-		PairSymbol:   p.PairSymbol,
-		Side:         p.Side,
-		Quantity:     p.Quantity,
-	}
-}
-
-func (h CreateOrderHandler) Handle(ctx context.Context, payload CreateOrderPayload) error {
-	ord := payload.ToOrder()
-	if err := ord.Validate(); err != nil {
-		return fmt.Errorf("invalid order: %w", err)
-	}
-
-	return h.repository.LockedBacktest(payload.BacktestId, func() error {
-		bt, err := h.repository.ReadBacktest(ctx, payload.BacktestId)
+func (h CreateOrderHandler) Handle(ctx context.Context, backtestId uint, order order.Order) error {
+	return h.repository.LockedBacktest(backtestId, func() error {
+		bt, err := h.repository.ReadBacktest(ctx, backtestId)
 		if err != nil {
 			return fmt.Errorf("cannot get backtest: %w", err)
 		}
 
 		resp, err := h.csClient.ReadCandlesticks(ctx, &candlesticksProto.ReadCandlesticksRequest{
-			ExchangeName: payload.ExchangeName,
-			PairSymbol:   payload.PairSymbol,
+			ExchangeName: order.ExchangeName,
+			PairSymbol:   order.PairSymbol,
 			PeriodSymbol: bt.PeriodBetweenEvents.String(),
 			Start:        bt.CurrentCsTick.Time.Format(time.RFC3339),
 			End:          bt.CurrentCsTick.Time.Format(time.RFC3339),
@@ -76,7 +52,7 @@ func (h CreateOrderHandler) Handle(ctx context.Context, payload CreateOrderPaylo
 			return backtest.ErrNoDataForOrderValidation
 		}
 
-		if err := bt.AddOrder(ord, resp.Candlesticks[0]); err != nil {
+		if err := bt.AddOrder(order, resp.Candlesticks[0]); err != nil {
 			return err
 		}
 

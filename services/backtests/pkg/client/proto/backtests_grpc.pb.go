@@ -26,8 +26,8 @@ type BacktestsServiceClient interface {
 	SubscribeToBacktestEvents(ctx context.Context, in *SubscribeToBacktestEventsRequest, opts ...grpc.CallOption) (*SubscribeToBacktestEventsResponse, error)
 	AdvanceBacktest(ctx context.Context, in *AdvanceBacktestRequest, opts ...grpc.CallOption) (*AdvanceBacktestResponse, error)
 	CreateBacktestOrder(ctx context.Context, in *CreateBacktestOrderRequest, opts ...grpc.CallOption) (*CreateBacktestOrderResponse, error)
-	Accounts(ctx context.Context, in *AccountsRequest, opts ...grpc.CallOption) (*AccountsResponse, error)
-	Orders(ctx context.Context, in *OrdersRequest, opts ...grpc.CallOption) (*OrdersResponse, error)
+	BacktestAccounts(ctx context.Context, in *BacktestAccountsRequest, opts ...grpc.CallOption) (*BacktestAccountsResponse, error)
+	BacktestOrders(ctx context.Context, in *BacktestOrdersRequest, opts ...grpc.CallOption) (*BacktestOrdersResponse, error)
 }
 
 type backtestsServiceClient struct {
@@ -74,18 +74,18 @@ func (c *backtestsServiceClient) CreateBacktestOrder(ctx context.Context, in *Cr
 	return out, nil
 }
 
-func (c *backtestsServiceClient) Accounts(ctx context.Context, in *AccountsRequest, opts ...grpc.CallOption) (*AccountsResponse, error) {
-	out := new(AccountsResponse)
-	err := c.cc.Invoke(ctx, "/backtests.BacktestsService/Accounts", in, out, opts...)
+func (c *backtestsServiceClient) BacktestAccounts(ctx context.Context, in *BacktestAccountsRequest, opts ...grpc.CallOption) (*BacktestAccountsResponse, error) {
+	out := new(BacktestAccountsResponse)
+	err := c.cc.Invoke(ctx, "/backtests.BacktestsService/BacktestAccounts", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *backtestsServiceClient) Orders(ctx context.Context, in *OrdersRequest, opts ...grpc.CallOption) (*OrdersResponse, error) {
-	out := new(OrdersResponse)
-	err := c.cc.Invoke(ctx, "/backtests.BacktestsService/Orders", in, out, opts...)
+func (c *backtestsServiceClient) BacktestOrders(ctx context.Context, in *BacktestOrdersRequest, opts ...grpc.CallOption) (*BacktestOrdersResponse, error) {
+	out := new(BacktestOrdersResponse)
+	err := c.cc.Invoke(ctx, "/backtests.BacktestsService/BacktestOrders", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -100,8 +100,8 @@ type BacktestsServiceServer interface {
 	SubscribeToBacktestEvents(context.Context, *SubscribeToBacktestEventsRequest) (*SubscribeToBacktestEventsResponse, error)
 	AdvanceBacktest(context.Context, *AdvanceBacktestRequest) (*AdvanceBacktestResponse, error)
 	CreateBacktestOrder(context.Context, *CreateBacktestOrderRequest) (*CreateBacktestOrderResponse, error)
-	Accounts(context.Context, *AccountsRequest) (*AccountsResponse, error)
-	Orders(context.Context, *OrdersRequest) (*OrdersResponse, error)
+	BacktestAccounts(context.Context, *BacktestAccountsRequest) (*BacktestAccountsResponse, error)
+	BacktestOrders(context.Context, *BacktestOrdersRequest) (*BacktestOrdersResponse, error)
 }
 
 // UnimplementedBacktestsServiceServer should be embedded to have forward compatible implementations.
@@ -120,11 +120,11 @@ func (UnimplementedBacktestsServiceServer) AdvanceBacktest(context.Context, *Adv
 func (UnimplementedBacktestsServiceServer) CreateBacktestOrder(context.Context, *CreateBacktestOrderRequest) (*CreateBacktestOrderResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateBacktestOrder not implemented")
 }
-func (UnimplementedBacktestsServiceServer) Accounts(context.Context, *AccountsRequest) (*AccountsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Accounts not implemented")
+func (UnimplementedBacktestsServiceServer) BacktestAccounts(context.Context, *BacktestAccountsRequest) (*BacktestAccountsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method BacktestAccounts not implemented")
 }
-func (UnimplementedBacktestsServiceServer) Orders(context.Context, *OrdersRequest) (*OrdersResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Orders not implemented")
+func (UnimplementedBacktestsServiceServer) BacktestOrders(context.Context, *BacktestOrdersRequest) (*BacktestOrdersResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method BacktestOrders not implemented")
 }
 
 // UnsafeBacktestsServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -210,38 +210,38 @@ func _BacktestsService_CreateBacktestOrder_Handler(srv interface{}, ctx context.
 	return interceptor(ctx, in, info, handler)
 }
 
-func _BacktestsService_Accounts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(AccountsRequest)
+func _BacktestsService_BacktestAccounts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BacktestAccountsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(BacktestsServiceServer).Accounts(ctx, in)
+		return srv.(BacktestsServiceServer).BacktestAccounts(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/backtests.BacktestsService/Accounts",
+		FullMethod: "/backtests.BacktestsService/BacktestAccounts",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(BacktestsServiceServer).Accounts(ctx, req.(*AccountsRequest))
+		return srv.(BacktestsServiceServer).BacktestAccounts(ctx, req.(*BacktestAccountsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _BacktestsService_Orders_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(OrdersRequest)
+func _BacktestsService_BacktestOrders_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BacktestOrdersRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(BacktestsServiceServer).Orders(ctx, in)
+		return srv.(BacktestsServiceServer).BacktestOrders(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/backtests.BacktestsService/Orders",
+		FullMethod: "/backtests.BacktestsService/BacktestOrders",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(BacktestsServiceServer).Orders(ctx, req.(*OrdersRequest))
+		return srv.(BacktestsServiceServer).BacktestOrders(ctx, req.(*BacktestOrdersRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -270,12 +270,12 @@ var BacktestsService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _BacktestsService_CreateBacktestOrder_Handler,
 		},
 		{
-			MethodName: "Accounts",
-			Handler:    _BacktestsService_Accounts_Handler,
+			MethodName: "BacktestAccounts",
+			Handler:    _BacktestsService_BacktestAccounts_Handler,
 		},
 		{
-			MethodName: "Orders",
-			Handler:    _BacktestsService_Orders_Handler,
+			MethodName: "BacktestOrders",
+			Handler:    _BacktestsService_BacktestOrders_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

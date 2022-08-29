@@ -34,15 +34,15 @@ class BacktestsServiceStub(object):
                 request_serializer=backtests__pb2.CreateBacktestOrderRequest.SerializeToString,
                 response_deserializer=backtests__pb2.CreateBacktestOrderResponse.FromString,
                 )
-        self.Accounts = channel.unary_unary(
-                '/backtests.BacktestsService/Accounts',
-                request_serializer=backtests__pb2.AccountsRequest.SerializeToString,
-                response_deserializer=backtests__pb2.AccountsResponse.FromString,
+        self.BacktestAccounts = channel.unary_unary(
+                '/backtests.BacktestsService/BacktestAccounts',
+                request_serializer=backtests__pb2.BacktestAccountsRequest.SerializeToString,
+                response_deserializer=backtests__pb2.BacktestAccountsResponse.FromString,
                 )
-        self.Orders = channel.unary_unary(
-                '/backtests.BacktestsService/Orders',
-                request_serializer=backtests__pb2.OrdersRequest.SerializeToString,
-                response_deserializer=backtests__pb2.OrdersResponse.FromString,
+        self.BacktestOrders = channel.unary_unary(
+                '/backtests.BacktestsService/BacktestOrders',
+                request_serializer=backtests__pb2.BacktestOrdersRequest.SerializeToString,
+                response_deserializer=backtests__pb2.BacktestOrdersResponse.FromString,
                 )
 
 
@@ -73,13 +73,13 @@ class BacktestsServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def Accounts(self, request, context):
+    def BacktestAccounts(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def Orders(self, request, context):
+    def BacktestOrders(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -108,15 +108,15 @@ def add_BacktestsServiceServicer_to_server(servicer, server):
                     request_deserializer=backtests__pb2.CreateBacktestOrderRequest.FromString,
                     response_serializer=backtests__pb2.CreateBacktestOrderResponse.SerializeToString,
             ),
-            'Accounts': grpc.unary_unary_rpc_method_handler(
-                    servicer.Accounts,
-                    request_deserializer=backtests__pb2.AccountsRequest.FromString,
-                    response_serializer=backtests__pb2.AccountsResponse.SerializeToString,
+            'BacktestAccounts': grpc.unary_unary_rpc_method_handler(
+                    servicer.BacktestAccounts,
+                    request_deserializer=backtests__pb2.BacktestAccountsRequest.FromString,
+                    response_serializer=backtests__pb2.BacktestAccountsResponse.SerializeToString,
             ),
-            'Orders': grpc.unary_unary_rpc_method_handler(
-                    servicer.Orders,
-                    request_deserializer=backtests__pb2.OrdersRequest.FromString,
-                    response_serializer=backtests__pb2.OrdersResponse.SerializeToString,
+            'BacktestOrders': grpc.unary_unary_rpc_method_handler(
+                    servicer.BacktestOrders,
+                    request_deserializer=backtests__pb2.BacktestOrdersRequest.FromString,
+                    response_serializer=backtests__pb2.BacktestOrdersResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -197,7 +197,7 @@ class BacktestsService(object):
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
-    def Accounts(request,
+    def BacktestAccounts(request,
             target,
             options=(),
             channel_credentials=None,
@@ -207,14 +207,14 @@ class BacktestsService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/backtests.BacktestsService/Accounts',
-            backtests__pb2.AccountsRequest.SerializeToString,
-            backtests__pb2.AccountsResponse.FromString,
+        return grpc.experimental.unary_unary(request, target, '/backtests.BacktestsService/BacktestAccounts',
+            backtests__pb2.BacktestAccountsRequest.SerializeToString,
+            backtests__pb2.BacktestAccountsResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
-    def Orders(request,
+    def BacktestOrders(request,
             target,
             options=(),
             channel_credentials=None,
@@ -224,8 +224,8 @@ class BacktestsService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/backtests.BacktestsService/Orders',
-            backtests__pb2.OrdersRequest.SerializeToString,
-            backtests__pb2.OrdersResponse.FromString,
+        return grpc.experimental.unary_unary(request, target, '/backtests.BacktestsService/BacktestOrders',
+            backtests__pb2.BacktestOrdersRequest.SerializeToString,
+            backtests__pb2.BacktestOrdersResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

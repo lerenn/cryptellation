@@ -19,7 +19,6 @@ func NewApplication() (app.Application, func(), error) {
 	}
 
 	app, closeApp, err := newApplication(csClient)
-
 	return app, func() {
 		closeApp()
 		if err := closeCsClient(); err != nil {

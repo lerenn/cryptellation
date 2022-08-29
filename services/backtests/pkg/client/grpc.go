@@ -1,20 +1,24 @@
 package client
 
 import (
+	"context"
 	"fmt"
 	"os"
+	"time"
 
 	"github.com/digital-feather/cryptellation/services/backtests/internal/adapters/pubsub"
 	"github.com/digital-feather/cryptellation/services/backtests/internal/adapters/pubsub/nats"
 	"github.com/digital-feather/cryptellation/services/backtests/pkg/client/proto"
+	"github.com/digital-feather/cryptellation/services/backtests/pkg/models/account"
 	"github.com/digital-feather/cryptellation/services/backtests/pkg/models/event"
+	"github.com/digital-feather/cryptellation/services/backtests/pkg/models/order"
 	"golang.org/x/xerrors"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
 
 type GrpcClient struct {
-	proto.BacktestsServiceClient
+	grpcClient proto.BacktestsServiceClient
 	natsClient pubsub.Port
 }
 
@@ -35,12 +39,92 @@ func New() (client *GrpcClient, close func() error, err error) {
 	}
 
 	return &GrpcClient{
-			BacktestsServiceClient: proto.NewBacktestsServiceClient(conn),
-			natsClient:             natsClient,
+			grpcClient: proto.NewBacktestsServiceClient(conn),
+			natsClient: natsClient,
 		}, func() error {
 			natsClient.Close()
 			return conn.Close()
 		}, nil
+}
+
+func (c *GrpcClient) CreateBacktest(ctx context.Context, start, end time.Time, accounts map[string]account.Account) (id uint64, err error) {
+	pbAccounts := make(map[string]*proto.Account)
+	for n, a := range accounts {
+		pbAccounts[n] = a.ToProtoBuff()
+	}
+
+	resp, err := c.grpcClient.CreateBacktest(ctx, &proto.CreateBacktestRequest{
+		StartTime: start.Format(time.RFC3339Nano),
+		EndTime:   end.Format(time.RFC3339Nano),
+		Accounts:  pbAccounts,
+	})
+	if err != nil {
+		return 0, err
+	}
+
+	return resp.Id, nil
+}
+
+func (c *GrpcClient) AdvanceBacktest(ctx context.Context, backtestID uint64) error {
+	_, err := c.grpcClient.AdvanceBacktest(ctx, &proto.AdvanceBacktestRequest{
+		Id: backtestID,
+	})
+
+	return err
+}
+
+func (c *GrpcClient) BacktestAccounts(ctx context.Context, backtestID uint64) (map[string]account.Account, error) {
+	resp, err := c.grpcClient.BacktestAccounts(ctx, &proto.BacktestAccountsRequest{
+		BacktestId: backtestID,
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	accounts := make(map[string]account.Account)
+	for n, a := range resp.Accounts {
+		accounts[n] = account.FromProtoBuff(a)
+	}
+
+	return accounts, nil
+}
+
+func (c *GrpcClient) CreateBacktestOrder(ctx context.Context, backtestID uint64, o order.Order) error {
+	_, err := c.grpcClient.CreateBacktestOrder(ctx, &proto.CreateBacktestOrderRequest{
+		BacktestId: backtestID,
+		Order:      o.ToProtoBuff(),
+	})
+	return err
+}
+
+func (c *GrpcClient) BacktestOrders(ctx context.Context, backtestID uint64) ([]order.Order, error) {
+	resp, err := c.grpcClient.BacktestOrders(ctx, &proto.BacktestOrdersRequest{
+		BacktestId: backtestID,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	orders := make([]order.Order, len(resp.Orders))
+	for i, pb := range resp.Orders {
+		o, err := order.FromProtoBuff(pb)
+		if err != nil {
+			return nil, err
+		}
+		orders[i] = o
+	}
+
+	return orders, nil
+}
+
+func (c *GrpcClient) SubscribeToBacktestEvents(ctx context.Context, backtestID uint64, exchangeName, pairSymbol string) error {
+	_, err := c.grpcClient.SubscribeToBacktestEvents(ctx, &proto.SubscribeToBacktestEventsRequest{
+		Id:           backtestID,
+		ExchangeName: exchangeName,
+		PairSymbol:   pairSymbol,
+	})
+	return err
 }
 
 func (c *GrpcClient) ListenBacktest(backtestID uint) (<-chan event.Event, error) {

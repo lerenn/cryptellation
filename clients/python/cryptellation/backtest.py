@@ -111,22 +111,24 @@ class Backtest(object):
     def order(self, type: str, exchange: str, pair: str, side: str, quantity: float):
         req = backtests.CreateBacktestOrderRequest(
             backtest_id=self._id,
-            type=type,
-            exchange_name=exchange,
-            pair_symbol=pair,
-            side=side,
-            quantity=quantity,
+            order = backtests.Order(
+                type=type,
+                exchange_name=exchange,
+                pair_symbol=pair,
+                side=side,
+                quantity=quantity,
+            )
         )
         self._stub.CreateBacktestOrder(req)
 
     def accounts(self) -> Dict[str, Account]:
-        req = backtests.AccountsRequest(
+        req = backtests.BacktestAccountsRequest(
             backtest_id=self._id,
         )
-        resp = self._stub.Accounts(req)
+        resp = self._stub.BacktestAccounts(req)
         return self._grpc_to_accounts(resp)
 
-    def _grpc_to_accounts(self, resp: backtests.AccountsResponse) -> Dict[str, Account]:
+    def _grpc_to_accounts(self, resp: backtests.BacktestAccountsResponse) -> Dict[str, Account]:
         accounts = {}
         for exch, account in resp.accounts.items():
             assets = {}
@@ -136,11 +138,11 @@ class Backtest(object):
         return accounts
 
     def orders(self) -> List[Order]:
-        req = backtests.OrdersRequest(backtest_id=self._id)
-        resp = self._stub.Orders(req)
+        req = backtests.BacktestOrdersRequest(backtest_id=self._id)
+        resp = self._stub.BacktestOrders(req)
         return self._grpc_orders(resp)
 
-    def _grpc_orders(self, resp: backtests.OrdersResponse) -> List[Order]:
+    def _grpc_orders(self, resp: backtests.BacktestOrdersResponse) -> List[Order]:
         orders = []
         for o in resp.orders:
             orders.append(

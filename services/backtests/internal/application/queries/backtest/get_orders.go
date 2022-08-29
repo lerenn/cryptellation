@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/digital-feather/cryptellation/services/backtests/internal/adapters/vdb"
-	"github.com/digital-feather/cryptellation/services/backtests/internal/domain/order"
+	"github.com/digital-feather/cryptellation/services/backtests/pkg/models/order"
 )
 
 type GetOrders struct {

@@ -12,8 +12,9 @@ import (
 	"github.com/digital-feather/cryptellation/services/backtests/internal/adapters/vdb/redis"
 	"github.com/digital-feather/cryptellation/services/backtests/internal/controllers/grpc"
 	"github.com/digital-feather/cryptellation/services/backtests/pkg/client"
-	"github.com/digital-feather/cryptellation/services/backtests/pkg/client/proto"
+	"github.com/digital-feather/cryptellation/services/backtests/pkg/models/account"
 	"github.com/digital-feather/cryptellation/services/backtests/pkg/models/event"
+	"github.com/digital-feather/cryptellation/services/backtests/pkg/models/order"
 	"github.com/digital-feather/cryptellation/services/backtests/pkg/models/status"
 	"github.com/digital-feather/cryptellation/services/backtests/pkg/models/tick"
 	"github.com/stretchr/testify/suite"
@@ -26,7 +27,7 @@ func TestServiceSuite(t *testing.T) {
 type ServiceSuite struct {
 	suite.Suite
 	vdb       vdb.Port
-	client    *client.GrpcClient
+	client    client.Client
 	closeTest func() error
 }
 
@@ -67,22 +68,18 @@ func (suite *ServiceSuite) TearDownSuite() {
 }
 
 func (suite *ServiceSuite) TestCreateBacktest() {
-	req := proto.CreateBacktestRequest{
-		StartTime: time.Unix(0, 0).Format(time.RFC3339),
-		EndTime:   time.Unix(120, 0).Format(time.RFC3339),
-		Accounts: map[string]*proto.Account{
-			"exchange": {
-				Assets: map[string]float32{
-					"DAI": 1000,
-				},
+	accounts := map[string]account.Account{
+		"exchange": {
+			Balances: map[string]float64{
+				"DAI": 1000,
 			},
 		},
 	}
 
-	resp, err := suite.client.CreateBacktest(context.Background(), &req)
+	id, err := suite.client.CreateBacktest(context.Background(), time.Unix(0, 0), time.Unix(120, 0), accounts)
 	suite.Require().NoError(err)
 
-	recvBT, err := suite.vdb.ReadBacktest(context.Background(), uint(resp.Id))
+	recvBT, err := suite.vdb.ReadBacktest(context.Background(), uint(id))
 	suite.Require().NoError(err)
 	suite.Require().WithinDuration(time.Unix(0, 0), recvBT.StartTime, time.Millisecond)
 	suite.Require().WithinDuration(time.Unix(120, 0), recvBT.EndTime, time.Millisecond)
@@ -92,29 +89,21 @@ func (suite *ServiceSuite) TestCreateBacktest() {
 }
 
 func (suite *ServiceSuite) TestBacktestSubscribeToEvents() {
-	req := proto.CreateBacktestRequest{
-		StartTime: time.Unix(0, 0).Format(time.RFC3339),
-		EndTime:   time.Unix(120, 0).Format(time.RFC3339),
-		Accounts: map[string]*proto.Account{
-			"exchange": {
-				Assets: map[string]float32{
-					"DAI": 1000,
-				},
+	accounts := map[string]account.Account{
+		"exchange": {
+			Balances: map[string]float64{
+				"DAI": 1000,
 			},
 		},
 	}
 
-	resp, err := suite.client.CreateBacktest(context.Background(), &req)
+	id, err := suite.client.CreateBacktest(context.Background(), time.Unix(0, 0), time.Unix(120, 0), accounts)
 	suite.Require().NoError(err)
 
-	_, err = suite.client.SubscribeToBacktestEvents(context.Background(), &proto.SubscribeToBacktestEventsRequest{
-		Id:           resp.Id,
-		ExchangeName: "exchange",
-		PairSymbol:   "ETH-DAI",
-	})
+	err = suite.client.SubscribeToBacktestEvents(context.Background(), id, "exchange", "ETH-DAI")
 	suite.Require().NoError(err)
 
-	recvBT, err := suite.vdb.ReadBacktest(context.Background(), uint(resp.Id))
+	recvBT, err := suite.vdb.ReadBacktest(context.Background(), uint(id))
 	suite.Require().NoError(err)
 	suite.Require().Len(recvBT.TickSubscribers, 1)
 	suite.Require().Equal("exchange", recvBT.TickSubscribers[0].ExchangeName)
@@ -122,75 +111,65 @@ func (suite *ServiceSuite) TestBacktestSubscribeToEvents() {
 }
 
 func (suite *ServiceSuite) TestBacktestListenEvents() {
-	req := proto.CreateBacktestRequest{
-		StartTime: time.Unix(0, 0).Format(time.RFC3339),
-		EndTime:   time.Unix(120, 0).Format(time.RFC3339),
-		Accounts: map[string]*proto.Account{
-			"exchange": {
-				Assets: map[string]float32{
-					"DAI": 1000,
-				},
+	accounts := map[string]account.Account{
+		"exchange": {
+			Balances: map[string]float64{
+				"DAI": 1000,
 			},
 		},
 	}
 
-	resp, err := suite.client.CreateBacktest(context.Background(), &req)
+	id, err := suite.client.CreateBacktest(context.Background(), time.Unix(0, 0), time.Unix(120, 0), accounts)
 	suite.Require().NoError(err)
 
-	_, err = suite.client.SubscribeToBacktestEvents(context.Background(), &proto.SubscribeToBacktestEventsRequest{
-		Id:           resp.Id,
-		ExchangeName: "exchange",
-		PairSymbol:   "ETH-DAI",
-	})
+	err = suite.client.SubscribeToBacktestEvents(context.Background(), id, "exchange", "ETH-DAI")
 	suite.Require().NoError(err)
 
-	ch, err := suite.client.ListenBacktest(uint(resp.Id))
+	ch, err := suite.client.ListenBacktest(uint(id))
 	suite.Require().NoError(err)
 
 	// First candlestick (high)
-	suite.advance(resp.Id)
+	suite.advance(id)
 	suite.checkEvent(ch, event.TypeIsTick, time.Unix(0, 0), tick.Tick{PairSymbol: "ETH-DAI", Price: 2, Exchange: "exchange"})
 	suite.checkEvent(ch, event.TypeIsStatus, time.Unix(0, 0), status.Status{Finished: false})
 
 	// First candlestick (low)
-	suite.advance(resp.Id)
+	suite.advance(id)
 	suite.checkEvent(ch, event.TypeIsTick, time.Unix(0, 0), tick.Tick{PairSymbol: "ETH-DAI", Price: 0.5, Exchange: "exchange"})
 	suite.checkEvent(ch, event.TypeIsStatus, time.Unix(0, 0), status.Status{Finished: false})
 
 	// First candlestick (close)
-	suite.advance(resp.Id)
+	suite.advance(id)
 	suite.checkEvent(ch, event.TypeIsTick, time.Unix(0, 0), tick.Tick{PairSymbol: "ETH-DAI", Price: 1.5, Exchange: "exchange"})
 	suite.checkEvent(ch, event.TypeIsStatus, time.Unix(0, 0), status.Status{Finished: false})
 
 	// Second candlestick (open)
-	suite.advance(resp.Id)
+	suite.advance(id)
 	suite.checkEvent(ch, event.TypeIsTick, time.Unix(60, 0), tick.Tick{PairSymbol: "ETH-DAI", Price: 1, Exchange: "exchange"})
 	suite.checkEvent(ch, event.TypeIsStatus, time.Unix(60, 0), status.Status{Finished: false})
 
 	// Second candlestick (high)
-	suite.advance(resp.Id)
+	suite.advance(id)
 	suite.checkEvent(ch, event.TypeIsTick, time.Unix(60, 0), tick.Tick{PairSymbol: "ETH-DAI", Price: 2, Exchange: "exchange"})
 	suite.checkEvent(ch, event.TypeIsStatus, time.Unix(60, 0), status.Status{Finished: false})
 
 	// Second candlestick (low)
-	suite.advance(resp.Id)
+	suite.advance(id)
 	suite.checkEvent(ch, event.TypeIsTick, time.Unix(60, 0), tick.Tick{PairSymbol: "ETH-DAI", Price: 0.5, Exchange: "exchange"})
 	suite.checkEvent(ch, event.TypeIsStatus, time.Unix(60, 0), status.Status{Finished: false})
 
 	// Second candlestick (close)
-	suite.advance(resp.Id)
+	suite.advance(id)
 	suite.checkEvent(ch, event.TypeIsTick, time.Unix(60, 0), tick.Tick{PairSymbol: "ETH-DAI", Price: 1.5, Exchange: "exchange"})
 	suite.checkEvent(ch, event.TypeIsStatus, time.Unix(60, 0), status.Status{Finished: false})
 
 	// End of backtest
-	suite.advance(resp.Id)
+	suite.advance(id)
 	suite.checkEvent(ch, event.TypeIsStatus, time.Unix(120, 0), status.Status{Finished: true})
 }
 
 func (suite *ServiceSuite) advance(id uint64) {
-	_, err := suite.client.AdvanceBacktest(context.Background(), &proto.AdvanceBacktestRequest{
-		Id: id,
-	})
+	err := suite.client.AdvanceBacktest(context.Background(), id)
 	suite.Require().NoError(err)
 }
 
@@ -209,91 +188,75 @@ func (suite *ServiceSuite) passEvent(ch <-chan event.Event, evtType event.Type) 
 }
 
 func (suite *ServiceSuite) TestBacktestOrders() {
-	req := proto.CreateBacktestRequest{
-		StartTime: time.Unix(0, 0).Format(time.RFC3339),
-		EndTime:   time.Unix(600, 0).Format(time.RFC3339),
-		Accounts: map[string]*proto.Account{
-			"exchange": {
-				Assets: map[string]float32{
-					"DAI": 1000,
-				},
+	accounts := map[string]account.Account{
+		"exchange": {
+			Balances: map[string]float64{
+				"DAI": 1000,
 			},
 		},
 	}
 
-	resp, err := suite.client.CreateBacktest(context.Background(), &req)
+	id, err := suite.client.CreateBacktest(context.Background(), time.Unix(0, 0), time.Unix(600, 0), accounts)
 	suite.Require().NoError(err)
 
-	_, err = suite.client.SubscribeToBacktestEvents(context.Background(), &proto.SubscribeToBacktestEventsRequest{
-		Id:           resp.Id,
-		ExchangeName: "exchange",
-		PairSymbol:   "ETH-DAI",
-	})
+	err = suite.client.SubscribeToBacktestEvents(context.Background(), id, "exchange", "ETH-DAI")
 	suite.Require().NoError(err)
 
-	_, err = suite.client.CreateBacktestOrder(context.Background(), &proto.CreateBacktestOrderRequest{
-		BacktestId:   resp.Id,
-		Type:         "market",
+	err = suite.client.CreateBacktestOrder(context.Background(), id, order.Order{
+		Type:         order.TypeIsMarket,
 		ExchangeName: "exchange",
 		PairSymbol:   "ETH-DAI",
-		Side:         "buy",
+		Side:         order.SideIsBuy,
 		Quantity:     1,
 	})
 	suite.Require().NoError(err)
 
-	accountsResp, err := suite.client.Accounts(context.Background(), &proto.AccountsRequest{
-		BacktestId: resp.Id,
-	})
+	accounts, err = suite.client.BacktestAccounts(context.Background(), id)
 	suite.Require().NoError(err)
-	suite.Require().Equal(float32(999), accountsResp.Accounts["exchange"].Assets["DAI"])
-	suite.Require().Equal(float32(1), accountsResp.Accounts["exchange"].Assets["ETH"])
+	suite.Require().Equal(999.0, accounts["exchange"].Balances["DAI"])
+	suite.Require().Equal(1.0, accounts["exchange"].Balances["ETH"])
 
-	ch, err := suite.client.ListenBacktest(uint(resp.Id))
+	ch, err := suite.client.ListenBacktest(uint(id))
 	suite.Require().NoError(err)
 	for i := 0; i < 5; i++ {
-		suite.advance(resp.Id)
+		suite.advance(id)
 		suite.passEvent(ch, event.TypeIsTick)
 		suite.passEvent(ch, event.TypeIsStatus)
 	}
 
-	_, err = suite.client.CreateBacktestOrder(context.Background(), &proto.CreateBacktestOrderRequest{
-		BacktestId:   resp.Id,
-		Type:         "market",
+	err = suite.client.CreateBacktestOrder(context.Background(), id, order.Order{
+		Type:         order.TypeIsMarket,
 		ExchangeName: "exchange",
 		PairSymbol:   "ETH-DAI",
-		Side:         "sell",
+		Side:         order.SideIsSell,
 		Quantity:     1,
 	})
 	suite.Require().NoError(err)
 
-	accountsResp, err = suite.client.Accounts(context.Background(), &proto.AccountsRequest{
-		BacktestId: resp.Id,
-	})
+	accounts, err = suite.client.BacktestAccounts(context.Background(), id)
 	suite.Require().NoError(err)
-	suite.Require().Equal(float32(1001), accountsResp.Accounts["exchange"].Assets["DAI"])
-	suite.Require().Equal(float32(0), accountsResp.Accounts["exchange"].Assets["ETH"])
+	suite.Require().Equal(1001.0, accounts["exchange"].Balances["DAI"])
+	suite.Require().Equal(0.0, accounts["exchange"].Balances["ETH"])
 
-	ordersResp, err := suite.client.Orders(context.Background(), &proto.OrdersRequest{
-		BacktestId: resp.Id,
-	})
+	orders, err := suite.client.BacktestOrders(context.Background(), id)
 	suite.Require().NoError(err)
-	suite.Require().Len(ordersResp.Orders, 2)
+	suite.Require().Len(orders, 2)
 
-	suite.Require().Equal("1970-01-01T00:00:00Z", ordersResp.Orders[0].Time)
-	suite.Require().Equal("market", ordersResp.Orders[0].Type)
-	suite.Require().Equal("exchange", ordersResp.Orders[0].ExchangeName)
-	suite.Require().Equal("ETH-DAI", ordersResp.Orders[0].PairSymbol)
-	suite.Require().Equal("buy", ordersResp.Orders[0].Side)
-	suite.Require().Equal(float32(1), ordersResp.Orders[0].Quantity)
-	suite.Require().Equal(float32(1), ordersResp.Orders[0].Price)
+	suite.Require().WithinDuration(time.Unix(0, 0), *orders[0].ExecutionTime, time.Second)
+	suite.Require().Equal(order.TypeIsMarket, orders[0].Type)
+	suite.Require().Equal("exchange", orders[0].ExchangeName)
+	suite.Require().Equal("ETH-DAI", orders[0].PairSymbol)
+	suite.Require().Equal(order.SideIsBuy, orders[0].Side)
+	suite.Require().Equal(1.0, orders[0].Quantity)
+	suite.Require().Equal(1.0, orders[0].Price)
 
-	suite.Require().Equal("1970-01-01T00:01:00Z", ordersResp.Orders[1].Time)
-	suite.Require().Equal("market", ordersResp.Orders[1].Type)
-	suite.Require().Equal("exchange", ordersResp.Orders[1].ExchangeName)
-	suite.Require().Equal("ETH-DAI", ordersResp.Orders[1].PairSymbol)
-	suite.Require().Equal("sell", ordersResp.Orders[1].Side)
-	suite.Require().Equal(float32(1), ordersResp.Orders[1].Quantity)
-	suite.Require().Equal(float32(2), ordersResp.Orders[1].Price)
+	suite.Require().WithinDuration(time.Unix(60, 0), *orders[1].ExecutionTime, time.Second)
+	suite.Require().Equal(order.TypeIsMarket, orders[1].Type)
+	suite.Require().Equal("exchange", orders[1].ExchangeName)
+	suite.Require().Equal("ETH-DAI", orders[1].PairSymbol)
+	suite.Require().Equal(order.SideIsSell, orders[1].Side)
+	suite.Require().Equal(1.0, orders[1].Quantity)
+	suite.Require().Equal(2.0, orders[1].Price)
 }
 
 func tmpEnvVar(key, value string) (reset func()) {

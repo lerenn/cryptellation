@@ -7,9 +7,9 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/digital-feather/cryptellation/services/backtests/internal/domain/order"
 	"github.com/digital-feather/cryptellation/services/backtests/pkg/models/account"
 	"github.com/digital-feather/cryptellation/services/backtests/pkg/models/event"
+	"github.com/digital-feather/cryptellation/services/backtests/pkg/models/order"
 	candlesticksProto "github.com/digital-feather/cryptellation/services/candlesticks/pkg/client/proto"
 	"github.com/digital-feather/cryptellation/services/candlesticks/pkg/models/candlestick"
 	"github.com/digital-feather/cryptellation/services/candlesticks/pkg/models/pairs"
@@ -211,8 +211,8 @@ func (bt *Backtest) AddOrder(ord order.Order, cs *candlesticksProto.Candlestick)
 		bt.Accounts[ord.ExchangeName].Balances[baseSymbol] -= ord.Quantity
 	}
 
-	ord.ID = uint(len(bt.Orders))
-	ord.Time = bt.CurrentCsTick.Time
+	ord.ID = uint64(len(bt.Orders))
+	ord.ExecutionTime = &bt.CurrentCsTick.Time
 	ord.Price = price
 
 	bt.Orders = append(bt.Orders, ord)

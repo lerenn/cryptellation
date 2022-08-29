@@ -1,6 +1,10 @@
 package account
 
-import "errors"
+import (
+	"errors"
+
+	"github.com/digital-feather/cryptellation/services/backtests/pkg/client/proto"
+)
 
 var (
 	ErrInvalidBalanceAmount = errors.New("invalid-balance-amount")
@@ -23,4 +27,26 @@ func (a Account) Validate() error {
 	}
 
 	return nil
+}
+
+func (a Account) ToProtoBuff() *proto.Account {
+	assets := make(map[string]float32)
+	for n, a := range a.Balances {
+		assets[n] = float32(a)
+	}
+
+	return &proto.Account{
+		Assets: assets,
+	}
+}
+
+func FromProtoBuff(pb *proto.Account) Account {
+	assets := make(map[string]float64)
+	for n, a := range pb.Assets {
+		assets[n] = float64(a)
+	}
+
+	return Account{
+		Balances: assets,
+	}
 }
