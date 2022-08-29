@@ -3,7 +3,7 @@
 
 clean: ## Clean
 
-proto: ## Generate protobuff code from services
+proto: ## Generate protobuf code from services
 	@mkdir -p cryptellation/_genproto
 	@for PROTOFILE in $(shell find ../../ -name *.proto); do \
 		echo "Generating $$PROTOFILE"; \

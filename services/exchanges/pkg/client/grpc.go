@@ -42,7 +42,7 @@ func (client *GrpcClient) ReadExchanges(ctx context.Context, names ...string) ([
 
 	exchanges := make([]exchange.Exchange, len(resp.Exchanges))
 	for i, pbExch := range resp.Exchanges {
-		exchanges[i], err = exchange.FromProtoBuff(pbExch)
+		exchanges[i], err = exchange.FromProtoBuf(pbExch)
 		if err != nil {
 			return nil, err
 		}

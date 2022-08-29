@@ -25,7 +25,7 @@ func (cs Candlestick) Equal(b Candlestick) bool {
 	return o && h && l && c && v && u
 }
 
-func FromProtoBuff(pbc *proto.Candlestick) (time.Time, Candlestick, error) {
+func FromProtoBuf(pbc *proto.Candlestick) (time.Time, Candlestick, error) {
 	t, err := time.Parse(time.RFC3339, pbc.Time)
 	if err != nil {
 		return time.Time{}, Candlestick{}, err

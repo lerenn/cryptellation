@@ -69,7 +69,7 @@ func MapToArray(mappedExchanges map[string]Exchange) []Exchange {
 	return exchanges
 }
 
-func FromProtoBuff(pb *proto.Exchange) (Exchange, error) {
+func FromProtoBuf(pb *proto.Exchange) (Exchange, error) {
 	lastSyncTime, err := time.Parse(time.RFC3339Nano, pb.LastSyncTime)
 	if err != nil {
 		return Exchange{}, err

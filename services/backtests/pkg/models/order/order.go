@@ -38,7 +38,7 @@ func (o Order) Validate() error {
 	return nil
 }
 
-func (o Order) ToProtoBuff() *proto.Order {
+func (o Order) ToProtoBuf() *proto.Order {
 	var pt *string
 	if o.ExecutionTime != nil {
 		t := o.ExecutionTime.UTC().Format(time.RFC3339Nano)
@@ -57,7 +57,7 @@ func (o Order) ToProtoBuff() *proto.Order {
 	}
 }
 
-func FromProtoBuff(pb *proto.Order) (Order, error) {
+func FromProtoBuf(pb *proto.Order) (Order, error) {
 	var pt *time.Time
 	if pb.ExecutionTime != nil {
 		t, err := time.Parse(time.RFC3339Nano, *pb.ExecutionTime)

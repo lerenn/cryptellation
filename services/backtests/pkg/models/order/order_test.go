@@ -16,7 +16,7 @@ type OrderTestSuite struct {
 	suite.Suite
 }
 
-func (suite *OrderTestSuite) TestFromProtoBuff() {
+func (suite *OrderTestSuite) TestFromProtoBuf() {
 	pb := &proto.Order{
 		Id:            1,
 		ExecutionTime: OptString("1970-01-01T00:01:00Z"),
@@ -28,7 +28,7 @@ func (suite *OrderTestSuite) TestFromProtoBuff() {
 		Price:         3.0,
 	}
 
-	o, err := FromProtoBuff(pb)
+	o, err := FromProtoBuf(pb)
 	suite.Require().NoError(err)
 	suite.Require().Equal(uint64(1), o.ID)
 	suite.Require().WithinDuration(time.Unix(60, 0), *o.ExecutionTime, time.Second)
@@ -40,7 +40,7 @@ func (suite *OrderTestSuite) TestFromProtoBuff() {
 	suite.Require().Equal(3.0, o.Price)
 }
 
-func (suite *OrderTestSuite) TestToProtoBuff() {
+func (suite *OrderTestSuite) TestToProtoBuf() {
 	o := Order{
 		ID:            1,
 		ExecutionTime: OptTime(time.Unix(60, 0)),
@@ -52,7 +52,7 @@ func (suite *OrderTestSuite) TestToProtoBuff() {
 		Price:         3.0,
 	}
 
-	pb := o.ToProtoBuff()
+	pb := o.ToProtoBuf()
 	suite.Require().Equal(uint64(1), pb.Id)
 	suite.Require().Equal("1970-01-01T00:01:00Z", *pb.ExecutionTime)
 	suite.Require().Equal(TypeIsMarket.String(), pb.Type)

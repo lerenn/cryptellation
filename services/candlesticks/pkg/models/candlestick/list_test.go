@@ -320,7 +320,7 @@ func (suite *CandlestickListSuite) TestMergeIntoOne() {
 	// TODO
 }
 
-func (suite *CandlestickListSuite) TestLoadFromProtobuff() {
+func (suite *CandlestickListSuite) TestLoadFromProtoBuf() {
 	originalCs1 := Candlestick{
 		Open:   1,
 		Low:    0.5,
@@ -360,7 +360,7 @@ func (suite *CandlestickListSuite) TestLoadFromProtobuff() {
 		PairSymbol:   "BTC-USDC",
 		Period:       period.M1,
 	})
-	suite.Require().NoError(l.LoadFromProtoBuff(pbList))
+	suite.Require().NoError(l.LoadFromProtoBuf(pbList))
 
 	cs1, ok := l.Get(time.Unix(60, 0))
 	suite.Require().True(ok)

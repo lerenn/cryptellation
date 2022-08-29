@@ -227,9 +227,9 @@ func (l List) String() string {
 	return txt
 }
 
-func (l List) LoadFromProtoBuff(cs []*proto.Candlestick) error {
+func (l List) LoadFromProtoBuf(cs []*proto.Candlestick) error {
 	for _, c := range cs {
-		t, cs, err := FromProtoBuff(c)
+		t, cs, err := FromProtoBuf(c)
 		if err != nil {
 			return err
 		}

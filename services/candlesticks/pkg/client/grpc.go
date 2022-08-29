@@ -60,7 +60,7 @@ func (c *GrpcClient) ReadCandlesticks(ctx context.Context, payload ReadCandlesti
 		Period:       payload.Period,
 	})
 
-	return l, l.LoadFromProtoBuff(resp.Candlesticks)
+	return l, l.LoadFromProtoBuf(resp.Candlesticks)
 }
 
 func grpcDialOpts(grpcAddr string) []grpc.DialOption {

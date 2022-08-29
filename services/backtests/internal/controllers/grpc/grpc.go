@@ -145,7 +145,7 @@ func (g GrpcController) SubscribeToBacktestEvents(ctx context.Context, req *prot
 }
 
 func (g GrpcController) CreateBacktestOrder(ctx context.Context, req *proto.CreateBacktestOrderRequest) (*proto.CreateBacktestOrderResponse, error) {
-	order, err := order.FromProtoBuff(req.Order)
+	order, err := order.FromProtoBuf(req.Order)
 	if err != nil {
 		return nil, err
 	}
@@ -165,7 +165,7 @@ func (g GrpcController) BacktestAccounts(ctx context.Context, req *proto.Backtes
 	}
 
 	for exch, acc := range accounts {
-		resp.Accounts[exch] = acc.ToProtoBuff()
+		resp.Accounts[exch] = acc.ToProtoBuf()
 	}
 
 	return &resp, nil
@@ -179,7 +179,7 @@ func (g GrpcController) BacktestOrders(ctx context.Context, req *proto.BacktestO
 
 	formattedOrders := make([]*proto.Order, len(orders))
 	for i, o := range orders {
-		formattedOrders[i] = o.ToProtoBuff()
+		formattedOrders[i] = o.ToProtoBuf()
 	}
 
 	return &proto.BacktestOrdersResponse{

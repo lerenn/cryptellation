@@ -50,7 +50,7 @@ func New() (client *GrpcClient, close func() error, err error) {
 func (c *GrpcClient) CreateBacktest(ctx context.Context, start, end time.Time, accounts map[string]account.Account) (id uint64, err error) {
 	pbAccounts := make(map[string]*proto.Account)
 	for n, a := range accounts {
-		pbAccounts[n] = a.ToProtoBuff()
+		pbAccounts[n] = a.ToProtoBuf()
 	}
 
 	resp, err := c.grpcClient.CreateBacktest(ctx, &proto.CreateBacktestRequest{
@@ -84,7 +84,7 @@ func (c *GrpcClient) BacktestAccounts(ctx context.Context, backtestID uint64) (m
 
 	accounts := make(map[string]account.Account)
 	for n, a := range resp.Accounts {
-		accounts[n] = account.FromProtoBuff(a)
+		accounts[n] = account.FromProtoBuf(a)
 	}
 
 	return accounts, nil
@@ -93,7 +93,7 @@ func (c *GrpcClient) BacktestAccounts(ctx context.Context, backtestID uint64) (m
 func (c *GrpcClient) CreateBacktestOrder(ctx context.Context, backtestID uint64, o order.Order) error {
 	_, err := c.grpcClient.CreateBacktestOrder(ctx, &proto.CreateBacktestOrderRequest{
 		BacktestId: backtestID,
-		Order:      o.ToProtoBuff(),
+		Order:      o.ToProtoBuf(),
 	})
 	return err
 }
@@ -108,7 +108,7 @@ func (c *GrpcClient) BacktestOrders(ctx context.Context, backtestID uint64) ([]o
 
 	orders := make([]order.Order, len(resp.Orders))
 	for i, pb := range resp.Orders {
-		o, err := order.FromProtoBuff(pb)
+		o, err := order.FromProtoBuf(pb)
 		if err != nil {
 			return nil, err
 		}

@@ -43,7 +43,7 @@ func New() (*Client, error) {
 }
 
 func (c *Client) Publish(backtestID uint, event event.Event) error {
-	pbEvent, err := event.ToProtoBuff()
+	pbEvent, err := event.ToProtoBuf()
 	if err != nil {
 		return nil
 	}
@@ -68,9 +68,9 @@ func (c *Client) Subscribe(backtestID uint) (<-chan event.Event, error) {
 			return
 		}
 
-		evt, err := event.FromProtoBuff(pbEvent)
+		evt, err := event.FromProtoBuf(pbEvent)
 		if err != nil {
-			log.Printf("error when decoding protobuff tick from %s: %s\n", subject, err)
+			log.Printf("error when decoding protobuf tick from %s: %s\n", subject, err)
 			return
 		}
 

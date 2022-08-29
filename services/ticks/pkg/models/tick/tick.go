@@ -22,7 +22,7 @@ func (t *Tick) UnmarshalBinary(data []byte) error {
 	return json.Unmarshal(data, t)
 }
 
-func (t Tick) ToProtoBuff() *proto.Tick {
+func (t Tick) ToProtoBuf() *proto.Tick {
 	return &proto.Tick{
 		Time:       t.Time.Format(time.RFC3339Nano),
 		Exchange:   t.Exchange,
@@ -31,7 +31,7 @@ func (t Tick) ToProtoBuff() *proto.Tick {
 	}
 }
 
-func FromProtoBuff(pb *proto.Tick) (Tick, error) {
+func FromProtoBuf(pb *proto.Tick) (Tick, error) {
 	t, err := time.Parse(time.RFC3339Nano, pb.Time)
 	if err != nil {
 		return Tick{}, err

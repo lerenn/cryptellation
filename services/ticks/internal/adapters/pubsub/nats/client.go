@@ -44,7 +44,7 @@ func New() (*Client, error) {
 
 func (c *Client) Publish(tick tick.Tick) error {
 	subject := fmt.Sprintf(SubjectFormat, tick.Exchange, tick.PairSymbol)
-	data, err := proto.Marshal(tick.ToProtoBuff())
+	data, err := proto.Marshal(tick.ToProtoBuf())
 	if err != nil {
 		return err
 	}
@@ -63,9 +63,9 @@ func (c *Client) Subscribe(symbol string) (<-chan tick.Tick, error) {
 			return
 		}
 
-		t, err := tick.FromProtoBuff(pbTick)
+		t, err := tick.FromProtoBuf(pbTick)
 		if err != nil {
-			log.Printf("error when decoding protobuff tick from %s: %s\n", subject, err)
+			log.Printf("error when decoding protobuf tick from %s: %s\n", subject, err)
 			return
 		}
 

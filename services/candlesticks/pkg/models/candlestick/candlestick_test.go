@@ -65,7 +65,7 @@ func (suite *CandlestickSuite) TestCandlestickNotEqualUncomplete() {
 	suite.Require().False(a.Equal(b))
 }
 
-func (suite *CandlestickSuite) TestCandlestickFromProtobuff() {
+func (suite *CandlestickSuite) TestCandlestickFromProtoBuf() {
 	originalCs := Candlestick{
 		Open:   1,
 		Low:    0.5,
@@ -74,7 +74,7 @@ func (suite *CandlestickSuite) TestCandlestickFromProtobuff() {
 		Volume: 1000,
 	}
 
-	t, cs, err := FromProtoBuff(&proto.Candlestick{
+	t, cs, err := FromProtoBuf(&proto.Candlestick{
 		Time:   "1970-01-01T00:01:00Z",
 		Open:   1,
 		Low:    0.5,
@@ -88,7 +88,7 @@ func (suite *CandlestickSuite) TestCandlestickFromProtobuff() {
 	suite.Require().True(originalCs.Equal(cs))
 }
 
-func (suite *CandlestickSuite) TestCandlestickToProtoBuff() {
+func (suite *CandlestickSuite) TestCandlestickToProtoBuf() {
 	cs := Candlestick{
 		Open:   1,
 		Low:    0.5,

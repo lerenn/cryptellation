@@ -35,7 +35,7 @@ func New() (client *GrpcClient, close func() error, err error) {
 func (c *GrpcClient) CreateLivetest(ctx context.Context, accounts map[string]account.Account) (id uint, err error) {
 	pbAccounts := make(map[string]*proto.Account)
 	for n, a := range accounts {
-		pbAccounts[n] = accountToProtoBuff(a)
+		pbAccounts[n] = accountToProtoBuf(a)
 	}
 
 	resp, err := c.grpcClient.CreateLivetest(ctx, &proto.CreateLivetestRequest{

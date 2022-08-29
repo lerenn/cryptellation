@@ -55,7 +55,7 @@ func (suite *EventSuite) TestOnlyKeepEarliestSameTimeEvents() {
 	}
 }
 
-func (suite *EventSuite) TestToProtoBuffWithTickEvent() {
+func (suite *EventSuite) TestToProtoBufWithTickEvent() {
 	evt := Event{
 		Type: TypeIsTick,
 		Time: time.Unix(60, 0),
@@ -66,14 +66,14 @@ func (suite *EventSuite) TestToProtoBuffWithTickEvent() {
 		},
 	}
 
-	pb, err := evt.ToProtoBuff()
+	pb, err := evt.ToProtoBuf()
 	suite.NoError(err)
 	suite.Require().Equal(evt.Time.Format(time.RFC3339Nano), pb.Time)
 	suite.Require().Equal(evt.Type.String(), pb.Type)
 	suite.Require().Equal("{\"pair_symbol\":\"BTC-USDC\",\"price\":1.01,\"exchange\":\"exchange\"}", pb.Content)
 }
 
-func (suite *EventSuite) TestFromProtoBuffWithTickEvent() {
+func (suite *EventSuite) TestFromProtoBufWithTickEvent() {
 	pbTick := &proto.BacktestEvent{
 		Time:    "1970-01-01T00:01:00Z",
 		Type:    TypeIsTick.String(),
@@ -86,14 +86,14 @@ func (suite *EventSuite) TestFromProtoBuffWithTickEvent() {
 		Exchange:   "exchange",
 	}
 
-	t, err := FromProtoBuff(pbTick)
+	t, err := FromProtoBuf(pbTick)
 	suite.Require().NoError(err)
 	suite.Require().WithinDuration(time.Unix(60, 0).UTC(), t.Time, time.Millisecond)
 	suite.Require().Equal(TypeIsTick, t.Type)
 	suite.Require().Equal(expectedTick, t.Content)
 }
 
-func (suite *EventSuite) TestToProtoBuffWithStatusEvent() {
+func (suite *EventSuite) TestToProtoBufWithStatusEvent() {
 	evt := Event{
 		Type: TypeIsTick,
 		Time: time.Unix(60, 0),
@@ -102,14 +102,14 @@ func (suite *EventSuite) TestToProtoBuffWithStatusEvent() {
 		},
 	}
 
-	pb, err := evt.ToProtoBuff()
+	pb, err := evt.ToProtoBuf()
 	suite.NoError(err)
 	suite.Require().Equal(evt.Time.Format(time.RFC3339Nano), pb.Time)
 	suite.Require().Equal(evt.Type.String(), pb.Type)
 	suite.Require().Equal("{\"finished\":true}", pb.Content)
 }
 
-func (suite *EventSuite) TestFromProtoBuffWithStatusEvent() {
+func (suite *EventSuite) TestFromProtoBufWithStatusEvent() {
 	pbTick := &proto.BacktestEvent{
 		Time:    "1970-01-01T00:01:00Z",
 		Type:    TypeIsStatus.String(),
@@ -120,7 +120,7 @@ func (suite *EventSuite) TestFromProtoBuffWithStatusEvent() {
 		Finished: true,
 	}
 
-	t, err := FromProtoBuff(pbTick)
+	t, err := FromProtoBuf(pbTick)
 	suite.Require().NoError(err)
 	suite.Require().WithinDuration(time.Unix(60, 0).UTC(), t.Time, time.Millisecond)
 	suite.Require().Equal(TypeIsStatus, t.Type)

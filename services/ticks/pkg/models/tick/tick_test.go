@@ -33,7 +33,7 @@ func (suite *TickSuite) TestMarshalingJSON() {
 	suite.Require().Equal(tick, tick2)
 }
 
-func (suite *TickSuite) TestToProtoBuff() {
+func (suite *TickSuite) TestToProtoBuf() {
 	tick := Tick{
 		Time:       time.Unix(60, 0).UTC(),
 		PairSymbol: "BTC-USDC",
@@ -41,14 +41,14 @@ func (suite *TickSuite) TestToProtoBuff() {
 		Exchange:   "exchange",
 	}
 
-	pb := tick.ToProtoBuff()
+	pb := tick.ToProtoBuf()
 	suite.Require().Equal(tick.Time.Format(time.RFC3339Nano), pb.Time)
 	suite.Require().Equal(tick.PairSymbol, pb.PairSymbol)
 	suite.Require().Equal(float32(tick.Price), pb.Price)
 	suite.Require().Equal(tick.Exchange, pb.Exchange)
 }
 
-func (suite *TickSuite) TestFromProtoBuff() {
+func (suite *TickSuite) TestFromProtoBuf() {
 	pbTick := &proto.Tick{
 		Time:       "1970-01-01T00:01:00Z",
 		PairSymbol: "BTC-USDC",
@@ -56,7 +56,7 @@ func (suite *TickSuite) TestFromProtoBuff() {
 		Exchange:   "exchange",
 	}
 
-	t, err := FromProtoBuff(pbTick)
+	t, err := FromProtoBuf(pbTick)
 	suite.Require().NoError(err)
 	suite.Require().WithinDuration(time.Unix(60, 0).UTC(), t.Time, time.Millisecond)
 	suite.Require().Equal(pbTick.PairSymbol, t.PairSymbol)

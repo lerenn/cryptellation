@@ -3,7 +3,7 @@
 
 clean: test/clean ## Clean everything
 
-proto: ## Generate protobuff code
+proto: ## Generate protobuf code
 	@mkdir -p pkg/client/proto
 	@for PROTOFILE in $(shell find . -name *.proto); do \
 		echo "Generating $$PROTOFILE"; \

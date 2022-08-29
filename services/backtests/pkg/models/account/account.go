@@ -29,7 +29,7 @@ func (a Account) Validate() error {
 	return nil
 }
 
-func (a Account) ToProtoBuff() *proto.Account {
+func (a Account) ToProtoBuf() *proto.Account {
 	assets := make(map[string]float32)
 	for n, a := range a.Balances {
 		assets[n] = float32(a)
@@ -40,7 +40,7 @@ func (a Account) ToProtoBuff() *proto.Account {
 	}
 }
 
-func FromProtoBuff(pb *proto.Account) Account {
+func FromProtoBuf(pb *proto.Account) Account {
 	assets := make(map[string]float64)
 	for n, a := range pb.Assets {
 		assets[n] = float64(a)

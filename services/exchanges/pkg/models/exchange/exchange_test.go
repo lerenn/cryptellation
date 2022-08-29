@@ -73,8 +73,8 @@ func (suite *ExchangeSuite) TestMerge() {
 	}
 }
 
-func (suite *ExchangeSuite) TestFromProtoBuff() {
-	exch, err := FromProtoBuff(&proto.Exchange{
+func (suite *ExchangeSuite) TestFromProtoBuf() {
+	exch, err := FromProtoBuf(&proto.Exchange{
 		Name: "exchange",
 		Periods: []string{
 			"M1",
@@ -94,7 +94,7 @@ func (suite *ExchangeSuite) TestFromProtoBuff() {
 	suite.Require().WithinDuration(time.Unix(0, 0), exch.LastSyncTime, time.Second)
 }
 
-func (suite *ExchangeSuite) TestToProtoBuff() {
+func (suite *ExchangeSuite) TestToProtoBuf() {
 	e := Exchange{
 		Name:           "exchange",
 		PairsSymbols:   []string{"ABC-DEF"},
