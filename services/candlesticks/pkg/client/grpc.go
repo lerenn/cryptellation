@@ -40,6 +40,7 @@ type ReadCandlestickPayload struct {
 	Period       period.Symbol
 	Start        time.Time
 	End          time.Time
+	Limit        uint
 }
 
 func (c *GrpcClient) ReadCandlesticks(ctx context.Context, payload ReadCandlestickPayload) (*candlestick.List, error) {
@@ -49,6 +50,7 @@ func (c *GrpcClient) ReadCandlesticks(ctx context.Context, payload ReadCandlesti
 		PeriodSymbol: payload.Period.String(),
 		Start:        payload.Start.Format(time.RFC3339Nano),
 		End:          payload.End.Format(time.RFC3339Nano),
+		Limit:        int64(payload.Limit),
 	})
 	if err != nil {
 		return nil, err
