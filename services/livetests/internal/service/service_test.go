@@ -8,11 +8,11 @@ import (
 	"testing"
 	"time"
 
-	"github.com/digital-feather/cryptellation/services/backtests/pkg/models/account"
 	"github.com/digital-feather/cryptellation/services/livetests/internal/adapters/vdb"
 	"github.com/digital-feather/cryptellation/services/livetests/internal/adapters/vdb/redis"
 	"github.com/digital-feather/cryptellation/services/livetests/internal/controllers/grpc"
 	"github.com/digital-feather/cryptellation/services/livetests/pkg/client"
+	"github.com/digital-feather/cryptellation/services/livetests/pkg/models/account"
 	"github.com/stretchr/testify/suite"
 )
 

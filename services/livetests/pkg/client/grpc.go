@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/digital-feather/cryptellation/services/backtests/pkg/models/account"
 	"github.com/digital-feather/cryptellation/services/livetests/pkg/client/proto"
+	"github.com/digital-feather/cryptellation/services/livetests/pkg/models/account"
 	"golang.org/x/xerrors"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -35,7 +35,7 @@ func New() (client *GrpcClient, close func() error, err error) {
 func (c *GrpcClient) CreateLivetest(ctx context.Context, accounts map[string]account.Account) (id uint, err error) {
 	pbAccounts := make(map[string]*proto.Account)
 	for n, a := range accounts {
-		pbAccounts[n] = accountToProtoBuf(a)
+		pbAccounts[n] = a.ToProtoBuf()
 	}
 
 	resp, err := c.grpcClient.CreateLivetest(ctx, &proto.CreateLivetestRequest{

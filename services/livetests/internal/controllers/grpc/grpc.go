@@ -7,10 +7,10 @@ import (
 	"net"
 	"os"
 
-	"github.com/digital-feather/cryptellation/services/backtests/pkg/models/account"
 	app "github.com/digital-feather/cryptellation/services/livetests/internal/application"
 	"github.com/digital-feather/cryptellation/services/livetests/internal/domain/livetest"
 	"github.com/digital-feather/cryptellation/services/livetests/pkg/client/proto"
+	"github.com/digital-feather/cryptellation/services/livetests/pkg/models/account"
 	"golang.org/x/xerrors"
 	"google.golang.org/grpc"
 )
