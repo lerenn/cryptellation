@@ -1,6 +1,8 @@
 .PHONY: all
 .DEFAULT_GOAL := help
 
+DOCKER_COMPOSE := docker-compose -p cryptellation
+
 clean: test/clean ## Clean everything
 
 proto: ## Generate protobuf code
@@ -24,14 +26,14 @@ endif
 	@LOG_LEVEL=error golangci-lint run
 
 test/build:
-	@docker-compose build
+	@$(DOCKER_COMPOSE) build
 
 test/clean:
-	@docker-compose down
+	@$(DOCKER_COMPOSE) down
 	@rm -f cover.out
 
 test/run:
-	@docker-compose run tests
+	@$(DOCKER_COMPOSE) run ticks-testing
 
 test: test/run ## Run tests
 

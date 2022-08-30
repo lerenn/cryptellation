@@ -4,14 +4,19 @@
 CLIENTS := $(shell find clients -mindepth 1 -maxdepth 1 -type d | xargs -I{} basename "{}")
 SERVICES := $(shell find services -mindepth 1 -maxdepth 1 -type d | xargs -I{} basename "{}")
 
-docker/build: ## Build docker images
-	@DOCKER_BUILDKIT=1 docker-compose build
-
-docker/run: docker/build ## Run with docker
-	@docker-compose up
+DOCKER_COMPOSE := docker-compose -p cryptellation $(foreach var,$(SERVICES),-f services/$(var)/docker-compose.yml)
 
 docker/clean: ## Clean remaining docker containers
-	@docker-compose down
+	$(DOCKER_COMPOSE) down
+
+docker/build: ## Build docker images
+	DOCKER_BUILDKIT=1 $(DOCKER_COMPOSE) build
+
+docker/run: ## Run with docker
+	$(DOCKER_COMPOSE) up
+
+docker/status: ## Display docker status
+	$(DOCKER_COMPOSE) ps
 
 clean: docker/clean ## Clean everything
 	@for CLIENT in $(CLIENTS); do $(MAKE) -C clients/$$CLIENT clean || exit $?; done

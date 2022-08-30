@@ -1,39 +1,54 @@
 version: "3.5"
 
 services:
-    redis:
-        container_name: cryptellation-ticks-tests-redis
-        image: redis:alpine
-        hostname: redis
+    ticks-redis:
+        image: redis:6-alpine
         networks:
-            - cryptellation-ticks-tests-network
+            - network
     nats:
-        container_name: cryptellation-ticks-tests-nats
         image: nats:alpine
-        hostname: nats
+        ports:
+            - 4222:4222
         networks:
-            - cryptellation-ticks-tests-network
-    tests:
-        depends_on:
-            - redis
-            - nats
-        build: ./tests
-        image: cryptellation-ticks-tests
-        container_name: cryptellation-ticks-tests-instance
+            - network
+    ticks:
+        build:
+            context: .
+            dockerfile: build/package/Dockerfile
+        ports:
+            - 127.0.0.1:9005:9005
         env_file:
             - ../../.env
         environment:
-            - REDIS_URL=redis:6379
+            - REDIS_URL=ticks-redis:6379
+            - SERVICE_PORT=9005
+        depends_on:
+            - ticks-redis
+            - nats
+        networks:
+            - network
+    ticks-testing:
+        profiles:
+            - testing
+        depends_on:
+            - ticks-redis
+            - nats
+        build: ./tests
+        image: cryptellation-ticks-testing
+        env_file:
+            - ../../.env
+        environment:
+            - REDIS_URL=backtests-redis:6379
         volumes:
             - gocache:/go/pkg/mod
             - gobuild:/root/.cache/go-build
             - .:/code
         networks:
-            - cryptellation-ticks-tests-network
+            - network
 
 volumes:
     gocache:
     gobuild:
 
 networks:
-    cryptellation-ticks-tests-network:
+    network:

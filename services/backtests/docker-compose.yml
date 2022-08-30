@@ -1,39 +1,55 @@
 version: "3.5"
 
 services:
-    redis:
-        container_name: cryptellation-backtests-tests-redis
-        image: redis:alpine
-        hostname: redis
+    backtests-redis:
+        image: redis:6-alpine
         networks:
-            - cryptellation-backtests-tests-network
+            - network
     nats:
-        container_name: cryptellation-backtests-tests-nats
         image: nats:alpine
-        hostname: nats
+        ports:
+            - 4222:4222
         networks:
-            - cryptellation-backtests-tests-network
-    tests:
-        depends_on:
-            - redis
-            - nats
-        build: ./tests
-        image: cryptellation-backtests-tests
-        container_name: cryptellation-backtests-tests-instance
+            - network
+    backtests:
+        build:
+            context: .
+            dockerfile: build/package/Dockerfile
+        ports:
+            - 127.0.0.1:9004:9004
         env_file:
             - ../../.env
         environment:
-            - REDIS_URL=redis:6379
+            - REDIS_URL=backtests-redis:6379
+            - SERVICE_PORT=9004
+        depends_on:
+            - backtests-redis
+            - nats
+            # - candlesticks
+        networks:
+            - network
+    backtests-testing:
+        profiles:
+            - testing
+        depends_on:
+            - backtests-redis
+            - nats
+        build: ./tests
+        image: cryptellation-backtests-testing
+        env_file:
+            - ../../.env
+        environment:
+            - REDIS_URL=backtests-redis:6379
         volumes:
             - gocache:/go/pkg/mod
             - gobuild:/root/.cache/go-build
             - ./:/code
         networks:
-            - cryptellation-backtests-tests-network
+            - network
 
 volumes:
     gocache:
     gobuild:
 
 networks:
-    cryptellation-backtests-tests-network:
+    network:

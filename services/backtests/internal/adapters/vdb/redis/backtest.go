@@ -3,6 +3,7 @@ package redis
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log"
 
@@ -66,17 +67,17 @@ func (db *DB) CreateBacktest(ctx context.Context, bt *backtest.Backtest) error {
 }
 
 func (db *DB) ReadBacktest(ctx context.Context, id uint) (backtest.Backtest, error) {
+	bt := backtest.Backtest{}
+
 	bValue, err := db.client.Get(ctx, backtestKey(id)).Bytes()
-	if err != nil {
-		if err == redis.Nil {
-			err = vdb.ErrRecordNotFound
-		}
-		return backtest.Backtest{}, err
+	if errors.Is(err, redis.Nil) {
+		return bt, vdb.ErrRecordNotFound
+	} else if err != nil {
+		return bt, err
 	}
 
-	bt := backtest.Backtest{}
 	if err := json.Unmarshal(bValue, &bt); err != nil {
-		return backtest.Backtest{}, err
+		return bt, err
 	}
 
 	return bt, nil

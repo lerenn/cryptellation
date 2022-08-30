@@ -1,32 +1,47 @@
 version: "3.5"
 
 services:
-    redis:
-        container_name: cryptellation-livetests-tests-redis
-        image: redis:alpine
-        hostname: redis
+    livetests-redis:
+        image: redis:6-alpine
         networks:
-            - cryptellation-livetests-tests-network
-    tests:
-        depends_on:
-            - redis
-        build: ./tests
-        image: cryptellation-livetests-tests
-        container_name: cryptellation-livetests-tests-instance
+            - network
+    livetests:
+        build:
+            context: .
+            dockerfile: build/package/Dockerfile
+        ports:
+            - 127.0.0.1:9006:9006
         env_file:
             - ../../.env
         environment:
-            - REDIS_URL=redis:6379
+            - REDIS_URL=livetests-redis:6379
+            - SERVICE_PORT=9006
+        depends_on:
+            - livetests-redis
+            # - ticks
+        networks:
+            - network
+    livetests-testing:
+        profiles:
+            - testing
+        depends_on:
+            - livetests-redis
+        build: ./tests
+        image: cryptellation-livetests-testing
+        env_file:
+            - ../../.env
+        environment:
+            - REDIS_URL=backtests-redis:6379
         volumes:
             - gocache:/go/pkg/mod
             - gobuild:/root/.cache/go-build
             - .:/code
         networks:
-            - cryptellation-livetests-tests-network
+            - network
 
 volumes:
     gocache:
     gobuild:
 
 networks:
-    cryptellation-livetests-tests-network:
+    network:

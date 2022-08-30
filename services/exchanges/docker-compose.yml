@@ -1,14 +1,13 @@
 version: "3.5"
 
 services:
-    cockroachdb:
-        container_name: cryptellation-exchanges-tests-cockroachdb
+    exchanges-cockroachdb:
         image: cockroachdb/cockroach
         # ports:
         #     - 26257:26257
         #     - 26256:8080
         networks:
-            - cryptellation-exchanges-tests-network
+            - network
         ulimits:
             nofile:
                 soft: 65536
@@ -17,24 +16,43 @@ services:
         restart: unless-stopped
         volumes:
             - ../../services/exchanges/configs:/docker-entrypoint-initdb.d
-    tests:
-        depends_on:
-            - cockroachdb
-        build: ./tests
-        image: cryptellation-exchanges-tests
-        container_name: cryptellation-exchanges-tests-instance
+    exchanges:
+        build:
+            context: .
+            dockerfile: build/package/Dockerfile
+        ports:
+            - 127.0.0.1:9002:9002
         env_file:
             - ../../.env
+        environment:
+            - COCKROACHDB_HOST=exchanges-cockroachdb
+            - COCKROACHDB_DATABASE=exchanges
+            - SERVICE_PORT=9002
+        depends_on:
+            - exchanges-cockroachdb
+        networks:
+            - network
+    exchanges-testing:
+        profiles:
+            - testing
+        depends_on:
+            - exchanges-cockroachdb
+        build: ./tests
+        image: cryptellation-exchanges-testing
+        env_file:
+            - ../../.env
+        environment:
+            - COCKROACHDB_HOST=exchanges-cockroachdb
         volumes:
             - gocache:/go/pkg/mod
             - gobuild:/root/.cache/go-build
             - .:/code
         networks:
-            - cryptellation-exchanges-tests-network
+            - network
 
 volumes:
     gocache:
     gobuild:
 
 networks:
-    cryptellation-exchanges-tests-network:
+    network:

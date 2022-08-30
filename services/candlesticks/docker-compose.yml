@@ -1,14 +1,13 @@
 version: "3.5"
 
 services:
-    cockroachdb:
-        container_name: cryptellation-candlesticks-tests-cockroachdb
+    candlesticks-cockroachdb:
         image: cockroachdb/cockroach
         # ports:
         #     - 26257:26257
         #     - 26256:8080
         networks:
-            - cryptellation-candlesticks-tests-network
+            - network
         ulimits:
             nofile:
                 soft: 65536
@@ -17,24 +16,43 @@ services:
         restart: unless-stopped
         volumes:
             - ../../services/candlesticks/configs:/docker-entrypoint-initdb.d
-    tests:
-        depends_on:
-            - cockroachdb
-        build: ./tests
-        image: cryptellation-candlesticks-tests
-        container_name: cryptellation-candlesticks-tests-instance
+    candlesticks:
+        build:
+            context: .
+            dockerfile: build/package/Dockerfile
+        ports:
+            - 127.0.0.1:9003:9003
         env_file:
             - ../../.env
+        environment:
+            - COCKROACHDB_HOST=candlesticks-cockroachdb
+            - COCKROACHDB_DATABASE=candlesticks
+            - SERVICE_PORT=9003
+        depends_on:
+            - candlesticks-cockroachdb
+        networks:
+            - network
+    candlesticks-testing:
+        profiles:
+            - testing
+        depends_on:
+            - candlesticks-cockroachdb
+        build: ./tests
+        image: cryptellation-candlesticks-testing
+        env_file:
+            - ../../.env
+        environment:
+            - COCKROACHDB_HOST=candlesticks-cockroachdb
         volumes:
             - gocache:/go/pkg/mod
             - gobuild:/root/.cache/go-build
             - .:/code
         networks:
-            - cryptellation-candlesticks-tests-network
+            - network
 
 volumes:
     gocache:
     gobuild:
 
 networks:
-    cryptellation-candlesticks-tests-network:
+    network:

@@ -3,6 +3,7 @@ package redis
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log"
 
@@ -62,21 +63,21 @@ func (db *DB) CreateLivetest(ctx context.Context, bt *livetest.Livetest) error {
 	}
 
 	bt.ID = uint(incr)
-	return db.client.Set(ctx, livetestKey(uint(incr)), bt, 0).Err()
+	return db.client.Set(ctx, livetestKey(bt.ID), bt, 0).Err()
 }
 
 func (db *DB) ReadLivetest(ctx context.Context, id uint) (livetest.Livetest, error) {
+	bt := livetest.Livetest{}
+
 	bValue, err := db.client.Get(ctx, livetestKey(id)).Bytes()
-	if err != nil {
-		if err == redis.Nil {
-			err = vdb.ErrRecordNotFound
-		}
-		return livetest.Livetest{}, err
+	if errors.Is(err, redis.Nil) {
+		return bt, vdb.ErrRecordNotFound
+	} else if err != nil {
+		return bt, err
 	}
 
-	bt := livetest.Livetest{}
 	if err := json.Unmarshal(bValue, &bt); err != nil {
-		return livetest.Livetest{}, err
+		return bt, err
 	}
 
 	return bt, nil
