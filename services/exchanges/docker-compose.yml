@@ -18,8 +18,9 @@ services:
             - ../../services/exchanges/configs:/docker-entrypoint-initdb.d
     exchanges:
         build:
-            context: .
+            context: ../exchanges
             dockerfile: build/package/Dockerfile
+        image: "cryptellation/exchanges:${DOCKER_IMAGE_TAG}"
         ports:
             - 127.0.0.1:9002:9002
         env_file:
@@ -38,7 +39,6 @@ services:
         depends_on:
             - exchanges-cockroachdb
         build: ./tests
-        image: cryptellation-exchanges-testing
         env_file:
             - ../../.env
         environment:

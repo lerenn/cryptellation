@@ -13,8 +13,9 @@ services:
             - network
     backtests:
         build:
-            context: .
+            context: ../backtests
             dockerfile: build/package/Dockerfile
+        image: "cryptellation/backtests:${DOCKER_IMAGE_TAG}"
         ports:
             - 127.0.0.1:9004:9004
         env_file:
@@ -35,7 +36,6 @@ services:
             - backtests-redis
             - nats
         build: ./tests
-        image: cryptellation-backtests-testing
         env_file:
             - ../../.env
         environment:

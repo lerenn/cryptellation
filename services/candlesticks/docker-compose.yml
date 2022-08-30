@@ -18,8 +18,9 @@ services:
             - ../../services/candlesticks/configs:/docker-entrypoint-initdb.d
     candlesticks:
         build:
-            context: .
+            context: ../candlesticks
             dockerfile: build/package/Dockerfile
+        image: "cryptellation/candlesticks:${DOCKER_IMAGE_TAG}"
         ports:
             - 127.0.0.1:9003:9003
         env_file:
@@ -38,7 +39,6 @@ services:
         depends_on:
             - candlesticks-cockroachdb
         build: ./tests
-        image: cryptellation-candlesticks-testing
         env_file:
             - ../../.env
         environment:

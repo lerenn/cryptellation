@@ -13,8 +13,9 @@ services:
             - network
     ticks:
         build:
-            context: .
+            context: ../ticks
             dockerfile: build/package/Dockerfile
+        image: "cryptellation/ticks:${DOCKER_IMAGE_TAG}"
         ports:
             - 127.0.0.1:9005:9005
         env_file:
@@ -34,7 +35,6 @@ services:
             - ticks-redis
             - nats
         build: ./tests
-        image: cryptellation-ticks-testing
         env_file:
             - ../../.env
         environment:
