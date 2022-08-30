@@ -24,7 +24,8 @@ services:
         ports:
             - 127.0.0.1:9003:9003
         env_file:
-            - ../../.env
+            - ../../.services.env
+            - ../../.credentials.env
         environment:
             - COCKROACHDB_HOST=candlesticks-cockroachdb
             - COCKROACHDB_DATABASE=candlesticks
@@ -40,7 +41,8 @@ services:
             - candlesticks-cockroachdb
         build: ./tests
         env_file:
-            - ../../.env
+            - ../../.services.env
+            - ../../.credentials.env
         environment:
             - COCKROACHDB_HOST=candlesticks-cockroachdb
         volumes:

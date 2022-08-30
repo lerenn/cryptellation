@@ -25,19 +25,30 @@ different cryptographic markets, featuring **backtesting**, **livetesting** and
 
 ### Requirements
 
+* bash
 * docker
 * docker-compose
+* make
 * pip
 
 ### How to
 
 First launch the cryptellation system:
 
-    docker-compose up -d
+    # Copy the credentials.example.env and modify it
+    cp .credentials.example.env .credentials.env
+
+    # Launch the system
+    make docker/run
 
 Then you can use the client to execute an example:
 
+    # Go into python client directory 
     cd clients/python
+
+    # Install requirements and client
     pip install -r requirements.txt
     pip install -e .
+
+    # Launch example
     python examples/graph.py # Or any other from examples/ directory

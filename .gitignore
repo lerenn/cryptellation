@@ -1,3 +1,2 @@
-*.env
-!*.example.env
+.credentials.env
 cover.out

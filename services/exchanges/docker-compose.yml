@@ -24,7 +24,8 @@ services:
         ports:
             - 127.0.0.1:9002:9002
         env_file:
-            - ../../.env
+            - ../../.services.env
+            - ../../.credentials.env
         environment:
             - COCKROACHDB_HOST=exchanges-cockroachdb
             - COCKROACHDB_DATABASE=exchanges
@@ -40,7 +41,8 @@ services:
             - exchanges-cockroachdb
         build: ./tests
         env_file:
-            - ../../.env
+            - ../../.services.env
+            - ../../.credentials.env
         environment:
             - COCKROACHDB_HOST=exchanges-cockroachdb
         volumes:

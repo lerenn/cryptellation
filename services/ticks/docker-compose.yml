@@ -19,7 +19,8 @@ services:
         ports:
             - 127.0.0.1:9005:9005
         env_file:
-            - ../../.env
+            - ../../.services.env
+            - ../../.credentials.env
         environment:
             - REDIS_URL=ticks-redis:6379
             - SERVICE_PORT=9005
@@ -36,7 +37,8 @@ services:
             - nats
         build: ./tests
         env_file:
-            - ../../.env
+            - ../../.services.env
+            - ../../.credentials.env
         environment:
             - REDIS_URL=backtests-redis:6379
         volumes:

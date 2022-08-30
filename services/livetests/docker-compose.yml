@@ -13,7 +13,8 @@ services:
         ports:
             - 127.0.0.1:9006:9006
         env_file:
-            - ../../.env
+            - ../../.services.env
+            - ../../.credentials.env
         environment:
             - REDIS_URL=livetests-redis:6379
             - SERVICE_PORT=9006
@@ -29,7 +30,8 @@ services:
             - livetests-redis
         build: ./tests
         env_file:
-            - ../../.env
+            - ../../.services.env
+            - ../../.credentials.env
         environment:
             - REDIS_URL=livetests-redis:6379
         volumes:
