@@ -6,19 +6,26 @@ import (
 
 	"github.com/digital-feather/cryptellation/services/livetests/internal/adapters/vdb"
 	"github.com/digital-feather/cryptellation/services/livetests/internal/domain/livetest"
+	ticksClient "github.com/digital-feather/cryptellation/services/ticks/pkg/client"
 )
 
 type CreateHandler struct {
-	repository vdb.Port
+	repository  vdb.Port
+	ticksClient ticksClient.Client
 }
 
-func NewCreateHandler(repository vdb.Port) CreateHandler {
+func NewCreateHandler(repository vdb.Port, tClient ticksClient.Client) CreateHandler {
 	if repository == nil {
 		panic("nil repository")
 	}
 
+	if tClient == nil {
+		panic("nil tClient")
+	}
+
 	return CreateHandler{
-		repository: repository,
+		repository:  repository,
+		ticksClient: tClient,
 	}
 }
 
