@@ -4,29 +4,34 @@ import styles from './styles.module.css';
 
 const FeatureList = [
   {
-    title: 'Test and Run Strategies',
-    Svg: require('@site/static/img/logo.svg').default,
-    description: (
-      <>
-        TODO
-      </>
-    ),
-  },
-  {
     title: 'Connected to the world',
-    Svg: require('@site/static/img/logo.svg').default,
+    Svg: require('@site/static/img/cloud.svg').default,
     description: (
       <>
-        TODO
+        The Cryptellation system aims to connect your strategies to different
+        marketplaces and have different newsfeed to react to any opportunity.
       </>
     ),
   },
   {
-    title: 'Scalable and Production ready',
-    Svg: require('@site/static/img/logo.svg').default,
+    title: 'Test and run strategies',
+    Svg: require('@site/static/img/repeat-candlesticks.svg').default,
     description: (
       <>
-        TODO
+        With <b>backtesting</b>, <b>livetesting</b> and <b>live running</b> capabilities, you can test
+        your algorithms on any market conditions to control how it can react and
+        measure its <b>profitability</b>.
+      </>
+    ),
+  },
+  {
+    title: 'Scalable and production ready',
+    Svg: require('@site/static/img/production.svg').default,
+    description: (
+      <>
+        With <b>unit</b>, <b>integration</b> and <b>end-to-end</b> tests, the system aims
+        for <b>reliability</b> and <b>security</b>. Also, you can plug the system
+        into your favorites tools (Kubernetes, Prometheus, and more).
       </>
     ),
   },
