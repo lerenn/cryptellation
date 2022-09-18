@@ -1,5 +1,6 @@
 {
-    "label": "Services",
+    "position": 3,
+    "label": "Candlesticks",
     "link": {
         "type": "generated-index"
     }

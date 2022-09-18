@@ -1,5 +1,6 @@
 {
-    "label": "Ticks",
+    "position": 5,
+    "label": "Forward Tests",
     "link": {
         "type": "generated-index"
     }

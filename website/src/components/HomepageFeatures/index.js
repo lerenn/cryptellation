@@ -18,7 +18,7 @@ const FeatureList = [
     Svg: require('@site/static/img/repeat-candlesticks.svg').default,
     description: (
       <>
-        With <b>backtesting</b>, <b>livetesting</b> and <b>live running</b> capabilities, you can test
+        With <b>backtesting</b>, <b>forward testing</b> and <b>live running</b> capabilities, you can test
         your algorithms on any market conditions to control how it can react and
         measure its <b>profitability</b>.
       </>
@@ -31,7 +31,7 @@ const FeatureList = [
       <>
         With <b>unit</b>, <b>integration</b> and <b>end-to-end</b> tests, the system aims
         for <b>reliability</b> and <b>security</b>. Also, you can plug the system
-        into your favorites tools (Kubernetes, Prometheus, and more).
+        into your favorite administrator tools (Kubernetes, Prometheus, and more).
       </>
     ),
   },
