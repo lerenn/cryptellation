@@ -2,7 +2,7 @@
 sidebar_position: 1
 ---
 
-# Overview
+# System Design
 
 On this section, you will find all information to understand what every service
 is and how they are interacting with each other.
