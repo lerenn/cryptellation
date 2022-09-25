@@ -53,9 +53,8 @@ func newApplication(client candlesticksClient.Client) (app.Application, func(), 
 		},
 		Queries: app.Queries{
 			Backtest: app.BacktestQueries{
-				GetAccounts:  queriesBacktest.NewGetAccounts(repository),
-				GetOrders:    queriesBacktest.NewGetOrders(repository),
-				ListenEvents: queriesBacktest.NewListenEventsHandler(ps),
+				GetAccounts: queriesBacktest.NewGetAccounts(repository),
+				GetOrders:   queriesBacktest.NewGetOrders(repository),
 			},
 		},
 	}, func() {}, nil

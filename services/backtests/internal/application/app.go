@@ -22,9 +22,8 @@ type Commands struct {
 }
 
 type BacktestQueries struct {
-	ListenEvents queriesBacktest.ListenEventsHandler
-	GetAccounts  queriesBacktest.GetAccounts
-	GetOrders    queriesBacktest.GetOrders
+	GetAccounts queriesBacktest.GetAccounts
+	GetOrders   queriesBacktest.GetOrders
 }
 
 type Queries struct {
