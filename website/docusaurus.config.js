@@ -71,6 +71,11 @@ const config = {
             position: 'left',
             label: 'Documentation',
           },
+          {
+            to:'/donate',
+            position: 'right',
+            label: 'Donate',
+          },
         ],
       },
       footer: {
