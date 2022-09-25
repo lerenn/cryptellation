@@ -27,6 +27,10 @@ export default function Home() {
       description="Cryptellation Website Homepage">
       <HomepageHeader />
       <main>
+        <center>
+          <i>Please not that this software is still in development, please see 
+            the following lines as objectives</i>
+        </center>
         <HomepageFeatures />
       </main>
     </Layout>
