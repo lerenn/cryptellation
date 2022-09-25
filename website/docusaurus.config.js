@@ -17,6 +17,7 @@ const config = {
   // GitHub pages deployment config.
   organizationName: 'digital-feather',
   projectName: 'cryptellation',
+  trailingSlash: false,
 
   i18n: {
     defaultLocale: 'en',
@@ -49,7 +50,7 @@ const config = {
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
       colorMode: {
-        defaultMode: 'dark',
+        defaultMode: 'light',
         disableSwitch: false,
         respectPrefersColorScheme: true,
       },
