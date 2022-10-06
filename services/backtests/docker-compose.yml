@@ -4,13 +4,13 @@ services:
     backtests-redis:
         image: redis:6-alpine
         networks:
-            - network
+            - cryptellation-network
     nats:
         image: nats:alpine
         ports:
             - 4222:4222
         networks:
-            - network
+            - cryptellation-network
     backtests:
         build:
             context: ../backtests
@@ -29,7 +29,7 @@ services:
             - nats
             # - candlesticks
         networks:
-            - network
+            - cryptellation-network
     backtests-testing:
         profiles:
             - testing
@@ -47,11 +47,11 @@ services:
             - gobuild:/root/.cache/go-build
             - ./:/code
         networks:
-            - network
+            - cryptellation-network
 
 volumes:
     gocache:
     gobuild:
 
 networks:
-    network:
+    cryptellation-network:

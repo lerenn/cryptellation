@@ -7,7 +7,7 @@ services:
         #     - 26257:26257
         #     - 26256:8080
         networks:
-            - network
+            - cryptellation-network
         ulimits:
             nofile:
                 soft: 65536
@@ -34,7 +34,7 @@ services:
         depends_on:
             - candlesticks-cockroachdb
         networks:
-            - network
+            - cryptellation-network
     candlesticks-testing:
         profiles:
             - testing
@@ -52,11 +52,11 @@ services:
             - gobuild:/root/.cache/go-build
             - .:/code
         networks:
-            - network
+            - cryptellation-network
 
 volumes:
     gocache:
     gobuild:
 
 networks:
-    network:
+    cryptellation-network:

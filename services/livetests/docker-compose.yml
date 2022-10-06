@@ -4,7 +4,7 @@ services:
     livetests-redis:
         image: redis:6-alpine
         networks:
-            - network
+            - cryptellation-network
     livetests:
         build:
             context: ../livetests
@@ -22,7 +22,7 @@ services:
             - livetests-redis
             # - ticks
         networks:
-            - network
+            - cryptellation-network
     livetests-testing:
         profiles:
             - testing
@@ -39,11 +39,11 @@ services:
             - gobuild:/root/.cache/go-build
             - .:/code
         networks:
-            - network
+            - cryptellation-network
 
 volumes:
     gocache:
     gobuild:
 
 networks:
-    network:
+    cryptellation-network:
