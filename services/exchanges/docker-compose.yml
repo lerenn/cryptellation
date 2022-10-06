@@ -27,8 +27,9 @@ services:
             - ../../.services.env
             - ../../.credentials.env
         environment:
-            - COCKROACHDB_HOST=exchanges-cockroachdb
-            - COCKROACHDB_DATABASE=exchanges
+            - SQLDB_HOST=exchanges-cockroachdb
+            - SQLDB_PORT=26257
+            - SQLDB_DATABASE=exchanges
             - SERVICE_PORT=9002
         depends_on:
             - exchanges-cockroachdb
@@ -44,7 +45,8 @@ services:
             - ../../.services.env
             - ../../.credentials.env
         environment:
-            - COCKROACHDB_HOST=exchanges-cockroachdb
+            - SQLDB_HOST=exchanges-cockroachdb
+            - SQLDB_PORT=26257
         volumes:
             - gocache:/go/pkg/mod
             - gobuild:/root/.cache/go-build

@@ -1,4 +1,4 @@
-package cockroach
+package sql
 
 import (
 	"context"
@@ -19,12 +19,12 @@ type DB struct {
 func New() (*DB, error) {
 	var c Config
 	if err := c.Load().Validate(); err != nil {
-		return nil, fmt.Errorf("loading cockroachdb config: %w", err)
+		return nil, fmt.Errorf("loading sqldb config: %w", err)
 	}
 
 	client, err := gorm.Open(postgres.Open(c.URL()), DefaultGormConfig)
 	if err != nil {
-		return nil, fmt.Errorf("opening cockroachdb connection: %w", err)
+		return nil, fmt.Errorf("opening sqldb connection: %w", err)
 	}
 
 	db := &DB{

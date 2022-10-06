@@ -1,4 +1,4 @@
-package cockroach
+package sql
 
 import (
 	"context"
@@ -11,17 +11,17 @@ import (
 	"github.com/stretchr/testify/suite"
 )
 
-func TestCockroachDatabaseSuite(t *testing.T) {
-	suite.Run(t, new(CockroachDatabaseSuite))
+func TestSqlDatabaseSuite(t *testing.T) {
+	suite.Run(t, new(SqlDatabaseSuite))
 }
 
-type CockroachDatabaseSuite struct {
+type SqlDatabaseSuite struct {
 	suite.Suite
 	db *DB
 }
 
-func (suite *CockroachDatabaseSuite) SetupTest() {
-	defer tmpEnvVar("COCKROACHDB_DATABASE", "candlesticks")()
+func (suite *SqlDatabaseSuite) SetupTest() {
+	defer tmpEnvVar("SQLDB_DATABASE", "candlesticks")()
 
 	db, err := New()
 	suite.Require().NoError(err)
@@ -30,15 +30,15 @@ func (suite *CockroachDatabaseSuite) SetupTest() {
 	suite.db = db
 }
 
-func (suite *CockroachDatabaseSuite) TestNewWithURIError() {
-	defer tmpEnvVar("COCKROACHDB_HOST", "")()
+func (suite *SqlDatabaseSuite) TestNewWithURIError() {
+	defer tmpEnvVar("SQLDB_HOST", "")()
 
 	var err error
 	_, err = New()
 	suite.Require().Error(err)
 }
 
-func (suite *CockroachDatabaseSuite) TestCreate() {
+func (suite *SqlDatabaseSuite) TestCreate() {
 	list := candlestick.NewList(candlestick.ListID{
 		ExchangeName: "exchange",
 		PairSymbol:   "ETH-USDC",
@@ -71,7 +71,7 @@ func (suite *CockroachDatabaseSuite) TestCreate() {
 	suite.True(cs == rcs)
 }
 
-func (suite *CockroachDatabaseSuite) TestCreateTwice() {
+func (suite *SqlDatabaseSuite) TestCreateTwice() {
 	list := candlestick.NewList(candlestick.ListID{
 		ExchangeName: "exchange",
 		PairSymbol:   "ETH-USDC",
@@ -91,7 +91,7 @@ func (suite *CockroachDatabaseSuite) TestCreateTwice() {
 	suite.Require().Error(suite.db.CreateCandlesticks(context.Background(), list))
 }
 
-func (suite *CockroachDatabaseSuite) TestRead() {
+func (suite *SqlDatabaseSuite) TestRead() {
 	// Create targeted exchange, pair, period
 	list := candlestick.NewList(candlestick.ListID{
 		ExchangeName: "exchange",
@@ -242,7 +242,7 @@ func (suite *CockroachDatabaseSuite) TestRead() {
 	suite.Require().Equal(c, rc)
 }
 
-func (suite *CockroachDatabaseSuite) TestReadLimit() {
+func (suite *SqlDatabaseSuite) TestReadLimit() {
 	// Create targeted exchange, pair, period
 	list := candlestick.NewList(candlestick.ListID{
 		ExchangeName: "exchange",
@@ -311,7 +311,7 @@ func (suite *CockroachDatabaseSuite) TestReadLimit() {
 	suite.Require().Equal(c, rc)
 }
 
-func (suite *CockroachDatabaseSuite) TestReadEmpty() {
+func (suite *SqlDatabaseSuite) TestReadEmpty() {
 	t, err := time.Parse(time.RFC3339, "1993-11-15T11:29:00Z")
 	suite.Require().NoError(err)
 	recvList := candlestick.NewList(candlestick.ListID{
@@ -323,7 +323,7 @@ func (suite *CockroachDatabaseSuite) TestReadEmpty() {
 	suite.Require().Equal(0, recvList.Len())
 }
 
-func (suite *CockroachDatabaseSuite) TestUpdate() {
+func (suite *SqlDatabaseSuite) TestUpdate() {
 	list := candlestick.NewList(candlestick.ListID{
 		ExchangeName: "exchange",
 		PairSymbol:   "ETH-USDC",
@@ -370,7 +370,7 @@ func (suite *CockroachDatabaseSuite) TestUpdate() {
 	suite.Require().Equal(cs, rcs)
 }
 
-func (suite *CockroachDatabaseSuite) TestUpdateInexistantTwice() {
+func (suite *SqlDatabaseSuite) TestUpdateInexistantTwice() {
 	list := candlestick.NewList(candlestick.ListID{
 		ExchangeName: "exchange",
 		PairSymbol:   "ETH-USDC",
@@ -390,7 +390,7 @@ func (suite *CockroachDatabaseSuite) TestUpdateInexistantTwice() {
 	suite.Require().Error(suite.db.UpdateCandlesticks(context.Background(), list))
 }
 
-func (suite *CockroachDatabaseSuite) TestDelete() {
+func (suite *SqlDatabaseSuite) TestDelete() {
 	list := candlestick.NewList(candlestick.ListID{
 		ExchangeName: "exchange",
 		PairSymbol:   "ETH-USDC",

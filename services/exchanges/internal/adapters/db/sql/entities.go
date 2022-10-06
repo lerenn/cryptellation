@@ -1,4 +1,4 @@
-package cockroach
+package sql
 
 import (
 	"time"

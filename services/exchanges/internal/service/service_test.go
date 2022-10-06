@@ -8,7 +8,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/digital-feather/cryptellation/services/exchanges/internal/adapters/db/cockroach"
+	sqldb "github.com/digital-feather/cryptellation/services/exchanges/internal/adapters/db/sql"
 	"github.com/digital-feather/cryptellation/services/exchanges/internal/controllers/grpc"
 	"github.com/digital-feather/cryptellation/services/exchanges/pkg/client"
 	"github.com/stretchr/testify/suite"
@@ -24,13 +24,13 @@ func TestServiceSuite(t *testing.T) {
 
 type ServiceSuite struct {
 	suite.Suite
-	db        *cockroach.DB
+	db        *sqldb.DB
 	client    client.Client
 	closeTest func() error
 }
 
 func (suite *ServiceSuite) SetupSuite() {
-	defer tmpEnvVar("COCKROACHDB_DATABASE", testDatabase)()
+	defer tmpEnvVar("SQLDB_DATABASE", testDatabase)()
 	defer tmpEnvVar("CRYPTELLATION_EXCHANGES_GRPC_URL", ":9003")()
 
 	a, err := newMockApplication()
@@ -56,9 +56,9 @@ func (suite *ServiceSuite) SetupSuite() {
 }
 
 func (suite *ServiceSuite) SetupTest() {
-	defer tmpEnvVar("COCKROACHDB_DATABASE", testDatabase)()
+	defer tmpEnvVar("SQLDB_DATABASE", testDatabase)()
 
-	db, err := cockroach.New()
+	db, err := sqldb.New()
 	suite.Require().NoError(err)
 	suite.Require().NoError(db.Reset())
 

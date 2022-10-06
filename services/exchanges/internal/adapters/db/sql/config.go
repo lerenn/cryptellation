@@ -1,4 +1,4 @@
-package cockroach
+package sql
 
 import (
 	"errors"
@@ -17,7 +17,7 @@ var (
 )
 
 var (
-	ErrInvalidConfig = errors.New("invalid cockroach config")
+	ErrInvalidConfig = errors.New("invalid sql config")
 )
 
 type Config struct {
@@ -29,11 +29,11 @@ type Config struct {
 }
 
 func (c *Config) Load() *Config {
-	c.Host = os.Getenv("COCKROACHDB_HOST")
-	c.Port, _ = strconv.Atoi(os.Getenv("COCKROACHDB_PORT"))
-	c.User = os.Getenv("COCKROACHDB_USER")
-	c.Password = os.Getenv("COCKROACHDB_PASSWORD")
-	c.Database = os.Getenv("COCKROACHDB_DATABASE")
+	c.Host = os.Getenv("SQLDB_HOST")
+	c.Port, _ = strconv.Atoi(os.Getenv("SQLDB_PORT"))
+	c.User = os.Getenv("SQLDB_USER")
+	c.Password = os.Getenv("SQLDB_PASSWORD")
+	c.Database = os.Getenv("SQLDB_DATABASE")
 
 	return c
 }

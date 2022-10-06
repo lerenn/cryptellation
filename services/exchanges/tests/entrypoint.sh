@@ -2,8 +2,8 @@
 
 set -eo pipefail
 
-# Wait for CockroachDB
-./scripts/wait-cockroachdb.sh
+# Wait for SqlDB
+./scripts/wait-sqldb.sh
 
 # Launch tests
 go test -p 1 ./... -coverprofile cover.out

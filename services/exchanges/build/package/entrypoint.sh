@@ -2,7 +2,7 @@
 
 set -eo pipefail
 
-# Wait for CockroachDB
-/scripts/wait-cockroachdb.sh
+# Wait for SqlDB
+/scripts/wait-sqldb.sh
 
 $@

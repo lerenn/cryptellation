@@ -1,7 +1,7 @@
 package service
 
 import (
-	"github.com/digital-feather/cryptellation/services/candlesticks/internal/adapters/db/cockroach"
+	sqldb "github.com/digital-feather/cryptellation/services/candlesticks/internal/adapters/db/sql"
 	"github.com/digital-feather/cryptellation/services/candlesticks/internal/adapters/exchanges"
 	"github.com/digital-feather/cryptellation/services/candlesticks/internal/adapters/exchanges/binance"
 	app "github.com/digital-feather/cryptellation/services/candlesticks/internal/application"
@@ -30,7 +30,7 @@ func newMockApplication() (app.Application, error) {
 }
 
 func newApplication(services map[string]exchanges.Port) (app.Application, error) {
-	repository, err := cockroach.New()
+	repository, err := sqldb.New()
 	if err != nil {
 		return app.Application{}, err
 	}

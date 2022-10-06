@@ -8,7 +8,7 @@ the system as a whole.
 
 ## Databases
 
-* CockroachDB
+* SQL Databases (CockroachDB, ...)
 
 ## Event Brokers
 

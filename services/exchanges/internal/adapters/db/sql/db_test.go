@@ -1,4 +1,4 @@
-package cockroach
+package sql
 
 import (
 	"context"
@@ -10,17 +10,17 @@ import (
 	"github.com/stretchr/testify/suite"
 )
 
-func TestCockroachDatabaseSuite(t *testing.T) {
-	suite.Run(t, new(CockroachDatabaseSuite))
+func TestSqlDatabaseSuite(t *testing.T) {
+	suite.Run(t, new(SqlDatabaseSuite))
 }
 
-type CockroachDatabaseSuite struct {
+type SqlDatabaseSuite struct {
 	suite.Suite
 	db *DB
 }
 
-func (suite *CockroachDatabaseSuite) SetupTest() {
-	defer tmpEnvVar("COCKROACHDB_DATABASE", "exchanges")()
+func (suite *SqlDatabaseSuite) SetupTest() {
+	defer tmpEnvVar("SQLDB_DATABASE", "exchanges")()
 
 	db, err := New()
 	suite.Require().NoError(err)
@@ -29,15 +29,15 @@ func (suite *CockroachDatabaseSuite) SetupTest() {
 	suite.db = db
 }
 
-func (suite *CockroachDatabaseSuite) TestNewWithURIError() {
-	defer tmpEnvVar("COCKROACHDB_HOST", "")()
+func (suite *SqlDatabaseSuite) TestNewWithURIError() {
+	defer tmpEnvVar("SQLDB_HOST", "")()
 
 	var err error
 	_, err = New()
 	suite.Error(err)
 }
 
-func (suite *CockroachDatabaseSuite) TestCreateRead() {
+func (suite *SqlDatabaseSuite) TestCreateRead() {
 	as := suite.Require()
 
 	// Given a exchange
@@ -65,7 +65,7 @@ func (suite *CockroachDatabaseSuite) TestCreateRead() {
 	as.WithinDuration(time.Now().UTC(), rp[0].LastSyncTime, time.Second)
 }
 
-func (suite *CockroachDatabaseSuite) TestCreateReadInexistant() {
+func (suite *SqlDatabaseSuite) TestCreateReadInexistant() {
 	as := suite.Require()
 
 	// When we read an inexistant exchange
@@ -76,7 +76,7 @@ func (suite *CockroachDatabaseSuite) TestCreateReadInexistant() {
 	as.Len(exchanges, 0)
 }
 
-func (suite *CockroachDatabaseSuite) TestReadAll() {
+func (suite *SqlDatabaseSuite) TestReadAll() {
 	as := suite.Require()
 
 	// Given 3 created exchanges
@@ -118,7 +118,7 @@ func (suite *CockroachDatabaseSuite) TestReadAll() {
 	}
 }
 
-func (suite *CockroachDatabaseSuite) TestUpdate() {
+func (suite *SqlDatabaseSuite) TestUpdate() {
 	as := suite.Require()
 
 	// Given a created exchange
@@ -156,7 +156,7 @@ func (suite *CockroachDatabaseSuite) TestUpdate() {
 	as.WithinDuration(time.Now().UTC(), rp[0].LastSyncTime, time.Second)
 }
 
-func (suite *CockroachDatabaseSuite) TestDelete() {
+func (suite *SqlDatabaseSuite) TestDelete() {
 	as := suite.Require()
 
 	// Given twp created exchange
@@ -201,7 +201,7 @@ func (suite *CockroachDatabaseSuite) TestDelete() {
 	as.Contains(periods, Period{Symbol: "M1"})
 }
 
-func (suite *CockroachDatabaseSuite) TestReset() {
+func (suite *SqlDatabaseSuite) TestReset() {
 	as := suite.Require()
 
 	// Given a created exchange
@@ -215,7 +215,7 @@ func (suite *CockroachDatabaseSuite) TestReset() {
 	as.NoError(suite.db.CreateExchanges(context.Background(), p))
 
 	// When we reset the DB
-	defer tmpEnvVar("COCKROACHDB_DATABASE", "exchanges")()
+	defer tmpEnvVar("SQLDB_DATABASE", "exchanges")()
 	as.NoError(suite.db.Reset())
 
 	// Then there is no exchange left

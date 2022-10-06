@@ -9,7 +9,7 @@ import (
 	"time"
 
 	"github.com/digital-feather/cryptellation/services/candlesticks/internal/adapters/db"
-	"github.com/digital-feather/cryptellation/services/candlesticks/internal/adapters/db/cockroach"
+	sqldb "github.com/digital-feather/cryptellation/services/candlesticks/internal/adapters/db/sql"
 	"github.com/digital-feather/cryptellation/services/candlesticks/internal/controllers/grpc"
 	"github.com/digital-feather/cryptellation/services/candlesticks/pkg/client"
 	"github.com/digital-feather/cryptellation/services/candlesticks/pkg/models/candlestick"
@@ -33,7 +33,7 @@ type ServiceSuite struct {
 }
 
 func (suite *ServiceSuite) SetupSuite() {
-	defer tmpEnvVar("COCKROACHDB_DATABASE", testDatabase)()
+	defer tmpEnvVar("SQLDB_DATABASE", testDatabase)()
 	defer tmpEnvVar("CRYPTELLATION_CANDLESTICKS_GRPC_URL", ":9002")()
 
 	a, err := newMockApplication()
@@ -59,9 +59,9 @@ func (suite *ServiceSuite) SetupSuite() {
 }
 
 func (suite *ServiceSuite) SetupTest() {
-	defer tmpEnvVar("COCKROACHDB_DATABASE", testDatabase)()
+	defer tmpEnvVar("SQLDB_DATABASE", testDatabase)()
 
-	db, err := cockroach.New()
+	db, err := sqldb.New()
 	suite.Require().NoError(err)
 	suite.Require().NoError(db.Reset())
 

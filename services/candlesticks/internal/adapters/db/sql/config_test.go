@@ -1,4 +1,4 @@
-package cockroach
+package sql
 
 import (
 	"testing"
@@ -31,11 +31,11 @@ func (suite *ConfigSuite) TestLoadValidate() {
 
 	var config Config
 	for i, c := range cases {
-		defer tmpEnvVar("COCKROACHDB_HOST", c.Host)()
-		defer tmpEnvVar("COCKROACHDB_PORT", c.Port)()
-		defer tmpEnvVar("COCKROACHDB_USER", c.User)()
-		defer tmpEnvVar("COCKROACHDB_PASSWORD", c.Password)()
-		defer tmpEnvVar("COCKROACHDB_DATABASE", c.Database)()
+		defer tmpEnvVar("SQLDB_HOST", c.Host)()
+		defer tmpEnvVar("SQLDB_PORT", c.Port)()
+		defer tmpEnvVar("SQLDB_USER", c.User)()
+		defer tmpEnvVar("SQLDB_PASSWORD", c.Password)()
+		defer tmpEnvVar("SQLDB_DATABASE", c.Database)()
 
 		err := config.Load().Validate()
 		suite.Require().Equal(c.Err, err, i)
