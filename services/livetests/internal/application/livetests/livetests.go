@@ -1,4 +1,4 @@
-package cmdLivetest
+package livetests
 
 import (
 	"context"
@@ -8,21 +8,21 @@ import (
 	"github.com/digital-feather/cryptellation/services/livetests/internal/domain/livetest"
 )
 
-type CreateHandler struct {
+type Livetests struct {
 	repository vdb.Port
 }
 
-func NewCreateHandler(repository vdb.Port) CreateHandler {
+func New(repository vdb.Port) *Livetests {
 	if repository == nil {
 		panic("nil repository")
 	}
 
-	return CreateHandler{
+	return &Livetests{
 		repository: repository,
 	}
 }
 
-func (h CreateHandler) Handle(ctx context.Context, req livetest.NewPayload) (id uint, err error) {
+func (h Livetests) Create(ctx context.Context, req livetest.NewPayload) (id uint, err error) {
 	bt, err := livetest.New(ctx, req)
 	if err != nil {
 		return 0, fmt.Errorf("creating a new livetest from request: %w", err)

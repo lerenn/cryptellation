@@ -8,7 +8,7 @@ import (
 	"os"
 
 	"github.com/digital-feather/cryptellation/services/backtests/pkg/models/account"
-	app "github.com/digital-feather/cryptellation/services/livetests/internal/application"
+	"github.com/digital-feather/cryptellation/services/livetests/internal/application"
 	"github.com/digital-feather/cryptellation/services/livetests/internal/domain/livetest"
 	"github.com/digital-feather/cryptellation/services/livetests/pkg/client/proto"
 	"golang.org/x/xerrors"
@@ -16,12 +16,12 @@ import (
 )
 
 type GrpcController struct {
-	application app.Application
-	server      *grpc.Server
+	app    *application.Application
+	server *grpc.Server
 }
 
-func New(application app.Application) GrpcController {
-	return GrpcController{application: application}
+func New(application *application.Application) GrpcController {
+	return GrpcController{app: application}
 }
 
 func (g *GrpcController) Run() error {
@@ -78,7 +78,7 @@ func (g GrpcController) CreateLivetest(ctx context.Context, req *proto.CreateLiv
 		return nil, err
 	}
 
-	id, err := g.application.Commands.Livetest.Create.Handle(ctx, newPayload)
+	id, err := g.app.Livetests.Create(ctx, newPayload)
 	if err != nil {
 		return nil, err
 	}
