@@ -34,7 +34,7 @@ type ServiceSuite struct {
 func (suite *ServiceSuite) SetupSuite() {
 	defer tmpEnvVar("CRYPTELLATION_BACKTESTS_GRPC_URL", ":9004")()
 
-	a, closeApplication, err := NewMockedApplication()
+	a, err := NewMockedApplication()
 	suite.Require().NoError(err)
 
 	rpcUrl := os.Getenv("CRYPTELLATION_BACKTESTS_GRPC_URL")
@@ -53,7 +53,6 @@ func (suite *ServiceSuite) SetupSuite() {
 	suite.closeTest = func() error {
 		err := closeClient()
 		go grpcController.Stop() // TODO: remove goroutine
-		closeApplication()
 		return err
 	}
 
