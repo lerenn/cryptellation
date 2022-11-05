@@ -15,9 +15,9 @@ func NewApplication() (*application.Application, error) {
 	return application.New(exchanges)
 }
 
-func instanciateExchanges() (map[string]exchanges.Port, error) {
+func instanciateExchanges() (map[string]exchanges.Adapter, error) {
 	var err error
-	exchanges := make(map[string]exchanges.Port)
+	exchanges := make(map[string]exchanges.Adapter)
 
 	exchanges[binance.Name], err = binance.New()
 	if err != nil {
@@ -28,7 +28,7 @@ func instanciateExchanges() (map[string]exchanges.Port, error) {
 }
 
 func NewMockedApplication() (*application.Application, error) {
-	services := map[string]exchanges.Port{
+	services := map[string]exchanges.Adapter{
 		MockExchangeName: &MockExchangeService{},
 	}
 

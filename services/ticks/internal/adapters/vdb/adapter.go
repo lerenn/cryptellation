@@ -11,7 +11,7 @@ const (
 	Tries      = 20
 )
 
-type Port interface {
+type Adapter interface {
 	IncrementSymbolListenerCount(ctx context.Context, exchange, pairSymbol string) (int64, error)
 	DecrementSymbolListenerCount(ctx context.Context, exchange, pairSymbol string) (int64, error)
 	GetSymbolListenerCount(ctx context.Context, exchange, pairSymbol string) (int64, error)

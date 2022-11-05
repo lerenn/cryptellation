@@ -13,7 +13,7 @@ type Application struct {
 	Ticks ticks.Operator
 }
 
-func New(exchanges map[string]exchanges.Port) (*Application, error) {
+func New(exchanges map[string]exchanges.Adapter) (*Application, error) {
 	repository, err := redis.New()
 	if err != nil {
 		return nil, err

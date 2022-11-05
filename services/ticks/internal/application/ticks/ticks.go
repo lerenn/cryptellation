@@ -13,12 +13,12 @@ import (
 )
 
 type Ticks struct {
-	vdb       vdb.Port
-	pubsub    pubsub.Port
-	exchanges map[string]exchanges.Port
+	vdb       vdb.Adapter
+	pubsub    pubsub.Adapter
+	exchanges map[string]exchanges.Adapter
 }
 
-func New(ps pubsub.Port, db vdb.Port, exchanges map[string]exchanges.Port) *Ticks {
+func New(ps pubsub.Adapter, db vdb.Adapter, exchanges map[string]exchanges.Adapter) *Ticks {
 	if ps == nil {
 		panic("nil pubsub")
 	}
@@ -84,8 +84,8 @@ func (t Ticks) launchListener(exchange, pairSymbol string) error {
 type newListenerPayload struct {
 	exchange   string
 	pairSymbol string
-	db         vdb.Port
-	ps         pubsub.Port
+	db         vdb.Adapter
+	ps         pubsub.Adapter
 	ticksChan  chan tick.Tick
 	stopChan   chan struct{}
 }

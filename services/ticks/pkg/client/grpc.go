@@ -16,7 +16,7 @@ import (
 
 type GrpcClient struct {
 	grpcClient proto.TicksServiceClient
-	psClient   pubsub.Port
+	psClient   pubsub.Adapter
 }
 
 func New() (client *GrpcClient, close func() error, err error) {
