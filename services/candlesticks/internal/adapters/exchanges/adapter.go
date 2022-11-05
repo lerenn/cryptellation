@@ -8,7 +8,7 @@ import (
 	"github.com/digital-feather/cryptellation/services/candlesticks/pkg/models/period"
 )
 
-type Port interface {
+type Adapter interface {
 	Candlesticks(pairSymbol string, period period.Symbol) (CandlesticksService, error)
 }
 

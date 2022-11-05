@@ -27,7 +27,7 @@ func TestServiceSuite(t *testing.T) {
 
 type ServiceSuite struct {
 	suite.Suite
-	db        db.Port
+	db        db.Adapter
 	client    client.Client
 	closeTest func() error
 }

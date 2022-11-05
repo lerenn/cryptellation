@@ -16,11 +16,11 @@ import (
 var _ Operator = (*Candlesticks)(nil)
 
 type Candlesticks struct {
-	repository db.Port
-	services   map[string]exchanges.Port
+	repository db.Adapter
+	services   map[string]exchanges.Adapter
 }
 
-func New(repository db.Port, services map[string]exchanges.Port) Candlesticks {
+func New(repository db.Adapter, services map[string]exchanges.Adapter) Candlesticks {
 	if repository == nil {
 		panic("nil repository")
 	}

@@ -12,7 +12,7 @@ func NewApplication() (*application.Application, error) {
 		return nil, err
 	}
 
-	services := map[string]exchanges.Port{
+	services := map[string]exchanges.Adapter{
 		binance.Name: binanceService,
 	}
 
@@ -20,7 +20,7 @@ func NewApplication() (*application.Application, error) {
 }
 
 func newMockApplication() (*application.Application, error) {
-	services := map[string]exchanges.Port{
+	services := map[string]exchanges.Adapter{
 		"mock_exchange": &MockExchangeService{},
 	}
 

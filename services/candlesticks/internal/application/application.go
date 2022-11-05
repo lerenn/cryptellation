@@ -10,7 +10,7 @@ type Application struct {
 	Candlesticks candlesticks.Operator
 }
 
-func New(services map[string]exchanges.Port) (*Application, error) {
+func New(services map[string]exchanges.Adapter) (*Application, error) {
 	repository, err := sql.New()
 	if err != nil {
 		return nil, err
