@@ -18,12 +18,12 @@ import (
 )
 
 type GrpcController struct {
-	application *app.Application
-	server      *grpc.Server
+	app    *app.Application
+	server *grpc.Server
 }
 
 func New(application *app.Application) GrpcController {
-	return GrpcController{application: application}
+	return GrpcController{app: application}
 }
 
 func (g *GrpcController) Run() error {
@@ -80,7 +80,7 @@ func (g GrpcController) CreateBacktest(ctx context.Context, req *proto.CreateBac
 		return nil, err
 	}
 
-	id, err := g.application.Backtests.Create(ctx, newPayload)
+	id, err := g.app.Backtests.Create(ctx, newPayload)
 	if err != nil {
 		return nil, err
 	}
@@ -132,7 +132,7 @@ func fromCreateBacktestRequest(req *proto.CreateBacktestRequest) (backtest.NewPa
 }
 
 func (g GrpcController) AdvanceBacktest(ctx context.Context, req *proto.AdvanceBacktestRequest) (*proto.AdvanceBacktestResponse, error) {
-	if err := g.application.Backtests.Advance(ctx, uint(req.Id)); err != nil {
+	if err := g.app.Backtests.Advance(ctx, uint(req.Id)); err != nil {
 		return nil, err
 	}
 
@@ -140,7 +140,7 @@ func (g GrpcController) AdvanceBacktest(ctx context.Context, req *proto.AdvanceB
 }
 
 func (g GrpcController) SubscribeToBacktestEvents(ctx context.Context, req *proto.SubscribeToBacktestEventsRequest) (*proto.SubscribeToBacktestEventsResponse, error) {
-	err := g.application.Backtests.SubscribeToEvents(ctx, uint(req.Id), req.ExchangeName, req.PairSymbol)
+	err := g.app.Backtests.SubscribeToEvents(ctx, uint(req.Id), req.ExchangeName, req.PairSymbol)
 	return &proto.SubscribeToBacktestEventsResponse{}, err
 }
 
@@ -150,12 +150,12 @@ func (g GrpcController) CreateBacktestOrder(ctx context.Context, req *proto.Crea
 		return nil, err
 	}
 
-	err = g.application.Backtests.CreateOrder(ctx, uint(req.BacktestId), order)
+	err = g.app.Backtests.CreateOrder(ctx, uint(req.BacktestId), order)
 	return &proto.CreateBacktestOrderResponse{}, err
 }
 
 func (g GrpcController) BacktestAccounts(ctx context.Context, req *proto.BacktestAccountsRequest) (*proto.BacktestAccountsResponse, error) {
-	accounts, err := g.application.Backtests.GetAccounts(ctx, uint(req.BacktestId))
+	accounts, err := g.app.Backtests.GetAccounts(ctx, uint(req.BacktestId))
 	if err != nil {
 		return nil, err
 	}
@@ -172,7 +172,7 @@ func (g GrpcController) BacktestAccounts(ctx context.Context, req *proto.Backtes
 }
 
 func (g GrpcController) BacktestOrders(ctx context.Context, req *proto.BacktestOrdersRequest) (*proto.BacktestOrdersResponse, error) {
-	orders, err := g.application.Backtests.GetOrders(ctx, uint(req.BacktestId))
+	orders, err := g.app.Backtests.GetOrders(ctx, uint(req.BacktestId))
 	if err != nil {
 		return nil, err
 	}
