@@ -15,7 +15,7 @@ const (
 
 type LockedLivetestCallback func() error
 
-type Port interface {
+type Adapter interface {
 	CreateLivetest(ctx context.Context, bt *livetest.Livetest) error
 	ReadLivetest(ctx context.Context, id uint) (livetest.Livetest, error)
 	UpdateLivetest(ctx context.Context, bt livetest.Livetest) error

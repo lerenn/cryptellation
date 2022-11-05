@@ -9,10 +9,10 @@ import (
 )
 
 type Livetests struct {
-	repository vdb.Port
+	repository vdb.Adapter
 }
 
-func New(repository vdb.Port) *Livetests {
+func New(repository vdb.Adapter) *Livetests {
 	if repository == nil {
 		panic("nil repository")
 	}

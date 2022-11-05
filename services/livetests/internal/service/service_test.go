@@ -22,7 +22,7 @@ func TestServiceSuite(t *testing.T) {
 
 type ServiceSuite struct {
 	suite.Suite
-	vdb       vdb.Port
+	vdb       vdb.Adapter
 	client    client.Client
 	closeTest func() error
 }
