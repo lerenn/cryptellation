@@ -13,11 +13,11 @@ import (
 )
 
 type Exchanges struct {
-	repository db.Port
-	services   map[string]exchanges.Port
+	repository db.Adapter
+	services   map[string]exchanges.Adapter
 }
 
-func New(repository db.Port, services map[string]exchanges.Port) Exchanges {
+func New(repository db.Adapter, services map[string]exchanges.Adapter) Exchanges {
 	if repository == nil {
 		panic("nil repository")
 	}

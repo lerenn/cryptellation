@@ -10,7 +10,7 @@ type Application struct {
 	Exchanges exchanges.Operator
 }
 
-func New(services map[string]exchangesAdapters.Port) (*Application, error) {
+func New(services map[string]exchangesAdapters.Adapter) (*Application, error) {
 	repository, err := sql.New()
 	if err != nil {
 		return nil, err

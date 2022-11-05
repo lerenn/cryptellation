@@ -6,6 +6,6 @@ import (
 	"github.com/digital-feather/cryptellation/services/exchanges/pkg/models/exchange"
 )
 
-type Port interface {
+type Adapter interface {
 	Infos(ctx context.Context) (exchange.Exchange, error)
 }
