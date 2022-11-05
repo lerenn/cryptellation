@@ -1,4 +1,4 @@
-package commands
+package candlesticks
 
 import (
 	"context"
@@ -9,28 +9,18 @@ import (
 	"github.com/digital-feather/cryptellation/services/candlesticks/internal/adapters/exchanges"
 	"github.com/digital-feather/cryptellation/services/candlesticks/internal/domain/candlesticks"
 	"github.com/digital-feather/cryptellation/services/candlesticks/pkg/models/candlestick"
-	"github.com/digital-feather/cryptellation/services/candlesticks/pkg/models/period"
 	"golang.org/x/xerrors"
 )
 
-type CachedReadCandlesticksPayload struct {
-	ExchangeName string
-	PairSymbol   string
-	Period       period.Symbol
-	Start        *time.Time
-	End          *time.Time
-	Limit        uint
-}
+// Test interface implementation
+var _ Operator = (*Candlesticks)(nil)
 
-type CachedReadCandlesticksHandler struct {
+type Candlesticks struct {
 	repository db.Port
 	services   map[string]exchanges.Port
 }
 
-func NewCachedReadCandlesticksHandler(
-	repository db.Port,
-	services map[string]exchanges.Port,
-) CachedReadCandlesticksHandler {
+func New(repository db.Port, services map[string]exchanges.Port) Candlesticks {
 	if repository == nil {
 		panic("nil repository")
 	}
@@ -39,13 +29,13 @@ func NewCachedReadCandlesticksHandler(
 		panic("nil services")
 	}
 
-	return CachedReadCandlesticksHandler{
+	return Candlesticks{
 		repository: repository,
 		services:   services,
 	}
 }
 
-func (reh CachedReadCandlesticksHandler) Handle(ctx context.Context, payload CachedReadCandlesticksPayload) (*candlestick.List, error) {
+func (c Candlesticks) GetCached(ctx context.Context, payload GetCachedPayload) (*candlestick.List, error) {
 	start, end := candlesticks.ProcessRequestedStartEndTimes(payload.Period, payload.Start, payload.End)
 
 	id := candlestick.ListID{
@@ -55,7 +45,7 @@ func (reh CachedReadCandlesticksHandler) Handle(ctx context.Context, payload Cac
 	}
 	cl := candlestick.NewList(id)
 
-	if err := reh.repository.ReadCandlesticks(ctx, cl, start, end, payload.Limit); err != nil {
+	if err := c.repository.ReadCandlesticks(ctx, cl, start, end, payload.Limit); err != nil {
 		return nil, err
 	}
 
@@ -64,18 +54,18 @@ func (reh CachedReadCandlesticksHandler) Handle(ctx context.Context, payload Cac
 	}
 
 	downloadStart, downloadEnd := candlesticks.GetDownloadStartEndTimes(cl, start, end)
-	if err := reh.download(ctx, cl, downloadStart, downloadEnd, payload.Limit); err != nil {
+	if err := c.download(ctx, cl, downloadStart, downloadEnd, payload.Limit); err != nil {
 		return nil, err
 	}
 
-	if err := reh.upsert(ctx, cl); err != nil {
+	if err := c.upsert(ctx, cl); err != nil {
 		return nil, err
 	}
 
 	return cl.Extract(start, end, payload.Limit), nil
 }
 
-func (reh CachedReadCandlesticksHandler) download(ctx context.Context, cl *candlestick.List, start, end time.Time, limit uint) error {
+func (reh Candlesticks) download(ctx context.Context, cl *candlestick.List, start, end time.Time, limit uint) error {
 	exchangeService, exists := reh.services[cl.ExchangeName()]
 	if !exists {
 		return xerrors.New(fmt.Sprintf("inexistant exchange service for %q", cl.ExchangeName()))
@@ -112,7 +102,7 @@ func (reh CachedReadCandlesticksHandler) download(ctx context.Context, cl *candl
 	return nil
 }
 
-func (reh CachedReadCandlesticksHandler) upsert(ctx context.Context, cl *candlestick.List) error {
+func (reh Candlesticks) upsert(ctx context.Context, cl *candlestick.List) error {
 	start, _, startExists := cl.First()
 	end, _, endExists := cl.Last()
 	if !startExists || !endExists {

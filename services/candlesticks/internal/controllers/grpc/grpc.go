@@ -8,8 +8,8 @@ import (
 	"os"
 	"time"
 
-	app "github.com/digital-feather/cryptellation/services/candlesticks/internal/application"
-	"github.com/digital-feather/cryptellation/services/candlesticks/internal/application/commands"
+	"github.com/digital-feather/cryptellation/services/candlesticks/internal/application"
+	"github.com/digital-feather/cryptellation/services/candlesticks/internal/application/candlesticks"
 	"github.com/digital-feather/cryptellation/services/candlesticks/pkg/client/proto"
 	"github.com/digital-feather/cryptellation/services/candlesticks/pkg/models/candlestick"
 	"github.com/digital-feather/cryptellation/services/candlesticks/pkg/models/period"
@@ -20,12 +20,12 @@ import (
 )
 
 type GrpcController struct {
-	application app.Application
-	server      *grpc.Server
+	app    *application.Application
+	server *grpc.Server
 }
 
-func New(application app.Application) GrpcController {
-	return GrpcController{application: application}
+func New(application *application.Application) GrpcController {
+	return GrpcController{app: application}
 }
 
 func (g *GrpcController) Run() error {
@@ -82,7 +82,7 @@ func (g GrpcController) ReadCandlesticks(ctx context.Context, req *proto.ReadCan
 		return nil, err
 	}
 
-	list, err := g.application.Commands.CachedReadCandlesticks.Handle(ctx, payload)
+	list, err := g.app.Candlesticks.GetCached(ctx, payload)
 	if err != nil {
 		log.Printf("%+v\n", err)
 		return nil, status.Error(codes.Internal, err.Error())
@@ -100,13 +100,13 @@ func (g GrpcController) ReadCandlesticks(ctx context.Context, req *proto.ReadCan
 	}, nil
 }
 
-func fromReadCandlesticksRequest(req *proto.ReadCandlesticksRequest) (commands.CachedReadCandlesticksPayload, error) {
+func fromReadCandlesticksRequest(req *proto.ReadCandlesticksRequest) (candlesticks.GetCachedPayload, error) {
 	per, err := period.FromString(req.PeriodSymbol)
 	if err != nil {
-		return commands.CachedReadCandlesticksPayload{}, err
+		return candlesticks.GetCachedPayload{}, err
 	}
 
-	payload := commands.CachedReadCandlesticksPayload{
+	payload := candlesticks.GetCachedPayload{
 		ExchangeName: req.ExchangeName,
 		PairSymbol:   req.PairSymbol,
 		Period:       per,
@@ -116,7 +116,7 @@ func fromReadCandlesticksRequest(req *proto.ReadCandlesticksRequest) (commands.C
 	if req.Start != "" {
 		start, err := time.Parse(time.RFC3339Nano, req.Start)
 		if err != nil {
-			return commands.CachedReadCandlesticksPayload{}, err
+			return candlesticks.GetCachedPayload{}, err
 		}
 		payload.Start = &start
 	}
@@ -124,7 +124,7 @@ func fromReadCandlesticksRequest(req *proto.ReadCandlesticksRequest) (commands.C
 	if req.End != "" {
 		end, err := time.Parse(time.RFC3339Nano, req.End)
 		if err != nil {
-			return commands.CachedReadCandlesticksPayload{}, err
+			return candlesticks.GetCachedPayload{}, err
 		}
 		payload.End = &end
 	}

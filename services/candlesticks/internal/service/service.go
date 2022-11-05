@@ -1,43 +1,28 @@
 package service
 
 import (
-	sqldb "github.com/digital-feather/cryptellation/services/candlesticks/internal/adapters/db/sql"
 	"github.com/digital-feather/cryptellation/services/candlesticks/internal/adapters/exchanges"
 	"github.com/digital-feather/cryptellation/services/candlesticks/internal/adapters/exchanges/binance"
-	app "github.com/digital-feather/cryptellation/services/candlesticks/internal/application"
-	"github.com/digital-feather/cryptellation/services/candlesticks/internal/application/commands"
+	"github.com/digital-feather/cryptellation/services/candlesticks/internal/application"
 )
 
-func NewApplication() (app.Application, error) {
+func NewApplication() (*application.Application, error) {
 	binanceService, err := binance.New()
 	if err != nil {
-		return app.Application{}, err
+		return nil, err
 	}
 
 	services := map[string]exchanges.Port{
 		binance.Name: binanceService,
 	}
 
-	return newApplication(services)
+	return application.New(services)
 }
 
-func newMockApplication() (app.Application, error) {
+func newMockApplication() (*application.Application, error) {
 	services := map[string]exchanges.Port{
 		"mock_exchange": &MockExchangeService{},
 	}
 
-	return newApplication(services)
-}
-
-func newApplication(services map[string]exchanges.Port) (app.Application, error) {
-	repository, err := sqldb.New()
-	if err != nil {
-		return app.Application{}, err
-	}
-
-	return app.Application{
-		Commands: app.Commands{
-			CachedReadCandlesticks: commands.NewCachedReadCandlesticksHandler(repository, services),
-		},
-	}, nil
+	return application.New(services)
 }
