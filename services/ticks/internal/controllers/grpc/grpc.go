@@ -7,19 +7,19 @@ import (
 	"net"
 	"os"
 
-	app "github.com/digital-feather/cryptellation/services/ticks/internal/application"
+	"github.com/digital-feather/cryptellation/services/ticks/internal/application"
 	"github.com/digital-feather/cryptellation/services/ticks/pkg/client/proto"
 	"golang.org/x/xerrors"
 	"google.golang.org/grpc"
 )
 
 type GrpcController struct {
-	application app.Application
-	server      *grpc.Server
+	app    *application.Application
+	server *grpc.Server
 }
 
-func New(application app.Application) GrpcController {
-	return GrpcController{application: application}
+func New(application *application.Application) GrpcController {
+	return GrpcController{app: application}
 }
 
 func (g *GrpcController) Run() error {
@@ -71,7 +71,7 @@ func (g *GrpcController) Stop() {
 }
 
 func (g GrpcController) Register(ctx context.Context, req *proto.RegisterRequest) (*proto.RegisterResponse, error) {
-	count, err := g.application.Commands.RegisterSymbolListener.Handle(ctx, req.Exchange, req.PairSymbol)
+	count, err := g.app.Ticks.Register(ctx, req.Exchange, req.PairSymbol)
 	if err != nil {
 		return nil, err
 	}
@@ -82,7 +82,7 @@ func (g GrpcController) Register(ctx context.Context, req *proto.RegisterRequest
 }
 
 func (g GrpcController) Unregister(ctx context.Context, req *proto.UnregisterRequest) (*proto.UnregisterResponse, error) {
-	count, err := g.application.Commands.UnregisterSymbolListener.Handle(ctx, req.Exchange, req.PairSymbol)
+	count, err := g.app.Ticks.Unregister(ctx, req.Exchange, req.PairSymbol)
 	if err != nil {
 		return nil, err
 	}

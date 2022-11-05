@@ -1,4 +1,4 @@
-package commands
+package ticks
 
 import (
 	"context"
@@ -12,13 +12,13 @@ import (
 	"github.com/digital-feather/cryptellation/services/ticks/pkg/models/tick"
 )
 
-type RegisterSymbolListenerHandler struct {
+type Ticks struct {
 	vdb       vdb.Port
 	pubsub    pubsub.Port
 	exchanges map[string]exchanges.Port
 }
 
-func NewRegisterSymbolListener(ps pubsub.Port, db vdb.Port, exchanges map[string]exchanges.Port) RegisterSymbolListenerHandler {
+func New(ps pubsub.Port, db vdb.Port, exchanges map[string]exchanges.Port) *Ticks {
 	if ps == nil {
 		panic("nil pubsub")
 	}
@@ -31,21 +31,25 @@ func NewRegisterSymbolListener(ps pubsub.Port, db vdb.Port, exchanges map[string
 		panic("nil exchanges clients")
 	}
 
-	return RegisterSymbolListenerHandler{
+	return &Ticks{
 		pubsub:    ps,
 		exchanges: exchanges,
 		vdb:       db,
 	}
 }
 
-func (h RegisterSymbolListenerHandler) Handle(ctx context.Context, exchange, pairSymbol string) (int64, error) {
-	count, err := h.vdb.IncrementSymbolListenerCount(ctx, exchange, pairSymbol)
+func (t Ticks) Listen(exchange, pairSymbol string) (<-chan tick.Tick, error) {
+	return t.pubsub.Subscribe(pairSymbol)
+}
+
+func (t Ticks) Register(ctx context.Context, exchange, pairSymbol string) (int64, error) {
+	count, err := t.vdb.IncrementSymbolListenerCount(ctx, exchange, pairSymbol)
 	if err != nil {
 		return count, err
 	}
 
 	if count == 1 {
-		err := h.launchListener(exchange, pairSymbol)
+		err := t.launchListener(exchange, pairSymbol)
 		if err != nil {
 			return count, err
 		}
@@ -54,8 +58,8 @@ func (h RegisterSymbolListenerHandler) Handle(ctx context.Context, exchange, pai
 	return count, nil
 }
 
-func (h RegisterSymbolListenerHandler) launchListener(exchange, pairSymbol string) error {
-	exch, exists := h.exchanges[exchange]
+func (t Ticks) launchListener(exchange, pairSymbol string) error {
+	exch, exists := t.exchanges[exchange]
 	if !exists {
 		return fmt.Errorf("exchange %q doesn't exists", exchange)
 	}
@@ -68,8 +72,8 @@ func (h RegisterSymbolListenerHandler) launchListener(exchange, pairSymbol strin
 	go newListener(newListenerPayload{
 		exchange:   exchange,
 		pairSymbol: pairSymbol,
-		db:         h.vdb,
-		ps:         h.pubsub,
+		db:         t.vdb,
+		ps:         t.pubsub,
 		ticksChan:  ticksChan,
 		stopChan:   stopChan,
 	})
@@ -122,4 +126,15 @@ func newListener(payload newListenerPayload) {
 			nextCheckTime = time.Now().Add(checkInterval)
 		}
 	}
+}
+
+func (t Ticks) Unregister(ctx context.Context, exchange, pairSymbol string) (int64, error) {
+	count, err := t.vdb.DecrementSymbolListenerCount(ctx, exchange, pairSymbol)
+	if err != nil {
+		return count, err
+	}
+
+	// TODO Unregister listener
+
+	return count, nil
 }

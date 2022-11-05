@@ -22,12 +22,11 @@ func run() int {
 	signal.Notify(interrupt, os.Interrupt, syscall.SIGTERM)
 
 	// Init application
-	app, closeApp, err := service.NewApplication()
+	app, err := service.NewApplication()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "An error occured when %+v\n", fmt.Errorf("creating application: %w", err))
 		return 255
 	}
-	defer closeApp()
 
 	// Init grpc server
 	grpcController := grpc.New(app)

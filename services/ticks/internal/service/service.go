@@ -1,28 +1,18 @@
 package service
 
 import (
-	"context"
-
 	"github.com/digital-feather/cryptellation/services/ticks/internal/adapters/exchanges"
 	"github.com/digital-feather/cryptellation/services/ticks/internal/adapters/exchanges/binance"
-	"github.com/digital-feather/cryptellation/services/ticks/internal/adapters/pubsub/nats"
-	"github.com/digital-feather/cryptellation/services/ticks/internal/adapters/vdb/redis"
-	app "github.com/digital-feather/cryptellation/services/ticks/internal/application"
-	"github.com/digital-feather/cryptellation/services/ticks/internal/application/commands"
-	"github.com/digital-feather/cryptellation/services/ticks/internal/application/queries"
+	"github.com/digital-feather/cryptellation/services/ticks/internal/application"
 )
 
-func NewApplication() (app.Application, func(), error) {
+func NewApplication() (*application.Application, error) {
 	exchanges, err := instanciateExchanges()
 	if err != nil {
-		return app.Application{}, func() {}, err
+		return nil, err
 	}
 
-	app, closeApp, err := newApplication(exchanges)
-
-	return app, func() {
-		closeApp()
-	}, err
+	return application.New(exchanges)
 }
 
 func instanciateExchanges() (map[string]exchanges.Port, error) {
@@ -37,36 +27,10 @@ func instanciateExchanges() (map[string]exchanges.Port, error) {
 	return exchanges, nil
 }
 
-func NewMockedApplication() (app.Application, func(), error) {
+func NewMockedApplication() (*application.Application, error) {
 	services := map[string]exchanges.Port{
 		MockExchangeName: &MockExchangeService{},
 	}
 
-	return newApplication(services)
-}
-
-func newApplication(exchanges map[string]exchanges.Port) (app.Application, func(), error) {
-	repository, err := redis.New()
-	if err != nil {
-		return app.Application{}, func() {}, err
-	}
-
-	if err := repository.ClearSymbolListenersCount(context.TODO()); err != nil {
-		return app.Application{}, func() {}, err
-	}
-
-	ps, err := nats.New()
-	if err != nil {
-		return app.Application{}, func() {}, err
-	}
-
-	return app.Application{
-		Commands: app.Commands{
-			RegisterSymbolListener:   commands.NewRegisterSymbolListener(ps, repository, exchanges),
-			UnregisterSymbolListener: commands.NewUnregisterSymbolListener(repository),
-		},
-		Queries: app.Queries{
-			ListenSymbol: queries.NewListenSymbolsHandler(ps),
-		},
-	}, func() {}, nil
+	return application.New(services)
 }
