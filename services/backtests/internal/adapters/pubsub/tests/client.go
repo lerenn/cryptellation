@@ -17,7 +17,7 @@ func TestPubSubClientSuite(t *testing.T) {
 
 type PubSubClientSuite struct {
 	suite.Suite
-	Client pubsub.Port
+	Client pubsub.Adapter
 }
 
 func (suite *PubSubClientSuite) TestOnePubOneSubObject() {

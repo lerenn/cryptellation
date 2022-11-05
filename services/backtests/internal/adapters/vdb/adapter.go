@@ -15,7 +15,7 @@ const (
 
 type LockedBacktestCallback func() error
 
-type Port interface {
+type Adapter interface {
 	CreateBacktest(ctx context.Context, bt *backtest.Backtest) error
 	ReadBacktest(ctx context.Context, id uint) (backtest.Backtest, error)
 	UpdateBacktest(ctx context.Context, bt backtest.Backtest) error

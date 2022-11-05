@@ -19,12 +19,12 @@ import (
 var _ Operator = (*Backtests)(nil)
 
 type Backtests struct {
-	repository vdb.Port
-	pubsub     pubsub.Port
+	repository vdb.Adapter
+	pubsub     pubsub.Adapter
 	csClient   candlesticks.Client
 }
 
-func New(repository vdb.Port, ps pubsub.Port, csClient candlesticks.Client) *Backtests {
+func New(repository vdb.Adapter, ps pubsub.Adapter, csClient candlesticks.Client) *Backtests {
 	if repository == nil {
 		panic("nil repository")
 	}

@@ -19,7 +19,7 @@ import (
 
 type GrpcClient struct {
 	grpcClient proto.BacktestsServiceClient
-	natsClient pubsub.Port
+	natsClient pubsub.Adapter
 }
 
 func New() (client *GrpcClient, close func() error, err error) {
