@@ -1,4 +1,4 @@
-package commands
+package exchanges
 
 import (
 	"context"
@@ -12,15 +12,12 @@ import (
 	"golang.org/x/xerrors"
 )
 
-type CachedReadExchangesHandler struct {
+type Exchanges struct {
 	repository db.Port
 	services   map[string]exchanges.Port
 }
 
-func NewCachedReadExchangesHandler(
-	repository db.Port,
-	services map[string]exchanges.Port,
-) CachedReadExchangesHandler {
+func New(repository db.Port, services map[string]exchanges.Port) Exchanges {
 	if repository == nil {
 		panic("nil repository")
 	}
@@ -29,33 +26,29 @@ func NewCachedReadExchangesHandler(
 		panic("nil services")
 	}
 
-	return CachedReadExchangesHandler{
+	return Exchanges{
 		repository: repository,
 		services:   services,
 	}
 }
 
-func (reh CachedReadExchangesHandler) Handle(
-	ctx context.Context,
-	expirationDuration *time.Duration,
-	names ...string,
-) ([]exchange.Exchange, error) {
-	dbExchanges, err := reh.repository.ReadExchanges(ctx, names...)
+func (e Exchanges) GetCached(ctx context.Context, expiration *time.Duration, names ...string) ([]exchange.Exchange, error) {
+	dbExchanges, err := e.repository.ReadExchanges(ctx, names...)
 	if err != nil {
 		return nil, fmt.Errorf("handling exchanges from db reading: %w", err)
 	}
 
-	toSync, err := domain.GetExpiredExchangesNames(names, dbExchanges, expirationDuration)
+	toSync, err := domain.GetExpiredExchangesNames(names, dbExchanges, expiration)
 	if err != nil {
 		return nil, fmt.Errorf("determining exchanges to synchronize: %w", err)
 	}
 
-	synced, err := reh.getExchangeFromServices(ctx, toSync...)
+	synced, err := e.getExchangeFromServices(ctx, toSync...)
 	if err != nil {
 		return nil, err
 	}
 
-	err = reh.upsertExchanges(ctx, dbExchanges, synced)
+	err = e.upsertExchanges(ctx, dbExchanges, synced)
 	if err != nil {
 		return nil, err
 	}
@@ -68,10 +61,10 @@ func (reh CachedReadExchangesHandler) Handle(
 	return exchange.MapToArray(mappedExchanges), nil
 }
 
-func (reh CachedReadExchangesHandler) getExchangeFromServices(ctx context.Context, toSync ...string) ([]exchange.Exchange, error) {
+func (e Exchanges) getExchangeFromServices(ctx context.Context, toSync ...string) ([]exchange.Exchange, error) {
 	synced := make([]exchange.Exchange, 0, len(toSync))
 	for _, name := range toSync {
-		service, ok := reh.services[name]
+		service, ok := e.services[name]
 		if !ok {
 			return nil, xerrors.New(fmt.Sprintf("inexistant exchange service %q", name))
 		}
@@ -87,7 +80,7 @@ func (reh CachedReadExchangesHandler) getExchangeFromServices(ctx context.Contex
 	return synced, nil
 }
 
-func (reh CachedReadExchangesHandler) upsertExchanges(ctx context.Context, dbExchanges, toUpsert []exchange.Exchange) error {
+func (e Exchanges) upsertExchanges(ctx context.Context, dbExchanges, toUpsert []exchange.Exchange) error {
 	toCreate := make([]exchange.Exchange, 0, len(toUpsert))
 	toUpdate := make([]exchange.Exchange, 0, len(toUpsert))
 	mappedDbExchanges := exchange.ArrayToMap(dbExchanges)
@@ -100,13 +93,13 @@ func (reh CachedReadExchangesHandler) upsertExchanges(ctx context.Context, dbExc
 	}
 
 	if len(toCreate) > 0 {
-		if err := reh.repository.CreateExchanges(ctx, toCreate...); err != nil {
+		if err := e.repository.CreateExchanges(ctx, toCreate...); err != nil {
 			return err
 		}
 	}
 
 	if len(toUpdate) > 0 {
-		if err := reh.repository.UpdateExchanges(ctx, toUpdate...); err != nil {
+		if err := e.repository.UpdateExchanges(ctx, toUpdate...); err != nil {
 			return err
 		}
 	}

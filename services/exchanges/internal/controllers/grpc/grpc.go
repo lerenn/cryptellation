@@ -8,7 +8,7 @@ import (
 	"os"
 	"time"
 
-	app "github.com/digital-feather/cryptellation/services/exchanges/internal/application"
+	"github.com/digital-feather/cryptellation/services/exchanges/internal/application"
 	"github.com/digital-feather/cryptellation/services/exchanges/pkg/client/proto"
 	"github.com/digital-feather/cryptellation/services/exchanges/pkg/models/exchange"
 	"golang.org/x/xerrors"
@@ -18,12 +18,12 @@ import (
 )
 
 type GrpcController struct {
-	application app.Application
-	server      *grpc.Server
+	app    *application.Application
+	server *grpc.Server
 }
 
-func New(application app.Application) GrpcController {
-	return GrpcController{application: application}
+func New(application *application.Application) GrpcController {
+	return GrpcController{app: application}
 }
 
 func (g *GrpcController) Run() error {
@@ -75,7 +75,7 @@ func (g *GrpcController) Stop() {
 }
 
 func (g GrpcController) ReadExchanges(ctx context.Context, req *proto.ReadExchangesRequest) (*proto.ReadExchangesResponse, error) {
-	list, err := g.application.Commands.CachedReadExchanges.Handle(ctx, nil, req.Names...)
+	list, err := g.app.Exchanges.GetCached(ctx, nil, req.Names...)
 	if err != nil {
 		log.Printf("%+v\n", err)
 		return nil, status.Error(codes.Internal, err.Error())
