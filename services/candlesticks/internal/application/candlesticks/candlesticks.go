@@ -66,19 +66,20 @@ func (c Candlesticks) GetCached(ctx context.Context, payload GetCachedPayload) (
 }
 
 func (reh Candlesticks) download(ctx context.Context, cl *candlestick.List, start, end time.Time, limit uint) error {
-	exchangeService, exists := reh.services[cl.ExchangeName()]
+	exch, exists := reh.services[cl.ExchangeName()]
 	if !exists {
 		return xerrors.New(fmt.Sprintf("inexistant exchange service for %q", cl.ExchangeName()))
 	}
 
-	service, err := exchangeService.Candlesticks(cl.PairSymbol(), cl.Period())
-	if err != nil {
-		return err
+	payload := exchanges.GetCandlesticksPayload{
+		PairSymbol: cl.PairSymbol(),
+		Period:     cl.Period(),
+		Start:      start,
+		End:        end,
 	}
 
-	service.StartTime(start).EndTime(end)
 	for {
-		ncl, err := service.Do(ctx)
+		ncl, err := exch.GetCandlesticks(ctx, payload)
 		if err != nil {
 			return err
 		}
@@ -96,7 +97,7 @@ func (reh Candlesticks) download(ctx context.Context, cl *candlestick.List, star
 			break
 		}
 
-		service.StartTime(t.Add(cl.Period().Duration()))
+		payload.Start = t.Add(cl.Period().Duration())
 	}
 
 	return nil

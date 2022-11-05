@@ -5,6 +5,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/digital-feather/cryptellation/services/candlesticks/internal/adapters/exchanges"
 	"github.com/digital-feather/cryptellation/services/candlesticks/pkg/models/candlestick"
 	"github.com/digital-feather/cryptellation/services/candlesticks/pkg/models/period"
 	"github.com/stretchr/testify/suite"
@@ -25,19 +26,8 @@ func (suite *BinanceSuite) SetupTest() {
 	suite.service = service
 }
 
-func (suite *BinanceSuite) TestCandlesticks() {
-	p := "BTC-USDT"
-	s, err := suite.service.Candlesticks(p, period.D1)
-	suite.Require().NoError(err)
-	suite.Require().NotNil(s)
-	suite.Require().Equal(period.D1, s.Period())
-	suite.Require().Equal(p, s.PairSymbol())
-}
-
-func (suite *BinanceSuite) TestDo() {
+func (suite *BinanceSuite) TestGetCandlesticks() {
 	p := "BTC-USDC"
-	s, err := suite.service.Candlesticks(p, period.M1)
-	suite.Require().NoError(err)
 
 	ts, err := time.Parse("2006/01/02 15:04:05", "2020/11/15 00:00:00")
 	suite.Require().NoError(err)
@@ -45,9 +35,15 @@ func (suite *BinanceSuite) TestDo() {
 	te, err := time.Parse("2006/01/02 15:04:05", "2020/11/15 00:05:00")
 	suite.Require().NoError(err)
 
-	cs, err := s.Limit(2).StartTime(ts).EndTime(te).Do(context.TODO())
+	cs, err := suite.service.GetCandlesticks(context.TODO(),
+		exchanges.GetCandlesticksPayload{
+			PairSymbol: p,
+			Period:     period.M1,
+			Limit:      2,
+			Start:      ts,
+			End:        te,
+		})
 	suite.Require().NoError(err)
-
 	suite.Require().Equal(p, cs.PairSymbol())
 	suite.Require().Equal(period.M1, cs.Period())
 
