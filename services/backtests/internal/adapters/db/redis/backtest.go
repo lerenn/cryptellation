@@ -7,8 +7,8 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/digital-feather/cryptellation/services/backtests/internal/adapters/vdb"
-	"github.com/digital-feather/cryptellation/services/backtests/internal/domain/backtest"
+	"github.com/digital-feather/cryptellation/services/backtests/internal/adapters/db"
+	"github.com/digital-feather/cryptellation/services/backtests/internal/domains/backtest"
 	"github.com/go-redis/redis/v8"
 	"github.com/go-redsync/redsync/v4"
 	"github.com/go-redsync/redsync/v4/redis/goredis/v8"
@@ -22,9 +22,9 @@ const (
 
 var (
 	lockOptions = []redsync.Option{
-		redsync.WithExpiry(vdb.Expiration),
-		redsync.WithRetryDelay(vdb.RetryDelay),
-		redsync.WithTries(vdb.Tries),
+		redsync.WithExpiry(db.Expiration),
+		redsync.WithRetryDelay(db.RetryDelay),
+		redsync.WithTries(db.Tries),
 	}
 )
 
@@ -56,22 +56,22 @@ func New() (*DB, error) {
 	}, nil
 }
 
-func (db *DB) CreateBacktest(ctx context.Context, bt *backtest.Backtest) error {
-	incr, err := db.client.Incr(ctx, redisKeyBacktestIDs).Result()
+func (d *DB) CreateBacktest(ctx context.Context, bt *backtest.Backtest) error {
+	incr, err := d.client.Incr(ctx, redisKeyBacktestIDs).Result()
 	if err != nil {
 		return err
 	}
 
 	bt.ID = uint(incr)
-	return db.client.Set(ctx, backtestKey(uint(incr)), bt, 0).Err()
+	return d.client.Set(ctx, backtestKey(uint(incr)), bt, 0).Err()
 }
 
-func (db *DB) ReadBacktest(ctx context.Context, id uint) (backtest.Backtest, error) {
+func (d *DB) ReadBacktest(ctx context.Context, id uint) (backtest.Backtest, error) {
 	bt := backtest.Backtest{}
 
-	bValue, err := db.client.Get(ctx, backtestKey(id)).Bytes()
+	bValue, err := d.client.Get(ctx, backtestKey(id)).Bytes()
 	if errors.Is(err, redis.Nil) {
-		return bt, vdb.ErrRecordNotFound
+		return bt, db.ErrRecordNotFound
 	} else if err != nil {
 		return bt, err
 	}
@@ -83,16 +83,16 @@ func (db *DB) ReadBacktest(ctx context.Context, id uint) (backtest.Backtest, err
 	return bt, nil
 }
 
-func (db *DB) UpdateBacktest(ctx context.Context, bt backtest.Backtest) error {
-	return db.client.Set(ctx, backtestKey(bt.ID), bt, 0).Err()
+func (d *DB) UpdateBacktest(ctx context.Context, bt backtest.Backtest) error {
+	return d.client.Set(ctx, backtestKey(bt.ID), bt, 0).Err()
 }
 
-func (db *DB) DeleteBacktest(ctx context.Context, bt backtest.Backtest) error {
-	return db.client.Del(ctx, backtestKey(bt.ID)).Err()
+func (d *DB) DeleteBacktest(ctx context.Context, bt backtest.Backtest) error {
+	return d.client.Del(ctx, backtestKey(bt.ID)).Err()
 }
 
-func (db *DB) LockedBacktest(id uint, fn vdb.LockedBacktestCallback) error {
-	mutex := db.lockClient.NewMutex(backtestMutexName(id), lockOptions...)
+func (d *DB) LockedBacktest(id uint, fn db.LockedBacktestCallback) error {
+	mutex := d.lockClient.NewMutex(backtestMutexName(id), lockOptions...)
 	if err := mutex.Lock(); err != nil {
 		return err
 	}

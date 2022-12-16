@@ -6,6 +6,8 @@ require (
 	github.com/digital-feather/cryptellation/services/candlesticks v0.0.0-20220829122843-38940ac90250
 	github.com/go-redis/redis/v8 v8.11.5
 	github.com/go-redsync/redsync/v4 v4.5.1
+	github.com/golang/mock v1.6.0
+	github.com/nats-io/go-nats v1.7.2
 	github.com/stretchr/testify v1.8.0
 	golang.org/x/xerrors v0.0.0-20220609144429-65e65417b02f
 	google.golang.org/grpc v1.48.0
@@ -19,7 +21,7 @@ require (
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/hashicorp/errwrap v1.0.0 // indirect
 	github.com/hashicorp/go-multierror v1.1.0 // indirect
-	github.com/nats-io/go-nats v1.7.2 // indirect
+	github.com/nats-io/gnatsd v1.4.1 // indirect
 	github.com/nats-io/nkeys v0.3.0 // indirect
 	github.com/nats-io/nuid v1.0.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect

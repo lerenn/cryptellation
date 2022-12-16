@@ -1,33 +1,23 @@
-package redis
+package test
 
 import (
 	"context"
 	"errors"
 	"fmt"
-	"testing"
 	"time"
 
-	"github.com/digital-feather/cryptellation/services/backtests/internal/domain/backtest"
+	"github.com/digital-feather/cryptellation/services/backtests/internal/adapters/db"
+	"github.com/digital-feather/cryptellation/services/backtests/internal/domains/backtest"
 	"github.com/digital-feather/cryptellation/services/backtests/pkg/models/account"
 	"github.com/stretchr/testify/suite"
 )
 
-func TestRedisVdbSuite(t *testing.T) {
-	suite.Run(t, new(RedisVdbSuite))
-}
-
-type RedisVdbSuite struct {
+type BacktestSuite struct {
 	suite.Suite
-	db *DB
+	DB db.Adapter
 }
 
-func (suite *RedisVdbSuite) SetupTest() {
-	db, err := New()
-	suite.Require().NoError(err)
-	suite.db = db
-}
-
-func (suite *RedisVdbSuite) TestCreateRead() {
+func (suite *BacktestSuite) TestCreateRead() {
 	bt := backtest.Backtest{
 		Accounts: map[string]account.Account{
 			"exchange": {
@@ -37,8 +27,8 @@ func (suite *RedisVdbSuite) TestCreateRead() {
 			},
 		},
 	}
-	suite.NoError(suite.db.CreateBacktest(context.TODO(), &bt))
-	rp, err := suite.db.ReadBacktest(context.TODO(), bt.ID)
+	suite.NoError(suite.DB.CreateBacktest(context.TODO(), &bt))
+	rp, err := suite.DB.ReadBacktest(context.TODO(), bt.ID)
 	suite.Assert().NoError(err)
 
 	suite.Assert().Equal(bt.ID, rp.ID)
@@ -47,7 +37,7 @@ func (suite *RedisVdbSuite) TestCreateRead() {
 	suite.Assert().Equal(bt.Accounts["exchange"].Balances["DAI"], rp.Accounts["exchange"].Balances["DAI"])
 }
 
-func (suite *RedisVdbSuite) TestUpdate() {
+func (suite *BacktestSuite) TestUpdate() {
 	bt := backtest.Backtest{
 		Accounts: map[string]account.Account{
 			"exchange": {
@@ -57,7 +47,7 @@ func (suite *RedisVdbSuite) TestUpdate() {
 			},
 		},
 	}
-	suite.NoError(suite.db.CreateBacktest(context.TODO(), &bt))
+	suite.NoError(suite.DB.CreateBacktest(context.TODO(), &bt))
 	bt2 := backtest.Backtest{
 		ID: bt.ID,
 		Accounts: map[string]account.Account{
@@ -69,8 +59,8 @@ func (suite *RedisVdbSuite) TestUpdate() {
 		},
 	}
 	// Should be changes here
-	suite.NoError(suite.db.UpdateBacktest(context.TODO(), bt2))
-	rp, err := suite.db.ReadBacktest(context.TODO(), bt.ID)
+	suite.NoError(suite.DB.UpdateBacktest(context.TODO(), bt2))
+	rp, err := suite.DB.ReadBacktest(context.TODO(), bt.ID)
 	suite.Assert().NoError(err)
 
 	suite.Equal(bt.ID, rp.ID)
@@ -80,7 +70,7 @@ func (suite *RedisVdbSuite) TestUpdate() {
 	suite.Assert().Equal(bt2.Accounts["exchange2"].Balances["USDC"], rp.Accounts["exchange2"].Balances["USDC"])
 }
 
-func (suite *RedisVdbSuite) TestDelete() {
+func (suite *BacktestSuite) TestDelete() {
 	bt := backtest.Backtest{
 		Accounts: map[string]account.Account{
 			"exchange": {
@@ -90,13 +80,13 @@ func (suite *RedisVdbSuite) TestDelete() {
 			},
 		},
 	}
-	suite.NoError(suite.db.CreateBacktest(context.TODO(), &bt))
-	suite.NoError(suite.db.DeleteBacktest(context.TODO(), bt))
-	_, err := suite.db.ReadBacktest(context.TODO(), bt.ID)
+	suite.NoError(suite.DB.CreateBacktest(context.TODO(), &bt))
+	suite.NoError(suite.DB.DeleteBacktest(context.TODO(), bt))
+	_, err := suite.DB.ReadBacktest(context.TODO(), bt.ID)
 	suite.Error(err)
 }
 
-func (suite *RedisVdbSuite) TestDeleteInexistant() {
+func (suite *BacktestSuite) TestDeleteInexistant() {
 	bt := backtest.Backtest{
 		Accounts: map[string]account.Account{
 			"exchange": {
@@ -106,12 +96,12 @@ func (suite *RedisVdbSuite) TestDeleteInexistant() {
 			},
 		},
 	}
-	suite.NoError(suite.db.CreateBacktest(context.TODO(), &bt))
-	suite.NoError(suite.db.DeleteBacktest(context.TODO(), bt))
-	suite.NoError(suite.db.DeleteBacktest(context.TODO(), bt))
+	suite.NoError(suite.DB.CreateBacktest(context.TODO(), &bt))
+	suite.NoError(suite.DB.DeleteBacktest(context.TODO(), bt))
+	suite.NoError(suite.DB.DeleteBacktest(context.TODO(), bt))
 }
 
-func (suite *RedisVdbSuite) TestLock() {
+func (suite *BacktestSuite) TestLock() {
 	bt := backtest.Backtest{
 		Accounts: map[string]account.Account{
 			"exchange": {
@@ -121,32 +111,32 @@ func (suite *RedisVdbSuite) TestLock() {
 			},
 		},
 	}
-	suite.Require().NoError(suite.db.CreateBacktest(context.TODO(), &bt))
+	suite.Require().NoError(suite.DB.CreateBacktest(context.TODO(), &bt))
 
 	// Check that lock works even with panic
-	suite.Require().NoError(suite.db.LockedBacktest(bt.ID, func() error {
+	suite.Require().NoError(suite.DB.LockedBacktest(bt.ID, func() error {
 		panic(errors.New("PANIC"))
 	}))
 
 	for i := 0; i < 10; i++ {
-		suite.Require().NoError(suite.db.LockedBacktest(bt.ID, func() error {
+		suite.Require().NoError(suite.DB.LockedBacktest(bt.ID, func() error {
 			return nil
 		}), fmt.Sprintf("Lock/Unlock attempt #%d", i+1))
 	}
 
 	go func() {
-		err := suite.db.LockedBacktest(bt.ID, func() error {
+		err := suite.DB.LockedBacktest(bt.ID, func() error {
 			bt.Accounts["exchange"].Balances["ETH"] = 2000
 			time.Sleep(200 * time.Millisecond)
-			suite.Require().NoError(suite.db.UpdateBacktest(context.TODO(), bt))
+			suite.Require().NoError(suite.DB.UpdateBacktest(context.TODO(), bt))
 			return nil
 		})
 		suite.Require().NoError(err)
 	}()
 	time.Sleep(time.Millisecond)
 
-	suite.Require().NoError(suite.db.LockedBacktest(bt.ID, func() error {
-		recvBt, err := suite.db.ReadBacktest(context.TODO(), bt.ID)
+	suite.Require().NoError(suite.DB.LockedBacktest(bt.ID, func() error {
+		recvBt, err := suite.DB.ReadBacktest(context.TODO(), bt.ID)
 		suite.Require().NoError(err)
 		suite.Require().Equal(2000.0, recvBt.Accounts["exchange"].Balances["ETH"])
 		return nil

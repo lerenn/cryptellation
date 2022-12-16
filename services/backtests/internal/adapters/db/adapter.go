@@ -1,10 +1,13 @@
-package vdb
+// Generate code for mock
+//go:generate go run -mod=mod github.com/golang/mock/mockgen -source=adapter.go -destination=mock.gen.go -package db
+
+package db
 
 import (
 	"context"
 	"time"
 
-	"github.com/digital-feather/cryptellation/services/backtests/internal/domain/backtest"
+	"github.com/digital-feather/cryptellation/services/backtests/internal/domains/backtest"
 )
 
 const (

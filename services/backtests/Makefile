@@ -3,8 +3,12 @@
 
 DOCKER_COMPOSE := docker-compose -p cryptellation
 
-clean: test/clean ## Clean everything
+.PHONY: clean
+clean: ## Clean everything
+	@$(DOCKER_COMPOSE) down
+	@rm -f cover.out
 
+.PHONY: proto
 proto: ## Generate protobuf code
 	@mkdir -p pkg/client/proto
 	@for PROTOFILE in $(shell find . -name *.proto); do \
@@ -19,23 +23,34 @@ proto: ## Generate protobuf code
 			"$$PROTOFILE" || exit $?; \
 	done
 
+.PHONY: lint
 lint: ## Lint the code
 ifeq ($(shell which golangci-lint &> /dev/null; echo $$?),1)
 	@go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
 endif
 	@LOG_LEVEL=error golangci-lint run
 
-test/build:
-	@$(DOCKER_COMPOSE) build
+.PHONY: generate ## Generate specified code across the codebase
+generate:
+	@go generate ./...
 
-test/clean:
-	@$(DOCKER_COMPOSE) down
-	@rm -f cover.out
+.PHONY: test/end-to-end
+test/end-to-end: ## Perform end-to-end tests
+	@echo "TODO"
 
-test/run:
-	@$(DOCKER_COMPOSE) run backtests-testing
+.PHONY: test/integration
+test/integration: ## Perform integration tests
+	@$(DOCKER_COMPOSE) -f ./tests/integration/docker-compose.yml build
+	@$(DOCKER_COMPOSE) -f ./tests/integration/docker-compose.yml run backtests
 
-test: test/run ## Run tests
+.PHONY: test/unit
+test/unit: ## Perform unit tests
+	@go test $(shell go list ./... | grep -v -e /internal/adapters) -coverprofile cover.out -v
+	@go tool cover -func cover.out
+	@rm cover.out
+
+.PHONY: test
+test: test/unit test/integration test/end-to-end ## Run tests
 
 help: ## Display this help message
 	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_\/-]+:.*?## / {printf "\033[34m%-30s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST) | \

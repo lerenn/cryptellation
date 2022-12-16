@@ -7,9 +7,10 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/digital-feather/cryptellation/services/backtests/internal/application"
 	"github.com/digital-feather/cryptellation/services/backtests/internal/controllers/grpc"
 	"github.com/digital-feather/cryptellation/services/backtests/internal/controllers/http/health"
-	"github.com/digital-feather/cryptellation/services/backtests/internal/service"
+	"github.com/digital-feather/cryptellation/services/candlesticks/pkg/client"
 )
 
 func run() int {
@@ -21,13 +22,20 @@ func run() int {
 	interrupt := make(chan os.Signal, 1)
 	signal.Notify(interrupt, os.Interrupt, syscall.SIGTERM)
 
+	// Init candlestick client
+	csClient, closeCsClient, err := client.New()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "An error occured when %+v\n", fmt.Errorf("creating candlestick client: %w", err))
+		return 255
+	}
+	defer closeCsClient()
+
 	// Init application
-	app, closeApp, err := service.NewApplication()
+	app, err := application.New(csClient)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "An error occured when %+v\n", fmt.Errorf("creating application: %w", err))
 		return 255
 	}
-	defer closeApp()
 
 	// Init grpc server
 	grpcController := grpc.New(app)

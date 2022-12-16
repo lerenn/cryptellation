@@ -1,4 +1,4 @@
-package vdb
+package db
 
 import "errors"
 

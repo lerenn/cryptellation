@@ -1,8 +1,8 @@
 package application
 
 import (
+	"github.com/digital-feather/cryptellation/services/backtests/internal/adapters/db/redis"
 	"github.com/digital-feather/cryptellation/services/backtests/internal/adapters/pubsub/nats"
-	"github.com/digital-feather/cryptellation/services/backtests/internal/adapters/vdb/redis"
 	"github.com/digital-feather/cryptellation/services/backtests/internal/application/backtests"
 	candlesticks "github.com/digital-feather/cryptellation/services/candlesticks/pkg/client"
 )
