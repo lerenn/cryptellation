@@ -1,3 +1,6 @@
+// Generate code for mock
+//go:generate go run -mod=mod github.com/golang/mock/mockgen -source=interfacer.go -destination=mock.gen.go -package client
+
 package client
 
 import (
@@ -9,7 +12,7 @@ import (
 	"github.com/digital-feather/cryptellation/services/backtests/pkg/models/order"
 )
 
-type Client interface {
+type Interfacer interface {
 	BacktestAccounts(ctx context.Context, backtestID uint64) (map[string]account.Account, error)
 	AdvanceBacktest(ctx context.Context, backtestID uint64) error
 	BacktestOrders(ctx context.Context, backtestID uint64) ([]order.Order, error)

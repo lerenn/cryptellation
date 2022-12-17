@@ -17,12 +17,12 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 )
 
-type GrpcClient struct {
+type Client struct {
 	grpcClient proto.BacktestsServiceClient
 	natsClient pubsub.Adapter
 }
 
-func New() (client *GrpcClient, close func() error, err error) {
+func New() (client *Client, close func() error, err error) {
 	grpcAddr := os.Getenv("CRYPTELLATION_BACKTESTS_GRPC_URL")
 	if grpcAddr == "" {
 		return nil, func() error { return nil }, xerrors.New("no grpc url provided")
@@ -38,7 +38,7 @@ func New() (client *GrpcClient, close func() error, err error) {
 		return nil, conn.Close, fmt.Errorf("creating NATs Client: %w", err)
 	}
 
-	return &GrpcClient{
+	return &Client{
 			grpcClient: proto.NewBacktestsServiceClient(conn),
 			natsClient: natsClient,
 		}, func() error {
@@ -47,7 +47,7 @@ func New() (client *GrpcClient, close func() error, err error) {
 		}, nil
 }
 
-func (c *GrpcClient) CreateBacktest(ctx context.Context, start, end time.Time, accounts map[string]account.Account) (id uint64, err error) {
+func (c *Client) CreateBacktest(ctx context.Context, start, end time.Time, accounts map[string]account.Account) (id uint64, err error) {
 	pbAccounts := make(map[string]*proto.Account)
 	for n, a := range accounts {
 		pbAccounts[n] = a.ToProtoBuf()
@@ -65,7 +65,7 @@ func (c *GrpcClient) CreateBacktest(ctx context.Context, start, end time.Time, a
 	return resp.Id, nil
 }
 
-func (c *GrpcClient) AdvanceBacktest(ctx context.Context, backtestID uint64) error {
+func (c *Client) AdvanceBacktest(ctx context.Context, backtestID uint64) error {
 	_, err := c.grpcClient.AdvanceBacktest(ctx, &proto.AdvanceBacktestRequest{
 		Id: backtestID,
 	})
@@ -73,7 +73,7 @@ func (c *GrpcClient) AdvanceBacktest(ctx context.Context, backtestID uint64) err
 	return err
 }
 
-func (c *GrpcClient) BacktestAccounts(ctx context.Context, backtestID uint64) (map[string]account.Account, error) {
+func (c *Client) BacktestAccounts(ctx context.Context, backtestID uint64) (map[string]account.Account, error) {
 	resp, err := c.grpcClient.BacktestAccounts(ctx, &proto.BacktestAccountsRequest{
 		BacktestId: backtestID,
 	})
@@ -90,7 +90,7 @@ func (c *GrpcClient) BacktestAccounts(ctx context.Context, backtestID uint64) (m
 	return accounts, nil
 }
 
-func (c *GrpcClient) CreateBacktestOrder(ctx context.Context, backtestID uint64, o order.Order) error {
+func (c *Client) CreateBacktestOrder(ctx context.Context, backtestID uint64, o order.Order) error {
 	_, err := c.grpcClient.CreateBacktestOrder(ctx, &proto.CreateBacktestOrderRequest{
 		BacktestId: backtestID,
 		Order:      o.ToProtoBuf(),
@@ -98,7 +98,7 @@ func (c *GrpcClient) CreateBacktestOrder(ctx context.Context, backtestID uint64,
 	return err
 }
 
-func (c *GrpcClient) BacktestOrders(ctx context.Context, backtestID uint64) ([]order.Order, error) {
+func (c *Client) BacktestOrders(ctx context.Context, backtestID uint64) ([]order.Order, error) {
 	resp, err := c.grpcClient.BacktestOrders(ctx, &proto.BacktestOrdersRequest{
 		BacktestId: backtestID,
 	})
@@ -118,7 +118,7 @@ func (c *GrpcClient) BacktestOrders(ctx context.Context, backtestID uint64) ([]o
 	return orders, nil
 }
 
-func (c *GrpcClient) SubscribeToBacktestEvents(ctx context.Context, backtestID uint64, exchangeName, pairSymbol string) error {
+func (c *Client) SubscribeToBacktestEvents(ctx context.Context, backtestID uint64, exchangeName, pairSymbol string) error {
 	_, err := c.grpcClient.SubscribeToBacktestEvents(ctx, &proto.SubscribeToBacktestEventsRequest{
 		Id:           backtestID,
 		ExchangeName: exchangeName,
@@ -127,7 +127,7 @@ func (c *GrpcClient) SubscribeToBacktestEvents(ctx context.Context, backtestID u
 	return err
 }
 
-func (c *GrpcClient) ListenBacktest(backtestID uint) (<-chan event.Event, error) {
+func (c *Client) ListenBacktest(backtestID uint) (<-chan event.Event, error) {
 	return c.natsClient.Subscribe(backtestID)
 }
 
