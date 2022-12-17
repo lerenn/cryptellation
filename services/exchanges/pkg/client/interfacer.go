@@ -1,3 +1,6 @@
+// Generate code for mock
+//go:generate go run -mod=mod github.com/golang/mock/mockgen -source=interfacer.go -destination=mock.gen.go -package client
+
 package client
 
 import (
@@ -6,6 +9,6 @@ import (
 	"github.com/digital-feather/cryptellation/services/exchanges/pkg/models/exchange"
 )
 
-type Client interface {
+type Interfacer interface {
 	ReadExchanges(ctx context.Context, names ...string) ([]exchange.Exchange, error)
 }

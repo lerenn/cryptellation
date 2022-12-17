@@ -12,11 +12,11 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 )
 
-type GrpcClient struct {
+type Client struct {
 	grpcClient proto.ExchangesServiceClient
 }
 
-func New() (client *GrpcClient, close func() error, err error) {
+func New() (client *Client, close func() error, err error) {
 	grpcAddr := os.Getenv("CRYPTELLATION_EXCHANGES_GRPC_URL")
 	if grpcAddr == "" {
 		return nil, func() error { return nil }, xerrors.New("no grpc url provided")
@@ -27,12 +27,12 @@ func New() (client *GrpcClient, close func() error, err error) {
 		return nil, func() error { return nil }, fmt.Errorf("dialing exchanges grpc server: %w", err)
 	}
 
-	return &GrpcClient{
+	return &Client{
 		grpcClient: proto.NewExchangesServiceClient(conn),
 	}, conn.Close, nil
 }
 
-func (client *GrpcClient) ReadExchanges(ctx context.Context, names ...string) ([]exchange.Exchange, error) {
+func (client *Client) ReadExchanges(ctx context.Context, names ...string) ([]exchange.Exchange, error) {
 	resp, err := client.grpcClient.ReadExchanges(ctx, &proto.ReadExchangesRequest{
 		Names: names,
 	})
