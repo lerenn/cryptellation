@@ -32,11 +32,23 @@ type List struct {
 	candleSticks *timeserie.TimeSerie
 }
 
-func NewList(id ListID) *List {
+func NewEmptyList(id ListID) *List {
 	return &List{
 		id:           id,
 		candleSticks: timeserie.New(),
 	}
+}
+
+func NewList(id ListID, candlesticks ...TimedCandlestick) (*List, error) {
+	l := NewEmptyList(id)
+
+	for _, c := range candlesticks {
+		if err := l.Set(c.Time, c.Candlestick); err != nil {
+			return nil, err
+		}
+	}
+
+	return l, nil
 }
 
 func (l List) ID() ListID {
@@ -138,24 +150,26 @@ func (l *List) Loop(callback func(t time.Time, cs Candlestick) (bool, error)) er
 	})
 }
 
-func (l List) First() (time.Time, Candlestick, bool) {
+func (l List) First() (TimedCandlestick, bool) {
 	t, data, ok := l.candleSticks.First()
 	if !ok {
-		return t, Candlestick{}, false
+		return TimedCandlestick{}, false
 	}
-	return t, data.(Candlestick), true
+
+	return TimedCandlestick{Time: t, Candlestick: data.(Candlestick)}, true
 }
 
-func (l List) Last() (time.Time, Candlestick, bool) {
+func (l List) Last() (TimedCandlestick, bool) {
 	t, data, ok := l.candleSticks.Last()
 	if !ok {
-		return t, Candlestick{}, false
+		return TimedCandlestick{}, false
 	}
-	return t, data.(Candlestick), true
+
+	return TimedCandlestick{Time: t, Candlestick: data.(Candlestick)}, true
 }
 
 func (l List) Extract(start, end time.Time, limit uint) *List {
-	el := NewList(l.id)
+	el := NewEmptyList(l.id)
 	el.candleSticks = l.candleSticks.Extract(start, end)
 
 	if limit == 0 || el.Len() < int(limit) {
@@ -166,25 +180,25 @@ func (l List) Extract(start, end time.Time, limit uint) *List {
 }
 
 func (l List) FirstN(limit uint) *List {
-	el := NewList(l.id)
+	el := NewEmptyList(l.id)
 	el.candleSticks = l.candleSticks.FirstN(limit)
 	return el
 }
 
-func MergeListIntoOneCandlestick(csl *List, per period.Symbol) (time.Time, Candlestick) {
+func MergeListIntoOneCandlestick(csl *List, per period.Symbol) TimedCandlestick {
 	if csl.Len() == 0 {
-		return time.Unix(0, 0), Candlestick{}
+		return TimedCandlestick{}
 	}
 
-	tsFirst, mcs, _ := csl.First()
-	mts := per.RoundTime(tsFirst)
+	mcs, _ := csl.First()
+	mts := per.RoundTime(mcs.Time)
 
 	_ = csl.Loop(func(t time.Time, cs Candlestick) (bool, error) {
 		if !per.RoundTime(t).Equal(mts) {
 			return true, nil
 		}
 
-		if t.Equal(tsFirst) {
+		if t.Equal(mcs.Time) {
 			return false, nil
 		}
 
@@ -200,7 +214,7 @@ func MergeListIntoOneCandlestick(csl *List, per period.Symbol) (time.Time, Candl
 		return false, nil
 	})
 
-	return mts, mcs
+	return mcs
 }
 
 func (l List) String() string {

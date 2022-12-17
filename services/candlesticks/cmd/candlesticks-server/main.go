@@ -7,9 +7,11 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/digital-feather/cryptellation/services/candlesticks/internal/adapters/exchanges"
+	"github.com/digital-feather/cryptellation/services/candlesticks/internal/adapters/exchanges/binance"
+	"github.com/digital-feather/cryptellation/services/candlesticks/internal/application"
 	"github.com/digital-feather/cryptellation/services/candlesticks/internal/controllers/grpc"
 	"github.com/digital-feather/cryptellation/services/candlesticks/internal/controllers/http/health"
-	"github.com/digital-feather/cryptellation/services/candlesticks/internal/service"
 )
 
 func run() int {
@@ -21,8 +23,20 @@ func run() int {
 	interrupt := make(chan os.Signal, 1)
 	signal.Notify(interrupt, os.Interrupt, syscall.SIGTERM)
 
+	// Init exchanges connections
+	binanceService, err := binance.New()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "An error occured when %+v\n", fmt.Errorf("creating binance adapter: %w", err))
+		return 255
+	}
+
+	// Assembling all services in a map
+	services := map[string]exchanges.Adapter{
+		binance.Name: binanceService,
+	}
+
 	// Init application
-	app, err := service.NewApplication()
+	app, err := application.New(services)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "An error occured when %+v\n", fmt.Errorf("creating application: %w", err))
 		return 255

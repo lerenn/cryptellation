@@ -39,7 +39,7 @@ func (suite *SqlDatabaseSuite) TestNewWithURIError() {
 }
 
 func (suite *SqlDatabaseSuite) TestCreate() {
-	list := candlestick.NewList(candlestick.ListID{
+	list := candlestick.NewEmptyList(candlestick.ListID{
 		ExchangeName: "exchange",
 		PairSymbol:   "ETH-USDC",
 		Period:       period.M1,
@@ -54,7 +54,7 @@ func (suite *SqlDatabaseSuite) TestCreate() {
 		Volume:     1000,
 		Uncomplete: true,
 	}))
-	recvList := candlestick.NewList(candlestick.ListID{
+	recvList := candlestick.NewEmptyList(candlestick.ListID{
 		ExchangeName: "exchange",
 		PairSymbol:   "ETH-USDC",
 		Period:       period.M1,
@@ -72,7 +72,7 @@ func (suite *SqlDatabaseSuite) TestCreate() {
 }
 
 func (suite *SqlDatabaseSuite) TestCreateTwice() {
-	list := candlestick.NewList(candlestick.ListID{
+	list := candlestick.NewEmptyList(candlestick.ListID{
 		ExchangeName: "exchange",
 		PairSymbol:   "ETH-USDC",
 		Period:       period.M1,
@@ -93,7 +93,7 @@ func (suite *SqlDatabaseSuite) TestCreateTwice() {
 
 func (suite *SqlDatabaseSuite) TestRead() {
 	// Create targeted exchange, pair, period
-	list := candlestick.NewList(candlestick.ListID{
+	list := candlestick.NewEmptyList(candlestick.ListID{
 		ExchangeName: "exchange",
 		PairSymbol:   "ETH-USDC",
 		Period:       period.M1,
@@ -142,7 +142,7 @@ func (suite *SqlDatabaseSuite) TestRead() {
 	suite.Require().NoError(suite.db.CreateCandlesticks(context.Background(), list))
 
 	// Create other exchange
-	otherExchangeList := candlestick.NewList(candlestick.ListID{
+	otherExchangeList := candlestick.NewEmptyList(candlestick.ListID{
 		ExchangeName: "exchange2",
 		PairSymbol:   "ETH-USDC",
 		Period:       period.M1,
@@ -158,7 +158,7 @@ func (suite *SqlDatabaseSuite) TestRead() {
 	suite.Require().NoError(suite.db.CreateCandlesticks(context.Background(), otherExchangeList))
 
 	// Create other pair
-	otherPairList := candlestick.NewList(candlestick.ListID{
+	otherPairList := candlestick.NewEmptyList(candlestick.ListID{
 		ExchangeName: "exchange",
 		PairSymbol:   "BTC-USDC",
 		Period:       period.M1,
@@ -174,7 +174,7 @@ func (suite *SqlDatabaseSuite) TestRead() {
 	suite.Require().NoError(suite.db.CreateCandlesticks(context.Background(), otherPairList))
 
 	// Create other period
-	otherPeriodList := candlestick.NewList(candlestick.ListID{
+	otherPeriodList := candlestick.NewEmptyList(candlestick.ListID{
 		ExchangeName: "exchange",
 		PairSymbol:   "ETH-USDC",
 		Period:       period.M15,
@@ -190,7 +190,7 @@ func (suite *SqlDatabaseSuite) TestRead() {
 	suite.Require().NoError(suite.db.CreateCandlesticks(context.Background(), otherPeriodList))
 
 	// Read only the two centered candles
-	recvList := candlestick.NewList(candlestick.ListID{
+	recvList := candlestick.NewEmptyList(candlestick.ListID{
 		ExchangeName: "exchange",
 		PairSymbol:   "ETH-USDC",
 		Period:       period.M1,
@@ -208,7 +208,7 @@ func (suite *SqlDatabaseSuite) TestRead() {
 	suite.Require().Equal(c, rc)
 
 	// Check others
-	recvList = candlestick.NewList(candlestick.ListID{
+	recvList = candlestick.NewEmptyList(candlestick.ListID{
 		ExchangeName: "exchange2",
 		PairSymbol:   "ETH-USDC",
 		Period:       period.M1,
@@ -219,7 +219,7 @@ func (suite *SqlDatabaseSuite) TestRead() {
 	suite.True(exists)
 	suite.Require().Equal(c, rc)
 
-	recvList = candlestick.NewList(candlestick.ListID{
+	recvList = candlestick.NewEmptyList(candlestick.ListID{
 		ExchangeName: "exchange",
 		PairSymbol:   "BTC-USDC",
 		Period:       period.M1,
@@ -230,7 +230,7 @@ func (suite *SqlDatabaseSuite) TestRead() {
 	suite.True(exists)
 	suite.Require().Equal(c, rc)
 
-	recvList = candlestick.NewList(candlestick.ListID{
+	recvList = candlestick.NewEmptyList(candlestick.ListID{
 		ExchangeName: "exchange",
 		PairSymbol:   "ETH-USDC",
 		Period:       period.M15,
@@ -244,7 +244,7 @@ func (suite *SqlDatabaseSuite) TestRead() {
 
 func (suite *SqlDatabaseSuite) TestReadLimit() {
 	// Create targeted exchange, pair, period
-	list := candlestick.NewList(candlestick.ListID{
+	list := candlestick.NewEmptyList(candlestick.ListID{
 		ExchangeName: "exchange",
 		PairSymbol:   "ETH-USDC",
 		Period:       period.M1,
@@ -293,7 +293,7 @@ func (suite *SqlDatabaseSuite) TestReadLimit() {
 	suite.Require().NoError(suite.db.CreateCandlesticks(context.Background(), list))
 
 	// Read only the 2 first
-	recvList := candlestick.NewList(candlestick.ListID{
+	recvList := candlestick.NewEmptyList(candlestick.ListID{
 		ExchangeName: "exchange",
 		PairSymbol:   "ETH-USDC",
 		Period:       period.M1,
@@ -314,7 +314,7 @@ func (suite *SqlDatabaseSuite) TestReadLimit() {
 func (suite *SqlDatabaseSuite) TestReadEmpty() {
 	t, err := time.Parse(time.RFC3339, "1993-11-15T11:29:00Z")
 	suite.Require().NoError(err)
-	recvList := candlestick.NewList(candlestick.ListID{
+	recvList := candlestick.NewEmptyList(candlestick.ListID{
 		ExchangeName: "exchange",
 		PairSymbol:   "ETH-USDC",
 		Period:       period.M1,
@@ -324,7 +324,7 @@ func (suite *SqlDatabaseSuite) TestReadEmpty() {
 }
 
 func (suite *SqlDatabaseSuite) TestUpdate() {
-	list := candlestick.NewList(candlestick.ListID{
+	list := candlestick.NewEmptyList(candlestick.ListID{
 		ExchangeName: "exchange",
 		PairSymbol:   "ETH-USDC",
 		Period:       period.M1,
@@ -341,7 +341,7 @@ func (suite *SqlDatabaseSuite) TestUpdate() {
 	}))
 	suite.Require().NoError(suite.db.CreateCandlesticks(context.Background(), list))
 
-	update := candlestick.NewList(candlestick.ListID{
+	update := candlestick.NewEmptyList(candlestick.ListID{
 		ExchangeName: "exchange",
 		PairSymbol:   "ETH-USDC",
 		Period:       period.M1,
@@ -355,7 +355,7 @@ func (suite *SqlDatabaseSuite) TestUpdate() {
 		Uncomplete: false,
 	}))
 	suite.Require().NoError(suite.db.UpdateCandlesticks(context.Background(), update))
-	receivedList := candlestick.NewList(candlestick.ListID{
+	receivedList := candlestick.NewEmptyList(candlestick.ListID{
 		ExchangeName: "exchange",
 		PairSymbol:   "ETH-USDC",
 		Period:       period.M1,
@@ -371,7 +371,7 @@ func (suite *SqlDatabaseSuite) TestUpdate() {
 }
 
 func (suite *SqlDatabaseSuite) TestUpdateInexistantTwice() {
-	list := candlestick.NewList(candlestick.ListID{
+	list := candlestick.NewEmptyList(candlestick.ListID{
 		ExchangeName: "exchange",
 		PairSymbol:   "ETH-USDC",
 		Period:       period.M1,
@@ -391,7 +391,7 @@ func (suite *SqlDatabaseSuite) TestUpdateInexistantTwice() {
 }
 
 func (suite *SqlDatabaseSuite) TestDelete() {
-	list := candlestick.NewList(candlestick.ListID{
+	list := candlestick.NewEmptyList(candlestick.ListID{
 		ExchangeName: "exchange",
 		PairSymbol:   "ETH-USDC",
 		Period:       period.M1,
@@ -408,7 +408,7 @@ func (suite *SqlDatabaseSuite) TestDelete() {
 	suite.Require().NoError(suite.db.CreateCandlesticks(context.Background(), list))
 
 	// Remove half the data
-	delete := candlestick.NewList(candlestick.ListID{
+	delete := candlestick.NewEmptyList(candlestick.ListID{
 		ExchangeName: "exchange",
 		PairSymbol:   "ETH-USDC",
 		Period:       period.M1,
@@ -423,7 +423,7 @@ func (suite *SqlDatabaseSuite) TestDelete() {
 	// Check staying data
 	tEnd := time.Unix(10*int64(period.M1.Duration().Seconds()), 0)
 	tStart := time.Unix(5*int64(period.M1.Duration().Seconds()), 0)
-	receivedList := candlestick.NewList(candlestick.ListID{
+	receivedList := candlestick.NewEmptyList(candlestick.ListID{
 		ExchangeName: "exchange",
 		PairSymbol:   "ETH-USDC",
 		Period:       period.M1,

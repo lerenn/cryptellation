@@ -29,9 +29,9 @@ func AreMissing(cl *candlestick.List, start, end time.Time, limit uint) bool {
 }
 
 func GetDownloadStartEndTimes(cl *candlestick.List, start, end time.Time) (time.Time, time.Time) {
-	t, _, exists := cl.Last()
+	c, exists := cl.Last()
 	if exists && !cl.HasUncomplete() {
-		start = t.Add(cl.Period().Duration())
+		start = c.Time.Add(cl.Period().Duration())
 	}
 
 	qty := int(cl.Period().CountBetweenTimes(start, end)) + 1

@@ -19,13 +19,13 @@ type CandlestickListSuite struct {
 	suite.Suite
 }
 
-func (suite *CandlestickListSuite) TestNew() {
+func (suite *CandlestickListSuite) TestNewEmpty() {
 	id := ListID{
 		ExchangeName: "exchange",
 		PairSymbol:   "ETH-USDC",
 		Period:       period.M1,
 	}
-	l := NewList(id)
+	l := NewEmptyList(id)
 	suite.Require().Equal("exchange", l.ExchangeName())
 	suite.Require().Equal("ETH-USDC", l.PairSymbol())
 	suite.Require().Equal(period.M1, l.Period())
@@ -33,8 +33,56 @@ func (suite *CandlestickListSuite) TestNew() {
 	suite.Require().Equal(id, l.ID())
 }
 
+func (suite *CandlestickListSuite) TestNew() {
+	id := ListID{
+		ExchangeName: "exchange",
+		PairSymbol:   "ETH-USDC",
+		Period:       period.M1,
+	}
+	tc1 := TimedCandlestick{Time: time.Unix(0, 0), Candlestick: Candlestick{
+		Open: 1.0,
+	}}
+	tc2 := TimedCandlestick{Time: time.Unix(60, 0), Candlestick: Candlestick{
+		Open: 2.0,
+	}}
+	l, err := NewList(id, tc1, tc2)
+
+	// Check list
+	suite.Require().NoError(err)
+	suite.Require().Equal("exchange", l.ExchangeName())
+	suite.Require().Equal("ETH-USDC", l.PairSymbol())
+	suite.Require().Equal(period.M1, l.Period())
+	suite.Require().Equal(id, l.ID())
+
+	// Check candlesticks
+	suite.Require().Equal(2, l.Len())
+
+	t, e := l.Get(tc1.Time)
+	suite.Require().True(e)
+	suite.Require().Equal(tc1.Candlestick, t)
+
+	t, e = l.Get(tc2.Time)
+	suite.Require().True(e)
+	suite.Require().Equal(tc2.Candlestick, t)
+}
+
+func (suite *CandlestickListSuite) TestNewWithUnalignedCandlestick() {
+	id := ListID{
+		ExchangeName: "exchange",
+		PairSymbol:   "ETH-USDC",
+		Period:       period.M1,
+	}
+	tc := TimedCandlestick{Time: time.Unix(1, 0), Candlestick: Candlestick{
+		Open: 1.0,
+	}}
+	_, err := NewList(id, tc)
+
+	// Check list
+	suite.Require().Error(err)
+}
+
 func (suite *CandlestickListSuite) TestMergeTimeSeries() {
-	l := NewList(ListID{
+	l := NewEmptyList(ListID{
 		ExchangeName: "exchange",
 		PairSymbol:   "ETH-USDC",
 		Period:       period.M1,
@@ -58,7 +106,7 @@ func (suite *CandlestickListSuite) TestMergeTimeSeries() {
 }
 
 func (suite *CandlestickListSuite) TestSetWrongPeriod() {
-	l := NewList(ListID{
+	l := NewEmptyList(ListID{
 		ExchangeName: "exchange",
 		PairSymbol:   "ETH-USDC",
 		Period:       period.M1,
@@ -73,12 +121,12 @@ func (suite *CandlestickListSuite) TestSetWrongPeriod() {
 }
 
 func (suite *CandlestickListSuite) TestMerge() {
-	l := NewList(ListID{
+	l := NewEmptyList(ListID{
 		ExchangeName: "exchange",
 		PairSymbol:   "ETH-USDC",
 		Period:       period.M1,
 	})
-	recvCSList := NewList(ListID{
+	recvCSList := NewEmptyList(ListID{
 		ExchangeName: "exchange",
 		PairSymbol:   "ETH-USDC",
 		Period:       period.M1,
@@ -102,7 +150,7 @@ func (suite *CandlestickListSuite) TestMerge() {
 }
 
 func (suite *CandlestickListSuite) TestDelete() {
-	l := NewList(ListID{
+	l := NewEmptyList(ListID{
 		ExchangeName: "exchange",
 		PairSymbol:   "ETH-USDC",
 		Period:       period.M1,
@@ -128,7 +176,7 @@ type loopListTestObject struct {
 
 func (suite *CandlestickListSuite) TestLoop() {
 	p := "BTC-USDC"
-	csList := NewList(ListID{
+	csList := NewEmptyList(ListID{
 		ExchangeName: "exchange",
 		PairSymbol:   p,
 		Period:       period.M1,
@@ -161,7 +209,7 @@ func (suite *CandlestickListSuite) TestLoop() {
 
 func (suite *CandlestickListSuite) TestLoopError() {
 	p := "BTC-USDC"
-	csList := NewList(ListID{
+	csList := NewEmptyList(ListID{
 		ExchangeName: "exchange",
 		PairSymbol:   p,
 		Period:       period.M1,
@@ -190,7 +238,7 @@ func (suite *CandlestickListSuite) TestLoopError() {
 
 func (suite *CandlestickListSuite) TestLoopBreak() {
 	p := "BTC-USDC"
-	csList := NewList(ListID{
+	csList := NewEmptyList(ListID{
 		ExchangeName: "exchange",
 		PairSymbol:   p,
 		Period:       period.M1,
@@ -219,7 +267,7 @@ func (suite *CandlestickListSuite) TestLoopBreak() {
 
 func (suite *CandlestickListSuite) TestUpdate() {
 	p := "BTC-USDC"
-	csList := NewList(ListID{
+	csList := NewEmptyList(ListID{
 		ExchangeName: "exchange",
 		PairSymbol:   p,
 		Period:       period.M1,
@@ -253,7 +301,7 @@ func (suite *CandlestickListSuite) TestHasUncomplete() {
 }
 
 func (suite *CandlestickListSuite) TestExtract() {
-	l := NewList(ListID{
+	l := NewEmptyList(ListID{
 		ExchangeName: "exchange",
 		PairSymbol:   "ETH-USDC",
 		Period:       period.M1,
@@ -287,7 +335,7 @@ func (suite *CandlestickListSuite) TestExtractWithLimit() {
 }
 
 func (suite *CandlestickListSuite) TestFirstN() {
-	l := NewList(ListID{
+	l := NewEmptyList(ListID{
 		ExchangeName: "exchange",
 		PairSymbol:   "ETH-USDC",
 		Period:       period.M1,
@@ -355,7 +403,7 @@ func (suite *CandlestickListSuite) TestLoadFromProtoBuf() {
 		},
 	}
 
-	l := NewList(ListID{
+	l := NewEmptyList(ListID{
 		ExchangeName: "exchange",
 		PairSymbol:   "BTC-USDC",
 		Period:       period.M1,

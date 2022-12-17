@@ -19,7 +19,7 @@ type CandlesticksSuite struct {
 
 func (suite *CandlesticksSuite) TestAreMissing() {
 	// Given all candlesticks
-	cl := candlestick.NewList(candlestick.ListID{
+	cl := candlestick.NewEmptyList(candlestick.ListID{
 		ExchangeName: "exchange",
 		PairSymbol:   "ETH-USDC",
 		Period:       period.M1,
@@ -41,7 +41,7 @@ func (suite *CandlesticksSuite) TestAreMissing() {
 
 func (suite *CandlesticksSuite) TestAreMissingWithOneMissing() {
 	// Given all candlesticks
-	cl := candlestick.NewList(candlestick.ListID{
+	cl := candlestick.NewEmptyList(candlestick.ListID{
 		ExchangeName: "exchange",
 		PairSymbol:   "ETH-USDC",
 		Period:       period.M1,
@@ -67,7 +67,7 @@ func (suite *CandlesticksSuite) TestAreMissingWithOneMissing() {
 
 func (suite *CandlesticksSuite) TestAreMissingWithOneMissingAndLimit() {
 	// Given all candlesticks
-	cl := candlestick.NewList(candlestick.ListID{
+	cl := candlestick.NewEmptyList(candlestick.ListID{
 		ExchangeName: "exchange",
 		PairSymbol:   "ETH-USDC",
 		Period:       period.M1,

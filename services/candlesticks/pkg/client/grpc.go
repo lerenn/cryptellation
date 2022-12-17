@@ -56,7 +56,7 @@ func (c *GrpcClient) ReadCandlesticks(ctx context.Context, payload ReadCandlesti
 		return nil, err
 	}
 
-	l := candlestick.NewList(candlestick.ListID{
+	l := candlestick.NewEmptyList(candlestick.ListID{
 		ExchangeName: payload.ExchangeName,
 		PairSymbol:   payload.PairSymbol,
 		Period:       payload.Period,
