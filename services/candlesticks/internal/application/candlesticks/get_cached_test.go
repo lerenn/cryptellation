@@ -39,7 +39,7 @@ func (suite *GetCachedSuite) setMocksForAllExistWithNoneInDB(ctx context.Context
 		ExchangeName: "exchange", PairSymbol: "ETH-USDC", Period: period.M1,
 	})
 	for i := int64(0); i < 100; i++ {
-		l.Set(time.Unix(i*60, 0), candlestick.Candlestick{Open: float64(60 * i)})
+		suite.Require().NoError(l.Set(time.Unix(i*60, 0), candlestick.Candlestick{Open: float64(60 * i)}))
 	}
 
 	// Set first call to know how much candlestick there is in the database
@@ -175,12 +175,12 @@ func (suite *GetCachedSuite) setMocksForFromDBAndService(ctx context.Context) {
 
 	dbl := candlestick.NewEmptyList(id)
 	for i := int64(0); i < 10; i++ {
-		dbl.Set(time.Unix(i*60, 0), candlestick.Candlestick{Close: 4321})
+		suite.Require().NoError(dbl.Set(time.Unix(i*60, 0), candlestick.Candlestick{Close: 4321}))
 	}
 
 	exchl := candlestick.NewEmptyList(id)
 	for i := int64(10); i < 110; i++ {
-		exchl.Set(time.Unix(i*60, 0), candlestick.Candlestick{Close: 1234})
+		suite.Require().NoError(exchl.Set(time.Unix(i*60, 0), candlestick.Candlestick{Close: 1234}))
 	}
 
 	// Set list that will be pulled from exchange and created in DB
@@ -261,13 +261,13 @@ func (suite *GetCachedSuite) setMocksForFromDBAndServiceWithUncomplete(ctx conte
 
 	dbl := candlestick.NewEmptyList(id)
 	for i := int64(0); i < 10; i++ {
-		dbl.Set(time.Unix(i*60, 0), candlestick.Candlestick{Close: 4321})
+		suite.Require().NoError(dbl.Set(time.Unix(i*60, 0), candlestick.Candlestick{Close: 4321}))
 	}
-	dbl.Set(time.Unix(540, 0), candlestick.Candlestick{Close: 4321, Uncomplete: true})
+	suite.Require().NoError(dbl.Set(time.Unix(540, 0), candlestick.Candlestick{Close: 4321, Uncomplete: true}))
 
 	exchl := candlestick.NewEmptyList(id)
 	for i := int64(0); i < 100; i++ {
-		exchl.Set(time.Unix(i*60, 0), candlestick.Candlestick{Close: 1234})
+		suite.Require().NoError(exchl.Set(time.Unix(i*60, 0), candlestick.Candlestick{Close: 1234}))
 	}
 
 	// Set list that will be pulled from exchange and created in DB
@@ -299,7 +299,7 @@ func (suite *GetCachedSuite) setMocksForFromDBAndServiceWithUncomplete(ctx conte
 	// Set call for creating candlesticks in database
 	createdl := candlestick.NewEmptyList(id)
 	for i := int64(10); i < 100; i++ {
-		createdl.Set(time.Unix(i*60, 0), candlestick.Candlestick{Close: 1234})
+		suite.Require().NoError(createdl.Set(time.Unix(i*60, 0), candlestick.Candlestick{Close: 1234}))
 	}
 	suite.db.EXPECT().CreateCandlesticks(ctx, createdl).Return(nil)
 

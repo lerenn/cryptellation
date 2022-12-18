@@ -28,7 +28,7 @@ func run() int {
 		fmt.Fprintf(os.Stderr, "An error occured when %+v\n", fmt.Errorf("creating candlestick client: %w", err))
 		return 255
 	}
-	defer closeCsClient()
+	defer func() { _ = closeCsClient() }()
 
 	// Init application
 	app, err := application.New(csClient)
