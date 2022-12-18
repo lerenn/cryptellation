@@ -14,12 +14,12 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 )
 
-type GrpcClient struct {
+type Client struct {
 	grpcClient proto.TicksServiceClient
 	psClient   pubsub.Adapter
 }
 
-func New() (client *GrpcClient, close func() error, err error) {
+func New() (client *Client, close func() error, err error) {
 	grpcAddr := os.Getenv("CRYPTELLATION_TICKS_GRPC_URL")
 	if grpcAddr == "" {
 		return nil, func() error { return nil }, xerrors.New("no grpc url provided")
@@ -35,7 +35,7 @@ func New() (client *GrpcClient, close func() error, err error) {
 		return nil, conn.Close, fmt.Errorf("creating NATs Client: %w", err)
 	}
 
-	return &GrpcClient{
+	return &Client{
 			grpcClient: proto.NewTicksServiceClient(conn),
 			psClient:   natsClient,
 		}, func() error {
@@ -44,7 +44,7 @@ func New() (client *GrpcClient, close func() error, err error) {
 		}, nil
 }
 
-func (c *GrpcClient) Register(ctx context.Context, exchange, symbol string) error {
+func (c *Client) Register(ctx context.Context, exchange, symbol string) error {
 	_, err := c.grpcClient.Register(ctx, &proto.RegisterRequest{
 		Exchange:   exchange,
 		PairSymbol: symbol,
@@ -52,7 +52,7 @@ func (c *GrpcClient) Register(ctx context.Context, exchange, symbol string) erro
 	return err
 }
 
-func (c *GrpcClient) Unregister(ctx context.Context, exchange, symbol string) error {
+func (c *Client) Unregister(ctx context.Context, exchange, symbol string) error {
 	_, err := c.grpcClient.Register(ctx, &proto.RegisterRequest{
 		Exchange:   exchange,
 		PairSymbol: symbol,
@@ -60,7 +60,7 @@ func (c *GrpcClient) Unregister(ctx context.Context, exchange, symbol string) er
 	return err
 }
 
-func (c *GrpcClient) Listen(symbol string) (<-chan tick.Tick, error) {
+func (c *Client) Listen(symbol string) (<-chan tick.Tick, error) {
 	return c.psClient.Subscribe(symbol)
 }
 
