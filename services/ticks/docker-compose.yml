@@ -29,24 +29,6 @@ services:
             - nats
         networks:
             - cryptellation-network
-    ticks-testing:
-        profiles:
-            - testing
-        depends_on:
-            - ticks-redis
-            - nats
-        build: ./tests
-        env_file:
-            - ../../.services.env
-            - ../../.credentials.env
-        environment:
-            - REDIS_URL=backtests-redis:6379
-        volumes:
-            - gocache:/go/pkg/mod
-            - gobuild:/root/.cache/go-build
-            - .:/code
-        networks:
-            - cryptellation-network
 
 volumes:
     gocache:

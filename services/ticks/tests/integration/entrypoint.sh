@@ -9,7 +9,10 @@ set -eo pipefail
 # TODO
 
 # Launch tests
-go test -p 1 ./... -coverprofile cover.out
+go test -p 1 ./internal/adapters/... -coverprofile cover.out
 
 # Displaying result
 go tool cover -func cover.out
+
+# Cleaning up
+rm cover.out
