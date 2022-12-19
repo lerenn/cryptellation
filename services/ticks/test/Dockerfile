@@ -9,4 +9,3 @@ ENV CGO_ENABLED 0
 
 # Set entrypoint
 WORKDIR /code
-ENTRYPOINT [ "/bin/bash", "./tests/integration/entrypoint.sh" ]

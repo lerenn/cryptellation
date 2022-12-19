@@ -1,12 +1,24 @@
 .PHONY: all
 .DEFAULT_GOAL := help
 
-DOCKER_COMPOSE := docker-compose -p cryptellation-exchanges
+SERVICE_NAME = exchanges
+
+SHORT_COMMIT_SHA := $(shell git rev-parse --short HEAD)
+
+DOCKER_IMAGE_TAG=$(SHORT_COMMIT_SHA)
+DOCKER_COMPOSE := docker-compose -p cryptellation-$(SERVICE_NAME)
+
+.PHONY: docker/build
+docker/build: ## Build docker image
+	@docker build -t digital-feather/cryptellation-$(SERVICE_NAME):$(SHORT_COMMIT_SHA) -f ./build/package/Dockerfile .
+
+.PHONY: docker/push
+docker/push: ## Push docker image
+	@git diff-index --quiet HEAD || (echo "ERROR: Some files have been modified. Please commit before pushing."; exit 1)
+	@docker push -t digital-feather/cryptellation-$(SERVICE_NAME):$(SHORT_COMMIT_SHA)
 
 .PHONY: clean
 clean: test/clean ## Clean everything
-	@$(DOCKER_COMPOSE) down
-	@rm -f cover.out
 
 .PHONY: proto
 proto: ## Generate protobuf code
@@ -34,14 +46,19 @@ endif
 generate:
 	@go generate ./...
 
+.PHONY: test/clean
+test/clean:
+	@$(DOCKER_COMPOSE) -f ./test/docker-compose.yml down
+	@rm -f cover.out
+
 .PHONY: test/end-to-end
 test/end-to-end: ## Perform end-to-end tests
 	@echo "TODO"
 
 .PHONY: test/integration
 test/integration: ## Perform integration tests
-	@$(DOCKER_COMPOSE) -f ./tests/integration/docker-compose.yml build exchanges
-	@$(DOCKER_COMPOSE) -f ./tests/integration/docker-compose.yml run exchanges
+	@$(DOCKER_COMPOSE) -f ./test/docker-compose.yml build $(SERVICE_NAME)
+	@$(DOCKER_COMPOSE) -f ./test/docker-compose.yml run $(SERVICE_NAME) ./test/integration.sh
 
 .PHONY: test/unit
 test/unit: ## Perform unit tests

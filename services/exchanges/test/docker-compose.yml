@@ -7,7 +7,7 @@ services:
         #     - 26257:26257
         #     - 26256:8080
         networks:
-            - cryptellation-network
+            - test-network
         ulimits:
             nofile:
                 soft: 65536
@@ -15,29 +15,29 @@ services:
         command: start-single-node --insecure
         restart: unless-stopped
         volumes:
-            - ../../configs:/docker-entrypoint-initdb.d
-    candlesticks:
+            - ../configs:/docker-entrypoint-initdb.d
+    exchanges:
         profiles:
             - testing
         depends_on:
             - cockroachdb
         build: .
         env_file:
-            - ../../../../.services.env
-            - ../../../../.credentials.env
+            - ../../../.services.env
+            - ../../../.credentials.env
         environment:
             - SQLDB_HOST=cockroachdb
             - SQLDB_PORT=26257
         volumes:
             - gocache:/go/pkg/mod
             - gobuild:/root/.cache/go-build
-            - ../../:/code
+            - ../:/code
         networks:
-            - cryptellation-network
+            - test-network
 
 volumes:
     gocache:
     gobuild:
 
 networks:
-    cryptellation-network:
+    test-network:

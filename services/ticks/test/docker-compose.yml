@@ -4,33 +4,35 @@ services:
     redis:
         image: redis:6-alpine
         networks:
-            - cryptellation-network
+            - test-network
     nats:
         image: nats:alpine
-        ports:
-            - 4222:4222
+        # ports:
+        #     - 4222:4222
         networks:
-            - cryptellation-network
-    backtests:
+            - test-network
+    ticks:
+        profiles:
+            - testing
         depends_on:
             - redis
             - nats
         build: .
         env_file:
-            - ../../../../.services.env
-            - ../../../../.credentials.env
+            - ../../../.services.env
+            - ../../../.credentials.env
         environment:
             - REDIS_URL=redis:6379
         volumes:
             - gocache:/go/pkg/mod
             - gobuild:/root/.cache/go-build
-            - ./../..:/code
+            - ../:/code
         networks:
-            - cryptellation-network
+            - test-network
 
 volumes:
     gocache:
     gobuild:
 
 networks:
-    cryptellation-network:
+    test-network:
