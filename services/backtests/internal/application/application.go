@@ -1,9 +1,9 @@
 package application
 
 import (
-	"github.com/digital-feather/cryptellation/services/backtests/internal/adapters/db/redis"
-	"github.com/digital-feather/cryptellation/services/backtests/internal/adapters/pubsub/nats"
-	"github.com/digital-feather/cryptellation/services/backtests/internal/application/backtests"
+	"github.com/digital-feather/cryptellation/services/backtests/internal/application/operations/backtests"
+	"github.com/digital-feather/cryptellation/services/backtests/internal/application/ports/db"
+	"github.com/digital-feather/cryptellation/services/backtests/internal/application/ports/pubsub"
 	candlesticks "github.com/digital-feather/cryptellation/services/candlesticks/pkg/client"
 )
 
@@ -11,18 +11,8 @@ type Application struct {
 	Backtests backtests.Operator
 }
 
-func New(cs candlesticks.Client) (*Application, error) {
-	repository, err := redis.New()
-	if err != nil {
-		return nil, err
-	}
-
-	ps, err := nats.New()
-	if err != nil {
-		return nil, err
-	}
-
+func New(cs candlesticks.Client, db db.Adapter, ps pubsub.Adapter) (*Application, error) {
 	return &Application{
-		Backtests: backtests.New(repository, ps, cs),
+		Backtests: backtests.New(db, ps, cs),
 	}, nil
 }

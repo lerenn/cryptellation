@@ -7,12 +7,40 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/digital-feather/cryptellation/services/candlesticks/internal/adapters/exchanges"
-	"github.com/digital-feather/cryptellation/services/candlesticks/internal/adapters/exchanges/binance"
 	"github.com/digital-feather/cryptellation/services/candlesticks/internal/application"
+	"github.com/digital-feather/cryptellation/services/candlesticks/internal/application/ports/exchanges"
 	"github.com/digital-feather/cryptellation/services/candlesticks/internal/controllers/grpc"
 	"github.com/digital-feather/cryptellation/services/candlesticks/internal/controllers/http/health"
+	"github.com/digital-feather/cryptellation/services/candlesticks/internal/infrastructure/db/sql"
+	"github.com/digital-feather/cryptellation/services/candlesticks/internal/infrastructure/exchanges/binance"
 )
+
+func initApp() (*application.Application, error) {
+	// Init database client
+	db, err := sql.New()
+	if err != nil {
+		return nil, err
+	}
+
+	// Init exchanges connections
+	binanceService, err := binance.New()
+	if err != nil {
+		return nil, err
+	}
+
+	// Assembling all services in a map
+	services := map[string]exchanges.Adapter{
+		binance.Name: binanceService,
+	}
+
+	// Init application
+	app, err := application.New(db, services)
+	if err != nil {
+		return nil, err
+	}
+
+	return app, nil
+}
 
 func run() int {
 	// Init health server
@@ -23,22 +51,10 @@ func run() int {
 	interrupt := make(chan os.Signal, 1)
 	signal.Notify(interrupt, os.Interrupt, syscall.SIGTERM)
 
-	// Init exchanges connections
-	binanceService, err := binance.New()
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "An error occured when %+v\n", fmt.Errorf("creating binance adapter: %w", err))
-		return 255
-	}
-
-	// Assembling all services in a map
-	services := map[string]exchanges.Adapter{
-		binance.Name: binanceService,
-	}
-
 	// Init application
-	app, err := application.New(services)
+	app, err := initApp()
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "An error occured when %+v\n", fmt.Errorf("creating application: %w", err))
+		fmt.Fprintf(os.Stderr, "An error occured when %+v\n", fmt.Errorf("initialize application: %w", err))
 		return 255
 	}
 

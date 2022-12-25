@@ -1,22 +1,17 @@
 package application
 
 import (
-	"github.com/digital-feather/cryptellation/services/candlesticks/internal/adapters/db/sql"
-	"github.com/digital-feather/cryptellation/services/candlesticks/internal/adapters/exchanges"
-	"github.com/digital-feather/cryptellation/services/candlesticks/internal/application/candlesticks"
+	"github.com/digital-feather/cryptellation/services/candlesticks/internal/application/operators/candlesticks"
+	"github.com/digital-feather/cryptellation/services/candlesticks/internal/application/ports/db"
+	"github.com/digital-feather/cryptellation/services/candlesticks/internal/application/ports/exchanges"
 )
 
 type Application struct {
 	Candlesticks candlesticks.Operator
 }
 
-func New(services map[string]exchanges.Adapter) (*Application, error) {
-	repository, err := sql.New()
-	if err != nil {
-		return nil, err
-	}
-
+func New(db db.Adapter, services map[string]exchanges.Adapter) (*Application, error) {
 	return &Application{
-		Candlesticks: candlesticks.New(repository, services),
+		Candlesticks: candlesticks.New(db, services),
 	}, nil
 }

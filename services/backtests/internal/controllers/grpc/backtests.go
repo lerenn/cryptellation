@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/digital-feather/cryptellation/services/backtests/internal/domains/backtest"
+	"github.com/digital-feather/cryptellation/services/backtests/internal/application/domains/backtest"
 	"github.com/digital-feather/cryptellation/services/backtests/pkg/client/proto"
 	"github.com/digital-feather/cryptellation/services/backtests/pkg/models/account"
 	"github.com/digital-feather/cryptellation/services/backtests/pkg/models/order"

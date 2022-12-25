@@ -1,7 +1,5 @@
 #!/bin/bash
 
-set -eo pipefail
-
 # Wait for Redis
 # TODO
 
@@ -9,7 +7,7 @@ set -eo pipefail
 # TODO
 
 # Launch tests
-go test -p 1 ./internal/adapters/... -coverprofile cover.out
+go test -p 1 ./internal/infrastructure/... -coverprofile cover.out
 
 # Displaying result
 go tool cover -func cover.out

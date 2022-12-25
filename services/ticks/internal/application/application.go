@@ -1,34 +1,18 @@
 package application
 
 import (
-	"context"
-
-	"github.com/digital-feather/cryptellation/services/ticks/internal/adapters/exchanges"
-	"github.com/digital-feather/cryptellation/services/ticks/internal/adapters/pubsub/nats"
-	"github.com/digital-feather/cryptellation/services/ticks/internal/adapters/vdb/redis"
-	"github.com/digital-feather/cryptellation/services/ticks/internal/application/ticks"
+	"github.com/digital-feather/cryptellation/services/ticks/internal/application/operators/ticks"
+	"github.com/digital-feather/cryptellation/services/ticks/internal/application/ports/exchanges"
+	"github.com/digital-feather/cryptellation/services/ticks/internal/application/ports/pubsub"
+	"github.com/digital-feather/cryptellation/services/ticks/internal/application/ports/vdb"
 )
 
 type Application struct {
 	Ticks ticks.Operator
 }
 
-func New(exchanges map[string]exchanges.Adapter) (*Application, error) {
-	repository, err := redis.New()
-	if err != nil {
-		return nil, err
-	}
-
-	if err := repository.ClearSymbolListenersCount(context.TODO()); err != nil {
-		return nil, err
-	}
-
-	ps, err := nats.New()
-	if err != nil {
-		return nil, err
-	}
-
+func New(db vdb.Adapter, ps pubsub.Adapter, exchanges map[string]exchanges.Adapter) (*Application, error) {
 	return &Application{
-		Ticks: ticks.New(ps, repository, exchanges),
+		Ticks: ticks.New(ps, db, exchanges),
 	}, nil
 }

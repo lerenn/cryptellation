@@ -62,7 +62,7 @@ test/integration: ## Perform integration tests
 
 .PHONY: test/unit
 test/unit: ## Perform unit tests
-	@go test $(shell go list ./... | grep -v -e /internal/adapters) -coverprofile cover.out -v
+	@go test $(shell go list ./... | grep -v -e /internal/infrastructure) -coverprofile cover.out -v
 	@go tool cover -func cover.out
 	@rm cover.out
 
