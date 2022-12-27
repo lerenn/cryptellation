@@ -12,10 +12,10 @@ var _ Operator = (*Backtests)(nil)
 type Backtests struct {
 	db       db.Adapter
 	pubsub   pubsub.Adapter
-	csClient candlesticks.Client
+	csClient candlesticks.Interfacer
 }
 
-func New(db db.Adapter, ps pubsub.Adapter, csClient candlesticks.Client) *Backtests {
+func New(db db.Adapter, ps pubsub.Adapter, csClient candlesticks.Interfacer) *Backtests {
 	if db == nil {
 		panic("nil db")
 	}

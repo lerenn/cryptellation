@@ -11,7 +11,7 @@ type Application struct {
 	Backtests backtests.Operator
 }
 
-func New(cs candlesticks.Client, db db.Adapter, ps pubsub.Adapter) (*Application, error) {
+func New(cs candlesticks.Interfacer, db db.Adapter, ps pubsub.Adapter) (*Application, error) {
 	return &Application{
 		Backtests: backtests.New(db, ps, cs),
 	}, nil

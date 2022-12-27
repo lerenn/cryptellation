@@ -26,13 +26,13 @@ type AdvanceSuite struct {
 	operator     Operator
 	db           *db.MockAdapter
 	pubsub       *pubsub.MockAdapter
-	candlesticks *MockClient
+	candlesticks *client.MockInterfacer
 }
 
 func (suite *AdvanceSuite) SetupTest() {
 	suite.db = db.NewMockAdapter(gomock.NewController(suite.T()))
 	suite.pubsub = pubsub.NewMockAdapter(gomock.NewController(suite.T()))
-	suite.candlesticks = NewMockClient(gomock.NewController(suite.T()))
+	suite.candlesticks = client.NewMockInterfacer(gomock.NewController(suite.T()))
 	suite.operator = New(suite.db, suite.pubsub, suite.candlesticks)
 }
 
@@ -85,7 +85,7 @@ func (suite *AdvanceSuite) TestWithoutAccount() {
 		Start:        time.Unix(0, 0),
 		End:          time.Unix(120, 0),
 		Limit:        1,
-	}).Return(candlestick.NewList(candlestick.ListID{
+	}).Return(candlestick.NewEmptyList(candlestick.ListID{
 		ExchangeName: "exchange",
 		PairSymbol:   "ETH-USDT",
 		Period:       period.M1,

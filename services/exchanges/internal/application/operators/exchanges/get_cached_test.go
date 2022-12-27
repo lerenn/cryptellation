@@ -33,7 +33,9 @@ func (suite *GetCachedSuite) SetupTest() {
 	suite.operator = New(suite.db, exchanges)
 }
 
-func (suite *GetCachedSuite) setMocksForReadExchangesThatIsNotCached(ctx context.Context) {
+func (suite *GetCachedSuite) setMocksForReadExchangesThatIsNotCached() context.Context {
+	ctx := context.Background()
+
 	// Set call to DB that should not return anything
 	suite.db.EXPECT().ReadExchanges(ctx, "exchange").Return(
 		[]exchange.Exchange{},
@@ -48,11 +50,12 @@ func (suite *GetCachedSuite) setMocksForReadExchangesThatIsNotCached(ctx context
 
 	// Set call to database that should create the exchange
 	suite.db.EXPECT().CreateExchanges(ctx, exchange.Exchange{Name: "exchange"}).Return(nil)
+
+	return ctx
 }
 
 func (suite *GetCachedSuite) TestReadExchangesThatIsNotCached() {
-	ctx := context.Background()
-	suite.setMocksForReadExchangesThatIsNotCached(ctx)
+	ctx := suite.setMocksForReadExchangesThatIsNotCached()
 
 	// When requesting an exchange for the first time
 	exchanges, err := suite.operator.GetCached(ctx, DurationOpt(time.Hour), "exchange")

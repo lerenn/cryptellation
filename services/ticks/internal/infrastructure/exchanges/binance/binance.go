@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/digital-feather/cryptellation/services/candlesticks/pkg/models/pairs"
+	"github.com/digital-feather/cryptellation/services/ticks/internal/infrastructure/exchanges"
 	"github.com/digital-feather/cryptellation/services/ticks/pkg/models/tick"
 
 	client "github.com/adshao/go-binance/v2"
@@ -59,4 +60,8 @@ func (s *Service) ListenSymbol(symbol string) (chan tick.Tick, chan struct{}, er
 func toBinanceSymbol(symbol string) (string, error) {
 	base, quote, err := pairs.ParsePairSymbol(symbol)
 	return fmt.Sprintf("%s%s", base, quote), err
+}
+
+func (s *Service) Name() string {
+	return exchanges.BinanceName
 }

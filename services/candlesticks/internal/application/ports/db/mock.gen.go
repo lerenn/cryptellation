@@ -6,79 +6,88 @@ package db
 
 import (
 	context "context"
-	candlestick "github.com/digital-feather/cryptellation/services/candlesticks/pkg/models/candlestick"
-	gomock "github.com/golang/mock/gomock"
 	reflect "reflect"
 	time "time"
+
+	candlestick "github.com/digital-feather/cryptellation/services/candlesticks/pkg/models/candlestick"
+	gomock "github.com/golang/mock/gomock"
 )
 
-// MockAdapter is a mock of Adapter interface
+// MockAdapter is a mock of Adapter interface.
 type MockAdapter struct {
 	ctrl     *gomock.Controller
 	recorder *MockAdapterMockRecorder
 }
 
-// MockAdapterMockRecorder is the mock recorder for MockAdapter
+// MockAdapterMockRecorder is the mock recorder for MockAdapter.
 type MockAdapterMockRecorder struct {
 	mock *MockAdapter
 }
 
-// NewMockAdapter creates a new mock instance
+// NewMockAdapter creates a new mock instance.
 func NewMockAdapter(ctrl *gomock.Controller) *MockAdapter {
 	mock := &MockAdapter{ctrl: ctrl}
 	mock.recorder = &MockAdapterMockRecorder{mock}
 	return mock
 }
 
-// EXPECT returns an object that allows the caller to indicate expected use
+// EXPECT returns an object that allows the caller to indicate expected use.
 func (m *MockAdapter) EXPECT() *MockAdapterMockRecorder {
 	return m.recorder
 }
 
-// CreateCandlesticks mocks base method
+// CreateCandlesticks mocks base method.
 func (m *MockAdapter) CreateCandlesticks(ctx context.Context, cs *candlestick.List) error {
+	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreateCandlesticks", ctx, cs)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
-// CreateCandlesticks indicates an expected call of CreateCandlesticks
+// CreateCandlesticks indicates an expected call of CreateCandlesticks.
 func (mr *MockAdapterMockRecorder) CreateCandlesticks(ctx, cs interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateCandlesticks", reflect.TypeOf((*MockAdapter)(nil).CreateCandlesticks), ctx, cs)
 }
 
-// ReadCandlesticks mocks base method
-func (m *MockAdapter) ReadCandlesticks(ctx context.Context, cs *candlestick.List, start, end time.Time, limit uint) error {
-	ret := m.ctrl.Call(m, "ReadCandlesticks", ctx, cs, start, end, limit)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// ReadCandlesticks indicates an expected call of ReadCandlesticks
-func (mr *MockAdapterMockRecorder) ReadCandlesticks(ctx, cs, start, end, limit interface{}) *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ReadCandlesticks", reflect.TypeOf((*MockAdapter)(nil).ReadCandlesticks), ctx, cs, start, end, limit)
-}
-
-// UpdateCandlesticks mocks base method
-func (m *MockAdapter) UpdateCandlesticks(ctx context.Context, cs *candlestick.List) error {
-	ret := m.ctrl.Call(m, "UpdateCandlesticks", ctx, cs)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// UpdateCandlesticks indicates an expected call of UpdateCandlesticks
-func (mr *MockAdapterMockRecorder) UpdateCandlesticks(ctx, cs interface{}) *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateCandlesticks", reflect.TypeOf((*MockAdapter)(nil).UpdateCandlesticks), ctx, cs)
-}
-
-// DeleteCandlesticks mocks base method
+// DeleteCandlesticks mocks base method.
 func (m *MockAdapter) DeleteCandlesticks(ctx context.Context, cs *candlestick.List) error {
+	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "DeleteCandlesticks", ctx, cs)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
-// DeleteCandlesticks indicates an expected call of DeleteCandlesticks
+// DeleteCandlesticks indicates an expected call of DeleteCandlesticks.
 func (mr *MockAdapterMockRecorder) DeleteCandlesticks(ctx, cs interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteCandlesticks", reflect.TypeOf((*MockAdapter)(nil).DeleteCandlesticks), ctx, cs)
+}
+
+// ReadCandlesticks mocks base method.
+func (m *MockAdapter) ReadCandlesticks(ctx context.Context, cs *candlestick.List, start, end time.Time, limit uint) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ReadCandlesticks", ctx, cs, start, end, limit)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// ReadCandlesticks indicates an expected call of ReadCandlesticks.
+func (mr *MockAdapterMockRecorder) ReadCandlesticks(ctx, cs, start, end, limit interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ReadCandlesticks", reflect.TypeOf((*MockAdapter)(nil).ReadCandlesticks), ctx, cs, start, end, limit)
+}
+
+// UpdateCandlesticks mocks base method.
+func (m *MockAdapter) UpdateCandlesticks(ctx context.Context, cs *candlestick.List) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateCandlesticks", ctx, cs)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdateCandlesticks indicates an expected call of UpdateCandlesticks.
+func (mr *MockAdapterMockRecorder) UpdateCandlesticks(ctx, cs interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateCandlesticks", reflect.TypeOf((*MockAdapter)(nil).UpdateCandlesticks), ctx, cs)
 }

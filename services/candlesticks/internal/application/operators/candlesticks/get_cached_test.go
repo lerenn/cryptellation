@@ -33,7 +33,9 @@ func (suite *GetCachedSuite) SetupTest() {
 	suite.operator = New(suite.db, exchanges)
 }
 
-func (suite *GetCachedSuite) setMocksForAllExistWithNoneInDB(ctx context.Context) {
+func (suite *GetCachedSuite) setMocksForAllExistWithNoneInDB() context.Context {
+	ctx := context.Background()
+
 	// Set list that will be pulled from exchange and created in DB
 	l := candlestick.NewEmptyList(candlestick.ListID{
 		ExchangeName: "exchange", PairSymbol: "ETH-USDC", Period: period.M1,
@@ -78,11 +80,12 @@ func (suite *GetCachedSuite) setMocksForAllExistWithNoneInDB(ctx context.Context
 			Limit:      0,
 		},
 	).Return(l, nil)
+
+	return ctx
 }
 
 func (suite *GetCachedSuite) TestAllExistWithNoneInDB() {
-	ctx := context.Background()
-	suite.setMocksForAllExistWithNoneInDB(ctx)
+	ctx := suite.setMocksForAllExistWithNoneInDB()
 
 	// When a request is made
 	l, err := suite.operator.GetCached(ctx, GetCachedPayload{
@@ -106,7 +109,9 @@ func (suite *GetCachedSuite) TestAllExistWithNoneInDB() {
 	})
 }
 
-func (suite *GetCachedSuite) setMocksForNoneExistWithNoneInDB(ctx context.Context) {
+func (suite *GetCachedSuite) setMocksForNoneExistWithNoneInDB() context.Context {
+	ctx := context.Background()
+
 	l := candlestick.NewEmptyList(candlestick.ListID{
 		ExchangeName: "exchange", PairSymbol: "ETH-USDC", Period: period.M1,
 	})
@@ -122,20 +127,6 @@ func (suite *GetCachedSuite) setMocksForNoneExistWithNoneInDB(ctx context.Contex
 		uint(0),
 	).Return(nil)
 
-	// Set first call to know how much candlestick there is in the database
-	suite.db.EXPECT().ReadCandlesticks(
-		ctx,
-		candlestick.NewEmptyList(
-			candlestick.ListID{ExchangeName: "exchange", PairSymbol: "ETH-USDC", Period: period.M1},
-		),
-		time.Unix(0, 0),
-		time.Unix(5940, 0),
-		uint(0),
-	).Return(nil)
-
-	// Set call for creating candlesticks in database
-	suite.db.EXPECT().CreateCandlesticks(ctx, l).Return(nil)
-
 	// Set call for getting the candlesticks from the database
 	suite.exchange.EXPECT().GetCandlesticks(
 		ctx,
@@ -147,12 +138,13 @@ func (suite *GetCachedSuite) setMocksForNoneExistWithNoneInDB(ctx context.Contex
 			Limit:      0,
 		},
 	).Return(l, nil)
+
+	return ctx
 }
 
 func (suite *GetCachedSuite) TestNoneExistWithNoneInDB() {
 	// Set list that will be pulled from exchange and created in DB
-	ctx := context.Background()
-	suite.setMocksForNoneExistWithNoneInDB(ctx)
+	ctx := suite.setMocksForNoneExistWithNoneInDB()
 
 	// When a request is made
 	l, err := suite.operator.GetCached(ctx, GetCachedPayload{
@@ -168,7 +160,9 @@ func (suite *GetCachedSuite) TestNoneExistWithNoneInDB() {
 	suite.Require().Equal(0, l.Len())
 }
 
-func (suite *GetCachedSuite) setMocksForFromDBAndService(ctx context.Context) {
+func (suite *GetCachedSuite) setMocksForFromDBAndService() context.Context {
+	ctx := context.Background()
+
 	id := candlestick.ListID{
 		ExchangeName: "exchange", PairSymbol: "ETH-USDC", Period: period.M1,
 	}
@@ -223,11 +217,12 @@ func (suite *GetCachedSuite) setMocksForFromDBAndService(ctx context.Context) {
 			Limit:      0,
 		},
 	).Return(exchl, nil)
+
+	return ctx
 }
 
 func (suite *GetCachedSuite) TestFromDBAndService() {
-	ctx := context.Background()
-	suite.setMocksForFromDBAndService(ctx)
+	ctx := suite.setMocksForFromDBAndService()
 
 	// When a request is made
 	el, err := suite.operator.GetCached(ctx, GetCachedPayload{
@@ -254,7 +249,9 @@ func (suite *GetCachedSuite) TestFromDBAndService() {
 	})
 }
 
-func (suite *GetCachedSuite) setMocksForFromDBAndServiceWithUncomplete(ctx context.Context) {
+func (suite *GetCachedSuite) setMocksForFromDBAndServiceWithUncomplete() context.Context {
+	ctx := context.Background()
+
 	id := candlestick.ListID{
 		ExchangeName: "exchange", PairSymbol: "ETH-USDC", Period: period.M1,
 	}
@@ -314,11 +311,12 @@ func (suite *GetCachedSuite) setMocksForFromDBAndServiceWithUncomplete(ctx conte
 			Limit:      0,
 		},
 	).Return(exchl, nil)
+
+	return ctx
 }
 
 func (suite *GetCachedSuite) TestFromDBAndServiceWithUncomplete() {
-	ctx := context.Background()
-	suite.setMocksForFromDBAndServiceWithUncomplete(ctx)
+	ctx := suite.setMocksForFromDBAndServiceWithUncomplete()
 
 	// When a request is made
 	el, err := suite.operator.GetCached(ctx, GetCachedPayload{

@@ -2,6 +2,7 @@ package ticks
 
 import (
 	"context"
+	"sync"
 	"testing"
 	"time"
 
@@ -35,7 +36,10 @@ func (suite *RegisterSuite) SetupTest() {
 	suite.operator = New(suite.ps, suite.vdb, exchanges)
 }
 
-func (suite *RegisterSuite) setMocksForFirstRegister(ctx context.Context, ch chan tick.Tick, stopCh chan struct{}) {
+func (suite *RegisterSuite) setMocksForFirstRegister(ctx context.Context) (chan tick.Tick, chan struct{}, *sync.WaitGroup) {
+	ch := make(chan tick.Tick, 10)
+	stopCh := make(chan struct{}, 10)
+
 	// Set call to database for checking existing listener, and return the new count
 	suite.vdb.EXPECT().
 		IncrementSymbolListenerCount(ctx, "exchange", "PAIR_SYMBOL").
@@ -47,24 +51,29 @@ func (suite *RegisterSuite) setMocksForFirstRegister(ctx context.Context, ch cha
 		Return(ch, stopCh, nil)
 
 	// Set call to pubsub when receving a tick for the exchange
+	wg := sync.WaitGroup{}
 	suite.ps.EXPECT().Publish(tick.Tick{
 		Time:       time.Unix(60, 0),
 		PairSymbol: "SYMBOL",
 		Price:      2.0,
 		Exchange:   "EXCHANGE",
-	}).Return(nil)
+	}).DoAndReturn(func(tick tick.Tick) error {
+		wg.Done()
+		return nil
+	})
+	wg.Add(1)
 
 	// Set call to pubsub when closing the goroutine automatically
 	suite.ps.EXPECT().Close()
+
+	return ch, stopCh, &wg
 }
 
 func (suite *RegisterSuite) TestFirstRegister() {
 	ctx := context.Background()
-	ch := make(chan tick.Tick, 1)
+	ch, stopCh, wg := suite.setMocksForFirstRegister(ctx)
 	defer close(ch)
-	stopCh := make(chan struct{}, 1)
 	defer close(stopCh)
-	suite.setMocksForFirstRegister(ctx, ch, stopCh)
 
 	// Register to the application
 	count, err := suite.operator.Register(ctx, "exchange", "PAIR_SYMBOL")
@@ -81,21 +90,26 @@ func (suite *RegisterSuite) TestFirstRegister() {
 		Exchange:   "EXCHANGE",
 	}
 	ch <- t
-	time.Sleep(time.Millisecond) // Wait for channel to propagate
+
+	// Wait for tick to be arrived
+	wg.Wait()
 }
 
-func (suite *RegisterSuite) setMocksForSecondRegister(ctx context.Context) {
+func (suite *RegisterSuite) setMocksForSecondRegister() context.Context {
+	ctx := context.Background()
+
 	// Set call to database for checking existing listener, and return the new count
 	suite.vdb.EXPECT().
 		IncrementSymbolListenerCount(ctx, "exchange", "PAIR_SYMBOL").
 		Return(int64(2), nil)
 
 	// Nothing more should happen
+
+	return ctx
 }
 
 func (suite *RegisterSuite) TestSecondRegister() {
-	ctx := context.Background()
-	suite.setMocksForSecondRegister(ctx)
+	ctx := suite.setMocksForSecondRegister()
 
 	// Register to the application
 	count, err := suite.operator.Register(ctx, "exchange", "PAIR_SYMBOL")

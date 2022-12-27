@@ -33,14 +33,19 @@ func (suite *UnregisterSuite) SetupTest() {
 	suite.operator = New(suite.ps, suite.vdb, exchanges)
 }
 
-func (suite *UnregisterSuite) setMocksForUnregister(ctx context.Context) {
+func (suite *UnregisterSuite) setMocksForUnregister() context.Context {
+	ctx := context.Background()
+
 	// Set call to database for checking existing listener, and return the new count
 	suite.vdb.EXPECT().
 		DecrementSymbolListenerCount(ctx, "exchange", "PAIR_SYMBOL").
 		Return(int64(0), nil)
+
+	return ctx
 }
 
 func (suite *UnregisterSuite) TestUnregister() {
-	ctx := context.Background()
-	suite.setMocksForUnregister(ctx)
+	ctx := suite.setMocksForUnregister()
+
+	suite.operator.Unregister(ctx, "exchange", "PAIR_SYMBOL")
 }

@@ -6,80 +6,89 @@ package vdb
 
 import (
 	context "context"
-	gomock "github.com/golang/mock/gomock"
 	reflect "reflect"
+
+	gomock "github.com/golang/mock/gomock"
 )
 
-// MockAdapter is a mock of Adapter interface
+// MockAdapter is a mock of Adapter interface.
 type MockAdapter struct {
 	ctrl     *gomock.Controller
 	recorder *MockAdapterMockRecorder
 }
 
-// MockAdapterMockRecorder is the mock recorder for MockAdapter
+// MockAdapterMockRecorder is the mock recorder for MockAdapter.
 type MockAdapterMockRecorder struct {
 	mock *MockAdapter
 }
 
-// NewMockAdapter creates a new mock instance
+// NewMockAdapter creates a new mock instance.
 func NewMockAdapter(ctrl *gomock.Controller) *MockAdapter {
 	mock := &MockAdapter{ctrl: ctrl}
 	mock.recorder = &MockAdapterMockRecorder{mock}
 	return mock
 }
 
-// EXPECT returns an object that allows the caller to indicate expected use
+// EXPECT returns an object that allows the caller to indicate expected use.
 func (m *MockAdapter) EXPECT() *MockAdapterMockRecorder {
 	return m.recorder
 }
 
-// IncrementSymbolListenerCount mocks base method
-func (m *MockAdapter) IncrementSymbolListenerCount(ctx context.Context, exchange, pairSymbol string) (int64, error) {
-	ret := m.ctrl.Call(m, "IncrementSymbolListenerCount", ctx, exchange, pairSymbol)
-	ret0, _ := ret[0].(int64)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
+// ClearSymbolListenersCount mocks base method.
+func (m *MockAdapter) ClearSymbolListenersCount(ctx context.Context) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ClearSymbolListenersCount", ctx)
+	ret0, _ := ret[0].(error)
+	return ret0
 }
 
-// IncrementSymbolListenerCount indicates an expected call of IncrementSymbolListenerCount
-func (mr *MockAdapterMockRecorder) IncrementSymbolListenerCount(ctx, exchange, pairSymbol interface{}) *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IncrementSymbolListenerCount", reflect.TypeOf((*MockAdapter)(nil).IncrementSymbolListenerCount), ctx, exchange, pairSymbol)
+// ClearSymbolListenersCount indicates an expected call of ClearSymbolListenersCount.
+func (mr *MockAdapterMockRecorder) ClearSymbolListenersCount(ctx interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ClearSymbolListenersCount", reflect.TypeOf((*MockAdapter)(nil).ClearSymbolListenersCount), ctx)
 }
 
-// DecrementSymbolListenerCount mocks base method
+// DecrementSymbolListenerCount mocks base method.
 func (m *MockAdapter) DecrementSymbolListenerCount(ctx context.Context, exchange, pairSymbol string) (int64, error) {
+	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "DecrementSymbolListenerCount", ctx, exchange, pairSymbol)
 	ret0, _ := ret[0].(int64)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// DecrementSymbolListenerCount indicates an expected call of DecrementSymbolListenerCount
+// DecrementSymbolListenerCount indicates an expected call of DecrementSymbolListenerCount.
 func (mr *MockAdapterMockRecorder) DecrementSymbolListenerCount(ctx, exchange, pairSymbol interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DecrementSymbolListenerCount", reflect.TypeOf((*MockAdapter)(nil).DecrementSymbolListenerCount), ctx, exchange, pairSymbol)
 }
 
-// GetSymbolListenerCount mocks base method
+// GetSymbolListenerCount mocks base method.
 func (m *MockAdapter) GetSymbolListenerCount(ctx context.Context, exchange, pairSymbol string) (int64, error) {
+	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetSymbolListenerCount", ctx, exchange, pairSymbol)
 	ret0, _ := ret[0].(int64)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// GetSymbolListenerCount indicates an expected call of GetSymbolListenerCount
+// GetSymbolListenerCount indicates an expected call of GetSymbolListenerCount.
 func (mr *MockAdapterMockRecorder) GetSymbolListenerCount(ctx, exchange, pairSymbol interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetSymbolListenerCount", reflect.TypeOf((*MockAdapter)(nil).GetSymbolListenerCount), ctx, exchange, pairSymbol)
 }
 
-// ClearSymbolListenersCount mocks base method
-func (m *MockAdapter) ClearSymbolListenersCount(ctx context.Context) error {
-	ret := m.ctrl.Call(m, "ClearSymbolListenersCount", ctx)
-	ret0, _ := ret[0].(error)
-	return ret0
+// IncrementSymbolListenerCount mocks base method.
+func (m *MockAdapter) IncrementSymbolListenerCount(ctx context.Context, exchange, pairSymbol string) (int64, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "IncrementSymbolListenerCount", ctx, exchange, pairSymbol)
+	ret0, _ := ret[0].(int64)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
-// ClearSymbolListenersCount indicates an expected call of ClearSymbolListenersCount
-func (mr *MockAdapterMockRecorder) ClearSymbolListenersCount(ctx interface{}) *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ClearSymbolListenersCount", reflect.TypeOf((*MockAdapter)(nil).ClearSymbolListenersCount), ctx)
+// IncrementSymbolListenerCount indicates an expected call of IncrementSymbolListenerCount.
+func (mr *MockAdapterMockRecorder) IncrementSymbolListenerCount(ctx, exchange, pairSymbol interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IncrementSymbolListenerCount", reflect.TypeOf((*MockAdapter)(nil).IncrementSymbolListenerCount), ctx, exchange, pairSymbol)
 }

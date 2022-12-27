@@ -6,43 +6,46 @@ package exchanges
 
 import (
 	context "context"
+	reflect "reflect"
+
 	candlestick "github.com/digital-feather/cryptellation/services/candlesticks/pkg/models/candlestick"
 	gomock "github.com/golang/mock/gomock"
-	reflect "reflect"
 )
 
-// MockAdapter is a mock of Adapter interface
+// MockAdapter is a mock of Adapter interface.
 type MockAdapter struct {
 	ctrl     *gomock.Controller
 	recorder *MockAdapterMockRecorder
 }
 
-// MockAdapterMockRecorder is the mock recorder for MockAdapter
+// MockAdapterMockRecorder is the mock recorder for MockAdapter.
 type MockAdapterMockRecorder struct {
 	mock *MockAdapter
 }
 
-// NewMockAdapter creates a new mock instance
+// NewMockAdapter creates a new mock instance.
 func NewMockAdapter(ctrl *gomock.Controller) *MockAdapter {
 	mock := &MockAdapter{ctrl: ctrl}
 	mock.recorder = &MockAdapterMockRecorder{mock}
 	return mock
 }
 
-// EXPECT returns an object that allows the caller to indicate expected use
+// EXPECT returns an object that allows the caller to indicate expected use.
 func (m *MockAdapter) EXPECT() *MockAdapterMockRecorder {
 	return m.recorder
 }
 
-// GetCandlesticks mocks base method
+// GetCandlesticks mocks base method.
 func (m *MockAdapter) GetCandlesticks(ctx context.Context, payload GetCandlesticksPayload) (*candlestick.List, error) {
+	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetCandlesticks", ctx, payload)
 	ret0, _ := ret[0].(*candlestick.List)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// GetCandlesticks indicates an expected call of GetCandlesticks
+// GetCandlesticks indicates an expected call of GetCandlesticks.
 func (mr *MockAdapterMockRecorder) GetCandlesticks(ctx, payload interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetCandlesticks", reflect.TypeOf((*MockAdapter)(nil).GetCandlesticks), ctx, payload)
 }
