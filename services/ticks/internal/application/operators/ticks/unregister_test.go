@@ -47,5 +47,7 @@ func (suite *UnregisterSuite) setMocksForUnregister() context.Context {
 func (suite *UnregisterSuite) TestUnregister() {
 	ctx := suite.setMocksForUnregister()
 
-	suite.operator.Unregister(ctx, "exchange", "PAIR_SYMBOL")
+	count, err := suite.operator.Unregister(ctx, "exchange", "PAIR_SYMBOL")
+	suite.Require().NoError(err)
+	suite.Require().Equal(int64(0), count)
 }
