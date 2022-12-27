@@ -4,9 +4,9 @@ import (
 	"testing"
 	"time"
 
+	"github.com/digital-feather/cryptellation/services/ticks/internal/application/ports/db"
 	"github.com/digital-feather/cryptellation/services/ticks/internal/application/ports/exchanges"
 	"github.com/digital-feather/cryptellation/services/ticks/internal/application/ports/pubsub"
-	"github.com/digital-feather/cryptellation/services/ticks/internal/application/ports/vdb"
 	"github.com/digital-feather/cryptellation/services/ticks/pkg/models/tick"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/suite"
@@ -19,13 +19,13 @@ func TestListenSuite(t *testing.T) {
 type ListenSuite struct {
 	suite.Suite
 	operator Operator
-	vdb      *vdb.MockAdapter
+	vdb      *db.MockAdapter
 	ps       *pubsub.MockAdapter
 	exchange *exchanges.MockAdapter
 }
 
 func (suite *ListenSuite) SetupTest() {
-	suite.vdb = vdb.NewMockAdapter(gomock.NewController(suite.T()))
+	suite.vdb = db.NewMockAdapter(gomock.NewController(suite.T()))
 	suite.ps = pubsub.NewMockAdapter(gomock.NewController(suite.T()))
 
 	suite.exchange = exchanges.NewMockAdapter(gomock.NewController(suite.T()))

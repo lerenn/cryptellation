@@ -2,7 +2,7 @@
 // Source: adapter.go
 
 // Package vdb is a generated GoMock package.
-package vdb
+package db
 
 import (
 	context "context"

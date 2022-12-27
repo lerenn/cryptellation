@@ -6,7 +6,7 @@ import (
 )
 
 func (t Ticks) Register(ctx context.Context, exchange, pairSymbol string) (int64, error) {
-	count, err := t.vdb.IncrementSymbolListenerCount(ctx, exchange, pairSymbol)
+	count, err := t.db.IncrementSymbolListenerCount(ctx, exchange, pairSymbol)
 	if err != nil {
 		return count, err
 	}
@@ -28,7 +28,7 @@ func (t Ticks) launchListener(exchange, pairSymbol string) error {
 	}
 
 	el := internalListener{
-		DB:         t.vdb,
+		DB:         t.db,
 		PubSub:     t.pubsub,
 		Exchange:   exch,
 		PairSymbol: pairSymbol,

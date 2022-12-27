@@ -1,7 +1,7 @@
 // Generate code for mock
-//go:generate go run -mod=mod github.com/golang/mock/mockgen -source=adapter.go -destination=mock.gen.go -package vdb
+//go:generate go run -mod=mod github.com/golang/mock/mockgen -source=adapter.go -destination=mock.gen.go -package db
 
-package vdb
+package db
 
 import (
 	"context"
