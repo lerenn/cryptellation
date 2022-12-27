@@ -20,21 +20,6 @@ docker/push: ## Push docker image
 .PHONY: clean
 clean: test/clean ## Clean everything
 
-.PHONY: proto
-proto: ## Generate protobuf code
-	@mkdir -p pkg/client/proto
-	@for PROTOFILE in $(shell find . -name *.proto); do \
-		echo "Generating $$PROTOFILE"; \
-		protoc \
-			--proto_path=./api \
-			--go_out=./pkg/client/proto \
-			--go_opt=paths=source_relative \
-			--go-grpc_opt=require_unimplemented_servers=false \
-			--go-grpc_out=./pkg/client/proto \
-			--go-grpc_opt=paths=source_relative \
-			"$$PROTOFILE" || exit $?; \
-	done
-
 .PHONY: lint
 lint: ## Lint the code
 ifeq ($(shell which golangci-lint &> /dev/null; echo $$?),1)
@@ -44,6 +29,9 @@ endif
 
 .PHONY: generate ## Generate specified code across the codebase
 generate:
+ifeq ($(shell which protoc &> /dev/null; echo $$?),1)
+	@echo "No protobuff compiler (protoc) detected. Please install it."
+endif
 	@go generate ./...
 
 .PHONY: test/clean

@@ -21,9 +21,8 @@ clean:  ## Clean everything
 	@for CLIENT in $(CLIENTS); do $(MAKE) -C clients/$$CLIENT clean || exit $?; done
 	@for SERVICE in $(SERVICES); do $(MAKE) -C services/$$SERVICE clean || exit $?; done
 
-proto: ## Generate protobuf code
-	@for CLIENT in $(CLIENTS); do $(MAKE) -C clients/$$CLIENT proto || exit $?; done
-	@for SERVICE in $(SERVICES); do $(MAKE) -C services/$$SERVICE proto || exit $?; done
+generate: ## Generate code
+	@for SERVICE in $(SERVICES); do $(MAKE) -C services/$$SERVICE generate || exit $?; done
 
 lint: ## Lint the code
 	@for CLIENT in $(CLIENTS); do $(MAKE) -C clients/$$CLIENT lint || exit $?; done
