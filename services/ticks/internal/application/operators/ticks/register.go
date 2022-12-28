@@ -6,7 +6,7 @@ import (
 )
 
 func (t Ticks) Register(ctx context.Context, exchange, pairSymbol string) (int64, error) {
-	count, err := t.db.IncrementSymbolListenerCount(ctx, exchange, pairSymbol)
+	count, err := t.db.IncrementSymbolListenerSubscribers(ctx, exchange, pairSymbol)
 	if err != nil {
 		return count, err
 	}

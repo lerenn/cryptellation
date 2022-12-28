@@ -1,11 +1,9 @@
 package redis
 
 import (
-	"context"
-	"fmt"
 	"testing"
-	"time"
 
+	"github.com/digital-feather/cryptellation/services/ticks/internal/application/ports/db/tests"
 	"github.com/stretchr/testify/suite"
 )
 
@@ -14,55 +12,11 @@ func TestRedisVdbSuite(t *testing.T) {
 }
 
 type RedisVdbSuite struct {
-	suite.Suite
-	db *DB
+	tests.SymbolListenerSuite
 }
 
 func (suite *RedisVdbSuite) SetupTest() {
 	db, err := New()
 	suite.Require().NoError(err)
-	suite.db = db
-}
-
-func (suite *RedisVdbSuite) ResetSymbolListener(exchange, pairSymbol string) {
-	suite.db.client.Set(context.Background(), fmt.Sprintf(redisKeySymbolListener, exchange, pairSymbol), 0, time.Second)
-}
-
-func (suite *RedisVdbSuite) TestIncrementDecrementSymbolListener() {
-	suite.ResetSymbolListener("EXCHANGE1", "PAIR1")
-	suite.ResetSymbolListener("EXCHANGE2", "PAIR1")
-
-	count, err := suite.db.IncrementSymbolListenerCount(context.Background(), "EXCHANGE1", "PAIR1")
-	suite.Require().NoError(err)
-	suite.Equal(int64(1), count)
-
-	count, err = suite.db.IncrementSymbolListenerCount(context.Background(), "EXCHANGE1", "PAIR1")
-	suite.Require().NoError(err)
-	suite.Equal(int64(2), count)
-
-	count, err = suite.db.IncrementSymbolListenerCount(context.Background(), "EXCHANGE2", "PAIR1")
-	suite.Require().NoError(err)
-	suite.Equal(int64(1), count)
-
-	count, err = suite.db.GetSymbolListenerCount(context.Background(), "EXCHANGE1", "PAIR1")
-	suite.Require().NoError(err)
-	suite.Equal(int64(2), count)
-
-	count, err = suite.db.GetSymbolListenerCount(context.Background(), "EXCHANGE2", "PAIR1")
-	suite.Require().NoError(err)
-	suite.Equal(int64(1), count)
-
-	count, err = suite.db.DecrementSymbolListenerCount(context.Background(), "EXCHANGE1", "PAIR1")
-	suite.Require().NoError(err)
-	suite.Equal(int64(1), count)
-
-	suite.NoError(suite.db.ClearSymbolListenersCount(context.Background()))
-
-	count, err = suite.db.GetSymbolListenerCount(context.Background(), "EXCHANGE1", "PAIR1")
-	suite.Require().NoError(err)
-	suite.Equal(int64(0), count)
-
-	count, err = suite.db.GetSymbolListenerCount(context.Background(), "EXCHANGE2", "PAIR1")
-	suite.Require().NoError(err)
-	suite.Equal(int64(0), count)
+	suite.DB = db
 }

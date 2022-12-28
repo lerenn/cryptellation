@@ -74,7 +74,7 @@ func (l *internalListener) setNextCheckTimeIfNeeded() (finished bool, err error)
 	ctx := context.Background()
 
 	if l.nextCheckTime.Before(time.Now()) {
-		count, err := l.DB.GetSymbolListenerCount(ctx, l.Exchange.Name(), l.PairSymbol)
+		count, err := l.DB.GetSymbolListenerSubscribers(ctx, l.Exchange.Name(), l.PairSymbol)
 		if err != nil {
 			return false, err
 		}

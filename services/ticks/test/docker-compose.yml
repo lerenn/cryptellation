@@ -5,6 +5,21 @@ services:
         image: redis:6-alpine
         networks:
             - test-network
+    cockroachdb:
+        image: cockroachdb/cockroach
+        # ports:
+        #     - 26257:26257
+        #     - 26256:8080
+        networks:
+            - test-network
+        ulimits:
+            nofile:
+                soft: 65536
+                hard: 65536
+        command: start-single-node --insecure
+        restart: unless-stopped
+        volumes:
+            - ../configs:/docker-entrypoint-initdb.d
     nats:
         image: nats:alpine
         # ports:
@@ -16,12 +31,15 @@ services:
             - testing
         depends_on:
             - redis
+            - cockroachdb
             - nats
         build: .
         env_file:
             - ../../../.services.env
             - ../../../.credentials.env
         environment:
+            - SQLDB_HOST=cockroachdb
+            - SQLDB_PORT=26257
             - REDIS_URL=redis:6379
         volumes:
             - gocache:/go/pkg/mod

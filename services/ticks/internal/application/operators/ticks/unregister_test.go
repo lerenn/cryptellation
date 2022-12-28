@@ -38,7 +38,7 @@ func (suite *UnregisterSuite) setMocksForUnregister() context.Context {
 
 	// Set call to database for checking existing listener, and return the new count
 	suite.vdb.EXPECT().
-		DecrementSymbolListenerCount(ctx, "exchange", "PAIR_SYMBOL").
+		DecrementSymbolListenerSubscribers(ctx, "exchange", "PAIR_SYMBOL").
 		Return(int64(0), nil)
 
 	return ctx

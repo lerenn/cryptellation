@@ -42,7 +42,7 @@ func (suite *RegisterSuite) setMocksForFirstRegister(ctx context.Context) (chan 
 
 	// Set call to database for checking existing listener, and return the new count
 	suite.vdb.EXPECT().
-		IncrementSymbolListenerCount(ctx, "exchange", "PAIR_SYMBOL").
+		IncrementSymbolListenerSubscribers(ctx, "exchange", "PAIR_SYMBOL").
 		Return(int64(1), nil)
 
 	// Set call to exchange to listen to symbol
@@ -100,7 +100,7 @@ func (suite *RegisterSuite) setMocksForSecondRegister() context.Context {
 
 	// Set call to database for checking existing listener, and return the new count
 	suite.vdb.EXPECT().
-		IncrementSymbolListenerCount(ctx, "exchange", "PAIR_SYMBOL").
+		IncrementSymbolListenerSubscribers(ctx, "exchange", "PAIR_SYMBOL").
 		Return(int64(2), nil)
 
 	// Nothing more should happen

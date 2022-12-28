@@ -15,8 +15,10 @@ const (
 )
 
 type Adapter interface {
-	IncrementSymbolListenerCount(ctx context.Context, exchange, pairSymbol string) (int64, error)
-	DecrementSymbolListenerCount(ctx context.Context, exchange, pairSymbol string) (int64, error)
-	GetSymbolListenerCount(ctx context.Context, exchange, pairSymbol string) (int64, error)
-	ClearSymbolListenersCount(ctx context.Context) error
+	// Symbol Listener Count
+	IncrementSymbolListenerSubscribers(ctx context.Context, exchange, pairSymbol string) (int64, error)
+	DecrementSymbolListenerSubscribers(ctx context.Context, exchange, pairSymbol string) (int64, error)
+	GetSymbolListenerSubscribers(ctx context.Context, exchange, pairSymbol string) (int64, error)
+	ClearSymbolListenerSubscribers(ctx context.Context, exchange, pairSymbol string) error
+	ClearAllSymbolListenersCount(ctx context.Context) error
 }
