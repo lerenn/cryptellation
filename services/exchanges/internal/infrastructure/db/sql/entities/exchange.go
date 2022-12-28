@@ -1,18 +1,10 @@
-package sql
+package entities
 
 import (
 	"time"
 
 	"github.com/digital-feather/cryptellation/services/exchanges/pkg/models/exchange"
 )
-
-type Pair struct {
-	Symbol string `gorm:"primaryKey;autoIncrement:false"`
-}
-
-type Period struct {
-	Symbol string `gorm:"primaryKey;autoIncrement:false"`
-}
 
 type Exchange struct {
 	Name         string   `gorm:"primaryKey;autoIncrement:false"`
