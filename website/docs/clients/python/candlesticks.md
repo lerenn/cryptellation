@@ -1,3 +1,0 @@
-# Candlesticks
-
-TODO
