@@ -10,14 +10,14 @@ import (
 	"github.com/digital-feather/cryptellation/services/backtests/internal/application"
 	"github.com/digital-feather/cryptellation/services/backtests/internal/controllers/grpc"
 	"github.com/digital-feather/cryptellation/services/backtests/internal/controllers/http/health"
-	"github.com/digital-feather/cryptellation/services/backtests/internal/infrastructure/db/redis"
+	"github.com/digital-feather/cryptellation/services/backtests/internal/infrastructure/db/sql"
 	"github.com/digital-feather/cryptellation/services/backtests/internal/infrastructure/pubsub/nats"
 	"github.com/digital-feather/cryptellation/services/candlesticks/pkg/client"
 )
 
 func initApp() (*application.Application, func(), error) {
 	// Init database client
-	db, err := redis.New()
+	db, err := sql.New()
 	if err != nil {
 		return nil, func() {}, err
 	}

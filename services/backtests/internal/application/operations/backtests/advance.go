@@ -12,20 +12,14 @@ import (
 )
 
 func (b Backtests) Advance(ctx context.Context, backtestId uint) error {
-	return b.db.LockedBacktest(backtestId, func() error {
-		// Get backtest info
-		bt, err := b.db.ReadBacktest(ctx, backtestId)
-		if err != nil {
-			return fmt.Errorf("cannot get backtest: %w", err)
-		}
-
+	return b.db.LockedBacktest(ctx, backtestId, func(bt *backtest.Backtest) error {
 		// Advance backtest
 		finished := bt.Advance()
 
 		// Get actual events
 		evts := make([]event.Event, 0, 1)
 		if !finished {
-			evts, err = b.readActualEvents(ctx, bt)
+			evts, err := b.readActualEvents(ctx, *bt)
 			if err != nil {
 				return fmt.Errorf("cannot read actual events: %w", err)
 			}
@@ -45,18 +39,13 @@ func (b Backtests) Advance(ctx context.Context, backtestId uint) error {
 		}))
 		b.broadcastEvents(backtestId, evts)
 
-		// Update backtest
-		if err := b.db.UpdateBacktest(ctx, bt); err != nil {
-			return fmt.Errorf("cannot update backtest: %w", err)
-		}
-
 		return nil
 	})
 }
 
 func (b Backtests) readActualEvents(ctx context.Context, bt backtest.Backtest) ([]event.Event, error) {
-	evts := make([]event.Event, 0, len(bt.TickSubscribers))
-	for _, sub := range bt.TickSubscribers {
+	evts := make([]event.Event, 0, len(bt.TickSubscriptions))
+	for _, sub := range bt.TickSubscriptions {
 		list, err := b.csClient.ReadCandlesticks(ctx, candlesticks.ReadCandlestickPayload{
 			ExchangeName: sub.ExchangeName,
 			PairSymbol:   sub.PairSymbol,

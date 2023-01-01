@@ -16,7 +16,7 @@ const (
 	Tries      = 20
 )
 
-type LockedBacktestCallback func() error
+type LockedBacktestCallback func(bt *backtest.Backtest) error
 
 type Adapter interface {
 	CreateBacktest(ctx context.Context, bt *backtest.Backtest) error
@@ -24,5 +24,5 @@ type Adapter interface {
 	UpdateBacktest(ctx context.Context, bt backtest.Backtest) error
 	DeleteBacktest(ctx context.Context, bt backtest.Backtest) error
 
-	LockedBacktest(id uint, fn LockedBacktestCallback) error
+	LockedBacktest(ctx context.Context, id uint, fn LockedBacktestCallback) error
 }

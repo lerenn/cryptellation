@@ -36,23 +36,29 @@ func (suite *SubscribeSuite) TestHappyPath() {
 	ctx := context.Background()
 
 	// Set DB expected operations
-	suite.db.EXPECT().LockedBacktest(uint(1234), gomock.Any()).
-		DoAndReturn(func(id uint, fn db.LockedBacktestCallback) error {
-			return fn()
+	suite.db.EXPECT().LockedBacktest(ctx, uint(1234), gomock.Any()).
+		DoAndReturn(func(ctx context.Context, id uint, fn db.LockedBacktestCallback) error {
+			bt := backtest.Backtest{
+				ID:                1234,
+				TickSubscriptions: make([]event.TickSubscription, 0),
+			}
+
+			if err := fn(&bt); err != nil {
+				return err
+			}
+
+			suite.Require().Equal(backtest.Backtest{
+				ID: 1234,
+				TickSubscriptions: []event.TickSubscription{
+					{
+						ExchangeName: "exchange",
+						PairSymbol:   "ETH-USDT",
+					},
+				},
+			}, bt)
+
+			return nil
 		})
-	suite.db.EXPECT().ReadBacktest(ctx, uint(1234)).Return(backtest.Backtest{
-		ID:              1234,
-		TickSubscribers: make([]event.Subscription, 0),
-	}, nil)
-	suite.db.EXPECT().UpdateBacktest(ctx, backtest.Backtest{
-		ID: 1234,
-		TickSubscribers: []event.Subscription{
-			{
-				ExchangeName: "exchange",
-				PairSymbol:   "ETH-USDT",
-			},
-		},
-	})
 
 	// Execute operation
 	err := suite.operator.SubscribeToEvents(ctx, uint(1234), "exchange", "ETH-USDT")

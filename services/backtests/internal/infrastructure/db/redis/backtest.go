@@ -91,7 +91,7 @@ func (d *DB) DeleteBacktest(ctx context.Context, bt backtest.Backtest) error {
 	return d.client.Del(ctx, backtestKey(bt.ID)).Err()
 }
 
-func (d *DB) LockedBacktest(id uint, fn db.LockedBacktestCallback) error {
+func (d *DB) LockedBacktest(ctx context.Context, id uint, fn db.LockedBacktestCallback) error {
 	mutex := d.lockClient.NewMutex(backtestMutexName(id), lockOptions...)
 	if err := mutex.Lock(); err != nil {
 		return err
@@ -111,8 +111,17 @@ func (d *DB) LockedBacktest(id uint, fn db.LockedBacktestCallback) error {
 		}
 	}()
 
-	err = fn()
-	return err
+	bt, err := d.ReadBacktest(ctx, id)
+	if err != nil {
+		return err
+	}
+
+	err = fn(&bt)
+	if err != nil {
+		return err
+	}
+
+	return d.UpdateBacktest(ctx, bt)
 }
 
 func backtestKey(id uint) string {

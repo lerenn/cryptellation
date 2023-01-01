@@ -36,7 +36,7 @@ type Backtest struct {
 	EndTime             time.Time
 	Accounts            map[string]account.Account
 	PeriodBetweenEvents period.Symbol
-	TickSubscribers     []event.Subscription
+	TickSubscriptions   []event.TickSubscription
 	Orders              []order.Order
 }
 
@@ -102,7 +102,7 @@ func New(ctx context.Context, payload NewPayload) (Backtest, error) {
 		EndTime:             *payload.EndTime,
 		Accounts:            payload.Accounts,
 		PeriodBetweenEvents: per,
-		TickSubscribers:     make([]event.Subscription, 0),
+		TickSubscriptions:   make([]event.TickSubscription, 0),
 		Orders:              make([]order.Order, 0),
 	}, nil
 }
@@ -145,19 +145,19 @@ func (bt *Backtest) SetCurrentTime(ts time.Time) {
 	bt.CurrentCsTick.PriceType = candlestick.PriceTypeIsOpen
 }
 
-func (bt *Backtest) CreateTickSubscription(exchangeName string, pairSymbol string) (event.Subscription, error) {
-	for _, ts := range bt.TickSubscribers {
+func (bt *Backtest) CreateTickSubscription(exchangeName string, pairSymbol string) (event.TickSubscription, error) {
+	for _, ts := range bt.TickSubscriptions {
 		if ts.ExchangeName == exchangeName && ts.PairSymbol == pairSymbol {
-			return event.Subscription{}, ErrTickSubscriptionAlreadyExists
+			return event.TickSubscription{}, ErrTickSubscriptionAlreadyExists
 		}
 	}
 
-	s := event.Subscription{
-		ID:           len(bt.TickSubscribers),
+	s := event.TickSubscription{
+		ID:           len(bt.TickSubscriptions),
 		ExchangeName: exchangeName,
 		PairSymbol:   pairSymbol,
 	}
-	bt.TickSubscribers = append(bt.TickSubscribers, s)
+	bt.TickSubscriptions = append(bt.TickSubscriptions, s)
 
 	return s, nil
 }

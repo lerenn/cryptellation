@@ -10,12 +10,7 @@ import (
 )
 
 func (b Backtests) CreateOrder(ctx context.Context, backtestId uint, order order.Order) error {
-	return b.db.LockedBacktest(backtestId, func() error {
-		bt, err := b.db.ReadBacktest(ctx, backtestId)
-		if err != nil {
-			return fmt.Errorf("cannot get backtest: %w", err)
-		}
-
+	return b.db.LockedBacktest(ctx, backtestId, func(bt *backtest.Backtest) error {
 		list, err := b.csClient.ReadCandlesticks(ctx, candlesticks.ReadCandlestickPayload{
 			ExchangeName: order.ExchangeName,
 			PairSymbol:   order.PairSymbol,
@@ -35,10 +30,6 @@ func (b Backtests) CreateOrder(ctx context.Context, backtestId uint, order order
 
 		if err := bt.AddOrder(order, tcs.Candlestick); err != nil {
 			return err
-		}
-
-		if err := b.db.UpdateBacktest(ctx, bt); err != nil {
-			return fmt.Errorf("cannot update backtest: %w", err)
 		}
 
 		return nil

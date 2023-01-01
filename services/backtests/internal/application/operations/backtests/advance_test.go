@@ -40,42 +40,46 @@ func (suite *AdvanceSuite) TestWithoutAccount() {
 	ctx := context.Background()
 
 	// Set DB calls expectated
-	suite.db.EXPECT().LockedBacktest(uint(1234), gomock.Any()).
-		DoAndReturn(func(id uint, fn db.LockedBacktestCallback) error {
-			return fn()
+	suite.db.EXPECT().LockedBacktest(ctx, uint(1234), gomock.Any()).
+		DoAndReturn(func(ctx context.Context, id uint, fn db.LockedBacktestCallback) error {
+			bt := backtest.Backtest{
+				ID: 1234,
+				CurrentCsTick: backtest.CurrentCsTick{
+					Time:      time.Unix(0, 0),
+					PriceType: candlestick.PriceTypeIsOpen,
+				},
+				EndTime:             time.Unix(120, 0),
+				PeriodBetweenEvents: period.M1,
+				TickSubscriptions: []event.TickSubscription{
+					{
+						ExchangeName: "exchange",
+						PairSymbol:   "ETH-USDT",
+					},
+				},
+			}
+
+			if err := fn(&bt); err != nil {
+				return err
+			}
+
+			suite.Require().Equal(backtest.Backtest{
+				ID: 1234,
+				CurrentCsTick: backtest.CurrentCsTick{
+					Time:      time.Unix(120, 0),
+					PriceType: candlestick.PriceTypeIsOpen,
+				},
+				EndTime:             time.Unix(120, 0),
+				PeriodBetweenEvents: period.M1,
+				TickSubscriptions: []event.TickSubscription{
+					{
+						ExchangeName: "exchange",
+						PairSymbol:   "ETH-USDT",
+					},
+				},
+			}, bt)
+
+			return nil
 		})
-
-	suite.db.EXPECT().ReadBacktest(ctx, uint(1234)).Return(backtest.Backtest{
-		ID: 1234,
-		CurrentCsTick: backtest.CurrentCsTick{
-			Time:      time.Unix(0, 0),
-			PriceType: candlestick.PriceTypeIsOpen,
-		},
-		EndTime:             time.Unix(120, 0),
-		PeriodBetweenEvents: period.M1,
-		TickSubscribers: []event.Subscription{
-			{
-				ExchangeName: "exchange",
-				PairSymbol:   "ETH-USDT",
-			},
-		},
-	}, nil)
-
-	suite.db.EXPECT().UpdateBacktest(gomock.Any(), backtest.Backtest{
-		ID: 1234,
-		CurrentCsTick: backtest.CurrentCsTick{
-			Time:      time.Unix(120, 0),
-			PriceType: candlestick.PriceTypeIsOpen,
-		},
-		EndTime:             time.Unix(120, 0),
-		PeriodBetweenEvents: period.M1,
-		TickSubscribers: []event.Subscription{
-			{
-				ExchangeName: "exchange",
-				PairSymbol:   "ETH-USDT",
-			},
-		},
-	})
 
 	// Set candlesticks client expected calls
 	suite.candlesticks.EXPECT().ReadCandlesticks(ctx, client.ReadCandlestickPayload{

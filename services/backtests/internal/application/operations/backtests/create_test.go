@@ -54,7 +54,7 @@ func (suite *CreationSuite) TestHappyPass() {
 			},
 		},
 		PeriodBetweenEvents: period.M1,
-		TickSubscribers:     make([]event.Subscription, 0),
+		TickSubscriptions:   make([]event.TickSubscription, 0),
 		Orders:              make([]order.Order, 0)})).
 		Do(func(ctx context.Context, bt *backtest.Backtest) { bt.ID = 1 }).
 		Return(nil)

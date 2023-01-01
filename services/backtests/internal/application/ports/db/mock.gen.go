@@ -64,17 +64,17 @@ func (mr *MockAdapterMockRecorder) DeleteBacktest(ctx, bt interface{}) *gomock.C
 }
 
 // LockedBacktest mocks base method.
-func (m *MockAdapter) LockedBacktest(id uint, fn LockedBacktestCallback) error {
+func (m *MockAdapter) LockedBacktest(ctx context.Context, id uint, fn LockedBacktestCallback) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "LockedBacktest", id, fn)
+	ret := m.ctrl.Call(m, "LockedBacktest", ctx, id, fn)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // LockedBacktest indicates an expected call of LockedBacktest.
-func (mr *MockAdapterMockRecorder) LockedBacktest(id, fn interface{}) *gomock.Call {
+func (mr *MockAdapterMockRecorder) LockedBacktest(ctx, id, fn interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "LockedBacktest", reflect.TypeOf((*MockAdapter)(nil).LockedBacktest), id, fn)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "LockedBacktest", reflect.TypeOf((*MockAdapter)(nil).LockedBacktest), ctx, id, fn)
 }
 
 // ReadBacktest mocks base method.
