@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 
-	pb "github.com/digital-feather/cryptellation/services/ticks/pkg/client/proto"
+	pb "github.com/digital-feather/cryptellation/services/ticks/clients/go/proto"
 	"github.com/digital-feather/cryptellation/services/ticks/pkg/models/tick"
 	"github.com/nats-io/go-nats"
 	"google.golang.org/protobuf/proto"

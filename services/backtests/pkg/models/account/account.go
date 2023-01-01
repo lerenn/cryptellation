@@ -3,7 +3,7 @@ package account
 import (
 	"errors"
 
-	"github.com/digital-feather/cryptellation/services/backtests/pkg/client/proto"
+	"github.com/digital-feather/cryptellation/services/backtests/clients/go/proto"
 )
 
 var (

@@ -10,7 +10,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/digital-feather/cryptellation/services/exchanges/pkg/client/proto"
+	"github.com/digital-feather/cryptellation/services/exchanges/clients/go/proto"
 	"github.com/digital-feather/cryptellation/services/exchanges/pkg/models/exchange"
 	"golang.org/x/xerrors"
 	"google.golang.org/grpc"

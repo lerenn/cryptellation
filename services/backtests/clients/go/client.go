@@ -11,9 +11,9 @@ import (
 	"os"
 	"time"
 
+	"github.com/digital-feather/cryptellation/services/backtests/clients/go/proto"
 	"github.com/digital-feather/cryptellation/services/backtests/internal/application/ports/pubsub"
 	"github.com/digital-feather/cryptellation/services/backtests/internal/infrastructure/pubsub/nats"
-	"github.com/digital-feather/cryptellation/services/backtests/pkg/client/proto"
 	"github.com/digital-feather/cryptellation/services/backtests/pkg/models/account"
 	"github.com/digital-feather/cryptellation/services/backtests/pkg/models/event"
 	"github.com/digital-feather/cryptellation/services/backtests/pkg/models/order"

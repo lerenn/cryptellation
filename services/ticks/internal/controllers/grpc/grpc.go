@@ -7,8 +7,8 @@ import (
 	"net"
 	"os"
 
+	"github.com/digital-feather/cryptellation/services/ticks/clients/go/proto"
 	"github.com/digital-feather/cryptellation/services/ticks/internal/application"
-	"github.com/digital-feather/cryptellation/services/ticks/pkg/client/proto"
 	"golang.org/x/xerrors"
 	"google.golang.org/grpc"
 )

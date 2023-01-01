@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/digital-feather/cryptellation/services/backtests/pkg/client/proto"
+	"github.com/digital-feather/cryptellation/services/backtests/clients/go/proto"
 	"github.com/stretchr/testify/suite"
 )
 

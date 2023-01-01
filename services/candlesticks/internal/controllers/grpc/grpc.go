@@ -8,9 +8,9 @@ import (
 	"os"
 	"time"
 
+	"github.com/digital-feather/cryptellation/services/candlesticks/clients/go/proto"
 	"github.com/digital-feather/cryptellation/services/candlesticks/internal/application"
 	"github.com/digital-feather/cryptellation/services/candlesticks/internal/application/operators/candlesticks"
-	"github.com/digital-feather/cryptellation/services/candlesticks/pkg/client/proto"
 	"github.com/digital-feather/cryptellation/services/candlesticks/pkg/models/candlestick"
 	"github.com/digital-feather/cryptellation/services/candlesticks/pkg/models/period"
 	"golang.org/x/xerrors"

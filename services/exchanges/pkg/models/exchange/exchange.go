@@ -3,7 +3,7 @@ package exchange
 import (
 	"time"
 
-	"github.com/digital-feather/cryptellation/services/exchanges/pkg/client/proto"
+	"github.com/digital-feather/cryptellation/services/exchanges/clients/go/proto"
 )
 
 // swagger:model Exchange

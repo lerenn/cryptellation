@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"time"
 
-	"github.com/digital-feather/cryptellation/services/backtests/pkg/client/proto"
+	"github.com/digital-feather/cryptellation/services/backtests/clients/go/proto"
 	"github.com/digital-feather/cryptellation/services/backtests/pkg/models/status"
 	"github.com/digital-feather/cryptellation/services/backtests/pkg/models/tick"
 )

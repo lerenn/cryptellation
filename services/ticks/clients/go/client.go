@@ -10,9 +10,9 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/digital-feather/cryptellation/services/ticks/clients/go/proto"
 	"github.com/digital-feather/cryptellation/services/ticks/internal/application/ports/pubsub"
 	"github.com/digital-feather/cryptellation/services/ticks/internal/infrastructure/pubsub/nats"
-	"github.com/digital-feather/cryptellation/services/ticks/pkg/client/proto"
 	"github.com/digital-feather/cryptellation/services/ticks/pkg/models/tick"
 	"golang.org/x/xerrors"
 	"google.golang.org/grpc"

@@ -6,8 +6,8 @@ import (
 	"net"
 	"os"
 
+	"github.com/digital-feather/cryptellation/services/backtests/clients/go/proto"
 	app "github.com/digital-feather/cryptellation/services/backtests/internal/application"
-	"github.com/digital-feather/cryptellation/services/backtests/pkg/client/proto"
 	"golang.org/x/xerrors"
 	"google.golang.org/grpc"
 )

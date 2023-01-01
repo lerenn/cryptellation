@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"time"
 
-	"github.com/digital-feather/cryptellation/services/ticks/pkg/client/proto"
+	"github.com/digital-feather/cryptellation/services/ticks/clients/go/proto"
 )
 
 type Tick struct {
