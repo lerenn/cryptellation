@@ -3,11 +3,11 @@ import queue
 import iso8601
 import grpc
 
-from clients.python.cryptellation.config import Config
-from cryptellation.tick import Tick
+from cryptellation_ticks.config import Config
+from cryptellation_ticks.tick import Tick
 
-import cryptellation._genproto.ticks_pb2 as ticks
-import cryptellation._genproto.ticks_pb2_grpc as ticks_grpc
+import cryptellation_ticks._genproto.ticks_pb2 as ticks
+import cryptellation_ticks._genproto.ticks_pb2_grpc as ticks_grpc
 
 
 class Ticks(threading.Thread):
@@ -15,7 +15,7 @@ class Ticks(threading.Thread):
         threading.Thread.__init__(self)
         self._queue = queue.Queue(maxsize=2)
         self._config = Config()
-        self._channel = grpc.insecure_channel(self._config.ticks_url)
+        self._channel = grpc.insecure_channel(self._config.url)
         self._stub = ticks_grpc.TicksServiceStub(self._channel)
 
         req = ticks.ListenSymbolRequest(exchange=exchange, pair_symbol=pair)

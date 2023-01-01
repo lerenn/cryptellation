@@ -3,17 +3,17 @@ from datetime import datetime, timedelta
 import pytz
 import pandas as pd
 
-from cryptellation.config import Config
-from cryptellation.period import Period
+from cryptellation_candlesticks.config import Config
+from cryptellation_candlesticks.period import Period
 
-import cryptellation._genproto.candlesticks_pb2 as candlesticks
-import cryptellation._genproto.candlesticks_pb2_grpc as candlesticks_grpc
+import cryptellation_candlesticks._genproto.candlesticks_pb2 as candlesticks
+import cryptellation_candlesticks._genproto.candlesticks_pb2_grpc as candlesticks_grpc
 
 
 class Candlesticks(object):
     def __init__(self):
         self._config = Config()
-        self._channel = grpc.insecure_channel(self._config.candlesticks_url)
+        self._channel = grpc.insecure_channel(self._config.url)
         self._stub = candlesticks_grpc.CandlesticksServiceStub(self._channel)
 
     def get(

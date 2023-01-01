@@ -11,14 +11,11 @@ from datetime import datetime
 from .account import Account
 from .event import Event
 from .order import Order
-from .period import Period
-from .grapher import Grapher
-from .candlesticks import Candlesticks
 
-from cryptellation.config import Config
+from cryptellation_backtests.config import Config
 
-import cryptellation._genproto.backtests_pb2 as backtests
-import cryptellation._genproto.backtests_pb2_grpc as backtests_grpc
+import cryptellation_backtests._genproto.backtests_pb2 as backtests
+import cryptellation_backtests._genproto.backtests_pb2_grpc as backtests_grpc
 
 
 class BacktestEvents(threading.Thread):
@@ -60,8 +57,7 @@ class Backtest(object):
         },
     ):
         self._config = Config()
-        self._candlesticks = Candlesticks()
-        self._channel = grpc.insecure_channel(self._config.backtests_url)
+        self._channel = grpc.insecure_channel(self._config.service_url)
         self._stub = backtests_grpc.BacktestsServiceStub(self._channel)
         self._id = self._create(start_time, end_time, accounts)
         self._start_time = start_time
@@ -111,13 +107,13 @@ class Backtest(object):
     def order(self, type: str, exchange: str, pair: str, side: str, quantity: float):
         req = backtests.CreateBacktestOrderRequest(
             backtest_id=self._id,
-            order = backtests.Order(
+            order=backtests.Order(
                 type=type,
                 exchange_name=exchange,
                 pair_symbol=pair,
                 side=side,
                 quantity=quantity,
-            )
+            ),
         )
         self._stub.CreateBacktestOrder(req)
 
@@ -128,7 +124,9 @@ class Backtest(object):
         resp = self._stub.BacktestAccounts(req)
         return self._grpc_to_accounts(resp)
 
-    def _grpc_to_accounts(self, resp: backtests.BacktestAccountsResponse) -> Dict[str, Account]:
+    def _grpc_to_accounts(
+        self, resp: backtests.BacktestAccountsResponse
+    ) -> Dict[str, Account]:
         accounts = {}
         for exch, account in resp.accounts.items():
             assets = {}
@@ -164,18 +162,6 @@ class Backtest(object):
     def on_end(self):
         pass
 
-    def display(self, exchange: str, pair: str, period: Period):
-        p = Grapher()
-
-        start = self._start_time
-        end = self._end_time
-        cs = self._candlesticks.get(exchange, pair, period, start, end)
-        p.candlesticks(cs)
-
-        p.orders(self.orders())
-
-        p.show()
-
     def actual_time(self) -> datetime:
         return self._actual_time
 
@@ -197,15 +183,3 @@ class Backtest(object):
 
         return self.on_end()
 
-    def candlesticks(
-        self,
-        exchange: str,
-        pair: str,
-        period: Period,
-        relative_start: int,
-        relative_end: int = 0,
-        limit: int = 0,
-    ):
-        start = self._actual_time - relative_start * period.duration()
-        end = self._actual_time - relative_end * period.duration()
-        return self._candlesticks.get(exchange, pair, period, start, end, limit)
