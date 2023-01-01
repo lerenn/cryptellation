@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Wait for Redis
+# TODO
+
 # Wait for SqlDB
 ./scripts/wait-sqldb.sh
 

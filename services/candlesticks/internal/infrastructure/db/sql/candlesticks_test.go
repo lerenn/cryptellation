@@ -16,9 +16,10 @@ type CandlesticksSuite struct {
 }
 
 func (suite *CandlesticksSuite) SetupTest() {
+	defer tmpEnvVar("SQLDB_DATABASE", "candlesticks")()
+
 	db, err := New()
 	suite.Require().NoError(err)
-
 	suite.Require().NoError(db.Reset())
 
 	suite.DB = db

@@ -16,9 +16,10 @@ type ExchangesSuite struct {
 }
 
 func (suite *ExchangesSuite) SetupTest() {
+	defer tmpEnvVar("SQLDB_DATABASE", "exchanges")()
+
 	db, err := New()
 	suite.Require().NoError(err)
-
 	suite.Require().NoError(db.Reset())
 
 	suite.DB = db

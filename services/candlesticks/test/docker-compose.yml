@@ -28,7 +28,6 @@ services:
         environment:
             - SQLDB_HOST=cockroachdb
             - SQLDB_PORT=26257
-            - SQLDB_DATABASE=candlesticks
         volumes:
             - gocache:/go/pkg/mod
             - gobuild:/root/.cache/go-build
