@@ -1,6 +1,6 @@
 <mxfile host="65bd71144e">
     <diagram id="Z86SHZ22xJm4C7N7x-0L" name="Page-1">
-        <mxGraphModel dx="1168" dy="517" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+        <mxGraphModel dx="1065" dy="406" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -13,13 +13,13 @@
                 <mxCell id="13" value="&amp;nbsp; &lt;b&gt;Backtests&lt;/b&gt;&lt;br&gt;&amp;nbsp; [Microservice]" style="rounded=0;whiteSpace=wrap;html=1;labelBackgroundColor=none;strokeColor=#DAE8FC;strokeWidth=2;fillColor=none;verticalAlign=bottom;align=left;" parent="1" vertex="1">
                     <mxGeometry x="180" y="260" width="540" height="140" as="geometry"/>
                 </mxCell>
-                <mxCell id="2" value="&lt;b&gt;Backtests&lt;/b&gt;&lt;br&gt;[Service]&lt;br&gt;Provide an entire environment for users to execute backtests." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="1" vertex="1">
+                <mxCell id="2" value="&lt;b&gt;Backtests&lt;/b&gt;&lt;br&gt;[Container: Cryptellation Service]&lt;br&gt;Provide an entire environment for users to execute backtests." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="1" vertex="1">
                     <mxGeometry x="200" y="280" width="200" height="80" as="geometry"/>
                 </mxCell>
-                <mxCell id="3" value="&lt;b&gt;Redis&lt;/b&gt;&lt;br&gt;[In-Memory Database]&lt;br&gt;Stores backtests informations" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=7;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="1" vertex="1">
+                <mxCell id="3" value="&lt;b&gt;Database&lt;/b&gt;&lt;br&gt;[Container: Redis/SQL]&lt;br&gt;Stores backtests informations" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=7;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="1" vertex="1">
                     <mxGeometry x="530" y="280" width="160" height="80" as="geometry"/>
                 </mxCell>
-                <mxCell id="10" value="&lt;font face=&quot;helvetica&quot;&gt;Reads from&lt;br&gt;Writes to&lt;br&gt;[Redis]&lt;br&gt;&lt;/font&gt;" style="endArrow=none;dashed=1;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;edgeStyle=orthogonalEdgeStyle;startArrow=classic;startFill=1;exitPerimeter=0;" parent="1" source="3" target="2" edge="1">
+                <mxCell id="10" value="&lt;font face=&quot;helvetica&quot;&gt;Reads from&lt;br&gt;Writes to&lt;br&gt;[Redis/SQL]&lt;br&gt;&lt;/font&gt;" style="endArrow=none;dashed=1;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;edgeStyle=orthogonalEdgeStyle;startArrow=classic;startFill=1;exitPerimeter=0;" parent="1" source="3" target="2" edge="1">
                     <mxGeometry x="0.0769" width="50" height="50" relative="1" as="geometry">
                         <mxPoint x="360" y="500" as="sourcePoint"/>
                         <mxPoint x="360" y="370" as="targetPoint"/>
@@ -36,7 +36,7 @@
                         <mxPoint as="offset"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="15" value="&lt;b&gt;Candlesticks&lt;/b&gt;&lt;br&gt;[Service]&lt;br&gt;Provides candlesticks to services and users." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="1" vertex="1">
+                <mxCell id="15" value="&lt;b&gt;Candlesticks&lt;/b&gt;&lt;br&gt;[Container: Cryptellation Service]&lt;br&gt;Provides candlesticks to services and users." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="1" vertex="1">
                     <mxGeometry x="200" y="460" width="200" height="80" as="geometry"/>
                 </mxCell>
                 <mxCell id="16" value="&lt;font face=&quot;helvetica&quot;&gt;Get candlesticks&lt;br&gt;[gRPC]&lt;br&gt;&lt;/font&gt;" style="endArrow=none;dashed=1;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;edgeStyle=orthogonalEdgeStyle;startArrow=classic;startFill=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;" parent="1" source="15" target="2" edge="1">
@@ -47,7 +47,7 @@
                         <Array as="points"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="17" value="&lt;b&gt;NATS&lt;/b&gt;&lt;br&gt;[Message Broker Service]&lt;br&gt;Publish/Receive messages asynchronously" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=7;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="1" vertex="1">
+                <mxCell id="17" value="&lt;b&gt;Message Broker&lt;/b&gt;&lt;br&gt;[Container: NATS]&lt;br&gt;Publish/Receive messages asynchronously" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=7;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="1" vertex="1">
                     <mxGeometry x="530" y="460" width="160" height="80" as="geometry"/>
                 </mxCell>
                 <mxCell id="18" value="&lt;font face=&quot;helvetica&quot;&gt;Deliver new ticks&lt;br&gt;[NATS]&lt;br&gt;&lt;/font&gt;" style="endArrow=none;dashed=1;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.75;entryY=1;entryDx=0;entryDy=0;edgeStyle=orthogonalEdgeStyle;startArrow=classic;startFill=1;exitPerimeter=0;" parent="1" source="17" target="2" edge="1">
