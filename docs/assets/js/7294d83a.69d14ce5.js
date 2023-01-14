@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkwebsite=self.webpackChunkwebsite||[]).push([[1626],{6640:e=>{e.exports=JSON.parse('{"title":"Clients","slug":"/category/clients","permalink":"/docs/category/clients","navigation":{"previous":{"title":"Backtests","permalink":"/docs/category/backtests"},"next":{"title":"Go","permalink":"/docs/services/backtests/clients/go"}}}')}}]);
