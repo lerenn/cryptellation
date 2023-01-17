@@ -8,7 +8,7 @@ import (
 	"github.com/digital-feather/cryptellation/services/backtests/internal/application/domains/backtest"
 	"github.com/digital-feather/cryptellation/services/backtests/pkg/models/event"
 	"github.com/digital-feather/cryptellation/services/backtests/pkg/models/status"
-	candlesticks "github.com/digital-feather/cryptellation/services/candlesticks/pkg/client"
+	candlesticks "github.com/digital-feather/cryptellation/services/candlesticks/clients/go"
 )
 
 func (b Backtests) Advance(ctx context.Context, backtestId uint) error {

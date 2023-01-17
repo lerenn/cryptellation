@@ -11,7 +11,7 @@ import (
 	"github.com/digital-feather/cryptellation/services/backtests/pkg/models/account"
 	"github.com/digital-feather/cryptellation/services/backtests/pkg/models/event"
 	"github.com/digital-feather/cryptellation/services/backtests/pkg/models/order"
-	"github.com/digital-feather/cryptellation/services/candlesticks/pkg/client"
+	candlesticks "github.com/digital-feather/cryptellation/services/candlesticks/clients/go"
 	"github.com/digital-feather/cryptellation/services/candlesticks/pkg/models/candlestick"
 	"github.com/digital-feather/cryptellation/services/candlesticks/pkg/models/period"
 	"github.com/golang/mock/gomock"
@@ -27,13 +27,13 @@ type CreationSuite struct {
 	operator     Operator
 	db           *db.MockAdapter
 	pubsub       *pubsub.MockAdapter
-	candlesticks *client.MockInterfacer
+	candlesticks *candlesticks.MockInterfacer
 }
 
 func (suite *CreationSuite) SetupTest() {
 	suite.db = db.NewMockAdapter(gomock.NewController(suite.T()))
 	suite.pubsub = pubsub.NewMockAdapter(gomock.NewController(suite.T()))
-	suite.candlesticks = client.NewMockInterfacer(gomock.NewController(suite.T()))
+	suite.candlesticks = candlesticks.NewMockInterfacer(gomock.NewController(suite.T()))
 	suite.operator = New(suite.db, suite.pubsub, suite.candlesticks)
 }
 

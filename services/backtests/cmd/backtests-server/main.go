@@ -12,7 +12,7 @@ import (
 	"github.com/digital-feather/cryptellation/services/backtests/internal/controllers/http/health"
 	"github.com/digital-feather/cryptellation/services/backtests/internal/infrastructure/db/sql"
 	"github.com/digital-feather/cryptellation/services/backtests/internal/infrastructure/pubsub/nats"
-	"github.com/digital-feather/cryptellation/services/candlesticks/pkg/client"
+	candlesticks "github.com/digital-feather/cryptellation/services/candlesticks/clients/go"
 )
 
 func initApp() (*application.Application, func(), error) {
@@ -29,7 +29,7 @@ func initApp() (*application.Application, func(), error) {
 	}
 
 	// Init candlestick client
-	cs, closeCsClient, err := client.New()
+	cs, closeCsClient, err := candlesticks.New()
 	if err != nil {
 		return nil, func() {}, err
 	}

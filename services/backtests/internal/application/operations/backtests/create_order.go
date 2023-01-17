@@ -6,7 +6,7 @@ import (
 
 	"github.com/digital-feather/cryptellation/services/backtests/internal/application/domains/backtest"
 	"github.com/digital-feather/cryptellation/services/backtests/pkg/models/order"
-	candlesticks "github.com/digital-feather/cryptellation/services/candlesticks/pkg/client"
+	candlesticks "github.com/digital-feather/cryptellation/services/candlesticks/clients/go"
 )
 
 func (b Backtests) CreateOrder(ctx context.Context, backtestId uint, order order.Order) error {

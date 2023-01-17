@@ -10,7 +10,7 @@ import (
 	"github.com/digital-feather/cryptellation/services/backtests/internal/application/ports/pubsub"
 	"github.com/digital-feather/cryptellation/services/backtests/pkg/models/event"
 	"github.com/digital-feather/cryptellation/services/backtests/pkg/models/status"
-	"github.com/digital-feather/cryptellation/services/candlesticks/pkg/client"
+	candlesticks "github.com/digital-feather/cryptellation/services/candlesticks/clients/go"
 	"github.com/digital-feather/cryptellation/services/candlesticks/pkg/models/candlestick"
 	"github.com/digital-feather/cryptellation/services/candlesticks/pkg/models/period"
 	"github.com/golang/mock/gomock"
@@ -26,13 +26,13 @@ type AdvanceSuite struct {
 	operator     Operator
 	db           *db.MockAdapter
 	pubsub       *pubsub.MockAdapter
-	candlesticks *client.MockInterfacer
+	candlesticks *candlesticks.MockInterfacer
 }
 
 func (suite *AdvanceSuite) SetupTest() {
 	suite.db = db.NewMockAdapter(gomock.NewController(suite.T()))
 	suite.pubsub = pubsub.NewMockAdapter(gomock.NewController(suite.T()))
-	suite.candlesticks = client.NewMockInterfacer(gomock.NewController(suite.T()))
+	suite.candlesticks = candlesticks.NewMockInterfacer(gomock.NewController(suite.T()))
 	suite.operator = New(suite.db, suite.pubsub, suite.candlesticks)
 }
 
@@ -82,7 +82,7 @@ func (suite *AdvanceSuite) TestWithoutAccount() {
 		})
 
 	// Set candlesticks client expected calls
-	suite.candlesticks.EXPECT().ReadCandlesticks(ctx, client.ReadCandlestickPayload{
+	suite.candlesticks.EXPECT().ReadCandlesticks(ctx, candlesticks.ReadCandlestickPayload{
 		ExchangeName: "exchange",
 		PairSymbol:   "ETH-USDT",
 		Period:       period.M1,

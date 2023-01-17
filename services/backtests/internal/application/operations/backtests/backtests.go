@@ -3,7 +3,7 @@ package backtests
 import (
 	"github.com/digital-feather/cryptellation/services/backtests/internal/application/ports/db"
 	"github.com/digital-feather/cryptellation/services/backtests/internal/application/ports/pubsub"
-	candlesticks "github.com/digital-feather/cryptellation/services/candlesticks/pkg/client"
+	candlesticks "github.com/digital-feather/cryptellation/services/candlesticks/clients/go"
 )
 
 // Test interface implementation
