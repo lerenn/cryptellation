@@ -7,9 +7,9 @@ services:
             - test-network
     cockroachdb:
         image: cockroachdb/cockroach
-        ports:
-            - 26257:26257
-            - 26256:8080
+        # ports:
+        #     - 26257:26257
+        #     - 26256:8080
         networks:
             - test-network
         ulimits:
@@ -19,22 +19,24 @@ services:
         command: start-single-node --insecure
         restart: unless-stopped
         volumes:
-            - ../configs:/docker-entrypoint-initdb.d
+            - ../../configs:/docker-entrypoint-initdb.d
     nats:
         image: nats:alpine
         # ports:
         #     - 4222:4222
         networks:
             - test-network
-    backtests:
+    ticks:
+        profiles:
+            - testing
         depends_on:
             - redis
-            - nats
             - cockroachdb
+            - nats
         build: .
         env_file:
-            - ../../../.services.env
-            - ../../../.credentials.env
+            - ../../../../.services.env
+            - ../../../../.credentials.env
         environment:
             - SQLDB_HOST=cockroachdb
             - SQLDB_PORT=26257
@@ -42,7 +44,7 @@ services:
         volumes:
             - gocache:/go/pkg/mod
             - gobuild:/root/.cache/go-build
-            - ./..:/code
+            - ../../:/code
         networks:
             - test-network
 

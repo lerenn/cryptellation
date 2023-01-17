@@ -36,7 +36,7 @@ endif
 
 .PHONY: test/clean
 test/clean:
-	@$(DOCKER_COMPOSE) -f ./test/docker-compose.yml down
+	@$(DOCKER_COMPOSE) -f ./test/integration/docker-compose.yml down
 	@rm -f cover.out
 
 .PHONY: test/end-to-end
@@ -45,8 +45,8 @@ test/end-to-end: ## Perform end-to-end tests
 
 .PHONY: test/integration
 test/integration: ## Perform integration tests
-	@$(DOCKER_COMPOSE) -f ./test/docker-compose.yml build $(SERVICE_NAME)
-	@$(DOCKER_COMPOSE) -f ./test/docker-compose.yml run $(SERVICE_NAME) ./test/integration.sh
+	@$(DOCKER_COMPOSE) -f ./test/integration/docker-compose.yml build $(SERVICE_NAME)
+	@$(DOCKER_COMPOSE) -f ./test/integration/docker-compose.yml run $(SERVICE_NAME) ./test/integration/integration.sh
 
 .PHONY: test/unit
 test/unit: ## Perform unit tests
