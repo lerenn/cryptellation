@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunkwebsite=self.webpackChunkwebsite||[]).push([[5293],{9832:e=>{e.exports=JSON.parse('{"title":"System","slug":"/category/system","permalink":"/docs/category/system","navigation":{"previous":{"title":"Ticks","permalink":"/docs/clients/python/ticks"},"next":{"title":"System Design","permalink":"/docs/system/system_design"}}}')}}]);
