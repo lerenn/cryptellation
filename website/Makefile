@@ -1,3 +1,5 @@
-generate:
-	@yarn build
-	@rm -rf ../docs && cp -r ./build ../docs
+serve:
+	@yarn start
+	
+deploy:
+	@USE_SSH=true yarn deploy

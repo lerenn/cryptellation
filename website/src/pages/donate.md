@@ -1,7 +1,7 @@
 # Donate
 
 If this project helps you and you want to help us in return, do not hesitate to
-donate a bit of your time by [contributing to the project](/docs/contributing) or donate
+donate a bit of your time by [contributing to the project](/docs/category/contributing) or donate
 at one of the following address:
 
 | Cryptocurrency  | Address                                                                                                 |

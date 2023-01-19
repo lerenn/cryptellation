@@ -12,3 +12,4 @@ You will find the following sections:
 the system.
 * **Services**: all information to understand what every service is and how
 they are interacting with each other.
+* **Contributing**: information regarding participating in Cryptellation development.
