@@ -5,7 +5,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/digital-feather/cryptellation/services/candlesticks/clients/go/proto"
 	"github.com/digital-feather/cryptellation/services/candlesticks/pkg/models/period"
 	"github.com/digital-feather/cryptellation/services/candlesticks/pkg/models/timeserie"
 	"github.com/stretchr/testify/suite"
@@ -366,55 +365,4 @@ func (suite *CandlestickListSuite) TestFirstN() {
 
 func (suite *CandlestickListSuite) TestMergeIntoOne() {
 	// TODO
-}
-
-func (suite *CandlestickListSuite) TestLoadFromProtoBuf() {
-	originalCs1 := Candlestick{
-		Open:   1,
-		Low:    0.5,
-		High:   2,
-		Close:  1.5,
-		Volume: 1000,
-	}
-	originalCs2 := Candlestick{
-		Open:   2,
-		Low:    1,
-		High:   4,
-		Close:  3,
-		Volume: 2000,
-	}
-
-	pbList := []*proto.Candlestick{
-		{
-			Time:   "1970-01-01T00:01:00Z",
-			Open:   1,
-			Low:    0.5,
-			High:   2,
-			Close:  1.5,
-			Volume: 1000,
-		},
-		{
-			Time:   "1970-01-01T00:02:00Z",
-			Open:   2,
-			Low:    1,
-			High:   4,
-			Close:  3,
-			Volume: 2000,
-		},
-	}
-
-	l := NewEmptyList(ListID{
-		ExchangeName: "exchange",
-		PairSymbol:   "BTC-USDC",
-		Period:       period.M1,
-	})
-	suite.Require().NoError(l.LoadFromProtoBuf(pbList))
-
-	cs1, ok := l.Get(time.Unix(60, 0))
-	suite.Require().True(ok)
-	suite.Require().True(originalCs1.Equal(cs1))
-
-	cs2, ok := l.Get(time.Unix(120, 0))
-	suite.Require().True(ok)
-	suite.Require().True(originalCs2.Equal(cs2))
 }

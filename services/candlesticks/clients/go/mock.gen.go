@@ -8,6 +8,7 @@ import (
 	context "context"
 	reflect "reflect"
 
+	payloads "github.com/digital-feather/cryptellation/services/candlesticks/clients/go/payloads"
 	candlestick "github.com/digital-feather/cryptellation/services/candlesticks/pkg/models/candlestick"
 	gomock "github.com/golang/mock/gomock"
 )
@@ -36,7 +37,7 @@ func (m *MockInterfacer) EXPECT() *MockInterfacerMockRecorder {
 }
 
 // ReadCandlesticks mocks base method.
-func (m *MockInterfacer) ReadCandlesticks(ctx context.Context, payload ReadCandlestickPayload) (*candlestick.List, error) {
+func (m *MockInterfacer) ReadCandlesticks(ctx context.Context, payload payloads.ReadCandlesticksPayload) (*candlestick.List, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ReadCandlesticks", ctx, payload)
 	ret0, _ := ret[0].(*candlestick.List)

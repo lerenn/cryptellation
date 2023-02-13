@@ -6,9 +6,10 @@ package client
 import (
 	"context"
 
+	"github.com/digital-feather/cryptellation/services/candlesticks/clients/go/payloads"
 	"github.com/digital-feather/cryptellation/services/candlesticks/pkg/models/candlestick"
 )
 
 type Interfacer interface {
-	ReadCandlesticks(ctx context.Context, payload ReadCandlestickPayload) (*candlestick.List, error)
+	ReadCandlesticks(ctx context.Context, payload payloads.ReadCandlesticksPayload) (*candlestick.List, error)
 }

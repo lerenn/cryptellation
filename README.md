@@ -10,11 +10,11 @@ different cryptographic markets, featuring **backtesting**, **forward testing** 
 
 | Service          | Clients    | Description                             |
 |------------------|------------|-----------------------------------------|
-| **Backtests**    | Go, Python | Execute backtests                       |
-| **Candlesticks** | Go, Python | Get cached informations on candlesticks |
-| **Exchanges**    | Go, Python | Get cached informations on exchanges    |
-| **Livetests**    | Go, Python | Execute livetests                       |
-| **Ticks**        | Go, Python | Get ticks from exchanges                |
+| **Backtests**    | Go         | Execute backtests                       |
+| **Candlesticks** | Go         | Get cached informations on candlesticks |
+| **Exchanges**    | Go         | Get cached informations on exchanges    |
+| **Livetests**    | Go         | Execute livetests                       |
+| **Ticks**        | Go         | Get ticks from exchanges                |
 
 More on each service [here](https://cryptellation.dev/docs/category/services).
 

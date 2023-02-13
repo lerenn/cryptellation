@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/digital-feather/cryptellation/services/candlesticks/clients/go/proto"
 	"github.com/digital-feather/cryptellation/services/candlesticks/pkg/models/period"
 	"github.com/digital-feather/cryptellation/services/candlesticks/pkg/models/timeserie"
 )
@@ -239,19 +238,4 @@ func (l List) String() string {
 	})
 
 	return txt
-}
-
-func (l List) LoadFromProtoBuf(cs []*proto.Candlestick) error {
-	for _, c := range cs {
-		t, cs, err := FromProtoBuf(c)
-		if err != nil {
-			return err
-		}
-
-		if err := l.Set(t, cs); err != nil {
-			return err
-		}
-	}
-
-	return nil
 }

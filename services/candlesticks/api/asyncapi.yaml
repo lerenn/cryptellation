@@ -1,0 +1,187 @@
+asyncapi: 2.5.0
+info:
+  title: Candlesticks Service
+  version: 1.0.0
+  description: >
+    This service is serving candlesticks history through a caching system that is
+    proxying exchanges API.
+channels:
+  candlesticks.list.request:
+    publish:
+      operationId: candlesticksListRequest
+      description: Request a candlestick list from historic data
+      tags:
+        - name: candlestick list
+      message:
+        $ref: '#/components/messages/CandlesticksListRequest'
+
+  candlesticks.list.response:
+    subscribe:
+      operationId: candlesticksListResponse
+      description: Response to a list request, with the corresponding candlestick list 
+      tags:
+        - name: candlestick list
+      message:
+        $ref: '#/components/messages/CandlesticksListResponse'
+
+components:
+  messages:
+    CandlesticksListRequest:
+      headers:
+        type: object
+        properties:
+          correlationId:
+            description: Correlation ID set by client
+            type: string
+      payload:
+        type: object
+        description: Candlestick list request with filters and time boundaries
+        required:
+          - exchangeName
+          - pairSymbol
+          - periodSymbol
+          - limit
+        properties:
+          exchangeName:
+            $ref: '#/components/schemas/ExchangeName'
+            description: Requested candlesticks exchange name
+          pairSymbol:
+            $ref: '#/components/schemas/PairSymbol'
+            description: Requested candlesticks pair symbol
+          periodSymbol:
+            $ref: '#/components/schemas/PeriodSymbol'
+            description: Requested candlesticks period symbol
+          start:
+            $ref: '#/components/schemas/Date'
+            default: "1970-01-01T0:00:00.000Z"
+            description: Date-time for the oldest candlestick (RFC3339)
+          end:
+            $ref: '#/components/schemas/Date'
+            default: <date-time of the request processing>
+            description: Date-time for the newest candlestick (RFC3339)
+          limit:
+            $ref: '#/components/schemas/Limit'
+            description: The maximum candlesticks to retrieve (0 = unlimited)
+      correlationId:
+        description: Default Correlation ID
+        location: $message.header#/correlationId
+    CandlesticksListResponse:
+      headers:
+        type: object
+        properties:
+          correlationId:
+            description: Correlation ID set by client on corresponding request
+            type: string
+      payload:
+        type: object
+        properties:
+          candlesticks:
+            $ref: '#/components/schemas/CandlestickList'
+          error:
+            $ref: '#/components/schemas/Error'
+      correlationId:
+        description: Default Correlation ID
+        location: $message.header#/correlationId
+
+  schemas:
+    Candlestick:
+      type: object
+      required:
+        - time
+      properties:
+        time:
+          $ref: '#/components/schemas/Date'
+          description: Candlestick date and time
+        open:
+          type: number
+          format: double
+          description: Candlestick open price
+          examples:
+            - 1.0
+        high:
+          type: number
+          format: double
+          description: Candlestick high price
+          examples:
+            - 2.0
+        low:
+          type: number
+          format: double
+          description: Candlestick low price
+          examples:
+            - 0.5
+        close:
+          type: number
+          format: double
+          description: Candlestick close price
+          examples:
+            - 1.5
+        volume:
+          type: number
+          format: double
+          description: Candlestick volume
+          examples:
+            - 7000
+    CandlestickList:
+      type: array
+      description: Requested candlestick list
+      items:
+        $ref: '#/components/schemas/Candlestick'
+    ExchangeName:
+      type: string
+      description: Exchange name
+      examples:
+        - Binance
+    PairSymbol:
+      type: string
+      description: Pair symbol
+      examples:
+        - ETH-USDC
+    PeriodSymbol:
+      type: string
+      description: Period symbol
+      default: M1
+      enum:
+        - M1
+        - M3
+        - M5
+        - M15
+        - M30
+        - H1
+        - H2
+        - H4
+        - H6
+        - H8
+        - H12
+        - D1
+        - D3
+        - W1
+    Date:
+      type: string
+      format: date-time
+      description: Date-Time format according to RFC3339
+      examples:
+        - "1985-04-12T23:20:50.52Z"
+        - "1937-01-01T12:00:27.87+00:20"
+    Limit:
+      type: integer
+      format: int32
+      default: 0
+      description: The maximum quantity to retrieve (0 = unlimited)
+    Error:
+      type: object
+      description: Response to a failed call
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          description: Code to identify the error type, based on HTTP errors
+        message:
+          type: string
+          description: Main error reason
+          examples:
+            - "Invalid request: no time specified"
+
+

@@ -9,8 +9,8 @@ import (
 
 	"github.com/digital-feather/cryptellation/services/candlesticks/internal/application"
 	"github.com/digital-feather/cryptellation/services/candlesticks/internal/application/ports/exchanges"
-	"github.com/digital-feather/cryptellation/services/candlesticks/internal/controllers/grpc"
 	"github.com/digital-feather/cryptellation/services/candlesticks/internal/controllers/http/health"
+	"github.com/digital-feather/cryptellation/services/candlesticks/internal/controllers/nats"
 	"github.com/digital-feather/cryptellation/services/candlesticks/internal/infrastructure/db/sql"
 	"github.com/digital-feather/cryptellation/services/candlesticks/internal/infrastructure/exchanges/binance"
 )
@@ -54,17 +54,17 @@ func run() int {
 	// Init application
 	app, err := initApp()
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "An error occured when %+v\n", fmt.Errorf("initialize application: %w", err))
+		fmt.Fprintf(os.Stderr, "An error occured when %+v\n", fmt.Errorf("initializing application: %w", err))
 		return 255
 	}
 
 	// Init grpc server
-	grpcController := grpc.New(app)
-	if err := grpcController.Run(); err != nil {
-		fmt.Fprintf(os.Stderr, "An error occured when %+v\n", fmt.Errorf("running application: %w", err))
+	natsController := nats.New(app)
+	if err := natsController.Run(); err != nil {
+		fmt.Fprintf(os.Stderr, "An error occured when %+v\n", fmt.Errorf("running nats controller: %w", err))
 		return 255
 	}
-	defer grpcController.GracefulStop()
+	defer natsController.Close()
 
 	// Service marked as ready
 	log.Println("Service is ready")
