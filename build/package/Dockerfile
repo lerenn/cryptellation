@@ -14,13 +14,10 @@ RUN go mod download
 COPY ./ .
 
 # Build from code
-RUN go build ./cmd/${BINARY}
+RUN --mount=type=cache,target=/root/.cache/go-build go install ./cmd/cryptellation-candlesticks
 
 # Get base image for the final image
 FROM alpine
 
 # Get binary
-COPY --from=0 /app/${BINARY} /usr/local/bin
-
-# Set command
-CMD [ "${BINARY}" ]
+COPY --from=0 /go/bin/* /usr/local/bin
