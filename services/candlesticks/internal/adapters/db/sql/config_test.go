@@ -1,4 +1,4 @@
-package nats
+package sql
 
 import (
 	"testing"
@@ -21,9 +21,13 @@ func (suite *ConfigSuite) TestLoadValidate() {
 	}{
 		{
 			Config: Config{
-				Host: "host",
-				Port: 1000,
+				Host:     "host",
+				Port:     1000,
+				User:     "user",
+				Password: "password",
+				Database: "database",
 			},
+			Err: nil,
 		},
 	}
 

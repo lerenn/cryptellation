@@ -1,0 +1,62 @@
+package sql
+
+import (
+	"errors"
+	"fmt"
+
+	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
+)
+
+var (
+	DefaultGormConfig = &gorm.Config{
+		Logger: logger.Default.LogMode(logger.Silent),
+	}
+)
+
+var (
+	ErrInvalidConfig = errors.New("invalid sql config")
+)
+
+type Config struct {
+	User     string
+	Password string
+	Host     string
+	Port     int
+	Database string
+}
+
+func (c Config) URL() string {
+	fields := map[string]string{
+		"host":     c.Host,
+		"port":     fmt.Sprintf("%d", c.Port),
+		"user":     c.User,
+		"password": c.Password,
+		"dbname":   c.Database,
+	}
+
+	var dsn string
+	for field, value := range fields {
+		if value != "" {
+			dsn = fmt.Sprintf("%s %s=%s", dsn, field, value)
+		}
+	}
+
+	return dsn
+}
+
+func (c Config) Validate() error {
+	if c.User == "" {
+		return fmt.Errorf("reading user from env (%q): %w", c.User, ErrInvalidConfig)
+	}
+
+	if c.Host == "" {
+		return fmt.Errorf("reading host from env (%q): %w", c.Host, ErrInvalidConfig)
+	}
+
+	if c.Port == 0 {
+		return fmt.Errorf("reading port from env (%q): %w", c.Port, ErrInvalidConfig)
+	}
+
+	return nil
+}

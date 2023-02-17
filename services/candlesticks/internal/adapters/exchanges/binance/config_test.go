@@ -1,4 +1,4 @@
-package nats
+package binance
 
 import (
 	"testing"
@@ -21,8 +21,8 @@ func (suite *ConfigSuite) TestLoadValidate() {
 	}{
 		{
 			Config: Config{
-				Host: "host",
-				Port: 1000,
+				ApiKey:    "api-key",
+				SecretKey: "secret-key",
 			},
 		},
 	}
