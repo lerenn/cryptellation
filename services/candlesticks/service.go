@@ -36,10 +36,15 @@ func New(c ServiceConfig) (Service, error) {
 	}, nil
 }
 
-func (s Service) Serve() {
+func (s Service) Serve() error {
 	for _, c := range s.controllers {
-		c.Listen()
+		if err := c.Listen(); err != nil {
+			s.Close()
+			return err
+		}
 	}
+
+	return nil
 }
 
 func (s Service) Close() {

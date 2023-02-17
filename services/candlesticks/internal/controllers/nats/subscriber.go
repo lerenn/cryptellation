@@ -27,7 +27,7 @@ func (s subscriber) CandlesticksListRequest(msg async.CandlesticksListRequestMes
 	// Prepare response and set send at the end
 	resp := async.NewCandlesticksListResponseMessage()
 	resp.SetAsResponseFrom(msg)
-	defer s.controller.PublishCandlesticksListResponse(resp)
+	defer func() { _ = s.controller.PublishCandlesticksListResponse(resp) }()
 
 	// Process specific types
 	per, err := period.FromString(string(msg.Payload.PeriodSymbol))
