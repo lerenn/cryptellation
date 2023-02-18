@@ -3,9 +3,9 @@ version: "3.5"
 services:
     cockroachdb:
         image: cockroachdb/cockroach
-        # ports:
-        #     - 26257:26257
-        #     - 26256:8080
+        ports:
+            - 26257:26257
+            - 26256:8080
         networks:
             - test-network
         ulimits:

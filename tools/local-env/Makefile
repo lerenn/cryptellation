@@ -17,7 +17,7 @@ deploy/infra: ## Deploys local development infrastructure environment
 		--extra-config=kubelet.cluster-dns=10.96.0.10
 
 .PHONY: delete
-delete: delete/api ## deletes the dev environment
+delete: delete/infra ## deletes the dev environment
 
 .PHONY: delete/infra
 delete/infra: ## deletes local dev infrastructure
