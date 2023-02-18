@@ -1,10 +1,10 @@
 K8S_VERSION    := 1.24.10
-MINIKUBE_NODES := 1
+MINIKUBE_NODES := 3
 NODE_MEMORY    := 2g
 CLUSTER_NAME   := cryptellation-devel
 
 .PHONY: deploy
-deploy: deploy/infra ## Deploys everything, except Cryptellation System
+deploy: deploy/infra deploy/datastore ## Deploys everything, except Cryptellation System
 
 .PHONY: deploy/infra
 deploy/infra: ## Deploys local development infrastructure environment
@@ -16,8 +16,26 @@ deploy/infra: ## Deploys local development infrastructure environment
 		--kubernetes-version=v${K8S_VERSION} \
 		--extra-config=kubelet.cluster-dns=10.96.0.10
 
+.PHONY: deploy/datastore
+deploy/datastore:
+	@kubectl create ns datastore || true
+	@helm repo add cockroachdb https://charts.cockroachdb.com/; helm repo update
+	@helm upgrade --install cockroachdb cockroachdb/cockroachdb --values datastore/cockroachdb.values.yaml --namespace datastore
+
+.PHONY: status
+status: ## Checks the status of the dev environment
+	@minikube status --profile ${CLUSTER_NAME}
+
+.PHONY: stop
+stop:
+	@minikube stop -p ${CLUSTER_NAME}
+
 .PHONY: delete
-delete: delete/infra ## deletes the dev environment
+delete: delete/datastore delete/infra ## deletes the dev environment
+
+.PHONY: delete/datastore
+delete/datastore: ## Removes datastore
+	@kubectl delete all --all --namespace datastore || true
 
 .PHONY: delete/infra
 delete/infra: ## deletes local dev infrastructure
