@@ -22,6 +22,12 @@ deploy/datastore:
 	@helm repo add cockroachdb https://charts.cockroachdb.com/; helm repo update
 	@helm upgrade --install cockroachdb cockroachdb/cockroachdb --values datastore/cockroachdb.values.yaml --namespace datastore
 
+.PHONY: deploy/event-broker
+deploy/event-broker:
+	@kubectl create ns event-broker || true
+	@helm repo add nats https://nats-io.github.io/k8s/helm/charts/; helm repo update
+	@helm upgrade --install nats nats/nats --values event-broker/nats.values.yaml --namespace event-broker
+
 .PHONY: status
 status: ## Checks the status of the dev environment
 	@minikube status --profile ${CLUSTER_NAME}
@@ -31,14 +37,18 @@ stop:
 	@minikube stop -p ${CLUSTER_NAME}
 
 .PHONY: delete
-delete: delete/datastore delete/infra ## deletes the dev environment
+delete: delete/datastore delete/infra ## Deletes the dev environment
+
+.PHONY: delete/event-broker
+delete/event-broker: 
+	@kubectl delete all --all --namespace event-broker || true
 
 .PHONY: delete/datastore
-delete/datastore: ## Removes datastore
+delete/datastore:
 	@kubectl delete all --all --namespace datastore || true
 
 .PHONY: delete/infra
-delete/infra: ## deletes local dev infrastructure
+delete/infra:
 	@minikube delete --profile ${CLUSTER_NAME}
 
 .PHONY: help
