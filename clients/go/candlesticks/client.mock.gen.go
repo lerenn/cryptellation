@@ -5,10 +5,6 @@
 package candlesticks
 
 import (
-	context "context"
-	reflect "reflect"
-
-	candlestick "github.com/digital-feather/cryptellation/pkg/types/candlestick"
 	gomock "github.com/golang/mock/gomock"
 )
 
@@ -33,19 +29,4 @@ func NewMockClient(ctrl *gomock.Controller) *MockClient {
 // EXPECT returns an object that allows the caller to indicate expected use.
 func (m *MockClient) EXPECT() *MockClientMockRecorder {
 	return m.recorder
-}
-
-// ReadCandlesticks mocks base method.
-func (m *MockClient) ReadCandlesticks(ctx context.Context, payload ReadCandlesticksPayload) (*candlestick.List, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ReadCandlesticks", ctx, payload)
-	ret0, _ := ret[0].(*candlestick.List)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// ReadCandlesticks indicates an expected call of ReadCandlesticks.
-func (mr *MockClientMockRecorder) ReadCandlesticks(ctx, payload interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ReadCandlesticks", reflect.TypeOf((*MockClient)(nil).ReadCandlesticks), ctx, payload)
 }

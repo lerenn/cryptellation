@@ -3,20 +3,13 @@
 
 package candlesticks
 
-import (
-	"context"
-
-	"github.com/digital-feather/cryptellation/internal/components/candlesticks"
-	"github.com/digital-feather/cryptellation/pkg/types/candlestick"
-)
-
 type ClientConfig struct {
 }
 
 type Client interface {
-	ReadCandlesticks(ctx context.Context, payload ReadCandlesticksPayload) (*candlestick.List, error)
+	// ReadCandlesticks(ctx context.Context, payload ReadCandlesticksPayload) (*candlestick.List, error)
 }
 
 type ReadCandlesticksPayload struct {
-	candlesticks.GetCachedPayload
+	// candlesticks.GetCachedPayload
 }

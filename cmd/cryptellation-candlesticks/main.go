@@ -5,36 +5,37 @@ import (
 	"log"
 	"os"
 	"os/signal"
+	"strconv"
 	"syscall"
 
-	"github.com/digital-feather/cryptellation/internal/adapters/db/sql"
-	"github.com/digital-feather/cryptellation/internal/adapters/exchanges"
-	"github.com/digital-feather/cryptellation/internal/components/candlesticks"
-	"github.com/digital-feather/cryptellation/internal/controllers/nats"
-	natsCandlesticks "github.com/digital-feather/cryptellation/internal/controllers/nats/candlesticks"
-	"github.com/digital-feather/cryptellation/pkg/http/health"
+	"github.com/digital-feather/cryptellation/internal/candlesticks/app"
+	"github.com/digital-feather/cryptellation/internal/candlesticks/ctrl/nats"
+	"github.com/digital-feather/cryptellation/internal/candlesticks/infra/exchanges"
+	"github.com/digital-feather/cryptellation/internal/candlesticks/infra/sql"
+	"github.com/digital-feather/cryptellation/pkg/config"
+	"github.com/digital-feather/cryptellation/pkg/health"
 )
 
-func initComponent() (candlesticks.Port, error) {
+func initApp() (app.Port, error) {
 	// Init database client
-	db, err := sql.New(sql.LoadConfigFromEnv())
+	db, err := sql.New(config.LoadSQLConfigFromEnv())
 	if err != nil {
 		return nil, err
 	}
 
 	// Init exchanges connections
-	exchanges, err := exchanges.New(exchanges.LoadConfigFromEnv())
+	exchanges, err := exchanges.New(config.LoadExchangesConfigFromEnv())
 	if err != nil {
 		return nil, err
 	}
 
 	// Init component
-	return candlesticks.New(db, exchanges), nil
+	return app.New(db, exchanges), nil
 }
 
-func initController(component candlesticks.Port) (func(), error) {
+func initController(component app.Port) (func(), error) {
 	// Init NATS controller
-	natsController, err := natsCandlesticks.NewServer(nats.LoadConfigFromEnv(), component)
+	natsController, err := nats.NewServer(config.LoadNATSConfigFromEnv(), component)
 	if err != nil {
 		return func() {}, err
 	}
@@ -52,14 +53,19 @@ func initController(component candlesticks.Port) (func(), error) {
 func run() int {
 	// Init health server
 	h := health.New()
-	go h.Serve()
+	port, err := strconv.Atoi(os.Getenv("HEALTH_PORT"))
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "An error occured when %+v\n", fmt.Errorf("getting health port: %w", err))
+		return 255
+	}
+	go h.HTTPServe(port)
 
 	// Listen interruptions
 	interrupt := make(chan os.Signal, 1)
 	signal.Notify(interrupt, os.Interrupt, syscall.SIGTERM)
 
-	// Init component
-	component, err := initComponent()
+	// Init application
+	component, err := initApp()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "An error occured when %+v\n", fmt.Errorf("initialize application: %w", err))
 		return 255

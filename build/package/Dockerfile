@@ -1,3 +1,4 @@
+# Building image
 FROM golang:alpine
 
 # Disable CGO
@@ -13,11 +14,20 @@ RUN go mod download
 # Get all remaining code
 COPY ./ .
 
-# Build from code
-RUN --mount=type=cache,target=/root/.cache/go-build go install ./cmd/cryptellation-candlesticks
+# Build everything in cmd/
+RUN --mount=type=cache,target=/root/.cache/go-build go install ./cmd/*
 
-# Get base image for the final image
+# Get final base image
 FROM alpine
 
+# Build arguments
+ARG COMMAND
+
+# Environment variables
+ENV COMMAND=${COMMAND}
+
 # Get binary
-COPY --from=0 /go/bin/* /usr/local/bin
+COPY --from=0 /go/bin/${COMMAND} /usr/local/bin
+
+# Command
+CMD ${COMMAND}

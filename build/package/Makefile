@@ -1,25 +1,22 @@
-.DEFAULT_GOAL := help
+.DEFAULT_GOAL     := help
 
-DOCKER_REPO    = digital-feather/cryptellation
-IMAGE_NAME     = insula-api
-DOCKER_IMAGE   = ${DOCKER_REPO}/$(IMAGE_NAME)
+DOCKER_IMAGE_PREFIX = digital-feather/cryptellation
 
-RELEASE_VER    = $(shell grep "version = " ../../pkg/version/version.go | head -n 1 | cut -d \" -f 2)
+SERVICES          := $(shell find ../../internal -mindepth 1 -maxdepth 1 -type d | xargs -I{} basename "{}")
 
 # Force shell to bash for Gitlab CI
-SHELL         := /bin/bash
+SHELL             := /bin/bash
 
 .PHONY: build
 build: ## Build local docker image
-	@DOCKER_BUILDKIT=1 docker build -f ./Dockerfile --tag $(DOCKER_IMAGE):${RELEASE_VER} ../..
+	for SERVICE in $(SERVICES); do \
+		VERSION=$$(grep "SemVer: " ../../internal/$${SERVICE}/version.go | head -n 1 | cut -d \" -f 2); \
+		DOCKER_BUILDKIT=1 docker build -f ./Dockerfile --build-arg COMMAND=cryptellation-$${SERVICE} --tag $(DOCKER_IMAGE_PREFIX)-$${SERVICE}:$${VERSION} ../..; \
+		done
 
 .PHONY: push
 push: ## Push docker image
 	@docker push $(DOCKER_IMAGE):${RELEASE_VER}
-
-.PHONY: clean
-clean: ## Clean all docker images
-	@docker rmi ${DOCKER_IMAGE}:${RELEASE_VER} || true
 
 .PHONY: help
 help: ## Display this help message

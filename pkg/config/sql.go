@@ -1,0 +1,64 @@
+package config
+
+import (
+	"errors"
+	"fmt"
+	"os"
+	"strconv"
+)
+
+var (
+	ErrInvalidSQL = errors.New("invalid sql config")
+)
+
+type SQL struct {
+	User     string
+	Password string
+	Host     string
+	Port     int
+	Database string
+}
+
+func LoadSQLConfigFromEnv() (c SQL) {
+	c.Host = os.Getenv("SQLDB_HOST")
+	c.Port, _ = strconv.Atoi(os.Getenv("SQLDB_PORT"))
+	c.User = os.Getenv("SQLDB_USER")
+	c.Password = os.Getenv("SQLDB_PASSWORD")
+	c.Database = os.Getenv("SQLDB_DATABASE")
+	return c
+}
+
+func (c SQL) URL() string {
+	fields := map[string]string{
+		"host":     c.Host,
+		"port":     fmt.Sprintf("%d", c.Port),
+		"user":     c.User,
+		"password": c.Password,
+		"dbname":   c.Database,
+	}
+
+	var dsn string
+	for field, value := range fields {
+		if value != "" {
+			dsn = fmt.Sprintf("%s %s=%s", dsn, field, value)
+		}
+	}
+
+	return dsn
+}
+
+func (c SQL) Validate() error {
+	if c.User == "" {
+		return fmt.Errorf("reading user from env (%q): %w", c.User, ErrInvalidSQL)
+	}
+
+	if c.Host == "" {
+		return fmt.Errorf("reading host from env (%q): %w", c.Host, ErrInvalidSQL)
+	}
+
+	if c.Port == 0 {
+		return fmt.Errorf("reading port from env (%q): %w", c.Port, ErrInvalidSQL)
+	}
+
+	return nil
+}
