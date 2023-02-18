@@ -7,8 +7,8 @@ import (
 
 	"github.com/digital-feather/cryptellation/internal/candlesticks/app"
 	"github.com/digital-feather/cryptellation/internal/candlesticks/ctrl/nats/internal"
-	"github.com/digital-feather/cryptellation/pkg/types/candlestick"
-	"github.com/digital-feather/cryptellation/pkg/types/period"
+	"github.com/digital-feather/cryptellation/pkg/candlestick"
+	"github.com/digital-feather/cryptellation/pkg/period"
 )
 
 type subscriber struct {

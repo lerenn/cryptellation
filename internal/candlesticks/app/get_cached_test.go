@@ -7,8 +7,8 @@ import (
 
 	db "github.com/digital-feather/cryptellation/internal/candlesticks/app/ports/db"
 	"github.com/digital-feather/cryptellation/internal/candlesticks/app/ports/exchanges"
-	"github.com/digital-feather/cryptellation/pkg/types/candlestick"
-	"github.com/digital-feather/cryptellation/pkg/types/period"
+	"github.com/digital-feather/cryptellation/pkg/candlestick"
+	"github.com/digital-feather/cryptellation/pkg/period"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/suite"
 )

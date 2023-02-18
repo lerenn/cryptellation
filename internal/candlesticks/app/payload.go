@@ -3,7 +3,7 @@ package app
 import (
 	"time"
 
-	"github.com/digital-feather/cryptellation/pkg/types/period"
+	"github.com/digital-feather/cryptellation/pkg/period"
 )
 
 type GetCachedPayload struct {

@@ -6,7 +6,7 @@ import (
 
 	"github.com/digital-feather/cryptellation/internal/candlesticks/app/domain"
 	"github.com/digital-feather/cryptellation/internal/candlesticks/app/ports/exchanges"
-	"github.com/digital-feather/cryptellation/pkg/types/candlestick"
+	"github.com/digital-feather/cryptellation/pkg/candlestick"
 )
 
 func (c Component) GetCached(ctx context.Context, payload GetCachedPayload) (*candlestick.List, error) {

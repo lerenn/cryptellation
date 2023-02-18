@@ -6,8 +6,8 @@ import (
 
 	client "github.com/adshao/go-binance/v2"
 	"github.com/digital-feather/cryptellation/internal/candlesticks/app/ports/exchanges"
+	"github.com/digital-feather/cryptellation/pkg/candlestick"
 	"github.com/digital-feather/cryptellation/pkg/config"
-	"github.com/digital-feather/cryptellation/pkg/types/candlestick"
 )
 
 const Name = "binance"

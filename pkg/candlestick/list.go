@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/digital-feather/cryptellation/pkg/types/period"
-	"github.com/digital-feather/cryptellation/pkg/types/timeserie"
+	"github.com/digital-feather/cryptellation/pkg/period"
+	"github.com/digital-feather/cryptellation/pkg/timeserie"
 )
 
 var (
