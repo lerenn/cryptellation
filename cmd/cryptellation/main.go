@@ -16,6 +16,7 @@ import (
 func run() int {
 	client, err := candlesticks.New(config.LoadNATSConfigFromEnv())
 	if err != nil {
+		fmt.Fprintf(os.Stderr, "An error occured when %+v\n", fmt.Errorf("initializing client: %w", err))
 		return 255
 	}
 
@@ -27,6 +28,7 @@ func run() int {
 		End:          utils.ToReference(time.Now()),
 	})
 	if err != nil {
+		fmt.Fprintf(os.Stderr, "An error occured when %+v\n", fmt.Errorf("reading candlesticks: %w", err))
 		return 255
 	}
 

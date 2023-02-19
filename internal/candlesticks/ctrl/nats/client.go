@@ -2,6 +2,7 @@ package nats
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/digital-feather/cryptellation/internal/candlesticks/ctrl/nats/internal"
@@ -53,6 +54,11 @@ func (c client) ReadCandlesticks(ctx context.Context, payload ReadCandlesticksPa
 	}, time.Second)
 	if err != nil {
 		return nil, err
+	}
+
+	// Check error
+	if respMsg.Payload.Error != nil {
+		return nil, fmt.Errorf("%d Error: %s", respMsg.Payload.Error.Code, respMsg.Payload.Error.Message)
 	}
 
 	// To candlestick list
