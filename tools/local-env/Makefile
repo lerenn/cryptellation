@@ -1,7 +1,10 @@
-K8S_VERSION    := 1.24.10
-MINIKUBE_NODES := 3
-NODE_MEMORY    := 2g
-CLUSTER_NAME   := cryptellation-devel
+K8S_VERSION         := 1.24.10
+MINIKUBE_NODES      := 3
+NODE_MEMORY         := 2g
+CLUSTER_NAME        := cryptellation-devel
+
+DOCKER_IMAGE_PREFIX := digital-feather/cryptellation
+SERVICES            := $(shell find ../../internal -mindepth 1 -maxdepth 1 -type d | xargs -I{} basename "{}")
 
 .PHONY: deploy
 deploy: deploy/infra deploy/datastore ## Deploys everything, except Cryptellation System
@@ -15,6 +18,7 @@ deploy/infra: ## Deploys local development infrastructure environment
 		--profile ${CLUSTER_NAME} \
 		--kubernetes-version=v${K8S_VERSION} \
 		--extra-config=kubelet.cluster-dns=10.96.0.10
+	@minikube -p cryptellation-devel addons enable registry
 
 .PHONY: deploy/datastore
 deploy/datastore:
@@ -28,6 +32,17 @@ deploy/event-broker:
 	@helm repo add nats https://nats-io.github.io/k8s/helm/charts/; helm repo update
 	@helm upgrade --install nats nats/nats --values event-broker/nats.values.yaml --namespace event-broker
 
+.PHONY: deploy/cryptellation
+deploy/cryptellation:
+	@kubectl port-forward --namespace kube-system service/registry 5000:80 &> /dev/null & FORWARD_PID="$$!"; \
+		$(MAKE) -C ../../build/package push/local; \
+		kill -TERM $$FORWARD_PID
+	@helm upgrade --install cryptellation ../../deployments/helm/cryptellation \
+		-f ./cryptellation/values.yml \
+		-n cryptellation \
+		--create-namespace \
+		--wait  | sed 's/^/    /'
+
 .PHONY: status
 status: ## Checks the status of the dev environment
 	@minikube status --profile ${CLUSTER_NAME}
@@ -38,6 +53,10 @@ stop:
 
 .PHONY: delete
 delete: delete/datastore delete/infra ## Deletes the dev environment
+
+.PHONY: delete/cryptellation
+delete/cryptellation:
+	@kubectl delete all --all --namespace cryptellation || true
 
 .PHONY: delete/event-broker
 delete/event-broker: 

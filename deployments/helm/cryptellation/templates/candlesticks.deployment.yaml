@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: cryptellation-candlesticks
+  name: cryptellation-candlesticks
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cryptellation-candlesticks
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: cryptellation-candlesticks
+    spec:
+      containers:
+      - image: {{ .Values.services.candlesticks.image }}
+        imagePullPolicy: IfNotPresent
+        name: cryptellation-candlesticks
+        resources: {}
+status: {}
