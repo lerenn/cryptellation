@@ -61,11 +61,11 @@ func (s subscriber) CandlesticksListRequest(msg internal.CandlesticksListRequest
 	if err := list.Loop(func(t time.Time, cs candlestick.Candlestick) (bool, error) {
 		respList = append(respList, internal.CandlestickSchema{
 			Time:   internal.DateSchema(t),
-			Open:   &cs.Open,
-			High:   &cs.High,
-			Low:    &cs.Low,
-			Close:  &cs.Close,
-			Volume: &cs.Volume,
+			Open:   cs.Open,
+			High:   cs.High,
+			Low:    cs.Low,
+			Close:  cs.Close,
+			Volume: cs.Volume,
 		})
 		return false, nil
 	}); err != nil {

@@ -88,6 +88,11 @@ components:
       type: object
       required:
         - time
+        - open
+        - high
+        - low
+        - close
+        - volume
       properties:
         time:
           $ref: '#/components/schemas/Date'

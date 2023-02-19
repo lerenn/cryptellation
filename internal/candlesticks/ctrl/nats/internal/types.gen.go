@@ -235,22 +235,22 @@ func (msg *CandlesticksListResponseMessage) SetAsResponseFrom(req MessageWithCor
 // CandlestickSchema is a schema from the AsyncAPI specification required in messages
 type CandlestickSchema struct {
 	// Description: Candlestick close price
-	Close *float64 `json:"close"`
+	Close float64 `json:"close"`
 
 	// Description: Candlestick high price
-	High *float64 `json:"high"`
+	High float64 `json:"high"`
 
 	// Description: Candlestick low price
-	Low *float64 `json:"low"`
+	Low float64 `json:"low"`
 
 	// Description: Candlestick open price
-	Open *float64 `json:"open"`
+	Open float64 `json:"open"`
 
 	// Description: Candlestick date and time
 	Time DateSchema `json:"time"`
 
 	// Description: Candlestick volume
-	Volume *float64 `json:"volume"`
+	Volume float64 `json:"volume"`
 }
 
 // CandlestickListSchema is a schema from the AsyncAPI specification required in messages

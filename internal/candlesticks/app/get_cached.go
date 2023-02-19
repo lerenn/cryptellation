@@ -9,7 +9,7 @@ import (
 	"github.com/digital-feather/cryptellation/pkg/candlestick"
 )
 
-func (c Component) GetCached(ctx context.Context, payload GetCachedPayload) (*candlestick.List, error) {
+func (app candlesticks) GetCached(ctx context.Context, payload GetCachedPayload) (*candlestick.List, error) {
 	start, end := domain.ProcessRequestedStartEndTimes(payload.Period, payload.Start, payload.End)
 
 	id := candlestick.ListID{
@@ -19,7 +19,7 @@ func (c Component) GetCached(ctx context.Context, payload GetCachedPayload) (*ca
 	}
 	cl := candlestick.NewEmptyList(id)
 
-	if err := c.db.ReadCandlesticks(ctx, cl, start, end, payload.Limit); err != nil {
+	if err := app.db.ReadCandlesticks(ctx, cl, start, end, payload.Limit); err != nil {
 		return nil, err
 	}
 
@@ -28,18 +28,18 @@ func (c Component) GetCached(ctx context.Context, payload GetCachedPayload) (*ca
 	}
 
 	downloadStart, downloadEnd := domain.GetDownloadStartEndTimes(cl, start, end)
-	if err := c.download(ctx, cl, downloadStart, downloadEnd, payload.Limit); err != nil {
+	if err := app.download(ctx, cl, downloadStart, downloadEnd, payload.Limit); err != nil {
 		return nil, err
 	}
 
-	if err := c.upsert(ctx, cl); err != nil {
+	if err := app.upsert(ctx, cl); err != nil {
 		return nil, err
 	}
 
 	return cl.Extract(start, end, payload.Limit), nil
 }
 
-func (reh Component) download(ctx context.Context, cl *candlestick.List, start, end time.Time, limit uint) error {
+func (app candlesticks) download(ctx context.Context, cl *candlestick.List, start, end time.Time, limit uint) error {
 	payload := exchanges.GetCandlesticksPayload{
 		Exchange:   cl.ExchangeName(),
 		PairSymbol: cl.PairSymbol(),
@@ -49,7 +49,7 @@ func (reh Component) download(ctx context.Context, cl *candlestick.List, start, 
 	}
 
 	for {
-		ncl, err := reh.exchanges.GetCandlesticks(ctx, payload)
+		ncl, err := app.exchanges.GetCandlesticks(ctx, payload)
 		if err != nil {
 			return err
 		}
@@ -73,7 +73,7 @@ func (reh Component) download(ctx context.Context, cl *candlestick.List, start, 
 	return nil
 }
 
-func (reh Component) upsert(ctx context.Context, cl *candlestick.List) error {
+func (app candlesticks) upsert(ctx context.Context, cl *candlestick.List) error {
 	start, startExists := cl.First()
 	end, endExists := cl.Last()
 	if !startExists || !endExists {
@@ -81,7 +81,7 @@ func (reh Component) upsert(ctx context.Context, cl *candlestick.List) error {
 	}
 
 	rcl := candlestick.NewEmptyList(cl.ID())
-	if err := reh.db.ReadCandlesticks(ctx, rcl, start.Time, end.Time, 0); err != nil {
+	if err := app.db.ReadCandlesticks(ctx, rcl, start.Time, end.Time, 0); err != nil {
 		return err
 	}
 
@@ -99,11 +99,11 @@ func (reh Component) upsert(ctx context.Context, cl *candlestick.List) error {
 	}
 
 	if csToInsert.Len() > 0 {
-		return reh.db.CreateCandlesticks(ctx, csToInsert)
+		return app.db.CreateCandlesticks(ctx, csToInsert)
 	}
 
 	if csToUpdate.Len() > 0 {
-		return reh.db.UpdateCandlesticks(ctx, csToUpdate)
+		return app.db.UpdateCandlesticks(ctx, csToUpdate)
 	}
 
 	return nil

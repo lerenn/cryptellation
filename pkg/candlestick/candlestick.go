@@ -1,5 +1,7 @@
 package candlestick
 
+import "fmt"
+
 type Candlestick struct {
 	Open       float64 `bson:"open"     json:"open,omitempty"`
 	High       float64 `bson:"high"     json:"high,omitempty"`
@@ -21,4 +23,8 @@ func (cs Candlestick) Equal(b Candlestick) bool {
 
 func (cs Candlestick) PriceByType(pt PriceType) float64 {
 	return PriceByType(cs.Open, cs.High, cs.Low, cs.Close, pt)
+}
+
+func (cs Candlestick) String() string {
+	return fmt.Sprintf("O:%f | H:%f | L:%f | C:%f", cs.Open, cs.High, cs.Low, cs.Close)
 }

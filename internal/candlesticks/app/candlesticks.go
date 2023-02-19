@@ -5,15 +5,12 @@ import (
 	"github.com/digital-feather/cryptellation/internal/candlesticks/app/ports/exchanges"
 )
 
-// Test interface implementation
-var _ Port = (*Component)(nil)
-
-type Component struct {
+type candlesticks struct {
 	db        db.Port
 	exchanges exchanges.Port
 }
 
-func New(db db.Port, exchanges exchanges.Port) Component {
+func New(db db.Port, exchanges exchanges.Port) Port {
 	if db == nil {
 		panic("nil db")
 	}
@@ -22,7 +19,7 @@ func New(db db.Port, exchanges exchanges.Port) Component {
 		panic("nil exchanges")
 	}
 
-	return Component{
+	return candlesticks{
 		db:        db,
 		exchanges: exchanges,
 	}
