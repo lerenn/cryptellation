@@ -1,3 +1,21 @@
+config:
+  health:
+    port: 9000
+  nats:
+    host:
+    port:
+  sql:
+    host:
+    port:
+credentials:
+  exchanges:
+    binance:
+      api_key:
+      secret_key:
+  databases:
+    sql:
+      user:
+      password:
 services:
   candlesticks:
     image: digital-feather/cryptellation-candlesticks

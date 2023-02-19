@@ -1,3 +1,0 @@
-services:
-  candlesticks:
-    image: localhost:5000/digital-feather/cryptellation-candlesticks
