@@ -7,7 +7,7 @@ DOCKER_IMAGE_PREFIX := digital-feather/cryptellation
 SERVICES            := $(shell find ../../internal -mindepth 1 -maxdepth 1 -type d | xargs -I{} basename "{}")
 
 .PHONY: deploy
-deploy: deploy/infra deploy/datastore ## Deploys everything, except Cryptellation System
+deploy: deploy/infra deploy/datastore deploy/event-broker ## Deploys everything, except Cryptellation System
 
 .PHONY: deploy/infra
 deploy/infra: ## Deploys local development infrastructure environment
@@ -18,13 +18,15 @@ deploy/infra: ## Deploys local development infrastructure environment
 		--profile ${CLUSTER_NAME} \
 		--kubernetes-version=v${K8S_VERSION} \
 		--extra-config=kubelet.cluster-dns=10.96.0.10
-	@minikube -p cryptellation-devel addons enable registry
+	@minikube -p $(CLUSTER_NAME) addons enable registry
 
 .PHONY: deploy/datastore
 deploy/datastore:
 	@kubectl create ns datastore || true
 	@helm repo add cockroachdb https://charts.cockroachdb.com/; helm repo update
 	@helm upgrade --install cockroachdb cockroachdb/cockroachdb --values datastore/cockroachdb.values.yaml --namespace datastore
+	@kubectl create configmap init-db-scripts --from-file=../../scripts/init-databases.sql || true
+	@kubectl apply -f datastore/cockroachdb-init.job.yaml || true
 
 .PHONY: deploy/event-broker
 deploy/event-broker:
@@ -52,7 +54,7 @@ stop:
 	@minikube stop -p ${CLUSTER_NAME}
 
 .PHONY: delete
-delete: delete/datastore delete/infra ## Deletes the dev environment
+delete: delete/cryptellation delete/event-broker delete/datastore delete/infra ## Deletes the dev environment
 
 .PHONY: delete/cryptellation
 delete/cryptellation:
@@ -69,6 +71,9 @@ delete/datastore:
 .PHONY: delete/infra
 delete/infra:
 	@minikube delete --profile ${CLUSTER_NAME}
+
+.PHONY: clean
+clean: delete ## Clean everything
 
 .PHONY: help
 help: ## Display this help message

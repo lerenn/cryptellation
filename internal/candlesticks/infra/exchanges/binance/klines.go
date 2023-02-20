@@ -29,31 +29,31 @@ func KLineToCandlestick(k binance.Kline, p period.Symbol, now time.Time) (time.T
 	// Convert Open
 	open, err := strconv.ParseFloat(k.Open, 64)
 	if err != nil {
-		return time.Unix(0, 0), c, err
+		return time.Unix(0, 0), c, wrapError(err)
 	}
 
 	// Convert High
 	high, err := strconv.ParseFloat(k.High, 64)
 	if err != nil {
-		return time.Unix(0, 0), c, err
+		return time.Unix(0, 0), c, wrapError(err)
 	}
 
 	// Convert Low
 	low, err := strconv.ParseFloat(k.Low, 64)
 	if err != nil {
-		return time.Unix(0, 0), c, err
+		return time.Unix(0, 0), c, wrapError(err)
 	}
 
 	// Convert Close
 	close, err := strconv.ParseFloat(k.Close, 64)
 	if err != nil {
-		return time.Unix(0, 0), c, err
+		return time.Unix(0, 0), c, wrapError(err)
 	}
 
 	// Convert Volume
 	volume, err := strconv.ParseFloat(k.Volume, 64)
 	if err != nil {
-		return time.Unix(0, 0), c, err
+		return time.Unix(0, 0), c, wrapError(err)
 	}
 
 	// Check completness
@@ -85,11 +85,11 @@ func KLinesToCandlesticks(pair string, period period.Symbol, kl []*binance.Kline
 	for _, k := range kl {
 		t, c, err := KLineToCandlestick(*k, period, now)
 		if err != nil {
-			return nil, err
+			return nil, wrapError(err)
 		}
 
 		if err := cs.Set(t, c); err != nil {
-			return nil, err
+			return nil, wrapError(err)
 		}
 	}
 

@@ -1,19 +1,20 @@
 config:
   health:
     port: 9000
-  sql:
-    host: cockroachdb-public.datastore
-    port: 26257
   nats:
     host: nats.event-broker
     port: 4222
+  sqldb:
+    host: cockroachdb-public.datastore
+    port: 26257
+    database: candlesticks
 credentials:
   exchanges:
     binance:
       api_key:
       secret_key:
   databases:
-    sql:
+    sqldb:
       user: root
       password:
 services:

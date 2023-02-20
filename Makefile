@@ -29,6 +29,7 @@ docker/push/%:
 
 .PHONY: clean
 clean: test/clean ## Clean everything
+	$(MAKE) -C tools/minikube-env clean
 
 .PHONY: lint
 lint: ## Lint the code

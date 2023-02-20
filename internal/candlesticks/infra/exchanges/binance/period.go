@@ -58,6 +58,6 @@ func PeriodToInterval(interval period.Symbol) (e string, err error) {
 	case period.W1:
 		return "1w", nil
 	default:
-		return e, fmt.Errorf("interval error: unknown period")
+		return e, fmt.Errorf("%w: %s", ErrUnknownPeriod, interval)
 	}
 }

@@ -62,6 +62,22 @@ func (suite *BinanceSuite) TestGetCandlesticks() {
 	suite.Require().Equal(expected, rc)
 }
 
-func (suite *BinanceSuite) TestDoWithUncompleteCandlestick() {
-	// TODO
+func (suite *BinanceSuite) TestGetCandlesticksWithZeroLimit() {
+	p := "BTC-USDC"
+
+	ts, err := time.Parse("2006/01/02 15:04:05", "2020/11/15 00:00:00")
+	suite.Require().NoError(err)
+
+	te, err := time.Parse("2006/01/02 15:04:05", "2020/11/15 00:05:00")
+	suite.Require().NoError(err)
+
+	_, err = suite.service.GetCandlesticks(context.TODO(),
+		exchanges.GetCandlesticksPayload{
+			PairSymbol: p,
+			Period:     period.M1,
+			Limit:      0,
+			Start:      ts,
+			End:        te,
+		})
+	suite.Require().NoError(err)
 }

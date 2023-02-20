@@ -1,0 +1,49 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: init-db
+spec:
+  parallelism: 1    
+  completions: 1    
+  template:         
+    metadata:
+      name: init-db
+    spec:
+      volumes:
+      - name: init-db-scripts-volume
+        configMap:
+          name: init-db-scripts
+      # - name: client-certs
+      #   projected:
+      #     sources:
+      #     - secret:
+      #         name: cockroachdb-node
+      #         items:
+      #         - key: ca.crt
+      #           path: ca.crt
+      #     - secret:
+      #         name: cockroachdb-root
+      #         items:
+      #         - key: tls.crt
+      #           path: client.root.crt
+      #         - key: tls.key
+      #           path: client.root.key
+      #     defaultMode: 256
+      containers:
+      - name: init-db
+        image: cockroachdb/cockroach:v22.2.2
+        imagePullPolicy: IfNotPresent
+        volumeMounts:
+          - mountPath: /scripts
+            name: init-db-scripts-volume
+          # - name: client-certs
+          #   mountPath: /cockroach/cockroach-certs/
+        command:
+          - ./cockroach
+          - sql
+          - --insecure
+          # - --certs-dir=/cockroach/cockroach-certs
+          - --host=cockroachdb-public.datastore
+          - --file=/scripts/init-databases.sql
+      restartPolicy: Never
+

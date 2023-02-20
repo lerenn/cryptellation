@@ -32,8 +32,8 @@ func run() int {
 		return 255
 	}
 
-	list.Loop(func(t time.Time, cs candlestick.Candlestick) (bool, error) {
-		fmt.Println(cs.String())
+	_ = list.Loop(func(t time.Time, cs candlestick.Candlestick) (bool, error) {
+		fmt.Println("", t, "||", cs.String())
 		return false, nil
 	})
 

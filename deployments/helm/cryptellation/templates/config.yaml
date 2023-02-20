@@ -6,5 +6,6 @@ data:
     health.port: "{{ .Values.config.health.port | default 9000 }}"
     nats.host: "{{ .Values.config.nats.host }}"
     nats.port: "{{ .Values.config.nats.port }}"
-    sql.host: "{{ .Values.config.sql.host }}"
-    sql.port: "{{ .Values.config.sql.port }}"
+    sqldb.host: "{{ .Values.config.sqldb.host }}"
+    sqldb.port: "{{ .Values.config.sqldb.port }}"
+    sqldb.database: "{{ .Values.config.sqldb.database }}"

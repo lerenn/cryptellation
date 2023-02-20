@@ -4,16 +4,17 @@ config:
   nats:
     host:
     port:
-  sql:
+  sqldb:
     host:
     port:
+    database: candlesticks
 credentials:
   exchanges:
     binance:
       api_key:
       secret_key:
   databases:
-    sql:
+    sqldb:
       user:
       password:
 services:

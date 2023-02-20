@@ -60,5 +60,9 @@ func (c SQL) Validate() error {
 		return fmt.Errorf("reading port from env (%q): %w", c.Port, ErrInvalidSQL)
 	}
 
+	if c.Database == "" {
+		return fmt.Errorf("reading database from env (%q): %w", c.Database, ErrInvalidSQL)
+	}
+
 	return nil
 }

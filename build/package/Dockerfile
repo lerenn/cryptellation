@@ -30,4 +30,4 @@ ENV COMMAND=${COMMAND}
 COPY --from=0 /go/bin/${COMMAND} /usr/local/bin
 
 # Command
-CMD ${COMMAND}
+CMD ${COMMAND} serve

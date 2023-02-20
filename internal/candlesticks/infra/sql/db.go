@@ -3,7 +3,7 @@ package sql
 import (
 	"fmt"
 
-	"github.com/digital-feather/cryptellation/internal/candlesticks/infra/sql/internal/entities"
+	"github.com/digital-feather/cryptellation/internal/candlesticks/infra/sql/entities"
 	"github.com/digital-feather/cryptellation/pkg/config"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"

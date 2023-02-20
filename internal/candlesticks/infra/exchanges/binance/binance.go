@@ -25,6 +25,8 @@ func New(c config.Binance) (*Service, error) {
 }
 
 func (s *Service) GetCandlesticks(ctx context.Context, payload exchanges.GetCandlesticksPayload) (*candlestick.List, error) {
+	s.client.Debug = true
+
 	service := s.client.NewKlinesService()
 
 	// Set symbol
@@ -33,22 +35,23 @@ func (s *Service) GetCandlesticks(ctx context.Context, payload exchanges.GetCand
 	// Set interval
 	binanceInterval, err := PeriodToInterval(payload.Period)
 	if err != nil {
-		return nil, err
+		return nil, wrapError(err)
 	}
 	service.Interval(binanceInterval)
 
 	// Set start and end time
-	start, end := TimeToKLineTime(payload.Start), TimeToKLineTime(payload.End)
-	service.StartTime(start)
-	service.EndTime(end)
+	service.StartTime(TimeToKLineTime(payload.Start))
+	service.EndTime(TimeToKLineTime(payload.End))
 
 	// Set limit
-	service.Limit(payload.Limit)
+	if payload.Limit > 0 {
+		service.Limit(payload.Limit)
+	}
 
 	// Get KLines
 	kl, err := service.Do(ctx)
 	if err != nil {
-		return nil, err
+		return nil, wrapError(err)
 	}
 
 	// Change them to right format

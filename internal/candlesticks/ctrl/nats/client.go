@@ -51,7 +51,7 @@ func (c client) ReadCandlesticks(ctx context.Context, payload ReadCandlesticksPa
 	// Send request
 	respMsg, err := c.ctrl.WaitForCandlesticksListResponse(reqMsg, func() error {
 		return c.ctrl.PublishCandlesticksListRequest(reqMsg)
-	}, time.Second)
+	}, 3*time.Second)
 	if err != nil {
 		return nil, err
 	}
@@ -68,16 +68,18 @@ func (c client) ReadCandlesticks(ctx context.Context, payload ReadCandlesticksPa
 		Period:       payload.Period,
 	})
 	for _, c := range *respMsg.Payload.Candlesticks {
-		list.Set(time.Time(c.Time), candlestick.Candlestick{
+		if err := list.Set(time.Time(c.Time), candlestick.Candlestick{
 			Open:   c.Open,
 			High:   c.High,
 			Low:    c.Low,
 			Close:  c.Close,
 			Volume: c.Volume,
-		})
+		}); err != nil {
+			return nil, err
+		}
 	}
 
-	return nil, nil
+	return list, nil
 }
 
 func (c client) Close() {
