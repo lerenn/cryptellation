@@ -19,4 +19,4 @@ credentials:
       password:
 services:
   candlesticks:
-    image: digital-feather/cryptellation-candlesticks
+    image: digital-feather/cryptellation:latest

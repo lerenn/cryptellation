@@ -19,4 +19,4 @@ credentials:
       password:
 services:
   candlesticks:
-    image: localhost:5000/digital-feather/cryptellation-candlesticks
+    image: localhost:5000/digital-feather/cryptellation

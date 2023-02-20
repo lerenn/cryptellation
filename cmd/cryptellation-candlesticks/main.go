@@ -4,13 +4,13 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/digital-feather/cryptellation/internal/candlesticks"
+	"github.com/digital-feather/cryptellation/pkg/version"
 	"github.com/spf13/cobra"
 )
 
 var RootCmd = &cobra.Command{
 	Use:     "cryptellation-candlesticks",
-	Version: candlesticks.Version.FullVersion(),
+	Version: version.GetFullVersion(),
 	Short:   "cryptellation-candlesticks - a simple CLI to manipulate candlesticks service",
 	Long: "cryptellation-candlesticks is a simple CLI to manipulate candlesticks service.\n\n" +
 		"One can use cryptellation-candlesticks to manage migrations from the terminal and launch the service.",

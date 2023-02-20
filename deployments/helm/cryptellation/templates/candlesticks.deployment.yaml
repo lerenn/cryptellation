@@ -27,6 +27,7 @@ spec:
           httpGet:
             path: /readiness
             port: {{ .Values.config.health.port | default 9000 }}
+        command: [ "cryptellation-candlesticks", "serve" ]
         env:
         - name: "BINANCE_API_KEY"
           valueFrom:

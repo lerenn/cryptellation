@@ -1,31 +1,42 @@
-.DEFAULT_GOAL     := help
+.DEFAULT_GOAL     	= help
 
 DOCKER_IMAGE_PREFIX = digital-feather/cryptellation
 
-SERVICES          := $(shell find ../../internal -mindepth 1 -maxdepth 1 -type d | xargs -I{} basename "{}")
+RELEASE_VER			= $(shell grep "version = " ../../pkg/version/version.go | head -n 1 | cut -d \" -f 2)
 
 # Force shell to bash for Gitlab CI
 SHELL             := /bin/bash
 
-.PHONY: build
-build: ## Build local docker image
-	@for SERVICE in $(SERVICES); do \
-		VERSION=$$(grep "SemVer: " ../../internal/$${SERVICE}/version.go | head -n 1 | cut -d \" -f 2); \
-		DOCKER_BUILDKIT=1 docker build \
-			-f ./Dockerfile --build-arg COMMAND=cryptellation-$${SERVICE} \
-			-t $(DOCKER_IMAGE_PREFIX)-$${SERVICE}:$${VERSION} -t $(DOCKER_IMAGE_PREFIX)-$${SERVICE}:latest ../..; \
-		done
+.PHONY: build/build
+build/build:
+	@DOCKER_BUILDKIT=1 docker build \
+		-f ./build.dockerfile \
+		-t $(DOCKER_IMAGE_PREFIX):build-$(RELEASE_VER) \
+		-t $(DOCKER_IMAGE_PREFIX):build \
+		../..
+
+.PHONY: build/run
+build/run:
+	@DOCKER_BUILDKIT=1 docker build \
+		-f ./run.dockerfile \
+		--build-arg BUILD_IMAGE=$(DOCKER_IMAGE_PREFIX):build-$(RELEASE_VER) \
+		-t $(DOCKER_IMAGE_PREFIX):$(RELEASE_VER) \
+		-t $(DOCKER_IMAGE_PREFIX):latest \
+		../..
+
+.PHONY: build 
+build: build/build build/run ## Build local docker image
 
 .PHONY: push
-push: build## Push docker image
+push: build ## Push docker image
 	@docker push $(DOCKER_IMAGE):${RELEASE_VER}
 
 .PHONY: push/local
 push/local: build
-	@for SERVICE in $(SERVICES); do \
-		docker tag $(DOCKER_IMAGE_PREFIX)-$${SERVICE} localhost:5000/$(DOCKER_IMAGE_PREFIX)-$${SERVICE}; \
-		docker push localhost:5000/$(DOCKER_IMAGE_PREFIX)-$${SERVICE}; \
-	done
+	@docker tag $(DOCKER_IMAGE_PREFIX):$(RELEASE_VER) localhost:5000/$(DOCKER_IMAGE_PREFIX):$(RELEASE_VER)
+	@docker push localhost:5000/$(DOCKER_IMAGE_PREFIX):$(RELEASE_VER)
+	@docker tag $(DOCKER_IMAGE_PREFIX):latest localhost:5000/$(DOCKER_IMAGE_PREFIX):latest
+	@docker push localhost:5000/$(DOCKER_IMAGE_PREFIX):latest
 
 .PHONY: help
 help: ## Display this help message

@@ -4,7 +4,6 @@ NODE_MEMORY         := 2g
 CLUSTER_NAME        := cryptellation-devel
 
 DOCKER_IMAGE_PREFIX := digital-feather/cryptellation
-SERVICES            := $(shell find ../../internal -mindepth 1 -maxdepth 1 -type d | xargs -I{} basename "{}")
 
 .PHONY: deploy
 deploy: deploy/infra deploy/datastore deploy/event-broker ## Deploys everything, except Cryptellation System
