@@ -49,9 +49,9 @@ func (c client) ReadCandlesticks(ctx context.Context, payload ReadCandlesticksPa
 	reqMsg.Payload.Limit = internal.LimitSchema(payload.Limit)
 
 	// Send request
-	respMsg, err := c.ctrl.WaitForCandlesticksListResponse(reqMsg, func() error {
+	respMsg, err := c.ctrl.WaitForCandlesticksListResponse(ctx, reqMsg, func() error {
 		return c.ctrl.PublishCandlesticksListRequest(reqMsg)
-	}, 3*time.Second)
+	})
 	if err != nil {
 		return nil, err
 	}
