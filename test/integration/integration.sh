@@ -4,7 +4,7 @@
 ./scripts/wait-sqldb.sh
 
 # Launch tests
-go test -p 1 $(go list ./... | grep -e /infra/)  -coverprofile cover.out
+go test -p 1 $(go list ./internal/... | grep -e /infra/)  -coverprofile cover.out
 
 # Displaying result
 go tool cover -func cover.out
