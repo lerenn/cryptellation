@@ -13,7 +13,7 @@ run: ## Run end-to-end tests with port-forwarding from minikube
 
 .PHONY: test
 test: ## Run end-to-end tests only
-	@go test ./...
+	@go test -count=1 ./...
 
 .PHONY: help
 help: ## Display this help message

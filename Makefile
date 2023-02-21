@@ -52,7 +52,7 @@ test/clean:
 
 .PHONY: test/end-to-end
 test/end-to-end: ## Perform end-to-end tests
-	@echo "TODO"
+	@$(MAKE) -C test/end-to-end run
 
 .PHONY: test/integration
 test/integration: ## Perform integration tests
