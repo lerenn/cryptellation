@@ -10,7 +10,7 @@ type candlesticks struct {
 	exchanges exchanges.Port
 }
 
-func New(db db.Port, exchanges exchanges.Port) Port {
+func New(db db.Port, exchanges exchanges.Port) Controller {
 	if db == nil {
 		panic("nil db")
 	}

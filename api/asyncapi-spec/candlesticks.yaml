@@ -74,11 +74,13 @@ components:
             type: string
       payload:
         type: object
-        properties:
-          candlesticks:
-            $ref: '#/components/schemas/CandlestickList'
-          error:
-            $ref: '#/components/schemas/Error'
+        oneOf:
+        - properties:
+            candlesticks:
+              $ref: '#/components/schemas/CandlestickList'
+        - properties:
+            error:
+              $ref: '#/components/schemas/Error'
       correlationId:
         description: Default Correlation ID
         location: $message.header#/correlationId

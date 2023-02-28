@@ -24,7 +24,8 @@ type CandlesticksSuite struct {
 
 func (suite *CandlesticksSuite) SetupSuite() {
 	// Get config
-	cfg := config.LoadNATSConfigFromEnv()
+	cfg := config.LoadDefaultNATSConfig()
+	cfg.OverrideFromEnv()
 	suite.Require().NoError(cfg.Validate())
 
 	// Init client

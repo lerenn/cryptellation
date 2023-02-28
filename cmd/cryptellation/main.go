@@ -1,45 +1,52 @@
 package main
 
 import (
-	"context"
 	"fmt"
 	"os"
-	"time"
 
-	candlesticks "github.com/digital-feather/cryptellation/internal/candlesticks/ctrl/nats"
-	"github.com/digital-feather/cryptellation/pkg/candlestick"
 	"github.com/digital-feather/cryptellation/pkg/config"
-	"github.com/digital-feather/cryptellation/pkg/period"
-	"github.com/digital-feather/cryptellation/pkg/utils"
+	"github.com/digital-feather/cryptellation/pkg/version"
+	"github.com/spf13/cobra"
 )
 
-func run() int {
-	client, err := candlesticks.New(config.LoadNATSConfigFromEnv())
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "An error occured when %+v\n", fmt.Errorf("initializing client: %w", err))
-		return 255
-	}
+var (
+	globalNATSConfig config.NATS
+)
 
-	list, err := client.ReadCandlesticks(context.Background(), candlesticks.ReadCandlesticksPayload{
-		ExchangeName: "binance",
-		PairSymbol:   "ETH-USDT",
-		Period:       period.H1,
-		Start:        utils.ToReference(time.Now().AddDate(0, 0, -7)),
-		End:          utils.ToReference(time.Now()),
-	})
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "An error occured when %+v\n", fmt.Errorf("reading candlesticks: %w", err))
-		return 255
-	}
+var CryptellationCmd = &cobra.Command{
+	Use:     "cryptellation",
+	Version: version.GetFullVersion(),
+	Short:   "cryptellation - a simple CLI to manipulate cryptellation services",
+	Long: "cryptellation is a simple CLI to manipulate cryptellation services.\n\n" +
+		"One can use cryptellation-candlesticks to manage migrations from the terminal and launch the service.",
+	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+		// Set the default NATS configuration
+		globalNATSConfig = config.LoadDefaultNATSConfig()
 
-	_ = list.Loop(func(t time.Time, cs candlestick.Candlestick) (bool, error) {
-		fmt.Println("", t, "||", cs.String())
-		return false, nil
-	})
+		// Try to override from env
+		globalNATSConfig.OverrideFromEnv()
 
-	return 0
+		return nil
+	},
+}
+
+func init() {
+	initCandlesticks(CryptellationCmd)
+	initExchanges(CryptellationCmd)
 }
 
 func main() {
-	os.Exit(run())
+	if err := CryptellationCmd.Execute(); err != nil {
+		fmt.Fprintf(os.Stderr, "Error: %s\n", err)
+		os.Exit(1)
+	}
+}
+
+// this is compensating this issue: https://github.com/spf13/cobra/issues/252
+func executeParentPersistentPreRuns(cmd *cobra.Command, args []string) error {
+	root := cmd
+	for root.HasParent() {
+		root = root.Parent()
+	}
+	return root.PersistentPreRunE(cmd, args)
 }

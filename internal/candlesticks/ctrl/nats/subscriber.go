@@ -12,11 +12,11 @@ import (
 )
 
 type subscriber struct {
-	candlesticks app.Port
+	candlesticks app.Controller
 	controller   *internal.AppController
 }
 
-func newSubscriber(controller *internal.AppController, app app.Port) subscriber {
+func newSubscriber(controller *internal.AppController, app app.Controller) subscriber {
 	return subscriber{
 		candlesticks: app,
 		controller:   controller,

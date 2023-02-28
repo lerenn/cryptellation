@@ -1,0 +1,136 @@
+asyncapi: 2.5.0
+info:
+  title: Exchanges Service
+  version: 1.0.0
+  description: >
+    This service is serving exchanges informations through a caching system that
+    is proxying exchanges API.
+channels:
+  exchanges.list.request:
+    publish:
+      operationId: exchangesRequest
+      description: Request an exchanges information
+      tags:
+        - name: exchanges
+      message:
+        $ref: '#/components/messages/ExchangesRequest'
+
+  exchanges.list.response:
+    subscribe:
+      operationId: exchangesResponse
+      description: Response to an exchange information request 
+      tags:
+        - name: exchanges
+      message:
+        $ref: '#/components/messages/ExchangesResponse'
+
+components:
+  messages:
+    ExchangesRequest:
+      headers:
+        type: object
+        properties:
+          correlationId:
+            description: Correlation ID set by client
+            type: string
+      payload:
+        type: array
+        items:
+          $ref: '#/components/schemas/ExchangeName'
+      correlationId:
+        description: Default Correlation ID
+        location: $message.header#/correlationId
+    ExchangesResponse:
+      headers:
+        type: object
+        properties:
+          correlationId:
+            description: Correlation ID set by client
+            type: string
+      payload:
+        type: object
+        oneOf:
+        - properties:
+            exchanges:
+              type: array
+              items:
+                $ref: '#/components/schemas/Exchange'
+        - properties: 
+            error:
+              $ref: '#/components/schemas/Error'
+      correlationId:
+        description: Default Correlation ID
+        location: $message.header#/correlationId
+
+  schemas:
+    Exchange:
+      type: object
+      description: exchange information
+      required:
+        - name
+        - fees
+        - lastSyncTime
+      properties:
+        name:
+          $ref: '#/components/schemas/ExchangeName'
+        pairs:
+          type: array
+          items:
+            $ref: '#/components/schemas/PairSymbol'
+        periods:
+          type: array
+          items:
+            $ref: '#/components/schemas/PeriodSymbol'
+        fees:
+          type: number
+        lastSyncTime:
+          type: string
+          format: date-time
+          description: Last synchronisation time in RFC3339
+          examples:
+            - "1985-04-12T23:20:50.52Z"
+            - "1937-01-01T12:00:27.87+00:20"
+    ExchangeName:
+      type: string
+      description: Exchange name
+      examples:
+        - Binance
+    PairSymbol:
+      type: string
+      description: Pair symbol
+      examples:
+        - ETH-USDC
+    PeriodSymbol:
+      type: string
+      description: Period symbol
+      default: M1
+      enum:
+        - M1
+        - M3
+        - M5
+        - M15
+        - M30
+        - H1
+        - H2
+        - H4
+        - H6
+        - H8
+        - H12
+        - D1
+        - D3
+        - W1
+    Error:
+      type: object
+      description: Response to a failed call
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          description: Code to identify the error type, based on HTTP errors
+        message:
+          type: string
+          description: Main error reason
+          examples:
+            - "Invalid request: no time specified"

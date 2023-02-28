@@ -11,6 +11,10 @@ run: ## Run end-to-end tests with port-forwarding from minikube
 		$(MAKE) test; \
 		kill -TERM $$FORWARD_PID
 
+.PHONY: clean
+clean: ## Clean remaining ressources
+	# Nothing to do
+
 .PHONY: test
 test: ## Run end-to-end tests only
 	@go test -count=1 ./...

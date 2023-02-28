@@ -156,8 +156,10 @@ type CandlesticksListResponseMessage struct {
 
 	// Payload will be inserted in the message payload
 	Payload struct {
+		// Description: Requested candlestick list
 		Candlesticks *CandlestickListSchema `json:"candlesticks"`
 
+		// Description: Response to a failed call
 		Error *ErrorSchema `json:"error"`
 	}
 }

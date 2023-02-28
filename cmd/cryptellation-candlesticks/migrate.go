@@ -9,14 +9,9 @@ import (
 	"github.com/spf13/cobra"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
-	"gorm.io/gorm/logger"
 )
 
 var (
-	DefaultGormConfig = &gorm.Config{
-		Logger: logger.Default.LogMode(logger.Silent),
-	}
-
 	migrator *gormigrate.Gormigrate
 )
 
@@ -32,7 +27,7 @@ var migrationsCmd = &cobra.Command{
 		}
 
 		// Connect to database
-		db, err := gorm.Open(postgres.Open(c.URL()), DefaultGormConfig)
+		db, err := gorm.Open(postgres.Open(c.URL()), config.DefaultGormConfig)
 		if err != nil {
 			return err
 		}

@@ -1,8 +1,8 @@
-//go:generate go run github.com/lerenn/asyncapi-codegen/cmd/asyncapi-codegen@v0.7.0 -g application -p internal -i ../../../../api/asyncapi-spec/candlesticks.yaml -o ./internal/app.gen.go
-//go:generate go run github.com/lerenn/asyncapi-codegen/cmd/asyncapi-codegen@v0.7.0 -g client      -p internal -i ../../../../api/asyncapi-spec/candlesticks.yaml -o ./internal/client.gen.go
-//go:generate go run github.com/lerenn/asyncapi-codegen/cmd/asyncapi-codegen@v0.7.0 -g broker      -p internal -i ../../../../api/asyncapi-spec/candlesticks.yaml -o ./internal/broker.gen.go
-//go:generate go run github.com/lerenn/asyncapi-codegen/cmd/asyncapi-codegen@v0.7.0 -g types       -p internal -i ../../../../api/asyncapi-spec/candlesticks.yaml -o ./internal/types.gen.go
-//go:generate go run github.com/lerenn/asyncapi-codegen/cmd/asyncapi-codegen@v0.7.0 -g nats        -p internal -i ../../../../api/asyncapi-spec/candlesticks.yaml -o ./internal/nats.gen.go
+//go:generate asyncapi-codegen -g application -p internal -i ../../../../api/asyncapi-spec/candlesticks.yaml -o ./internal/app.gen.go
+//go:generate asyncapi-codegen -g client      -p internal -i ../../../../api/asyncapi-spec/candlesticks.yaml -o ./internal/client.gen.go
+//go:generate asyncapi-codegen -g broker      -p internal -i ../../../../api/asyncapi-spec/candlesticks.yaml -o ./internal/broker.gen.go
+//go:generate asyncapi-codegen -g types       -p internal -i ../../../../api/asyncapi-spec/candlesticks.yaml -o ./internal/types.gen.go
+//go:generate asyncapi-codegen -g nats        -p internal -i ../../../../api/asyncapi-spec/candlesticks.yaml -o ./internal/nats.gen.go
 
 package nats
 
@@ -16,10 +16,10 @@ import (
 type Server struct {
 	nc           *nats.Conn
 	controller   *internal.AppController
-	candlesticks app.Port
+	candlesticks app.Controller
 }
 
-func NewServer(c config.NATS, candlesticks app.Port) (*Server, error) {
+func NewServer(c config.NATS, candlesticks app.Controller) (*Server, error) {
 	// Validate configuration
 	if err := c.Validate(); err != nil {
 		return nil, err

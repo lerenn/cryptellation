@@ -1,22 +1,28 @@
-config:
-  health:
-    port: 9000
-  nats:
-    host:
-    port:
-  sqldb:
-    host:
-    port:
-    database: candlesticks
 credentials:
   exchanges:
     binance:
       api_key:
       secret_key:
-  databases:
+  event_brokers:
+    nats:
+      host:
+      port:
+  datastores:
     sqldb:
+      host:
+      port:
       user:
       password:
 services:
   candlesticks:
     image: digital-feather/cryptellation:latest
+    sqldb:
+      database: candlesticks
+    health:
+      port: 9000
+  exchanges:
+    image: digital-feather/cryptellation:latest
+    sqldb:
+      database: exchanges
+    health:
+      port: 9000

@@ -19,7 +19,7 @@ func TestGetCachedSuite(t *testing.T) {
 
 type GetCachedSuite struct {
 	suite.Suite
-	component Port
+	component Controller
 	db        *db.MockPort
 	exchange  *exchanges.MockPort
 }

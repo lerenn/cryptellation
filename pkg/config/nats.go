@@ -16,14 +16,35 @@ type NATS struct {
 	Port int
 }
 
-func LoadNATSConfigFromEnv() (c NATS) {
-	c.Host = os.Getenv("NATS_HOST")
-	c.Port, _ = strconv.Atoi(os.Getenv("NATS_PORT"))
-	return c
+func LoadNATSConfigFromEnv() (n NATS) {
+	n.OverrideFromEnv()
+	return n
+}
+
+func LoadDefaultNATSConfig() (n NATS) {
+	n.LoadDefault()
+	return n
 }
 
 func (n NATS) URL() string {
 	return fmt.Sprintf("nats://%s:%d", n.Host, n.Port)
+}
+
+func (n *NATS) OverrideFromEnv() {
+	host := os.Getenv("NATS_HOST")
+	if host != "" {
+		n.Host = host
+	}
+
+	port, _ := strconv.Atoi(os.Getenv("NATS_PORT"))
+	if port != 0 {
+		n.Port = port
+	}
+}
+
+func (n *NATS) LoadDefault() {
+	n.Host = "localhost"
+	n.Port = 4222
 }
 
 func (n NATS) Validate() error {

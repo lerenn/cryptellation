@@ -26,7 +26,7 @@ var serveCmd = &cobra.Command{
 	},
 }
 
-func initApp() (app.Port, error) {
+func initApp() (app.Controller, error) {
 	// Init database client
 	db, err := sql.New(config.LoadSQLConfigFromEnv())
 	if err != nil {
@@ -43,7 +43,7 @@ func initApp() (app.Port, error) {
 	return app.New(db, exchanges), nil
 }
 
-func initController(component app.Port) (func(), error) {
+func initController(component app.Controller) (func(), error) {
 	// Init NATS controller
 	natsController, err := nats.NewServer(config.LoadNATSConfigFromEnv(), component)
 	if err != nil {

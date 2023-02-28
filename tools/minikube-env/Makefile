@@ -24,8 +24,8 @@ deploy/datastore:
 	@kubectl create ns datastore || true
 	@helm repo add cockroachdb https://charts.cockroachdb.com/; helm repo update
 	@helm upgrade --install cockroachdb cockroachdb/cockroachdb --values datastore/cockroachdb.values.yaml --namespace datastore
-	@kubectl create configmap init-db-scripts --from-file=../../scripts/init-databases.sql || true
-	@kubectl apply -f datastore/cockroachdb-init.job.yaml || true
+	@kubectl create configmap init-databases-scripts --from-file=../../scripts/init-databases.sql || true
+	@kubectl apply -f datastore/cockroachdb.init-databases.job.yaml || true
 
 .PHONY: deploy/event-broker
 deploy/event-broker:

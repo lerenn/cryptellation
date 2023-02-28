@@ -7,13 +7,6 @@ import (
 	"github.com/digital-feather/cryptellation/pkg/config"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
-	"gorm.io/gorm/logger"
-)
-
-var (
-	DefaultGormConfig = &gorm.Config{
-		Logger: logger.Default.LogMode(logger.Silent),
-	}
 )
 
 type DB struct {
@@ -25,7 +18,7 @@ func New(c config.SQL) (*DB, error) {
 		return nil, fmt.Errorf("loading sqldb config: %w", err)
 	}
 
-	client, err := gorm.Open(postgres.Open(c.URL()), DefaultGormConfig)
+	client, err := gorm.Open(postgres.Open(c.URL()), config.DefaultGormConfig)
 	if err != nil {
 		return nil, fmt.Errorf("opening sqldb connection: %w", err)
 	}

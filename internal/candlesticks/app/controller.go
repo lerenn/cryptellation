@@ -6,6 +6,6 @@ import (
 	"github.com/digital-feather/cryptellation/pkg/candlestick"
 )
 
-type Port interface {
+type Controller interface {
 	GetCached(ctx context.Context, payload GetCachedPayload) (*candlestick.List, error)
 }

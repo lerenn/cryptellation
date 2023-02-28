@@ -5,10 +5,19 @@ import (
 	"fmt"
 	"os"
 	"strconv"
+
+	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
 var (
 	ErrInvalidSQL = errors.New("invalid sql config")
+)
+
+var (
+	DefaultGormConfig = &gorm.Config{
+		Logger: logger.Default.LogMode(logger.Silent),
+	}
 )
 
 type SQL struct {

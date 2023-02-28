@@ -47,6 +47,7 @@ endif
 
 .PHONY: test/clean
 test/clean:
+	$(MAKE) -C test/end-to-end clean
 	@$(DOCKER_COMPOSE) -f ./test/integration/docker-compose.yml down
 	@rm -f cover.out
 

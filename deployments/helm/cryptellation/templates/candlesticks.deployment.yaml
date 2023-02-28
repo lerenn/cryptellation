@@ -22,11 +22,11 @@ spec:
         livenessProbe:
           httpGet:
             path: /liveness
-            port: {{ .Values.config.health.port | default 9000 }}
+            port: {{ .Values.services.candlesticks.health.port | default 9000 }}
         readinessProbe:
           httpGet:
             path: /readiness
-            port: {{ .Values.config.health.port | default 9000 }}
+            port: {{ .Values.services.candlesticks.health.port | default 9000 }}
         command: [ "cryptellation-candlesticks", "serve" ]
         env:
         - name: "BINANCE_API_KEY"
@@ -42,18 +42,18 @@ spec:
         - name: "HEALTH_PORT"
           valueFrom:
             configMapKeyRef:
-              key:  health.port
+              key:  candlesticks.health.port
               name: cryptellation-config
         - name: "NATS_HOST"
           valueFrom:
             configMapKeyRef:
               key:  nats.host
-              name: cryptellation-config
+              name: cryptellation-credentials
         - name: "NATS_PORT"
           valueFrom:
             configMapKeyRef:
               key:  nats.port
-              name: cryptellation-config
+              name: cryptellation-credentials
         - name: "SQLDB_USER"
           valueFrom:
             configMapKeyRef:
@@ -68,16 +68,16 @@ spec:
           valueFrom:
             configMapKeyRef:
               key:  sqldb.host
-              name: cryptellation-config
+              name: cryptellation-credentials
         - name: "SQLDB_PORT"
           valueFrom:
             configMapKeyRef:
               key:  sqldb.port
-              name: cryptellation-config
+              name: cryptellation-credentials
         - name: "SQLDB_DATABASE"
           valueFrom:
             configMapKeyRef:
-              key:  sqldb.database
+              key:  candlesticks.sqldb.database
               name: cryptellation-config
         resources: {}
       initContainers:
@@ -99,15 +99,15 @@ spec:
           valueFrom:
             configMapKeyRef:
               key:  sqldb.host
-              name: cryptellation-config
+              name: cryptellation-credentials
         - name: "SQLDB_PORT"
           valueFrom:
             configMapKeyRef:
               key:  sqldb.port
-              name: cryptellation-config
+              name: cryptellation-credentials
         - name: "SQLDB_DATABASE"
           valueFrom:
             configMapKeyRef:
-              key:  sqldb.database
+              key:  candlesticks.sqldb.database
               name: cryptellation-config
 status: {}
