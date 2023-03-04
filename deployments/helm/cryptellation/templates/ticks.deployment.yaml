@@ -1,0 +1,103 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: ticks
+  name: ticks
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ticks
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: ticks
+    spec:
+      containers:
+      - name: ticks
+        image: {{ .Values.services.ticks.image }}
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          httpGet:
+            path: /liveness
+            port: {{ .Values.services.ticks.health.port | default 9000 }}
+        readinessProbe:
+          httpGet:
+            path: /readiness
+            port: {{ .Values.services.ticks.health.port | default 9000 }}
+        command: [ "cryptellation-ticks", "serve" ]
+        env:
+        - name: "HEALTH_PORT"
+          valueFrom:
+            configMapKeyRef:
+              key:  ticks.health.port
+              name: cryptellation-config
+        - name: "NATS_HOST"
+          valueFrom:
+            configMapKeyRef:
+              key:  nats.host
+              name: cryptellation-credentials
+        - name: "NATS_PORT"
+          valueFrom:
+            configMapKeyRef:
+              key:  nats.port
+              name: cryptellation-credentials
+        - name: "SQLDB_USER"
+          valueFrom:
+            configMapKeyRef:
+              key:  sqldb.user
+              name: cryptellation-credentials
+        - name: "SQLDB_PASSWORD"
+          valueFrom:
+            configMapKeyRef:
+              key:  sqldb.password
+              name: cryptellation-credentials
+        - name: "SQLDB_HOST"
+          valueFrom:
+            configMapKeyRef:
+              key:  sqldb.host
+              name: cryptellation-credentials
+        - name: "SQLDB_PORT"
+          valueFrom:
+            configMapKeyRef:
+              key:  sqldb.port
+              name: cryptellation-credentials
+        - name: "SQLDB_DATABASE"
+          valueFrom:
+            configMapKeyRef:
+              key:  ticks.sqldb.database
+              name: cryptellation-config
+        resources: {}
+      initContainers:
+      - name: init-ticks-sqldb
+        image: {{ .Values.services.ticks.image }}
+        command: [ "cryptellation-ticks", "migrations", "migrate" ]
+        env:
+        - name: "SQLDB_USER"
+          valueFrom:
+            configMapKeyRef:
+              key:  sqldb.user
+              name: cryptellation-credentials
+        - name: "SQLDB_PASSWORD"
+          valueFrom:
+            configMapKeyRef:
+              key:  sqldb.password
+              name: cryptellation-credentials
+        - name: "SQLDB_HOST"
+          valueFrom:
+            configMapKeyRef:
+              key:  sqldb.host
+              name: cryptellation-credentials
+        - name: "SQLDB_PORT"
+          valueFrom:
+            configMapKeyRef:
+              key:  sqldb.port
+              name: cryptellation-credentials
+        - name: "SQLDB_DATABASE"
+          valueFrom:
+            configMapKeyRef:
+              key:  ticks.sqldb.database
+              name: cryptellation-config
+status: {}

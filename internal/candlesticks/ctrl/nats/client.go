@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/digital-feather/cryptellation/internal/candlesticks/ctrl/nats/internal"
+	"github.com/digital-feather/cryptellation/internal/candlesticks/ctrl/nats/generated"
 	"github.com/digital-feather/cryptellation/pkg/candlestick"
 	"github.com/digital-feather/cryptellation/pkg/config"
 	"github.com/digital-feather/cryptellation/pkg/utils"
@@ -14,7 +14,7 @@ import (
 
 type client struct {
 	nats *nats.Conn
-	ctrl *internal.ClientController
+	ctrl *generated.ClientController
 }
 
 func New(c config.NATS) (Client, error) {
@@ -23,7 +23,7 @@ func New(c config.NATS) (Client, error) {
 		return nil, err
 	}
 
-	ctrl, err := internal.NewClientController(internal.NewNATSController(conn))
+	ctrl, err := generated.NewClientController(generated.NewNATSController(conn))
 	if err != nil {
 		return nil, err
 	}
@@ -36,17 +36,17 @@ func New(c config.NATS) (Client, error) {
 
 func (c client) ReadCandlesticks(ctx context.Context, payload ReadCandlesticksPayload) (*candlestick.List, error) {
 	// Set message
-	reqMsg := internal.NewCandlesticksListRequestMessage()
-	reqMsg.Payload.ExchangeName = internal.ExchangeNameSchema(payload.ExchangeName)
-	reqMsg.Payload.PairSymbol = internal.PairSymbolSchema(payload.PairSymbol)
-	reqMsg.Payload.PeriodSymbol = internal.PeriodSymbolSchema(payload.Period.String())
+	reqMsg := generated.NewCandlesticksListRequestMessage()
+	reqMsg.Payload.ExchangeName = generated.ExchangeNameSchema(payload.ExchangeName)
+	reqMsg.Payload.PairSymbol = generated.PairSymbolSchema(payload.PairSymbol)
+	reqMsg.Payload.PeriodSymbol = generated.PeriodSymbolSchema(payload.Period.String())
 	if payload.Start != nil {
-		reqMsg.Payload.Start = utils.ToReference(internal.DateSchema(*payload.Start))
+		reqMsg.Payload.Start = utils.ToReference(generated.DateSchema(*payload.Start))
 	}
 	if payload.End != nil {
-		reqMsg.Payload.End = utils.ToReference(internal.DateSchema(*payload.End))
+		reqMsg.Payload.End = utils.ToReference(generated.DateSchema(*payload.End))
 	}
-	reqMsg.Payload.Limit = internal.LimitSchema(payload.Limit)
+	reqMsg.Payload.Limit = generated.LimitSchema(payload.Limit)
 
 	// Send request
 	respMsg, err := c.ctrl.WaitForCandlesticksListResponse(ctx, reqMsg, func() error {

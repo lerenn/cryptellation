@@ -8,6 +8,9 @@ DOCKER_IMAGE_PREFIX := digital-feather/cryptellation
 .PHONY: deploy
 deploy: deploy/infra deploy/datastore deploy/event-broker ## Deploys everything, except Cryptellation System
 
+.PHONY: deploy/all
+deploy/all: deploy deploy/cryptellation ## Deploys everything, with Cryptellation System
+
 .PHONY: deploy/infra
 deploy/infra: ## Deploys local development infrastructure environment
 	@minikube start \
@@ -24,8 +27,8 @@ deploy/datastore:
 	@kubectl create ns datastore || true
 	@helm repo add cockroachdb https://charts.cockroachdb.com/; helm repo update
 	@helm upgrade --install cockroachdb cockroachdb/cockroachdb --values datastore/cockroachdb.values.yaml --namespace datastore
-	@kubectl create configmap init-databases-scripts --from-file=../../scripts/init-databases.sql || true
-	@kubectl apply -f datastore/cockroachdb.init-databases.job.yaml || true
+	@kubectl create configmap init-databases-scripts --from-file=../../scripts/init-databases.sql --namespace datastore || true
+	@kubectl apply -f datastore/cockroachdb.init-databases.job.yaml --namespace datastore || true
 
 .PHONY: deploy/event-broker
 deploy/event-broker:

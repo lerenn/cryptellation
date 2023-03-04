@@ -26,3 +26,9 @@ services:
       database: exchanges
     health:
       port: 9000
+  ticks:
+    image: digital-feather/cryptellation:latest
+    sqldb:
+      database: ticks
+    health:
+      port: 9000

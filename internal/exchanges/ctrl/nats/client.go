@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/digital-feather/cryptellation/internal/exchanges/ctrl/nats/internal"
+	"github.com/digital-feather/cryptellation/internal/exchanges/ctrl/nats/generated"
 	"github.com/digital-feather/cryptellation/pkg/config"
 	"github.com/digital-feather/cryptellation/pkg/exchange"
 	"github.com/nats-io/nats.go"
@@ -12,7 +12,7 @@ import (
 
 type client struct {
 	nats *nats.Conn
-	ctrl *internal.ClientController
+	ctrl *generated.ClientController
 }
 
 func New(c config.NATS) (Client, error) {
@@ -21,7 +21,7 @@ func New(c config.NATS) (Client, error) {
 		return nil, err
 	}
 
-	ctrl, err := internal.NewClientController(internal.NewNATSController(conn))
+	ctrl, err := generated.NewClientController(generated.NewNATSController(conn))
 	if err != nil {
 		return nil, err
 	}
@@ -34,10 +34,10 @@ func New(c config.NATS) (Client, error) {
 
 func (c client) ReadExchanges(ctx context.Context, names ...string) ([]exchange.Exchange, error) {
 	// Set message
-	reqMsg := internal.NewExchangesRequestMessage()
-	reqMsg.Payload = make([]internal.ExchangeNameSchema, 0, len(names))
+	reqMsg := generated.NewExchangesRequestMessage()
+	reqMsg.Payload = make([]generated.ExchangeNameSchema, 0, len(names))
 	for _, name := range names {
-		reqMsg.Payload = append(reqMsg.Payload, internal.ExchangeNameSchema(name))
+		reqMsg.Payload = append(reqMsg.Payload, generated.ExchangeNameSchema(name))
 	}
 
 	// Send request

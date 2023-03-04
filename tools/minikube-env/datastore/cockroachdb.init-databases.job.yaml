@@ -20,6 +20,7 @@ spec:
         volumeMounts:
           - mountPath: /scripts
             name: init-databases-scripts-volume
+        # TODO: avoid repeat fails until completion
         command:
           - ./cockroach
           - sql

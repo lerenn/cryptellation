@@ -6,33 +6,33 @@ import (
 	"time"
 
 	"github.com/digital-feather/cryptellation/internal/candlesticks/app"
-	"github.com/digital-feather/cryptellation/internal/candlesticks/ctrl/nats/internal"
+	"github.com/digital-feather/cryptellation/internal/candlesticks/ctrl/nats/generated"
 	"github.com/digital-feather/cryptellation/pkg/candlestick"
 	"github.com/digital-feather/cryptellation/pkg/period"
 )
 
 type subscriber struct {
 	candlesticks app.Controller
-	controller   *internal.AppController
+	controller   *generated.AppController
 }
 
-func newSubscriber(controller *internal.AppController, app app.Controller) subscriber {
+func newSubscriber(controller *generated.AppController, app app.Controller) subscriber {
 	return subscriber{
 		candlesticks: app,
 		controller:   controller,
 	}
 }
 
-func (s subscriber) CandlesticksListRequest(msg internal.CandlesticksListRequestMessage) {
+func (s subscriber) CandlesticksListRequest(msg generated.CandlesticksListRequestMessage, _ bool) {
 	// Prepare response and set send at the end
-	resp := internal.NewCandlesticksListResponseMessage()
+	resp := generated.NewCandlesticksListResponseMessage()
 	resp.SetAsResponseFrom(msg)
 	defer func() { _ = s.controller.PublishCandlesticksListResponse(resp) }()
 
 	// Process specific types
 	per, err := period.FromString(string(msg.Payload.PeriodSymbol))
 	if err != nil {
-		resp.Payload.Error = &internal.ErrorSchema{
+		resp.Payload.Error = &generated.ErrorSchema{
 			Code:    http.StatusBadRequest,
 			Message: err.Error(),
 		}
@@ -49,7 +49,7 @@ func (s subscriber) CandlesticksListRequest(msg internal.CandlesticksListRequest
 		Limit:        uint(msg.Payload.Limit),
 	})
 	if err != nil {
-		resp.Payload.Error = &internal.ErrorSchema{
+		resp.Payload.Error = &generated.ErrorSchema{
 			Code:    http.StatusInternalServerError,
 			Message: err.Error(),
 		}
@@ -57,10 +57,10 @@ func (s subscriber) CandlesticksListRequest(msg internal.CandlesticksListRequest
 	}
 
 	// Add list to response
-	respList := make(internal.CandlestickListSchema, 0, list.Len())
+	respList := make(generated.CandlestickListSchema, 0, list.Len())
 	if err := list.Loop(func(t time.Time, cs candlestick.Candlestick) (bool, error) {
-		respList = append(respList, internal.CandlestickSchema{
-			Time:   internal.DateSchema(t),
+		respList = append(respList, generated.CandlestickSchema{
+			Time:   generated.DateSchema(t),
 			Open:   cs.Open,
 			High:   cs.High,
 			Low:    cs.Low,
@@ -69,7 +69,7 @@ func (s subscriber) CandlesticksListRequest(msg internal.CandlesticksListRequest
 		})
 		return false, nil
 	}); err != nil {
-		resp.Payload.Error = &internal.ErrorSchema{
+		resp.Payload.Error = &generated.ErrorSchema{
 			Code:    http.StatusInternalServerError,
 			Message: err.Error(),
 		}

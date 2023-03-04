@@ -6,11 +6,11 @@ import (
 )
 
 type Exchanges struct {
-	db        db.Adapter
-	exchanges exchanges.Adapter
+	db        db.Port
+	exchanges exchanges.Port
 }
 
-func New(db db.Adapter, exchanges exchanges.Adapter) Exchanges {
+func New(db db.Port, exchanges exchanges.Port) Exchanges {
 	if db == nil {
 		panic("nil db")
 	}

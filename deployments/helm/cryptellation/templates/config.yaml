@@ -10,3 +10,7 @@ data:
     # Exchanges
     exchanges.sqldb.database: "{{ .Values.services.exchanges.sqldb.database }}"
     exchanges.health.port: "{{ .Values.services.exchanges.health.port | default 9000 }}"
+
+    # Exchanges
+    ticks.sqldb.database: "{{ .Values.services.ticks.sqldb.database }}"
+    ticks.health.port: "{{ .Values.services.ticks.health.port | default 9000 }}"

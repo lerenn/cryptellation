@@ -1,0 +1,155 @@
+asyncapi: 2.5.0
+info:
+  title: Ticks Service
+  version: 1.0.0
+  description: >
+    This service is serving ticks in real time, proxying exchanges API.
+channels:
+  ticks.register.request:
+    publish:
+      operationId: ticksRegisterRequest
+      description: Register to listen a specific symbol ticks
+      tags:
+        - name: register
+      message:
+        $ref: '#/components/messages/RegisteringRequest'
+  ticks.register.response:
+    subscribe:
+      operationId: ticksRegisterResponse
+      description: Response to registering for listening to specific symbol ticks
+      tags:
+        - name: register
+      message:
+        $ref: '#/components/messages/RegisteringResponse'
+  ticks.listen.{exchange}.{pair}:
+    parameters:
+      exchange:
+        description: Filter for ticks by exchange name
+        schema:
+          $ref: '#/components/schemas/ExchangeName'
+      pair:
+        description: Filter for ticks by pair symbol
+        schema:
+          $ref: '#/components/schemas/PairSymbol'
+    subscribe:
+      operationId: ticksListen
+      description: Listen to ticks based on their exchange and their symbol
+      tags:
+        - name: listen
+      message:
+        $ref: '#/components/messages/Tick'
+  ticks.unregister.request:
+    publish:
+      operationId: ticksUnregister
+      description: Unregister from listening to a specific symbol ticks
+      tags:
+        - name: unregister
+      message:
+        $ref: '#/components/messages/RegisteringRequest'
+  ticks.unregister.response:
+    subscribe:
+      operationId: ticksUnegisterResponse
+      description: Response to unregistering for listening to specific symbol ticks
+      tags:
+        - name: unregister
+      message:
+        $ref: '#/components/messages/RegisteringResponse'
+
+components:
+  messages:
+    RegisteringResponse:
+      headers:
+        type: object
+        properties:
+          correlationId:
+            description: Correlation ID set by client
+            type: string
+      payload:
+        type: object
+        properties:
+          count:
+            type: integer
+            description: count of listener after the call is complete
+          error:
+            $ref: '#/components/schemas/Error'
+      correlationId:
+        description: Default Correlation ID
+        location: $message.header#/correlationId
+    Tick:
+      payload:
+        $ref: '#/components/schemas/Tick'
+    RegisteringRequest:
+      headers:
+        type: object
+        properties:
+          correlationId:
+            description: Correlation ID set by client
+            type: string
+      payload:
+        type: object
+        required:
+          - exchange
+          - pair
+        properties:
+          exchange:
+            $ref: '#/components/schemas/ExchangeName'
+          pair:
+            $ref: '#/components/schemas/PairSymbol'
+      correlationId:
+        description: Default Correlation ID
+        location: $message.header#/correlationId
+
+  schemas:
+    Tick:
+      type: object
+      required:
+        - time
+        - pairSymbol
+        - price
+        - exchange
+      properties:
+        time:
+          $ref: '#/components/schemas/Date'
+        pairSymbol:
+          $ref: '#/components/schemas/PairSymbol'
+        price:
+          type: number
+          format: double
+          description: Tick price
+          examples:
+            - 1.5
+        exchange:
+          $ref: '#/components/schemas/ExchangeName'
+    ExchangeName:
+      type: string
+      description: Exchange name
+      examples:
+        - Binance
+    PairSymbol:
+      type: string
+      description: Pair symbol
+      examples:
+        - ETH-USDC
+    Date:
+      type: string
+      format: date-time
+      description: Date-Time format according to RFC3339
+      examples:
+        - "1985-04-12T23:20:50.52Z"
+        - "1937-01-01T12:00:27.87+00:20"
+    Error:
+      type: object
+      description: Response to a failed call
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          description: Code to identify the error type, based on HTTP errors
+        message:
+          type: string
+          description: Main error reason
+          examples:
+            - "Invalid request: no time specified"
+

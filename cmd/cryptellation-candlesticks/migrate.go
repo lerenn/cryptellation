@@ -3,7 +3,7 @@ package main
 import (
 	"log"
 
-	"github.com/digital-feather/cryptellation/internal/candlesticks/infra/sql/migrations"
+	"github.com/digital-feather/cryptellation/internal/candlesticks/infra/db/sql/migrations"
 	"github.com/digital-feather/cryptellation/pkg/config"
 	"github.com/go-gormigrate/gormigrate/v2"
 	"github.com/spf13/cobra"

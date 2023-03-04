@@ -11,7 +11,7 @@ import (
 
 type ExchangesSuite struct {
 	suite.Suite
-	DB db.Adapter
+	DB db.Port
 }
 
 func (suite *ExchangesSuite) TestCreateRead() {

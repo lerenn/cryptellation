@@ -20,13 +20,13 @@ func TestGetCachedSuite(t *testing.T) {
 type GetCachedSuite struct {
 	suite.Suite
 	app      Controller
-	db       *db.MockAdapter
-	exchange *exchanges.MockAdapter
+	db       *db.MockPort
+	exchange *exchanges.MockPort
 }
 
 func (suite *GetCachedSuite) SetupTest() {
-	suite.db = db.NewMockAdapter(gomock.NewController(suite.T()))
-	suite.exchange = exchanges.NewMockAdapter(gomock.NewController(suite.T()))
+	suite.db = db.NewMockPort(gomock.NewController(suite.T()))
+	suite.exchange = exchanges.NewMockPort(gomock.NewController(suite.T()))
 
 	suite.app = New(suite.db, suite.exchange)
 }

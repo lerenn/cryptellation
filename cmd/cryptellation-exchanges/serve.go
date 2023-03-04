@@ -10,8 +10,8 @@ import (
 
 	"github.com/digital-feather/cryptellation/internal/exchanges/app"
 	"github.com/digital-feather/cryptellation/internal/exchanges/ctrl/nats"
+	"github.com/digital-feather/cryptellation/internal/exchanges/infra/db/sql"
 	"github.com/digital-feather/cryptellation/internal/exchanges/infra/exchanges"
-	"github.com/digital-feather/cryptellation/internal/exchanges/infra/sql"
 	"github.com/digital-feather/cryptellation/pkg/config"
 	"github.com/digital-feather/cryptellation/pkg/health"
 	"github.com/spf13/cobra"

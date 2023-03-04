@@ -3,6 +3,12 @@
 # Wait for SqlDB
 ./scripts/wait-sqldb.sh
 
+# Wait for Redis
+# TODO
+
+# Wait for NATS
+# TODO
+
 # Launch tests
 go test -p 1 $(go list ./internal/... | grep -e /infra/)  -coverprofile cover.out
 

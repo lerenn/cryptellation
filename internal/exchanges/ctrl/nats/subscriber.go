@@ -5,24 +5,24 @@ import (
 	"net/http"
 
 	"github.com/digital-feather/cryptellation/internal/exchanges/app"
-	"github.com/digital-feather/cryptellation/internal/exchanges/ctrl/nats/internal"
+	"github.com/digital-feather/cryptellation/internal/exchanges/ctrl/nats/generated"
 )
 
 type subscriber struct {
 	exchanges  app.Controller
-	controller *internal.AppController
+	controller *generated.AppController
 }
 
-func newSubscriber(controller *internal.AppController, app app.Controller) subscriber {
+func newSubscriber(controller *generated.AppController, app app.Controller) subscriber {
 	return subscriber{
 		exchanges:  app,
 		controller: controller,
 	}
 }
 
-func (s subscriber) ExchangesListRequest(msg internal.ExchangesRequestMessage) {
+func (s subscriber) ExchangesListRequest(msg generated.ExchangesRequestMessage, _ bool) {
 	// Prepare response and set send at the end
-	resp := internal.NewExchangesResponseMessage()
+	resp := generated.NewExchangesResponseMessage()
 	resp.SetAsResponseFrom(msg)
 	defer func() { _ = s.controller.PublishExchangesListResponse(resp) }()
 
@@ -35,7 +35,7 @@ func (s subscriber) ExchangesListRequest(msg internal.ExchangesRequestMessage) {
 	// Request exchange(s) information
 	exchanges, err := s.exchanges.GetCached(context.Background(), exchangesNames...)
 	if err != nil {
-		resp.Payload.Error = &internal.ErrorSchema{
+		resp.Payload.Error = &generated.ErrorSchema{
 			Code:    http.StatusInternalServerError,
 			Message: err.Error(),
 		}
@@ -43,24 +43,24 @@ func (s subscriber) ExchangesListRequest(msg internal.ExchangesRequestMessage) {
 	}
 
 	// Add exchanges to response
-	resp.Payload.Exchanges = make([]internal.ExchangeSchema, len(exchanges))
+	resp.Payload.Exchanges = make([]generated.ExchangeSchema, len(exchanges))
 	for i, exch := range exchanges {
 		// Periods
-		periods := make([]internal.PeriodSymbolSchema, len(exch.PeriodsSymbols))
+		periods := make([]generated.PeriodSymbolSchema, len(exch.PeriodsSymbols))
 		for j, p := range exch.PeriodsSymbols {
-			periods[j] = internal.PeriodSymbolSchema(p)
+			periods[j] = generated.PeriodSymbolSchema(p)
 		}
 
 		// Pairs
-		pairs := make([]internal.PairSymbolSchema, len(exch.PairsSymbols))
+		pairs := make([]generated.PairSymbolSchema, len(exch.PairsSymbols))
 		for j, p := range exch.PairsSymbols {
-			pairs[j] = internal.PairSymbolSchema(p)
+			pairs[j] = generated.PairSymbolSchema(p)
 		}
 
 		// Exchange
-		resp.Payload.Exchanges[i] = internal.ExchangeSchema{
+		resp.Payload.Exchanges[i] = generated.ExchangeSchema{
 			Fees:         exch.Fees,
-			Name:         internal.ExchangeNameSchema(exch.Name),
+			Name:         generated.ExchangeNameSchema(exch.Name),
 			Pairs:        pairs,
 			Periods:      periods,
 			LastSyncTime: exch.LastSyncTime,
