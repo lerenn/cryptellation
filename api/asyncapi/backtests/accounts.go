@@ -1,0 +1,40 @@
+package backtests
+
+import "github.com/digital-feather/cryptellation/pkg/types/account"
+
+func (msg *BacktestsAccountsListResponseMessage) Set(accounts map[string]account.Account) {
+	// Format accounts
+	respAccounts := make([]AccountSchema, 0, len(accounts))
+	for name, acc := range accounts {
+		respAccounts = append(respAccounts, accountModelToAPI(name, acc))
+	}
+
+	// Set response
+	msg.Payload.Accounts = respAccounts
+}
+
+func accountModelToAPI(name string, account account.Account) AccountSchema {
+	assets := make([]AssetSchema, 0, len(account.Balances))
+	for name, qty := range account.Balances {
+		assets = append(assets, AssetSchema{
+			Name:   name,
+			Amount: qty,
+		})
+	}
+
+	return AccountSchema{
+		Name:   name,
+		Assets: assets,
+	}
+}
+
+func accountModelFromAPI(a AccountSchema) (string, account.Account) {
+	assets := make(map[string]float64)
+	for _, asset := range a.Assets {
+		assets[asset.Name] = asset.Amount
+	}
+
+	return a.Name, account.Account{
+		Balances: assets,
+	}
+}

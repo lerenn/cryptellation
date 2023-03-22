@@ -5,8 +5,8 @@ import (
 	"log"
 	"time"
 
+	asyncapi "github.com/digital-feather/cryptellation/api/asyncapi/backtests"
 	client "github.com/digital-feather/cryptellation/clients/go"
-	"github.com/digital-feather/cryptellation/internal/backtests/infra/events/nats/generated"
 	"github.com/digital-feather/cryptellation/pkg/config"
 	"github.com/digital-feather/cryptellation/pkg/types/event"
 	"github.com/digital-feather/cryptellation/pkg/types/tick"
@@ -15,7 +15,7 @@ import (
 
 type Backtests struct {
 	nats *nats.Conn
-	ctrl *generated.ClientController
+	ctrl *asyncapi.ClientController
 }
 
 func NewBacktests(c config.NATS) (client.Backtests, error) {
@@ -24,7 +24,7 @@ func NewBacktests(c config.NATS) (client.Backtests, error) {
 		return nil, err
 	}
 
-	ctrl, err := generated.NewClientController(generated.NewNATSController(conn))
+	ctrl, err := asyncapi.NewClientController(asyncapi.NewNATSController(conn))
 	if err != nil {
 		return nil, err
 	}
@@ -39,7 +39,7 @@ func (b Backtests) ListenEvents(ctx context.Context, backtestID uint) (<-chan ev
 	ch := make(chan event.Event, 256)
 
 	// Create callback when a tick appears
-	callback := func(msg generated.BacktestsEventMessage, done bool) {
+	callback := func(msg asyncapi.BacktestsEventMessage, done bool) {
 		// Check if done
 		if done {
 			close(ch)
@@ -79,29 +79,18 @@ func (b Backtests) ListenEvents(ctx context.Context, backtestID uint) (<-chan ev
 	}
 
 	// Listen to channel
-	return ch, b.ctrl.SubscribeBacktestsEventsID(generated.BacktestsEventsIDParameters{
+	return ch, b.ctrl.SubscribeBacktestsEventsID(asyncapi.BacktestsEventsIDParameters{
 		ID: int64(backtestID),
 	}, callback)
 }
 
 func (b Backtests) Create(ctx context.Context, payload client.BacktestCreationPayload) (int, error) {
 	// Set message
-	msg := generated.NewBacktestsCreateRequestMessage()
-	msg.Payload.StartTime = generated.DateSchema(payload.StartTime)
-	msg.Payload.EndTime = (*generated.DateSchema)(payload.EndTime)
-	// TODO
+	msg := asyncapi.NewBacktestsCreateRequestMessage()
+	msg.Set(payload)
 
 	return 0, nil
 }
-
-// func accountModelsToAPI(accounts map[string]account.Account) []generated.AccountSchema {
-// 	apiAccounts := make([]generated.AccountSchema, 0, len(accounts))
-// 	for name, acc := range accounts {
-// 		apiAccounts = append(apiAccounts, generated.AccountSchema{
-// 			Name: name,
-// 		})
-// 	}
-// }
 
 func (b Backtests) Close() {
 	b.ctrl.Close()

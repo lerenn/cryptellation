@@ -3,36 +3,33 @@ package nats
 import (
 	"context"
 	"net/http"
-	"time"
 
+	asyncapi "github.com/digital-feather/cryptellation/api/asyncapi/candlesticks"
 	"github.com/digital-feather/cryptellation/internal/candlesticks/app"
-	"github.com/digital-feather/cryptellation/internal/candlesticks/infra/events/nats/generated"
-	"github.com/digital-feather/cryptellation/pkg/types/candlestick"
-	"github.com/digital-feather/cryptellation/pkg/types/period"
 )
 
 type subscriber struct {
 	candlesticks app.Controller
-	controller   *generated.AppController
+	controller   *asyncapi.AppController
 }
 
-func newSubscriber(controller *generated.AppController, app app.Controller) subscriber {
+func newSubscriber(controller *asyncapi.AppController, app app.Controller) subscriber {
 	return subscriber{
 		candlesticks: app,
 		controller:   controller,
 	}
 }
 
-func (s subscriber) CandlesticksListRequest(msg generated.CandlesticksListRequestMessage, _ bool) {
+func (s subscriber) CandlesticksListRequest(msg asyncapi.CandlesticksListRequestMessage, _ bool) {
 	// Prepare response and set send at the end
-	resp := generated.NewCandlesticksListResponseMessage()
+	resp := asyncapi.NewCandlesticksListResponseMessage()
 	resp.SetAsResponseFrom(msg)
 	defer func() { _ = s.controller.PublishCandlesticksListResponse(resp) }()
 
-	// Process specific types
-	per, err := period.FromString(string(msg.Payload.PeriodSymbol))
+	// Set list payload
+	payload, err := msg.ToModel()
 	if err != nil {
-		resp.Payload.Error = &generated.ErrorSchema{
+		resp.Payload.Error = &asyncapi.ErrorSchema{
 			Code:    http.StatusBadRequest,
 			Message: err.Error(),
 		}
@@ -40,16 +37,9 @@ func (s subscriber) CandlesticksListRequest(msg generated.CandlesticksListReques
 	}
 
 	// Request list
-	list, err := s.candlesticks.GetCached(context.Background(), app.GetCachedPayload{
-		ExchangeName: string(msg.Payload.ExchangeName),
-		PairSymbol:   string(msg.Payload.PairSymbol),
-		Period:       per,
-		Start:        (*time.Time)(msg.Payload.Start),
-		End:          (*time.Time)(msg.Payload.End),
-		Limit:        uint(msg.Payload.Limit),
-	})
+	list, err := s.candlesticks.GetCached(context.Background(), payload)
 	if err != nil {
-		resp.Payload.Error = &generated.ErrorSchema{
+		resp.Payload.Error = &asyncapi.ErrorSchema{
 			Code:    http.StatusInternalServerError,
 			Message: err.Error(),
 		}
@@ -57,23 +47,11 @@ func (s subscriber) CandlesticksListRequest(msg generated.CandlesticksListReques
 	}
 
 	// Add list to response
-	respList := make(generated.CandlestickListSchema, 0, list.Len())
-	if err := list.Loop(func(t time.Time, cs candlestick.Candlestick) (bool, error) {
-		respList = append(respList, generated.CandlestickSchema{
-			Time:   generated.DateSchema(t),
-			Open:   cs.Open,
-			High:   cs.High,
-			Low:    cs.Low,
-			Close:  cs.Close,
-			Volume: cs.Volume,
-		})
-		return false, nil
-	}); err != nil {
-		resp.Payload.Error = &generated.ErrorSchema{
+	if err := resp.Set(list); err != nil {
+		resp.Payload.Error = &asyncapi.ErrorSchema{
 			Code:    http.StatusInternalServerError,
 			Message: err.Error(),
 		}
 		return
 	}
-	resp.Payload.Candlesticks = &respList
 }

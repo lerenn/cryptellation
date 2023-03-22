@@ -3,10 +3,9 @@ package nats
 import (
 	"context"
 	"fmt"
-	"time"
 
+	asyncapi "github.com/digital-feather/cryptellation/api/asyncapi/ticks"
 	client "github.com/digital-feather/cryptellation/clients/go"
-	"github.com/digital-feather/cryptellation/internal/ticks/infra/events/nats/generated"
 	"github.com/digital-feather/cryptellation/pkg/config"
 	"github.com/digital-feather/cryptellation/pkg/types/tick"
 	"github.com/nats-io/nats.go"
@@ -14,7 +13,7 @@ import (
 
 type Ticks struct {
 	nats *nats.Conn
-	ctrl *generated.ClientController
+	ctrl *asyncapi.ClientController
 }
 
 func NewTicks(c config.NATS) (client.Ticks, error) {
@@ -23,7 +22,7 @@ func NewTicks(c config.NATS) (client.Ticks, error) {
 		return nil, err
 	}
 
-	ctrl, err := generated.NewClientController(generated.NewNATSController(conn))
+	ctrl, err := asyncapi.NewClientController(asyncapi.NewNATSController(conn))
 	if err != nil {
 		return nil, err
 	}
@@ -36,9 +35,8 @@ func NewTicks(c config.NATS) (client.Ticks, error) {
 
 func (t Ticks) Register(ctx context.Context, payload client.TicksFilterPayload) error {
 	// Generate message
-	msg := generated.NewRegisteringRequestMessage()
-	msg.Payload.Exchange = generated.ExchangeNameSchema(payload.ExchangeName)
-	msg.Payload.Pair = generated.PairSymbolSchema(payload.PairSymbol)
+	msg := asyncapi.NewRegisteringRequestMessage()
+	msg.Set(payload)
 
 	// Send message
 	resp, err := t.ctrl.WaitForTicksRegisterResponse(ctx, msg, func() error {
@@ -60,30 +58,22 @@ func (t Ticks) Listen(ctx context.Context, payload client.TicksFilterPayload) (<
 	ch := make(chan tick.Tick, 256)
 
 	// Create params for channel path
-	params := generated.TicksListenExchangePairParameters{
-		Exchange: generated.ExchangeNameSchema(payload.ExchangeName),
-		Pair:     generated.PairSymbolSchema(payload.PairSymbol),
+	params := asyncapi.TicksListenExchangePairParameters{
+		Exchange: asyncapi.ExchangeNameSchema(payload.ExchangeName),
+		Pair:     asyncapi.PairSymbolSchema(payload.PairSymbol),
 	}
 
 	// Create callback when a tick appears
-	callback := func(msg generated.TickMessage, done bool) {
+	callback := func(msg asyncapi.TickMessage, done bool) {
 		// Check if done
 		if done {
 			close(ch)
 			return
 		}
 
-		// Transform message to tick
-		t := tick.Tick{
-			Time:       time.Time(msg.Payload.Time),
-			PairSymbol: string(msg.Payload.PairSymbol),
-			Price:      msg.Payload.Price,
-			Exchange:   string(msg.Payload.Exchange),
-		}
-
 		// Try to send tick or drop it
 		select {
-		case ch <- t:
+		case ch <- msg.ToModel():
 		default:
 			// Drop if it's full or closed
 		}
@@ -95,9 +85,8 @@ func (t Ticks) Listen(ctx context.Context, payload client.TicksFilterPayload) (<
 
 func (t Ticks) Unregister(ctx context.Context, payload client.TicksFilterPayload) error {
 	// Generate message
-	msg := generated.NewRegisteringRequestMessage()
-	msg.Payload.Exchange = generated.ExchangeNameSchema(payload.ExchangeName)
-	msg.Payload.Pair = generated.PairSymbolSchema(payload.PairSymbol)
+	msg := asyncapi.NewRegisteringRequestMessage()
+	msg.Set(payload)
 
 	// Send message
 	resp, err := t.ctrl.WaitForTicksUnregisterResponse(ctx, msg, func() error {

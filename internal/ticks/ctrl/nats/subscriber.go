@@ -5,27 +5,27 @@ import (
 	"log"
 	"net/http"
 
+	asyncapi "github.com/digital-feather/cryptellation/api/asyncapi/ticks"
 	"github.com/digital-feather/cryptellation/internal/ticks/app"
-	"github.com/digital-feather/cryptellation/internal/ticks/infra/events/nats/generated"
 )
 
 type subscriber struct {
 	ticks      app.Controller
-	controller *generated.AppController
+	controller *asyncapi.AppController
 }
 
-func newSubscriber(controller *generated.AppController, app app.Controller) subscriber {
+func newSubscriber(controller *asyncapi.AppController, app app.Controller) subscriber {
 	return subscriber{
 		ticks:      app,
 		controller: controller,
 	}
 }
 
-func (s subscriber) TicksRegisterRequest(msg generated.RegisteringRequestMessage, _ bool) {
+func (s subscriber) TicksRegisterRequest(msg asyncapi.RegisteringRequestMessage, _ bool) {
 	log.Printf("Received register request: %+v\n", msg)
 
 	// Set response
-	resp := generated.NewRegisteringResponseMessage()
+	resp := asyncapi.NewRegisteringResponseMessage()
 	resp.SetAsResponseFrom(msg)
 	defer func() { _ = s.controller.PublishTicksRegisterResponse(resp) }()
 
@@ -39,7 +39,7 @@ func (s subscriber) TicksRegisterRequest(msg generated.RegisteringRequestMessage
 	// If there is an error, return it as BadRequest
 	// TODO: get correct error
 	if err != nil {
-		resp.Payload.Error = &generated.ErrorSchema{
+		resp.Payload.Error = &asyncapi.ErrorSchema{
 			Code:    http.StatusBadRequest,
 			Message: err.Error(),
 		}
@@ -50,11 +50,11 @@ func (s subscriber) TicksRegisterRequest(msg generated.RegisteringRequestMessage
 	resp.Payload.Count = &count
 }
 
-func (s subscriber) TicksUnregisterRequest(msg generated.RegisteringRequestMessage, _ bool) {
+func (s subscriber) TicksUnregisterRequest(msg asyncapi.RegisteringRequestMessage, _ bool) {
 	log.Printf("Received unregister request: %+v\n", msg)
 
 	// Set response
-	resp := generated.NewRegisteringResponseMessage()
+	resp := asyncapi.NewRegisteringResponseMessage()
 	resp.SetAsResponseFrom(msg)
 	defer func() { _ = s.controller.PublishTicksUnregisterResponse(resp) }()
 
@@ -68,7 +68,7 @@ func (s subscriber) TicksUnregisterRequest(msg generated.RegisteringRequestMessa
 	// If there is an error, return it as BadRequest
 	// TODO: get correct error
 	if err != nil {
-		resp.Payload.Error = &generated.ErrorSchema{
+		resp.Payload.Error = &asyncapi.ErrorSchema{
 			Code:    http.StatusBadRequest,
 			Message: err.Error(),
 		}

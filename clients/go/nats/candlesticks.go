@@ -3,19 +3,17 @@ package nats
 import (
 	"context"
 	"fmt"
-	"time"
 
+	asyncapi "github.com/digital-feather/cryptellation/api/asyncapi/candlesticks"
 	client "github.com/digital-feather/cryptellation/clients/go"
-	"github.com/digital-feather/cryptellation/internal/candlesticks/infra/events/nats/generated"
 	"github.com/digital-feather/cryptellation/pkg/config"
 	"github.com/digital-feather/cryptellation/pkg/types/candlestick"
-	"github.com/digital-feather/cryptellation/pkg/utils"
 	"github.com/nats-io/nats.go"
 )
 
 type Candlesticks struct {
 	nats *nats.Conn
-	ctrl *generated.ClientController
+	ctrl *asyncapi.ClientController
 }
 
 func NewCandlesticks(c config.NATS) (client.Candlesticks, error) {
@@ -24,7 +22,7 @@ func NewCandlesticks(c config.NATS) (client.Candlesticks, error) {
 		return nil, err
 	}
 
-	ctrl, err := generated.NewClientController(generated.NewNATSController(conn))
+	ctrl, err := asyncapi.NewClientController(asyncapi.NewNATSController(conn))
 	if err != nil {
 		return nil, err
 	}
@@ -37,17 +35,8 @@ func NewCandlesticks(c config.NATS) (client.Candlesticks, error) {
 
 func (c Candlesticks) Read(ctx context.Context, payload client.ReadCandlesticksPayload) (*candlestick.List, error) {
 	// Set message
-	reqMsg := generated.NewCandlesticksListRequestMessage()
-	reqMsg.Payload.ExchangeName = generated.ExchangeNameSchema(payload.ExchangeName)
-	reqMsg.Payload.PairSymbol = generated.PairSymbolSchema(payload.PairSymbol)
-	reqMsg.Payload.PeriodSymbol = generated.PeriodSymbolSchema(payload.Period.String())
-	if payload.Start != nil {
-		reqMsg.Payload.Start = utils.ToReference(generated.DateSchema(*payload.Start))
-	}
-	if payload.End != nil {
-		reqMsg.Payload.End = utils.ToReference(generated.DateSchema(*payload.End))
-	}
-	reqMsg.Payload.Limit = generated.LimitSchema(payload.Limit)
+	reqMsg := asyncapi.NewCandlesticksListRequestMessage()
+	reqMsg.Set(payload)
 
 	// Send request
 	respMsg, err := c.ctrl.WaitForCandlesticksListResponse(ctx, reqMsg, func() error {
@@ -63,24 +52,7 @@ func (c Candlesticks) Read(ctx context.Context, payload client.ReadCandlesticksP
 	}
 
 	// To candlestick list
-	list := candlestick.NewEmptyList(candlestick.ListID{
-		ExchangeName: payload.ExchangeName,
-		PairSymbol:   payload.PairSymbol,
-		Period:       payload.Period,
-	})
-	for _, c := range *respMsg.Payload.Candlesticks {
-		if err := list.Set(time.Time(c.Time), candlestick.Candlestick{
-			Open:   c.Open,
-			High:   c.High,
-			Low:    c.Low,
-			Close:  c.Close,
-			Volume: c.Volume,
-		}); err != nil {
-			return nil, err
-		}
-	}
-
-	return list, nil
+	return respMsg.ToModel(payload.ExchangeName, payload.PairSymbol, payload.Period)
 }
 
 func (c Candlesticks) Close() {

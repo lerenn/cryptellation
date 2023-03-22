@@ -1,15 +1,15 @@
 package nats
 
 import (
+	asyncapi "github.com/digital-feather/cryptellation/api/asyncapi/exchanges"
 	"github.com/digital-feather/cryptellation/internal/exchanges/app"
-	"github.com/digital-feather/cryptellation/internal/exchanges/infra/events/nats/generated"
 	"github.com/digital-feather/cryptellation/pkg/config"
 	"github.com/nats-io/nats.go"
 )
 
 type Server struct {
 	nc         *nats.Conn
-	controller *generated.AppController
+	controller *asyncapi.AppController
 	exchanges  app.Controller
 }
 
@@ -34,7 +34,7 @@ func NewServer(c config.NATS, exchanges app.Controller) (*Server, error) {
 func (s *Server) Listen() error {
 	var err error
 
-	s.controller, err = generated.NewAppController(generated.NewNATSController(s.nc))
+	s.controller, err = asyncapi.NewAppController(asyncapi.NewNATSController(s.nc))
 	if err != nil {
 		return err
 	}

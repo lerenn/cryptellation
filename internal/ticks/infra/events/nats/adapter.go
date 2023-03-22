@@ -1,17 +1,11 @@
-//go:generate asyncapi-codegen -g application -p generated -i ../../../../../api/asyncapi-spec/ticks.yaml -o ./generated/app.gen.go
-//go:generate asyncapi-codegen -g client      -p generated -i ../../../../../api/asyncapi-spec/ticks.yaml -o ./generated/client.gen.go
-//go:generate asyncapi-codegen -g broker      -p generated -i ../../../../../api/asyncapi-spec/ticks.yaml -o ./generated/broker.gen.go
-//go:generate asyncapi-codegen -g types       -p generated -i ../../../../../api/asyncapi-spec/ticks.yaml -o ./generated/types.gen.go
-//go:generate asyncapi-codegen -g nats        -p generated -i ../../../../../api/asyncapi-spec/ticks.yaml -o ./generated/nats.gen.go
-
 package nats
 
 import (
 	"context"
 
+	asyncapi "github.com/digital-feather/cryptellation/api/asyncapi/ticks"
 	client "github.com/digital-feather/cryptellation/clients/go"
 	natsClient "github.com/digital-feather/cryptellation/clients/go/nats"
-	"github.com/digital-feather/cryptellation/internal/ticks/infra/events/nats/generated"
 	"github.com/digital-feather/cryptellation/pkg/config"
 	"github.com/digital-feather/cryptellation/pkg/types/tick"
 	"github.com/nats-io/nats.go"
@@ -19,7 +13,7 @@ import (
 
 type Adapter struct {
 	nc     *nats.Conn
-	app    *generated.AppController
+	app    *asyncapi.AppController
 	client client.Ticks
 }
 
@@ -36,7 +30,7 @@ func New(c config.NATS) (*Adapter, error) {
 	}
 
 	// Create new app controller
-	app, err := generated.NewAppController(generated.NewNATSController(nc))
+	app, err := asyncapi.NewAppController(asyncapi.NewNATSController(nc))
 	if err != nil {
 		return nil, err
 	}
@@ -56,16 +50,16 @@ func New(c config.NATS) (*Adapter, error) {
 
 func (a *Adapter) Publish(tick tick.Tick) error {
 	// Generated message
-	msg := generated.NewTickMessage()
-	msg.Payload.Exchange = generated.ExchangeNameSchema(tick.Exchange)
-	msg.Payload.PairSymbol = generated.PairSymbolSchema(tick.PairSymbol)
+	msg := asyncapi.NewTickMessage()
+	msg.Payload.Exchange = asyncapi.ExchangeNameSchema(tick.Exchange)
+	msg.Payload.PairSymbol = asyncapi.PairSymbolSchema(tick.PairSymbol)
 	msg.Payload.Price = tick.Price
-	msg.Payload.Time = generated.DateSchema(tick.Time)
+	msg.Payload.Time = asyncapi.DateSchema(tick.Time)
 
 	// Send message
-	return a.app.PublishTicksListenExchangePair(generated.TicksListenExchangePairParameters{
-		Exchange: generated.ExchangeNameSchema(tick.Exchange),
-		Pair:     generated.PairSymbolSchema(tick.PairSymbol),
+	return a.app.PublishTicksListenExchangePair(asyncapi.TicksListenExchangePairParameters{
+		Exchange: asyncapi.ExchangeNameSchema(tick.Exchange),
+		Pair:     asyncapi.PairSymbolSchema(tick.PairSymbol),
 	}, msg)
 }
 

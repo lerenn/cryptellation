@@ -1,26 +1,19 @@
-//go:generate asyncapi-codegen -g application -p generated -i ../../../../../api/asyncapi-spec/backtests.yaml -o ./generated/app.gen.go
-//go:generate asyncapi-codegen -g client      -p generated -i ../../../../../api/asyncapi-spec/backtests.yaml -o ./generated/client.gen.go
-//go:generate asyncapi-codegen -g broker      -p generated -i ../../../../../api/asyncapi-spec/backtests.yaml -o ./generated/broker.gen.go
-//go:generate asyncapi-codegen -g types       -p generated -i ../../../../../api/asyncapi-spec/backtests.yaml -o ./generated/types.gen.go
-//go:generate asyncapi-codegen -g nats        -p generated -i ../../../../../api/asyncapi-spec/backtests.yaml -o ./generated/nats.gen.go
-
 package nats
 
 import (
 	"context"
 
+	asyncapi "github.com/digital-feather/cryptellation/api/asyncapi/backtests"
 	client "github.com/digital-feather/cryptellation/clients/go"
 	natsClient "github.com/digital-feather/cryptellation/clients/go/nats"
-	"github.com/digital-feather/cryptellation/internal/backtests/infra/events/nats/generated"
 	"github.com/digital-feather/cryptellation/pkg/config"
 	"github.com/digital-feather/cryptellation/pkg/types/event"
-	"github.com/digital-feather/cryptellation/pkg/types/tick"
 	"github.com/nats-io/nats.go"
 )
 
 type Adapter struct {
 	nc     *nats.Conn
-	app    *generated.AppController
+	app    *asyncapi.AppController
 	client client.Backtests
 }
 
@@ -37,7 +30,7 @@ func New(c config.NATS) (*Adapter, error) {
 	}
 
 	// Create new app controller
-	app, err := generated.NewAppController(generated.NewNATSController(nc))
+	app, err := asyncapi.NewAppController(asyncapi.NewNATSController(nc))
 	if err != nil {
 		return nil, err
 	}
@@ -57,35 +50,15 @@ func New(c config.NATS) (*Adapter, error) {
 
 func (a *Adapter) Publish(backtestID uint, evt event.Event) error {
 	// Generated message
-	msg := generated.NewBacktestsEventMessage()
-	msg.Payload.Time = generated.DateSchema(evt.Time)
-	msg.Payload.Type = evt.Type.String()
+	msg := asyncapi.NewBacktestsEventMessage()
 
-	// Set message depending on event type
-	switch evt.Type {
-	case event.TypeIsStatus:
-		statusEvt, ok := evt.Content.(event.Status)
-		if !ok {
-			return event.ErrMismatchingType
-		}
-
-		msg.Payload.Content.Finished = statusEvt.Finished
-	case event.TypeIsTick:
-		t, ok := evt.Content.(tick.Tick)
-		if !ok {
-			return event.ErrMismatchingType
-		}
-
-		msg.Payload.Content.Exchange = generated.ExchangeNameSchema(t.Exchange)
-		msg.Payload.Content.PairSymbol = generated.PairSymbolSchema(t.PairSymbol)
-		msg.Payload.Content.Price = t.Price
-		msg.Payload.Content.Time = generated.DateSchema(t.Time)
-	default:
-		return event.ErrUnknownType
+	// Set from event
+	if err := msg.Set(evt); err != nil {
+		return err
 	}
 
 	// Send message
-	return a.app.PublishBacktestsEventsID(generated.BacktestsEventsIDParameters{
+	return a.app.PublishBacktestsEventsID(asyncapi.BacktestsEventsIDParameters{
 		ID: int64(backtestID),
 	}, msg)
 }
