@@ -6,16 +6,16 @@ import (
 	"time"
 
 	"github.com/digital-feather/cryptellation/internal/ticks/app/ports/db"
+	"github.com/digital-feather/cryptellation/internal/ticks/app/ports/events"
 	"github.com/digital-feather/cryptellation/internal/ticks/app/ports/exchanges"
-	"github.com/digital-feather/cryptellation/internal/ticks/app/ports/pubsub"
-	"github.com/digital-feather/cryptellation/pkg/tick"
+	"github.com/digital-feather/cryptellation/pkg/types/tick"
 )
 
 const checkInterval = 1 * time.Second
 
 type internalListener struct {
 	DB        db.Port
-	PubSub    pubsub.Port
+	Events    events.Port
 	Exchanges exchanges.Port
 
 	ExchangeName string
@@ -47,13 +47,13 @@ func (l *internalListener) Run() (err error) {
 func (l *internalListener) internalLoop() {
 	lastPrice := float64(0.0)
 
-	// Close the pubsub listener when exiting
-	defer l.PubSub.Close()
+	// Close the Events listener when exiting
+	defer l.Events.Close()
 
 	for {
 		t, open := <-l.ticksChan
-		if t.Price != 0 || t.Price != lastPrice {
-			err := l.PubSub.Publish(t)
+		if t.Price != 0 && t.Price != lastPrice {
+			err := l.Events.Publish(t)
 			if err != nil {
 				log.Println("Publish error:", err)
 				continue

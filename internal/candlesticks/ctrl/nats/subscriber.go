@@ -6,9 +6,9 @@ import (
 	"time"
 
 	"github.com/digital-feather/cryptellation/internal/candlesticks/app"
-	"github.com/digital-feather/cryptellation/internal/candlesticks/ctrl/nats/generated"
-	"github.com/digital-feather/cryptellation/pkg/candlestick"
-	"github.com/digital-feather/cryptellation/pkg/period"
+	"github.com/digital-feather/cryptellation/internal/candlesticks/infra/events/nats/generated"
+	"github.com/digital-feather/cryptellation/pkg/types/candlestick"
+	"github.com/digital-feather/cryptellation/pkg/types/period"
 )
 
 type subscriber struct {

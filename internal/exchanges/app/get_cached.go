@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	domain "github.com/digital-feather/cryptellation/internal/exchanges/app/domain/exchange"
-	"github.com/digital-feather/cryptellation/pkg/exchange"
+	"github.com/digital-feather/cryptellation/pkg/types/exchange"
 )
 
 func (e Exchanges) GetCached(ctx context.Context, names ...string) ([]exchange.Exchange, error) {

@@ -1,14 +1,8 @@
-//go:generate asyncapi-codegen -g application -p generated -i ../../../../api/asyncapi-spec/candlesticks.yaml -o ./generated/app.gen.go
-//go:generate asyncapi-codegen -g client      -p generated -i ../../../../api/asyncapi-spec/candlesticks.yaml -o ./generated/client.gen.go
-//go:generate asyncapi-codegen -g broker      -p generated -i ../../../../api/asyncapi-spec/candlesticks.yaml -o ./generated/broker.gen.go
-//go:generate asyncapi-codegen -g types       -p generated -i ../../../../api/asyncapi-spec/candlesticks.yaml -o ./generated/types.gen.go
-//go:generate asyncapi-codegen -g nats        -p generated -i ../../../../api/asyncapi-spec/candlesticks.yaml -o ./generated/nats.gen.go
-
 package nats
 
 import (
 	"github.com/digital-feather/cryptellation/internal/candlesticks/app"
-	"github.com/digital-feather/cryptellation/internal/candlesticks/ctrl/nats/generated"
+	"github.com/digital-feather/cryptellation/internal/candlesticks/infra/events/nats/generated"
 	"github.com/digital-feather/cryptellation/pkg/config"
 	"github.com/nats-io/nats.go"
 )

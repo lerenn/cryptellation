@@ -2,19 +2,19 @@ package app
 
 import (
 	"github.com/digital-feather/cryptellation/internal/ticks/app/ports/db"
+	"github.com/digital-feather/cryptellation/internal/ticks/app/ports/events"
 	"github.com/digital-feather/cryptellation/internal/ticks/app/ports/exchanges"
-	"github.com/digital-feather/cryptellation/internal/ticks/app/ports/pubsub"
 )
 
 type Ticks struct {
 	db        db.Port
-	pubsub    pubsub.Port
+	events    events.Port
 	exchanges exchanges.Port
 }
 
-func New(ps pubsub.Port, db db.Port, exchanges exchanges.Port) *Ticks {
-	if ps == nil {
-		panic("nil pubsub")
+func New(evts events.Port, db db.Port, exchanges exchanges.Port) *Ticks {
+	if evts == nil {
+		panic("nil events")
 	}
 
 	if db == nil {
@@ -26,7 +26,7 @@ func New(ps pubsub.Port, db db.Port, exchanges exchanges.Port) *Ticks {
 	}
 
 	return &Ticks{
-		pubsub:    ps,
+		events:    evts,
 		exchanges: exchanges,
 		db:        db,
 	}

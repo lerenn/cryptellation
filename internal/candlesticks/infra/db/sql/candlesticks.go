@@ -7,7 +7,7 @@ import (
 
 	"github.com/digital-feather/cryptellation/internal/candlesticks/app/ports/db"
 	"github.com/digital-feather/cryptellation/internal/candlesticks/infra/db/sql/entities"
-	"github.com/digital-feather/cryptellation/pkg/candlestick"
+	"github.com/digital-feather/cryptellation/pkg/types/candlestick"
 )
 
 func (d *DB) CreateCandlesticks(ctx context.Context, cs *candlestick.List) error {

@@ -6,7 +6,7 @@ package exchanges
 import (
 	"context"
 
-	"github.com/digital-feather/cryptellation/pkg/candlestick"
+	"github.com/digital-feather/cryptellation/pkg/types/candlestick"
 )
 
 type Port interface {

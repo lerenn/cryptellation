@@ -1,4 +1,4 @@
-K8S_VERSION         := 1.24.10
+K8S_VERSION         := 1.26.1
 MINIKUBE_NODES      := 3
 NODE_MEMORY         := 2g
 CLUSTER_NAME        := cryptellation-devel

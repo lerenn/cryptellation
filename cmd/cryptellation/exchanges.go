@@ -4,12 +4,13 @@ import (
 	"context"
 	"fmt"
 
-	exchanges "github.com/digital-feather/cryptellation/internal/exchanges/ctrl/nats"
+	client "github.com/digital-feather/cryptellation/clients/go"
+	"github.com/digital-feather/cryptellation/clients/go/nats"
 	"github.com/spf13/cobra"
 )
 
 var (
-	exchangesClient exchanges.Client
+	exchangesClient client.Exchanges
 )
 
 var exchangesCmd = &cobra.Command{
@@ -21,7 +22,7 @@ var exchangesCmd = &cobra.Command{
 			return err
 		}
 
-		exchangesClient, err = exchanges.New(globalNATSConfig)
+		exchangesClient, err = nats.NewExchanges(globalNATSConfig)
 		return err
 	},
 }
@@ -31,7 +32,7 @@ var exchangesReadCmd = &cobra.Command{
 	Aliases: []string{"r"},
 	Short:   "Read exchanges from service",
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		list, err := exchangesClient.ReadExchanges(context.Background(), "binance")
+		list, err := exchangesClient.Read(context.Background(), "binance")
 		if err != nil {
 			return err
 		}

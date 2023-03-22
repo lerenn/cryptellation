@@ -5,15 +5,16 @@ import (
 	"fmt"
 	"time"
 
-	candlesticks "github.com/digital-feather/cryptellation/internal/candlesticks/ctrl/nats"
-	"github.com/digital-feather/cryptellation/pkg/candlestick"
-	"github.com/digital-feather/cryptellation/pkg/period"
+	client "github.com/digital-feather/cryptellation/clients/go"
+	"github.com/digital-feather/cryptellation/clients/go/nats"
+	"github.com/digital-feather/cryptellation/pkg/types/candlestick"
+	"github.com/digital-feather/cryptellation/pkg/types/period"
 	"github.com/digital-feather/cryptellation/pkg/utils"
 	"github.com/spf13/cobra"
 )
 
 var (
-	candlesticksClient candlesticks.Client
+	candlesticks client.Candlesticks
 )
 
 var candlesticksCmd = &cobra.Command{
@@ -25,7 +26,7 @@ var candlesticksCmd = &cobra.Command{
 			return err
 		}
 
-		candlesticksClient, err = candlesticks.New(globalNATSConfig)
+		candlesticks, err = nats.NewCandlesticks(globalNATSConfig)
 		return err
 	},
 }
@@ -35,7 +36,7 @@ var candlesticksReadCmd = &cobra.Command{
 	Aliases: []string{"r"},
 	Short:   "Read candlesticks from service",
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		list, err := candlesticksClient.ReadCandlesticks(context.Background(), candlesticks.ReadCandlesticksPayload{
+		list, err := candlesticks.Read(context.Background(), client.ReadCandlesticksPayload{
 			ExchangeName: "binance",
 			PairSymbol:   "ETH-USDT",
 			Period:       period.H1,

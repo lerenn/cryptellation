@@ -5,8 +5,8 @@ import (
 	"time"
 
 	binance "github.com/adshao/go-binance/v2"
-	"github.com/digital-feather/cryptellation/pkg/candlestick"
-	"github.com/digital-feather/cryptellation/pkg/period"
+	"github.com/digital-feather/cryptellation/pkg/types/candlestick"
+	"github.com/digital-feather/cryptellation/pkg/types/period"
 )
 
 // TimeToKLineTime will take the time from a candle and will convert it to Kline time

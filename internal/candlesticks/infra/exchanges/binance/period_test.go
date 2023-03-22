@@ -3,7 +3,7 @@ package binance
 import (
 	"testing"
 
-	"github.com/digital-feather/cryptellation/pkg/period"
+	"github.com/digital-feather/cryptellation/pkg/types/period"
 )
 
 var possibleIntervals = map[period.Symbol]string{

@@ -3,7 +3,7 @@ package app
 import (
 	"context"
 
-	"github.com/digital-feather/cryptellation/pkg/tick"
+	"github.com/digital-feather/cryptellation/pkg/types/tick"
 )
 
 type Controller interface {

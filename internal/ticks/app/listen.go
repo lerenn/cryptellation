@@ -1,7 +1,7 @@
 package app
 
-import "github.com/digital-feather/cryptellation/pkg/tick"
+import "github.com/digital-feather/cryptellation/pkg/types/tick"
 
 func (t Ticks) Listen(exchange, pairSymbol string) (<-chan tick.Tick, error) {
-	return t.pubsub.Subscribe(pairSymbol)
+	return t.events.Subscribe(pairSymbol)
 }

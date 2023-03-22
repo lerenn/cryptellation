@@ -26,7 +26,7 @@ func (t Ticks) launchListener(exchange, pairSymbol string) error {
 
 	el := internalListener{
 		DB:        t.db,
-		PubSub:    t.pubsub,
+		Events:    t.events,
 		Exchanges: t.exchanges,
 
 		ExchangeName: exchange,

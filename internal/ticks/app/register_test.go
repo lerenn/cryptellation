@@ -7,9 +7,9 @@ import (
 	"time"
 
 	"github.com/digital-feather/cryptellation/internal/ticks/app/ports/db"
+	"github.com/digital-feather/cryptellation/internal/ticks/app/ports/events"
 	"github.com/digital-feather/cryptellation/internal/ticks/app/ports/exchanges"
-	"github.com/digital-feather/cryptellation/internal/ticks/app/ports/pubsub"
-	"github.com/digital-feather/cryptellation/pkg/tick"
+	"github.com/digital-feather/cryptellation/pkg/types/tick"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/suite"
 )
@@ -22,21 +22,20 @@ type RegisterSuite struct {
 	suite.Suite
 	operator Controller
 	vdb      *db.MockPort
-	ps       *pubsub.MockPort
+	ps       *events.MockPort
 	exchange *exchanges.MockPort
 }
 
 func (suite *RegisterSuite) SetupTest() {
 	suite.vdb = db.NewMockPort(gomock.NewController(suite.T()))
-	suite.ps = pubsub.NewMockPort(gomock.NewController(suite.T()))
+	suite.ps = events.NewMockPort(gomock.NewController(suite.T()))
 	suite.exchange = exchanges.NewMockPort(gomock.NewController(suite.T()))
 
 	suite.operator = New(suite.ps, suite.vdb, suite.exchange)
 }
 
-func (suite *RegisterSuite) setMocksForFirstRegister(ctx context.Context) (chan tick.Tick, chan struct{}, *sync.WaitGroup) {
+func (suite *RegisterSuite) setMocksForFirstRegister(ctx context.Context) (chan tick.Tick, func(), *sync.WaitGroup) {
 	ch := make(chan tick.Tick, 10)
-	stopCh := make(chan struct{}, 10)
 
 	// Set call to database for checking existing listener, and return the new count
 	suite.vdb.EXPECT().
@@ -46,9 +45,9 @@ func (suite *RegisterSuite) setMocksForFirstRegister(ctx context.Context) (chan 
 	// Set call to exchange to listen to symbol
 	suite.exchange.EXPECT().
 		ListenSymbol("exchange", "PAIR_SYMBOL").
-		Return(ch, stopCh, nil)
+		Return(ch, make(chan struct{}, 10), nil)
 
-	// Set call to pubsub when receving a tick for the exchange
+	// Set call to Events when receving a tick for the exchange
 	wg := sync.WaitGroup{}
 	suite.ps.EXPECT().Publish(tick.Tick{
 		Time:       time.Unix(60, 0),
@@ -61,17 +60,23 @@ func (suite *RegisterSuite) setMocksForFirstRegister(ctx context.Context) (chan 
 	})
 	wg.Add(1)
 
-	// Set call to pubsub when closing the goroutine automatically
-	suite.ps.EXPECT().Close()
+	// Set call to Events when closing the goroutine automatically
+	closeWaitGroup := sync.WaitGroup{}
+	suite.ps.EXPECT().Close().Do(func() {
+		closeWaitGroup.Done()
+	})
+	closeWaitGroup.Add(1)
 
-	return ch, stopCh, &wg
+	return ch, func() {
+		close(ch)
+		closeWaitGroup.Wait()
+	}, &wg
 }
 
 func (suite *RegisterSuite) TestFirstRegister() {
 	ctx := context.Background()
-	ch, stopCh, wg := suite.setMocksForFirstRegister(ctx)
-	defer close(ch)
-	defer close(stopCh)
+	fromExchangeChan, cleanup, wg := suite.setMocksForFirstRegister(ctx)
+	defer cleanup()
 
 	// Register to the application
 	count, err := suite.operator.Register(ctx, "exchange", "PAIR_SYMBOL")
@@ -87,7 +92,7 @@ func (suite *RegisterSuite) TestFirstRegister() {
 		Price:      2.0,
 		Exchange:   "EXCHANGE",
 	}
-	ch <- t
+	fromExchangeChan <- t
 
 	// Wait for tick to be arrived
 	wg.Wait()

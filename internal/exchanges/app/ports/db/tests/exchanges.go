@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/digital-feather/cryptellation/internal/exchanges/app/ports/db"
-	"github.com/digital-feather/cryptellation/pkg/exchange"
+	"github.com/digital-feather/cryptellation/pkg/types/exchange"
 	"github.com/stretchr/testify/suite"
 )
 

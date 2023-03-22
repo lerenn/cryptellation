@@ -3,7 +3,7 @@ package app
 import (
 	"context"
 
-	"github.com/digital-feather/cryptellation/pkg/exchange"
+	"github.com/digital-feather/cryptellation/pkg/types/exchange"
 )
 
 type Controller interface {

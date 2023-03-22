@@ -4,7 +4,8 @@ import (
 	"context"
 	"testing"
 
-	exchanges "github.com/digital-feather/cryptellation/internal/exchanges/ctrl/nats"
+	client "github.com/digital-feather/cryptellation/clients/go"
+	"github.com/digital-feather/cryptellation/clients/go/nats"
 	"github.com/digital-feather/cryptellation/pkg/config"
 	"github.com/stretchr/testify/suite"
 )
@@ -15,7 +16,7 @@ func TestExchangesSuite(t *testing.T) {
 
 type ExchangesSuite struct {
 	suite.Suite
-	client exchanges.Client
+	client client.Exchanges
 }
 
 func (suite *ExchangesSuite) SetupSuite() {
@@ -25,7 +26,7 @@ func (suite *ExchangesSuite) SetupSuite() {
 	suite.Require().NoError(cfg.Validate())
 
 	// Init client
-	client, err := exchanges.New(cfg)
+	client, err := nats.NewExchanges(cfg)
 	suite.Require().NoError(err)
 	suite.client = client
 }
@@ -36,7 +37,7 @@ func (suite *ExchangesSuite) TearDownSuite() {
 
 func (suite *ExchangesSuite) TestReadExchanges() {
 	// WHEN requesting a exchanges list
-	list, err := suite.client.ReadExchanges(context.Background(), "binance")
+	list, err := suite.client.Read(context.Background(), "binance")
 
 	// THEN the request is successful
 	suite.Require().NoError(err)

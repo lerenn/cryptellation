@@ -6,7 +6,7 @@ import (
 	"net/http"
 
 	"github.com/digital-feather/cryptellation/internal/ticks/app"
-	"github.com/digital-feather/cryptellation/internal/ticks/ctrl/nats/generated"
+	"github.com/digital-feather/cryptellation/internal/ticks/infra/events/nats/generated"
 )
 
 type subscriber struct {

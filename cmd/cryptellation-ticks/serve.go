@@ -11,8 +11,8 @@ import (
 	"github.com/digital-feather/cryptellation/internal/ticks/app"
 	natsCtrl "github.com/digital-feather/cryptellation/internal/ticks/ctrl/nats"
 	"github.com/digital-feather/cryptellation/internal/ticks/infra/db/sql"
+	natsAdapter "github.com/digital-feather/cryptellation/internal/ticks/infra/events/nats"
 	"github.com/digital-feather/cryptellation/internal/ticks/infra/exchanges"
-	natsAdapter "github.com/digital-feather/cryptellation/internal/ticks/infra/nats"
 	"github.com/digital-feather/cryptellation/pkg/config"
 	"github.com/digital-feather/cryptellation/pkg/health"
 	"github.com/spf13/cobra"
@@ -40,7 +40,7 @@ func initApp() (app.Controller, error) {
 		return nil, err
 	}
 
-	// Init pubsub client
+	// Init Events client
 	ps, err := natsAdapter.New(config.LoadNATSConfigFromEnv())
 	if err != nil {
 		return nil, err

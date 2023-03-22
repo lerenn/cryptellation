@@ -1,0 +1,544 @@
+asyncapi: 2.5.0
+info:
+  title: Backtests Service
+  version: 1.0.0
+  description: >
+    This service is providing a simulation on historic data.
+channels:
+  backtests.create.request:
+    publish:
+      operationId: backtestsCreateRequest
+      description: Request a new backtest
+      tags:
+        - name: backtest creation
+      message:
+        $ref: '#/components/messages/BacktestsCreateRequest'
+  backtests.create.response:
+    subscribe:
+      operationId: backtestsCreateResponse
+      description: Response to a new backtest request
+      tags:
+        - name: backtest creation
+      message:
+        $ref: '#/components/messages/BacktestsCreateResponse'
+
+  backtests.subscribe.request:
+    publish:
+      operationId: backtestsSubscribeRequest
+      description: Subscribe to a backtest events
+      tags:
+        - name: backtest subscribe
+      message:
+        $ref: '#/components/messages/BacktestsSubscribeRequest'
+  backtests.subscribe.response:
+    subscribe:
+      operationId: backtestsSubscribeResponse
+      description: Response to a backtest events subscription
+      tags:
+        - name: backtest subscribe
+      message:
+        $ref: '#/components/messages/BacktestsSubscribeResponse'
+
+  backtests.advance.request:
+    publish:
+      operationId: backtestsAdvanceRequest
+      description: Ask for new events on backtest
+      tags:
+        - name: backtest advance
+      message:
+        $ref: '#/components/messages/BacktestsAdvanceRequest'
+  backtests.advance.response:
+    subscribe:
+      operationId: backtestsAdvanceResponse
+      description: Response to new events request
+      tags:
+        - name: backtest advance
+      message:
+        $ref: '#/components/messages/BacktestsAdvanceResponse'
+
+  backtests.orders.create.request:
+    publish:
+      operationId: backtestsOrdersCreateRequest
+      description: Create a new order for a backtest
+      tags:
+        - name: backtest order creation
+      message:
+        $ref: '#/components/messages/BacktestsOrdersCreateRequest'
+  backtests.orders.create.response:
+    subscribe:
+      operationId: backtestsOrdersCreateResponse
+      description: Response to a new order creation
+      tags:
+        - name: backtest order creation
+      message:
+        $ref: '#/components/messages/BacktestsOrdersCreateResponse'
+
+  backtests.orders.list.request:
+    publish:
+      operationId: backtestsOrdersListRequest
+      description: List orders from a backtest
+      tags:
+        - name: backtest orders list
+      message:
+        $ref: '#/components/messages/BacktestsOrdersListRequest'
+  backtests.orders.list.response:
+    subscribe:
+      operationId: backtestsOrdersListResponse
+      description: Response to a orders list request
+      tags:
+        - name: backtest orders list
+      message:
+        $ref: '#/components/messages/BacktestsOrdersListResponse'
+
+  backtests.accounts.list.request:
+    publish:
+      operationId: backtestsAccountsListRequest
+      description: List accounts from a backtest
+      tags:
+        - name: backtest accounts list
+      message:
+        $ref: '#/components/messages/BacktestsAccountsListRequest'
+  backtests.accounts.list.response:
+    subscribe:
+      operationId: backtestsAccountsListResponse
+      description: Response to a accounts list request
+      tags:
+        - name: backtest accounts list
+      message:
+        $ref: '#/components/messages/BacktestsAccountsListResponse'
+
+  backtests.events.{id}:
+    parameters:
+      id:
+        description: Backtest identifier
+        schema:
+          type: integer
+    subscribe:
+      operationId: backtestsEvents
+      description: Events happening after an advance message
+      tags:
+        - name: backtest events
+      message:
+        $ref: '#/components/messages/BacktestsEvent'
+
+components:
+  messages:
+    # BacktestsCreate
+    BacktestsCreateRequest:
+      headers:
+        type: object
+        properties:
+          correlationId:
+            description: Correlation ID set by client
+            type: string
+      payload:
+        type: object
+        required:
+          - accounts
+          - start_time
+        properties:
+          accounts:
+            type: array
+            items:
+              $ref: '#/components/schemas/Account'
+          start_time:
+            $ref: '#/components/schemas/Date'
+          end_time:
+            $ref: '#/components/schemas/Date'
+          period:
+            $ref: '#/components/schemas/PeriodSymbol'
+      correlationId:
+        description: Default Correlation ID
+        location: $message.header#/correlationId
+    BacktestsCreateResponse:
+      headers:
+        type: object
+        properties:
+          correlationId:
+            description: Correlation ID set by client
+            type: string
+      payload:
+        type: object
+        required:
+          - id
+        oneOf:
+        - properties:
+            id:
+              type: integer
+              description: Newly created backtest ID
+        - properties:
+            error:
+              $ref: '#/components/schemas/Error'
+      correlationId:
+        description: Default Correlation ID
+        location: $message.header#/correlationId
+
+    # BacktestsSubscribe
+    BacktestsSubscribeRequest:
+      headers:
+        type: object
+        properties:
+          correlationId:
+            description: Correlation ID set by client
+            type: string
+      payload:
+        type: object
+        required:
+          - id
+          - exchange_name
+          - pair_symbol
+        properties:
+          id:
+            $ref: '#/components/schemas/BacktestID'
+          exchange_name:
+            $ref: '#/components/schemas/ExchangeName'
+          pair_symbol:
+            $ref: '#/components/schemas/PairSymbol'
+      correlationId:
+        description: Default Correlation ID
+        location: $message.header#/correlationId
+    BacktestsSubscribeResponse:
+      headers:
+        type: object
+        properties:
+          correlationId:
+            description: Correlation ID set by client
+            type: string
+      payload:
+        type: object
+        properties:
+          error:
+            $ref: '#/components/schemas/Error'
+      correlationId:
+        description: Default Correlation ID
+        location: $message.header#/correlationId
+
+    # BacktestsAdvance
+    BacktestsAdvanceRequest:
+      headers:
+        type: object
+        properties:
+          correlationId:
+            description: Correlation ID set by client
+            type: string
+      payload:
+        type: object
+        required:
+          - id
+        properties:
+          id:
+            $ref: '#/components/schemas/BacktestID'
+      correlationId:
+        description: Default Correlation ID
+        location: $message.header#/correlationId
+    BacktestsAdvanceResponse:
+      headers:
+        type: object
+        properties:
+          correlationId:
+            description: Correlation ID set by client
+            type: string
+      payload:
+        type: object
+        properties:
+          error:
+            $ref: '#/components/schemas/Error'
+      correlationId:
+        description: Default Correlation ID
+        location: $message.header#/correlationId
+
+    # BacktestsOrdersCreate
+    BacktestsOrdersCreateRequest:
+      headers:
+        type: object
+        properties:
+          correlationId:
+            description: Correlation ID set by client
+            type: string
+      payload:
+        type: object
+        required:
+          - id
+          - order
+        properties:
+          id:
+            $ref: '#/components/schemas/BacktestID'
+          order:
+            $ref: '#/components/schemas/Order'
+      correlationId:
+        description: Default Correlation ID
+        location: $message.header#/correlationId
+    BacktestsOrdersCreateResponse:
+      headers:
+        type: object
+        properties:
+          correlationId:
+            description: Correlation ID set by client
+            type: string
+      payload:
+        type: object
+        properties:
+          error:
+            $ref: '#/components/schemas/Error'
+      correlationId:
+        description: Default Correlation ID
+        location: $message.header#/correlationId
+
+    # BacktestsOrdersList
+    BacktestsOrdersListRequest:
+      headers:
+        type: object
+        properties:
+          correlationId:
+            description: Correlation ID set by client
+            type: string
+      payload:
+        type: object
+        required:
+          - id
+        properties:
+          id:
+            $ref: '#/components/schemas/BacktestID'
+      correlationId:
+        description: Default Correlation ID
+        location: $message.header#/correlationId
+    BacktestsOrdersListResponse:
+      headers:
+        type: object
+        properties:
+          correlationId:
+            description: Correlation ID set by client
+            type: string
+      payload:
+        type: object
+        required:
+          - id
+        oneOf:
+        - properties:
+            orders:
+              type: array
+              items:
+                $ref: '#/components/schemas/Order'
+        - properties:
+            error:
+              $ref: '#/components/schemas/Error'
+      correlationId:
+        description: Default Correlation ID
+        location: $message.header#/correlationId
+
+    # BacktestsAccountsList
+    BacktestsAccountsListRequest:
+      headers:
+        type: object
+        properties:
+          correlationId:
+            description: Correlation ID set by client
+            type: string
+      payload:
+        type: object
+        required:
+          - id
+        properties:
+          id:
+            $ref: '#/components/schemas/BacktestID'
+      correlationId:
+        description: Default Correlation ID
+        location: $message.header#/correlationId
+    BacktestsAccountsListResponse:
+      headers:
+        type: object
+        properties:
+          correlationId:
+            description: Correlation ID set by client
+            type: string
+      payload:
+        type: object
+        required:
+          - id
+        oneOf:
+        - properties:
+            accounts:
+              type: array
+              items:
+                $ref: '#/components/schemas/Account'
+        - properties:
+            error:
+              $ref: '#/components/schemas/Error'
+      correlationId:
+        description: Default Correlation ID
+        location: $message.header#/correlationId
+
+    # BacktestsEvent
+    BacktestsEvent:
+      payload:
+        type: object
+        required:
+          - time
+          - type
+          - content
+        properties:
+          time:
+            $ref: '#/components/schemas/Date'
+          type:
+            type: string
+            description: Content type of this event
+          content:
+            oneOf:
+              - $ref: '#/components/schemas/Tick'
+              - $ref: '#/components/schemas/Status'
+
+  schemas:
+    Account:
+      type: object
+      required:
+        - name
+        - assets
+      properties:
+        name:
+          type: string
+          description: Account's name
+        assets:
+          type: array
+          description: Account's assets
+          items:
+            $ref: '#/components/schemas/Asset'
+    Asset:
+      type: object
+      description: An asset is a particular commodity with an amount
+      required:
+        - name
+        - amount
+      properties:
+        name:
+          type: string
+        amount:
+          type: number
+          format: double
+    BacktestID:
+      type: integer
+      description: Targeted backtest ID
+    Date:
+      type: string
+      format: date-time
+      description: Date-Time format according to RFC3339
+      examples:
+        - "1985-04-12T23:20:50.52Z"
+        - "1937-01-01T12:00:27.87+00:20"
+    ExchangeName:
+      type: string
+      description: Exchange name
+      examples:
+        - Binance
+    Error:
+      type: object
+      description: Response to a failed call
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          description: Code to identify the error type, based on HTTP errors
+        message:
+          type: string
+          description: Main error reason
+          examples:
+            - "Invalid request: no time specified"
+    Order:
+      type: object
+      description: Order sent to the market
+      required:
+        - type
+        - exchange_name
+        - pair_symbol
+        - side
+        - quantity
+      properties:
+        id:
+          type: integer
+          description: Order ID set by the system
+        execution_time:
+          description: Effective time of order execution
+          $ref: '#/components/schemas/Date'
+        type:
+          $ref: '#/components/schemas/OrderType'
+        exchange_name:
+          $ref: '#/components/schemas/ExchangeName'
+        pair_symbol:
+          $ref: '#/components/schemas/PairSymbol'
+        side: 
+          $ref: '#/components/schemas/OrderSide'
+        quantity:
+          type: number
+          format: double
+          description: Quantity of the asset that should be traded
+        price:
+          type: number
+          format: double
+          description: Price of the asset that where it should be traded
+    OrderSide:
+      type: string
+      description: Side used by an order
+      enum:
+        - buy
+        - sell
+    OrderType:
+      type: string
+      description: Type of an order
+      enum:
+        - market
+    PairSymbol:
+      type: string
+      description: Pair symbol
+      examples:
+        - ETH-USDC
+    PeriodSymbol:
+      type: string
+      description: Period symbol
+      default: M1
+      enum:
+        - M1
+        - M3
+        - M5
+        - M15
+        - M30
+        - H1
+        - H2
+        - H4
+        - H6
+        - H8
+        - H12
+        - D1
+        - D3
+        - W1
+    Status:
+      type: object
+      description: |
+        Status event is happening when there is no more expected events.
+        An 'advance' message can be sent after this one.
+      required:
+        - finished
+      properties:
+        finished:
+          type: boolean
+          description: Indicates if the backtest has reached the end date
+    Tick:
+      type: object
+      required:
+        - time
+        - pairSymbol
+        - price
+        - exchange
+      properties:
+        time:
+          $ref: '#/components/schemas/Date'
+        pairSymbol:
+          $ref: '#/components/schemas/PairSymbol'
+        price:
+          type: number
+          format: double
+          description: Tick price
+          examples:
+            - 1.5
+        exchange:
+          $ref: '#/components/schemas/ExchangeName'

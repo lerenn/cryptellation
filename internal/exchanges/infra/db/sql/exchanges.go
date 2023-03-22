@@ -6,7 +6,7 @@ import (
 
 	"github.com/digital-feather/cryptellation/internal/exchanges/app/ports/db"
 	"github.com/digital-feather/cryptellation/internal/exchanges/infra/db/sql/entities"
-	"github.com/digital-feather/cryptellation/pkg/exchange"
+	"github.com/digital-feather/cryptellation/pkg/types/exchange"
 	"gorm.io/gorm"
 )
 

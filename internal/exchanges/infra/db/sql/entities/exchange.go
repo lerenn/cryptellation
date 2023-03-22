@@ -3,7 +3,7 @@ package entities
 import (
 	"time"
 
-	"github.com/digital-feather/cryptellation/pkg/exchange"
+	"github.com/digital-feather/cryptellation/pkg/types/exchange"
 )
 
 type Exchange struct {

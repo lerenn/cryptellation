@@ -1,0 +1,103 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: backtests
+  name: backtests
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backtests
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: backtests
+    spec:
+      containers:
+      - name: backtests
+        image: {{ .Values.services.backtests.image }}
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          httpGet:
+            path: /liveness
+            port: {{ .Values.services.backtests.health.port | default 9000 }}
+        readinessProbe:
+          httpGet:
+            path: /readiness
+            port: {{ .Values.services.backtests.health.port | default 9000 }}
+        command: [ "cryptellation-backtests", "serve" ]
+        env:
+        - name: "HEALTH_PORT"
+          valueFrom:
+            configMapKeyRef:
+              key:  backtests.health.port
+              name: cryptellation-config
+        - name: "NATS_HOST"
+          valueFrom:
+            configMapKeyRef:
+              key:  nats.host
+              name: cryptellation-credentials
+        - name: "NATS_PORT"
+          valueFrom:
+            configMapKeyRef:
+              key:  nats.port
+              name: cryptellation-credentials
+        - name: "SQLDB_USER"
+          valueFrom:
+            configMapKeyRef:
+              key:  sqldb.user
+              name: cryptellation-credentials
+        - name: "SQLDB_PASSWORD"
+          valueFrom:
+            configMapKeyRef:
+              key:  sqldb.password
+              name: cryptellation-credentials
+        - name: "SQLDB_HOST"
+          valueFrom:
+            configMapKeyRef:
+              key:  sqldb.host
+              name: cryptellation-credentials
+        - name: "SQLDB_PORT"
+          valueFrom:
+            configMapKeyRef:
+              key:  sqldb.port
+              name: cryptellation-credentials
+        - name: "SQLDB_DATABASE"
+          valueFrom:
+            configMapKeyRef:
+              key:  backtests.sqldb.database
+              name: cryptellation-config
+        resources: {}
+      initContainers:
+      - name: init-backtests-sqldb
+        image: {{ .Values.services.backtests.image }}
+        command: [ "cryptellation-backtests", "migrations", "migrate" ]
+        env:
+        - name: "SQLDB_USER"
+          valueFrom:
+            configMapKeyRef:
+              key:  sqldb.user
+              name: cryptellation-credentials
+        - name: "SQLDB_PASSWORD"
+          valueFrom:
+            configMapKeyRef:
+              key:  sqldb.password
+              name: cryptellation-credentials
+        - name: "SQLDB_HOST"
+          valueFrom:
+            configMapKeyRef:
+              key:  sqldb.host
+              name: cryptellation-credentials
+        - name: "SQLDB_PORT"
+          valueFrom:
+            configMapKeyRef:
+              key:  sqldb.port
+              name: cryptellation-credentials
+        - name: "SQLDB_DATABASE"
+          valueFrom:
+            configMapKeyRef:
+              key:  backtests.sqldb.database
+              name: cryptellation-config
+status: {}

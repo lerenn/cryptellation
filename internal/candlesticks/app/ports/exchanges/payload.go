@@ -3,7 +3,7 @@ package exchanges
 import (
 	"time"
 
-	"github.com/digital-feather/cryptellation/pkg/period"
+	"github.com/digital-feather/cryptellation/pkg/types/period"
 )
 
 type GetCandlesticksPayload struct {

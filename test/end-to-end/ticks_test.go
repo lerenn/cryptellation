@@ -5,7 +5,8 @@ import (
 	"testing"
 	"time"
 
-	ticks "github.com/digital-feather/cryptellation/internal/ticks/ctrl/nats"
+	client "github.com/digital-feather/cryptellation/clients/go"
+	natsClient "github.com/digital-feather/cryptellation/clients/go/nats"
 	"github.com/digital-feather/cryptellation/pkg/config"
 	"github.com/stretchr/testify/suite"
 )
@@ -16,7 +17,7 @@ func TestTicksSuite(t *testing.T) {
 
 type TicksSuite struct {
 	suite.Suite
-	client ticks.Client
+	client client.Ticks
 }
 
 func (suite *TicksSuite) SetupSuite() {
@@ -26,7 +27,7 @@ func (suite *TicksSuite) SetupSuite() {
 	suite.Require().NoError(cfg.Validate())
 
 	// Init client
-	client, err := ticks.New(cfg)
+	client, err := natsClient.NewTicks(cfg)
 	suite.Require().NoError(err)
 	suite.client = client
 }
@@ -37,14 +38,14 @@ func (suite *TicksSuite) TearDownSuite() {
 
 func (suite *TicksSuite) TestListen() {
 	// Register listener
-	err := suite.client.Register(context.Background(), ticks.TicksFilterPayload{
+	err := suite.client.Register(context.Background(), client.TicksFilterPayload{
 		ExchangeName: "binance",
 		PairSymbol:   "BTC-USDT",
 	})
 	suite.Require().NoError(err)
 
 	// Listen to ticks
-	ch, err := suite.client.Listen(context.Background(), ticks.TicksFilterPayload{
+	ch, err := suite.client.Listen(context.Background(), client.TicksFilterPayload{
 		ExchangeName: "binance",
 		PairSymbol:   "BTC-USDT",
 	})
@@ -60,7 +61,7 @@ func (suite *TicksSuite) TestListen() {
 	}
 
 	// Unregister listener
-	err = suite.client.Unregister(context.Background(), ticks.TicksFilterPayload{
+	err = suite.client.Unregister(context.Background(), client.TicksFilterPayload{
 		ExchangeName: "binance",
 		PairSymbol:   "BTC-USDT",
 	})

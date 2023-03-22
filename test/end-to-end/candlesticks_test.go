@@ -5,10 +5,11 @@ import (
 	"testing"
 	"time"
 
-	candlesticks "github.com/digital-feather/cryptellation/internal/candlesticks/ctrl/nats"
-	"github.com/digital-feather/cryptellation/pkg/candlestick"
+	client "github.com/digital-feather/cryptellation/clients/go"
+	"github.com/digital-feather/cryptellation/clients/go/nats"
 	"github.com/digital-feather/cryptellation/pkg/config"
-	"github.com/digital-feather/cryptellation/pkg/period"
+	"github.com/digital-feather/cryptellation/pkg/types/candlestick"
+	"github.com/digital-feather/cryptellation/pkg/types/period"
 	"github.com/digital-feather/cryptellation/pkg/utils"
 	"github.com/stretchr/testify/suite"
 )
@@ -19,7 +20,7 @@ func TestCandlesticksSuite(t *testing.T) {
 
 type CandlesticksSuite struct {
 	suite.Suite
-	client candlesticks.Client
+	client client.Candlesticks
 }
 
 func (suite *CandlesticksSuite) SetupSuite() {
@@ -29,7 +30,7 @@ func (suite *CandlesticksSuite) SetupSuite() {
 	suite.Require().NoError(cfg.Validate())
 
 	// Init client
-	client, err := candlesticks.New(cfg)
+	client, err := nats.NewCandlesticks(cfg)
 	suite.Require().NoError(err)
 	suite.client = client
 }
@@ -40,7 +41,7 @@ func (suite *CandlesticksSuite) TearDownSuite() {
 
 func (suite *CandlesticksSuite) TestReadCandlesticks() {
 	// WHEN requesting a candlesticks list
-	list, err := suite.client.ReadCandlesticks(context.Background(), candlesticks.ReadCandlesticksPayload{
+	list, err := suite.client.Read(context.Background(), client.ReadCandlesticksPayload{
 		ExchangeName: "binance",
 		PairSymbol:   "ETH-USDT",
 		Period:       period.H1,

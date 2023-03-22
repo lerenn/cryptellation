@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"github.com/digital-feather/cryptellation/internal/exchanges/app"
-	"github.com/digital-feather/cryptellation/internal/exchanges/ctrl/nats/generated"
+	"github.com/digital-feather/cryptellation/internal/exchanges/infra/events/nats/generated"
 )
 
 type subscriber struct {

@@ -3,7 +3,7 @@ package exchange
 import (
 	"time"
 
-	"github.com/digital-feather/cryptellation/pkg/exchange"
+	"github.com/digital-feather/cryptellation/pkg/types/exchange"
 )
 
 const DefaultExpirationDuration = time.Hour

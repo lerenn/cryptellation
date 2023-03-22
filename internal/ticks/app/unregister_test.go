@@ -5,8 +5,8 @@ import (
 	"testing"
 
 	"github.com/digital-feather/cryptellation/internal/ticks/app/ports/db"
+	"github.com/digital-feather/cryptellation/internal/ticks/app/ports/events"
 	"github.com/digital-feather/cryptellation/internal/ticks/app/ports/exchanges"
-	"github.com/digital-feather/cryptellation/internal/ticks/app/ports/pubsub"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/suite"
 )
@@ -19,13 +19,13 @@ type UnregisterSuite struct {
 	suite.Suite
 	operator Controller
 	vdb      *db.MockPort
-	ps       *pubsub.MockPort
+	ps       *events.MockPort
 	exchange *exchanges.MockPort
 }
 
 func (suite *UnregisterSuite) SetupTest() {
 	suite.vdb = db.NewMockPort(gomock.NewController(suite.T()))
-	suite.ps = pubsub.NewMockPort(gomock.NewController(suite.T()))
+	suite.ps = events.NewMockPort(gomock.NewController(suite.T()))
 	suite.exchange = exchanges.NewMockPort(gomock.NewController(suite.T()))
 
 	suite.operator = New(suite.ps, suite.vdb, suite.exchange)

@@ -7,7 +7,7 @@ import (
 	"github.com/digital-feather/cryptellation/internal/exchanges/app/ports/exchanges"
 	"github.com/digital-feather/cryptellation/internal/exchanges/infra/exchanges/binance"
 	"github.com/digital-feather/cryptellation/pkg/config"
-	"github.com/digital-feather/cryptellation/pkg/exchange"
+	"github.com/digital-feather/cryptellation/pkg/types/exchange"
 )
 
 type Exchanges struct {

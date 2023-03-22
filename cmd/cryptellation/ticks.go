@@ -5,12 +5,13 @@ import (
 	"fmt"
 	"time"
 
-	ticks "github.com/digital-feather/cryptellation/internal/ticks/ctrl/nats"
+	client "github.com/digital-feather/cryptellation/clients/go"
+	"github.com/digital-feather/cryptellation/clients/go/nats"
 	"github.com/spf13/cobra"
 )
 
 var (
-	ticksClient ticks.Client
+	ticksClient client.Ticks
 )
 
 var ticksCmd = &cobra.Command{
@@ -22,7 +23,7 @@ var ticksCmd = &cobra.Command{
 			return err
 		}
 
-		ticksClient, err = ticks.New(globalNATSConfig)
+		ticksClient, err = nats.NewTicks(globalNATSConfig)
 		return err
 	},
 }
@@ -32,7 +33,7 @@ var ticksRegisterCmd = &cobra.Command{
 	Aliases: []string{"r"},
 	Short:   "Register to ticks on service",
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		err = ticksClient.Register(context.Background(), ticks.TicksFilterPayload{
+		err = ticksClient.Register(context.Background(), client.TicksFilterPayload{
 			ExchangeName: "binance",
 			PairSymbol:   "BTC-USDT",
 		})
@@ -46,7 +47,7 @@ var ticksListenCmd = &cobra.Command{
 	Aliases: []string{"r"},
 	Short:   "Listen to ticks on service",
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		ch, err := ticksClient.Listen(context.Background(), ticks.TicksFilterPayload{
+		ch, err := ticksClient.Listen(context.Background(), client.TicksFilterPayload{
 			ExchangeName: "binance",
 			PairSymbol:   "BTC-USDT",
 		})
@@ -70,7 +71,7 @@ var ticksUnregisterCmd = &cobra.Command{
 	Aliases: []string{"r"},
 	Short:   "Unregister to ticks on service",
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		err = ticksClient.Unregister(context.Background(), ticks.TicksFilterPayload{
+		err = ticksClient.Unregister(context.Background(), client.TicksFilterPayload{
 			ExchangeName: "binance",
 			PairSymbol:   "BTC-USDT",
 		})

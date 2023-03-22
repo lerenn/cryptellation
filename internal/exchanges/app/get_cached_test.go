@@ -10,7 +10,7 @@ import (
 
 	"github.com/digital-feather/cryptellation/internal/exchanges/app/ports/db"
 	"github.com/digital-feather/cryptellation/internal/exchanges/app/ports/exchanges"
-	"github.com/digital-feather/cryptellation/pkg/exchange"
+	"github.com/digital-feather/cryptellation/pkg/types/exchange"
 )
 
 func TestGetCachedSuite(t *testing.T) {
