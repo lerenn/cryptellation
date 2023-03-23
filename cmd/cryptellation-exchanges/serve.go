@@ -9,7 +9,7 @@ import (
 	"syscall"
 
 	"github.com/digital-feather/cryptellation/internal/exchanges/app"
-	"github.com/digital-feather/cryptellation/internal/exchanges/ctrl/nats"
+	"github.com/digital-feather/cryptellation/internal/exchanges/ctrl/events/nats"
 	"github.com/digital-feather/cryptellation/internal/exchanges/infra/db/sql"
 	"github.com/digital-feather/cryptellation/internal/exchanges/infra/exchanges"
 	"github.com/digital-feather/cryptellation/pkg/config"

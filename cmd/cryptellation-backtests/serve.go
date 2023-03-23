@@ -10,7 +10,7 @@ import (
 
 	natsClient "github.com/digital-feather/cryptellation/clients/go/nats"
 	"github.com/digital-feather/cryptellation/internal/backtests/app"
-	natsCtrl "github.com/digital-feather/cryptellation/internal/backtests/ctrl/nats"
+	natsCtrl "github.com/digital-feather/cryptellation/internal/backtests/ctrl/events/nats"
 	"github.com/digital-feather/cryptellation/internal/backtests/infra/db/sql"
 	natsAdapter "github.com/digital-feather/cryptellation/internal/backtests/infra/events/nats"
 	"github.com/digital-feather/cryptellation/pkg/config"

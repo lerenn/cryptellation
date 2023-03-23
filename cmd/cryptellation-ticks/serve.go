@@ -9,7 +9,7 @@ import (
 	"syscall"
 
 	"github.com/digital-feather/cryptellation/internal/ticks/app"
-	natsCtrl "github.com/digital-feather/cryptellation/internal/ticks/ctrl/nats"
+	natsCtrl "github.com/digital-feather/cryptellation/internal/ticks/ctrl/events/nats"
 	"github.com/digital-feather/cryptellation/internal/ticks/infra/db/sql"
 	natsAdapter "github.com/digital-feather/cryptellation/internal/ticks/infra/events/nats"
 	"github.com/digital-feather/cryptellation/internal/ticks/infra/exchanges"
