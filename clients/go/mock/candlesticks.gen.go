@@ -9,7 +9,7 @@ import (
 	reflect "reflect"
 
 	client "github.com/digital-feather/cryptellation/clients/go"
-	candlestick "github.com/digital-feather/cryptellation/pkg/types/candlestick"
+	candlestick "github.com/digital-feather/cryptellation/pkg/candlestick"
 	gomock "github.com/golang/mock/gomock"
 )
 

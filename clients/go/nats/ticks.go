@@ -7,7 +7,7 @@ import (
 	asyncapi "github.com/digital-feather/cryptellation/api/asyncapi/ticks"
 	client "github.com/digital-feather/cryptellation/clients/go"
 	"github.com/digital-feather/cryptellation/pkg/config"
-	"github.com/digital-feather/cryptellation/pkg/types/tick"
+	"github.com/digital-feather/cryptellation/pkg/tick"
 	"github.com/nats-io/nats.go"
 )
 

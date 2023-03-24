@@ -7,7 +7,7 @@
 
 package exchanges
 
-import "github.com/digital-feather/cryptellation/pkg/types/exchange"
+import "github.com/digital-feather/cryptellation/pkg/exchange"
 
 func (msg *ExchangesRequestMessage) Set(names ...string) {
 	msg.Payload = make([]ExchangeNameSchema, 0, len(names))

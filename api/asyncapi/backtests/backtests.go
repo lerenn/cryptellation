@@ -11,11 +11,11 @@ import (
 	"time"
 
 	client "github.com/digital-feather/cryptellation/clients/go"
-	"github.com/digital-feather/cryptellation/internal/backtests/app/domain"
-	"github.com/digital-feather/cryptellation/pkg/types/account"
-	"github.com/digital-feather/cryptellation/pkg/types/event"
-	"github.com/digital-feather/cryptellation/pkg/types/period"
-	"github.com/digital-feather/cryptellation/pkg/types/tick"
+	"github.com/digital-feather/cryptellation/pkg/account"
+	"github.com/digital-feather/cryptellation/pkg/backtest"
+	"github.com/digital-feather/cryptellation/pkg/event"
+	"github.com/digital-feather/cryptellation/pkg/period"
+	"github.com/digital-feather/cryptellation/pkg/tick"
 	"github.com/digital-feather/cryptellation/pkg/utils"
 )
 
@@ -34,7 +34,7 @@ func (msg *BacktestsCreateRequestMessage) Set(payload client.BacktestCreationPay
 // 	}
 // }
 
-func (msg *BacktestsCreateRequestMessage) ToModel() (domain.NewPayload, error) {
+func (msg *BacktestsCreateRequestMessage) ToModel() (backtest.NewPayload, error) {
 	// Format accounts
 	accounts := make(map[string]account.Account)
 	for _, acc := range msg.Payload.Accounts {
@@ -47,14 +47,14 @@ func (msg *BacktestsCreateRequestMessage) ToModel() (domain.NewPayload, error) {
 	if msg.Payload.Period != nil {
 		symbol, err := period.FromString((string)(*msg.Payload.Period))
 		if err != nil {
-			return domain.NewPayload{}, err
+			return backtest.NewPayload{}, err
 		}
 
 		duration = utils.ToReference(symbol.Duration())
 	}
 
 	// Return model
-	return domain.NewPayload{
+	return backtest.NewPayload{
 		Accounts:              accounts,
 		StartTime:             time.Time(msg.Payload.StartTime),
 		EndTime:               (*time.Time)(msg.Payload.EndTime),

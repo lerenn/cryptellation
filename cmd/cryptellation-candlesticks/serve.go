@@ -8,12 +8,12 @@ import (
 	"strconv"
 	"syscall"
 
-	"github.com/digital-feather/cryptellation/internal/candlesticks/app"
-	"github.com/digital-feather/cryptellation/internal/candlesticks/ctrl/events/nats"
-	"github.com/digital-feather/cryptellation/internal/candlesticks/infra/db/sql"
-	"github.com/digital-feather/cryptellation/internal/candlesticks/infra/exchanges"
+	asyncapi "github.com/digital-feather/cryptellation/api/asyncapi/candlesticks"
 	"github.com/digital-feather/cryptellation/pkg/config"
-	"github.com/digital-feather/cryptellation/pkg/health"
+	"github.com/digital-feather/cryptellation/pkg/http/health"
+	"github.com/digital-feather/cryptellation/services/candlesticks"
+	"github.com/digital-feather/cryptellation/services/candlesticks/io/db/adapters/sql"
+	exchanges "github.com/digital-feather/cryptellation/services/candlesticks/io/exchanges/adapters"
 	"github.com/spf13/cobra"
 )
 
@@ -26,7 +26,7 @@ var serveCmd = &cobra.Command{
 	},
 }
 
-func initApp() (app.Controller, error) {
+func initApp() (candlesticks.Interface, error) {
 	// Init database client
 	db, err := sql.New(config.LoadSQLConfigFromEnv())
 	if err != nil {
@@ -40,12 +40,12 @@ func initApp() (app.Controller, error) {
 	}
 
 	// Init component
-	return app.New(db, exchanges), nil
+	return candlesticks.New(db, exchanges), nil
 }
 
-func initController(component app.Controller) (func(), error) {
+func initController(component candlesticks.Interface) (func(), error) {
 	// Init NATS controller
-	natsController, err := nats.NewServer(config.LoadNATSConfigFromEnv(), component)
+	natsController, err := asyncapi.NewNATS(config.LoadNATSConfigFromEnv(), component)
 	if err != nil {
 		return func() {}, err
 	}

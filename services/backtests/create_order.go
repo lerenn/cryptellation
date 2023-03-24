@@ -1,0 +1,37 @@
+package backtests
+
+import (
+	"context"
+	"fmt"
+
+	client "github.com/digital-feather/cryptellation/clients/go"
+	"github.com/digital-feather/cryptellation/pkg/backtest"
+	"github.com/digital-feather/cryptellation/pkg/order"
+)
+
+func (b Backtests) CreateOrder(ctx context.Context, backtestId uint, order order.Order) error {
+	return b.db.LockedBacktest(ctx, backtestId, func(bt *backtest.Backtest) error {
+		list, err := b.candlesticks.Read(ctx, client.ReadCandlesticksPayload{
+			ExchangeName: order.ExchangeName,
+			PairSymbol:   order.PairSymbol,
+			Period:       bt.PeriodBetweenEvents,
+			Start:        &bt.CurrentCsTick.Time,
+			End:          &bt.CurrentCsTick.Time,
+			Limit:        0,
+		})
+		if err != nil {
+			return fmt.Errorf("could not get candlesticks from service: %w", err)
+		}
+
+		tcs, notEmpty := list.First()
+		if !notEmpty {
+			return backtest.ErrNoDataForOrderValidation
+		}
+
+		if err := bt.AddOrder(order, tcs.Candlestick); err != nil {
+			return err
+		}
+
+		return nil
+	})
+}

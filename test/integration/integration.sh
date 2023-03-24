@@ -10,7 +10,7 @@
 # TODO
 
 # Launch tests
-go test -p 1 $(go list ./internal/... | grep -e /infra/)  -coverprofile cover.out
+go test -p 1 $(go list ./services/... | grep -e /io/)  -coverprofile cover.out
 
 # Displaying result
 go tool cover -func cover.out

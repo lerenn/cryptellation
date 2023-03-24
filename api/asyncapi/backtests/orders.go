@@ -3,7 +3,7 @@ package backtests
 import (
 	"time"
 
-	"github.com/digital-feather/cryptellation/pkg/types/order"
+	"github.com/digital-feather/cryptellation/pkg/order"
 	"github.com/digital-feather/cryptellation/pkg/utils"
 )
 

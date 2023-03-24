@@ -1,6 +1,6 @@
 package backtests
 
-import "github.com/digital-feather/cryptellation/pkg/types/account"
+import "github.com/digital-feather/cryptellation/pkg/account"
 
 func (msg *BacktestsAccountsListResponseMessage) Set(accounts map[string]account.Account) {
 	// Format accounts

@@ -9,7 +9,7 @@ import (
 	reflect "reflect"
 
 	client "github.com/digital-feather/cryptellation/clients/go"
-	tick "github.com/digital-feather/cryptellation/pkg/types/tick"
+	tick "github.com/digital-feather/cryptellation/pkg/tick"
 	gomock "github.com/golang/mock/gomock"
 )
 

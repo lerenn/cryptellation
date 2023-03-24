@@ -7,7 +7,7 @@ import (
 	asyncapi "github.com/digital-feather/cryptellation/api/asyncapi/exchanges"
 	client "github.com/digital-feather/cryptellation/clients/go"
 	"github.com/digital-feather/cryptellation/pkg/config"
-	"github.com/digital-feather/cryptellation/pkg/types/exchange"
+	"github.com/digital-feather/cryptellation/pkg/exchange"
 	"github.com/nats-io/nats.go"
 )
 

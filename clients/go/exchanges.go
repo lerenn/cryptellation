@@ -6,7 +6,7 @@ package client
 import (
 	"context"
 
-	"github.com/digital-feather/cryptellation/pkg/types/exchange"
+	"github.com/digital-feather/cryptellation/pkg/exchange"
 )
 
 type Exchanges interface {

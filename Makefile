@@ -6,7 +6,7 @@ SHORT_COMMIT_SHA := $(shell git rev-parse --short HEAD)
 DOCKER_IMAGE_TAG=$(SHORT_COMMIT_SHA)
 DOCKER_COMPOSE := docker-compose -p cryptellation
 
-SERVICES := $(patsubst internal/%, %, $(wildcard internal/*))
+SERVICES := $(patsubst services/%, %, $(wildcard services/*))
 
 .PHONY: docker/build
 docker/build: $(addprefix docker/build/,$(SERVICES)) ## Build docker image
@@ -62,7 +62,7 @@ test/integration: ## Perform integration tests
 
 .PHONY: test/unit
 test/unit: ## Perform unit tests
-	@go test $(shell go list ./cmd/... ./pkg/... ./internal/... | grep -v -e /infra/) -coverprofile cover.out -v
+	@go test $(shell go list ./cmd/... ./pkg/... ./services/... | grep -v -e /io/) -coverprofile cover.out -v
 	@go tool cover -func cover.out
 	@rm cover.out
 

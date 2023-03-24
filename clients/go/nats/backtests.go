@@ -8,8 +8,8 @@ import (
 	asyncapi "github.com/digital-feather/cryptellation/api/asyncapi/backtests"
 	client "github.com/digital-feather/cryptellation/clients/go"
 	"github.com/digital-feather/cryptellation/pkg/config"
-	"github.com/digital-feather/cryptellation/pkg/types/event"
-	"github.com/digital-feather/cryptellation/pkg/types/tick"
+	"github.com/digital-feather/cryptellation/pkg/event"
+	"github.com/digital-feather/cryptellation/pkg/tick"
 	"github.com/nats-io/nats.go"
 )
 

@@ -11,7 +11,7 @@ import (
 	"time"
 
 	client "github.com/digital-feather/cryptellation/clients/go"
-	"github.com/digital-feather/cryptellation/pkg/types/tick"
+	"github.com/digital-feather/cryptellation/pkg/tick"
 )
 
 func (msg *RegisteringRequestMessage) Set(payload client.TicksFilterPayload) {

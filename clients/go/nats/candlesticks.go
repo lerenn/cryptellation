@@ -6,8 +6,8 @@ import (
 
 	asyncapi "github.com/digital-feather/cryptellation/api/asyncapi/candlesticks"
 	client "github.com/digital-feather/cryptellation/clients/go"
+	"github.com/digital-feather/cryptellation/pkg/candlestick"
 	"github.com/digital-feather/cryptellation/pkg/config"
-	"github.com/digital-feather/cryptellation/pkg/types/candlestick"
 	"github.com/nats-io/nats.go"
 )
 

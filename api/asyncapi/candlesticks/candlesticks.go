@@ -11,10 +11,10 @@ import (
 	"time"
 
 	client "github.com/digital-feather/cryptellation/clients/go"
-	"github.com/digital-feather/cryptellation/internal/candlesticks/app"
-	"github.com/digital-feather/cryptellation/pkg/types/candlestick"
-	"github.com/digital-feather/cryptellation/pkg/types/period"
+	"github.com/digital-feather/cryptellation/pkg/candlestick"
+	"github.com/digital-feather/cryptellation/pkg/period"
 	"github.com/digital-feather/cryptellation/pkg/utils"
+	"github.com/digital-feather/cryptellation/services/candlesticks"
 )
 
 func (msg *CandlesticksListRequestMessage) Set(payload client.ReadCandlesticksPayload) {
@@ -30,15 +30,15 @@ func (msg *CandlesticksListRequestMessage) Set(payload client.ReadCandlesticksPa
 	msg.Payload.Limit = LimitSchema(payload.Limit)
 }
 
-func (msg *CandlesticksListRequestMessage) ToModel() (app.GetCachedPayload, error) {
+func (msg *CandlesticksListRequestMessage) ToModel() (candlesticks.GetCachedPayload, error) {
 	// Process specific types
 	per, err := period.FromString(string(msg.Payload.PeriodSymbol))
 	if err != nil {
-		return app.GetCachedPayload{}, err
+		return candlesticks.GetCachedPayload{}, err
 	}
 
 	// Request list
-	return app.GetCachedPayload{
+	return candlesticks.GetCachedPayload{
 		ExchangeName: string(msg.Payload.ExchangeName),
 		PairSymbol:   string(msg.Payload.PairSymbol),
 		Period:       per,

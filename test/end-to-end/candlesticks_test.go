@@ -7,9 +7,9 @@ import (
 
 	client "github.com/digital-feather/cryptellation/clients/go"
 	"github.com/digital-feather/cryptellation/clients/go/nats"
+	"github.com/digital-feather/cryptellation/pkg/candlestick"
 	"github.com/digital-feather/cryptellation/pkg/config"
-	"github.com/digital-feather/cryptellation/pkg/types/candlestick"
-	"github.com/digital-feather/cryptellation/pkg/types/period"
+	"github.com/digital-feather/cryptellation/pkg/period"
 	"github.com/digital-feather/cryptellation/pkg/utils"
 	"github.com/stretchr/testify/suite"
 )

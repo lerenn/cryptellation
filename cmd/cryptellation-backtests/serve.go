@@ -8,13 +8,13 @@ import (
 	"strconv"
 	"syscall"
 
+	asyncapi "github.com/digital-feather/cryptellation/api/asyncapi/backtests"
 	natsClient "github.com/digital-feather/cryptellation/clients/go/nats"
-	"github.com/digital-feather/cryptellation/internal/backtests/app"
-	natsCtrl "github.com/digital-feather/cryptellation/internal/backtests/ctrl/events/nats"
-	"github.com/digital-feather/cryptellation/internal/backtests/infra/db/sql"
-	natsAdapter "github.com/digital-feather/cryptellation/internal/backtests/infra/events/nats"
 	"github.com/digital-feather/cryptellation/pkg/config"
-	"github.com/digital-feather/cryptellation/pkg/health"
+	"github.com/digital-feather/cryptellation/pkg/http/health"
+	"github.com/digital-feather/cryptellation/services/backtests"
+	"github.com/digital-feather/cryptellation/services/backtests/io/db/adapters/sql"
+	natsAdapter "github.com/digital-feather/cryptellation/services/backtests/io/events/adapters/nats"
 	"github.com/spf13/cobra"
 )
 
@@ -27,7 +27,7 @@ var serveCmd = &cobra.Command{
 	},
 }
 
-func initApp() (app.Controller, error) {
+func initApp() (backtests.Interface, error) {
 	// Init database client
 	db, err := sql.New(config.LoadSQLConfigFromEnv())
 	if err != nil {
@@ -47,12 +47,12 @@ func initApp() (app.Controller, error) {
 	}
 
 	// Init component
-	return app.New(db, ps, csClient), nil
+	return backtests.New(db, ps, csClient), nil
 }
 
-func initController(component app.Controller) (func(), error) {
+func initController(component backtests.Interface) (func(), error) {
 	// Init NATS controller
-	natsController, err := natsCtrl.NewServer(config.LoadNATSConfigFromEnv(), component)
+	natsController, err := asyncapi.NewNATS(config.LoadNATSConfigFromEnv(), component)
 	if err != nil {
 		return func() {}, err
 	}
