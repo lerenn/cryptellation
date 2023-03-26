@@ -2,6 +2,10 @@ package backtests
 
 import "github.com/digital-feather/cryptellation/pkg/account"
 
+func (msg *BacktestsAccountsListRequestMessage) Set(backtestID uint) {
+	msg.Payload.ID = BacktestIDSchema(backtestID)
+}
+
 func (msg *BacktestsAccountsListResponseMessage) Set(accounts map[string]account.Account) {
 	// Format accounts
 	respAccounts := make([]AccountSchema, 0, len(accounts))
@@ -11,6 +15,15 @@ func (msg *BacktestsAccountsListResponseMessage) Set(accounts map[string]account
 
 	// Set response
 	msg.Payload.Accounts = respAccounts
+}
+
+func (msg *BacktestsAccountsListResponseMessage) ToModel() map[string]account.Account {
+	accounts := make(map[string]account.Account)
+	for _, accAPI := range msg.Payload.Accounts {
+		name, accModel := accountModelFromAPI(accAPI)
+		accounts[name] = accModel
+	}
+	return accounts
 }
 
 func accountModelToAPI(name string, account account.Account) AccountSchema {

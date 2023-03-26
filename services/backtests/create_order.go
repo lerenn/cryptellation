@@ -3,6 +3,7 @@ package backtests
 import (
 	"context"
 	"fmt"
+	"log"
 
 	client "github.com/digital-feather/cryptellation/clients/go"
 	"github.com/digital-feather/cryptellation/pkg/backtest"
@@ -28,6 +29,7 @@ func (b Backtests) CreateOrder(ctx context.Context, backtestId uint, order order
 			return backtest.ErrNoDataForOrderValidation
 		}
 
+		log.Printf("Adding %+v order to %d backtest", order, backtestId)
 		if err := bt.AddOrder(order, tcs.Candlestick); err != nil {
 			return err
 		}

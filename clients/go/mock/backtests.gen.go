@@ -49,10 +49,10 @@ func (mr *MockBacktestsMockRecorder) Close() *gomock.Call {
 }
 
 // Create mocks base method.
-func (m *MockBacktests) Create(ctx context.Context, payload client.BacktestCreationPayload) (int, error) {
+func (m *MockBacktests) Create(ctx context.Context, payload client.BacktestCreationPayload) (uint, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Create", ctx, payload)
-	ret0, _ := ret[0].(int)
+	ret0, _ := ret[0].(uint)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -76,4 +76,18 @@ func (m *MockBacktests) ListenEvents(ctx context.Context, backtestID uint) (<-ch
 func (mr *MockBacktestsMockRecorder) ListenEvents(ctx, backtestID interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListenEvents", reflect.TypeOf((*MockBacktests)(nil).ListenEvents), ctx, backtestID)
+}
+
+// Subscribe mocks base method.
+func (m *MockBacktests) Subscribe(ctx context.Context, backtestID uint, exchange, pair string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Subscribe", ctx, backtestID, exchange, pair)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Subscribe indicates an expected call of Subscribe.
+func (mr *MockBacktestsMockRecorder) Subscribe(ctx, backtestID, exchange, pair interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Subscribe", reflect.TypeOf((*MockBacktests)(nil).Subscribe), ctx, backtestID, exchange, pair)
 }

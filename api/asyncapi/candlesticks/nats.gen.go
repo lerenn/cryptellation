@@ -4,6 +4,7 @@
 package candlesticks
 
 import (
+	"errors"
 	"log"
 
 	"github.com/nats-io/nats.go"
@@ -72,12 +73,12 @@ func (c *NATSController) Subscribe(channel string) (msgs chan UniversalMessage, 
 				}
 			// Handle closure request from function caller
 			case _ = <-stop:
-				if err := sub.Unsubscribe(); err != nil {
-					log.Println("error when unsubscribing") // TODO: Add proper error handling
+				if err := sub.Unsubscribe(); err != nil && !errors.Is(err, nats.ErrConnectionClosed) {
+					log.Println("error when unsubscribing:", err) // TODO: Add proper error handling
 				}
 
-				if err := sub.Drain(); err != nil {
-					log.Println("error when draining") // TODO: Add proper error handling
+				if err := sub.Drain(); err != nil && !errors.Is(err, nats.ErrConnectionClosed) {
+					log.Println("error when draining:", err) // TODO: Add proper error handling
 				}
 
 				close(msgs)

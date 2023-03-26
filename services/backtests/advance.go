@@ -11,14 +11,15 @@ import (
 )
 
 func (b Backtests) Advance(ctx context.Context, backtestId uint) error {
-	return b.db.LockedBacktest(ctx, backtestId, func(bt *backtest.Backtest) error {
+	return b.db.LockedBacktest(ctx, backtestId, func(bt *backtest.Backtest) (err error) {
 		// Advance backtest
 		finished := bt.Advance()
+		log.Printf("Advancing backtest %d: %s", backtestId, bt.CurrentTime())
 
 		// Get actual events
 		evts := make([]event.Event, 0, 1)
 		if !finished {
-			evts, err := b.readActualEvents(ctx, *bt)
+			evts, err = b.readActualEvents(ctx, *bt)
 			if err != nil {
 				return fmt.Errorf("cannot read actual events: %w", err)
 			}
@@ -70,12 +71,16 @@ func (b Backtests) readActualEvents(ctx context.Context, bt backtest.Backtest) (
 	}
 
 	_, evts = event.OnlyKeepEarliestSameTimeEvents(evts, bt.EndTime)
+	log.Printf("%d events for ticks on backtest %d", len(evts), bt.ID)
 	return evts, nil
 }
 
 func (b Backtests) broadcastEvents(backtestId uint, evts []event.Event) {
+	log.Printf("Broadcasting %d events on backtest %d", len(evts), backtestId)
+
 	var count uint
 	for _, evt := range evts {
+		log.Printf("Broadcasting event %+v for backtest %d", evt, backtestId)
 		if err := b.events.Publish(backtestId, evt); err != nil {
 			log.Println("WARNING: error when publishing event", evt)
 			continue

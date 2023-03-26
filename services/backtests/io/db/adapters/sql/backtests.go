@@ -79,7 +79,7 @@ func (sqldb *DB) DeleteBacktest(ctx context.Context, bt backtest.Backtest) error
 }
 
 func (sqldb *DB) newTransaction(fn func() error) error {
-	return sqldb.client.Debug().Transaction(func(tx *gorm.DB) error {
+	return sqldb.client.Transaction(func(tx *gorm.DB) error {
 		// Set client as transaction and defer removal
 		originalClient := sqldb.client
 		sqldb.client = tx

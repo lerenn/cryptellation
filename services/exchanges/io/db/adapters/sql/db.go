@@ -41,7 +41,7 @@ func (sqldb *DB) Reset() error {
 	sessionOpt := &gorm.Session{AllowGlobalUpdate: true}
 	for i, entity := range entities {
 		log.Println(i)
-		if err := sqldb.client.Debug().Session(sessionOpt).Delete(entity).Error; err != nil {
+		if err := sqldb.client.Session(sessionOpt).Delete(entity).Error; err != nil {
 			return fmt.Errorf("emptying %T table: %w", entity, err)
 		}
 	}

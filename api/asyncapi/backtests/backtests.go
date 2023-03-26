@@ -22,17 +22,40 @@ import (
 func (msg *BacktestsCreateRequestMessage) Set(payload client.BacktestCreationPayload) {
 	msg.Payload.StartTime = DateSchema(payload.StartTime)
 	msg.Payload.EndTime = (*DateSchema)(payload.EndTime)
-	// TODO
+	msg.Payload.Accounts = accountModelsToAPI(payload.Accounts)
 }
 
-// func accountModelsToAPI(accounts map[string]account.Account) []generated.AccountSchema {
-// 	apiAccounts := make([]generated.AccountSchema, 0, len(accounts))
-// 	for name, acc := range accounts {
-// 		apiAccounts = append(apiAccounts, generated.AccountSchema{
-// 			Name: name,
-// 		})
-// 	}
-// }
+func accountModelsToAPI(accounts map[string]account.Account) []AccountSchema {
+	apiAccounts := make([]AccountSchema, 0, len(accounts))
+	for accName, acc := range accounts {
+		// Set assets
+		assets := make([]AssetSchema, 0, len(acc.Balances))
+		for assetName, amount := range acc.Balances {
+			assets = append(assets, AssetSchema{
+				Name:   assetName,
+				Amount: amount,
+			})
+		}
+
+		// Set account
+		apiAccounts = append(apiAccounts, AccountSchema{
+			Name:   accName,
+			Assets: assets,
+		})
+	}
+
+	return apiAccounts
+}
+
+func (msg *BacktestsSubscribeRequestMessage) Set(backtestID uint, exchange, pair string) {
+	msg.Payload.ID = BacktestIDSchema(backtestID)
+	msg.Payload.ExchangeName = ExchangeNameSchema(exchange)
+	msg.Payload.PairSymbol = PairSymbolSchema(pair)
+}
+
+func (msg *BacktestsAdvanceRequestMessage) Set(backtestID uint) {
+	msg.Payload.ID = BacktestIDSchema(backtestID)
+}
 
 func (msg *BacktestsCreateRequestMessage) ToModel() (backtest.NewPayload, error) {
 	// Format accounts

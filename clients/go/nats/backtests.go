@@ -2,11 +2,13 @@ package nats
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"time"
 
 	asyncapi "github.com/digital-feather/cryptellation/api/asyncapi/backtests"
 	client "github.com/digital-feather/cryptellation/clients/go"
+	"github.com/digital-feather/cryptellation/pkg/account"
 	"github.com/digital-feather/cryptellation/pkg/config"
 	"github.com/digital-feather/cryptellation/pkg/event"
 	"github.com/digital-feather/cryptellation/pkg/tick"
@@ -84,12 +86,109 @@ func (b Backtests) ListenEvents(ctx context.Context, backtestID uint) (<-chan ev
 	}, callback)
 }
 
-func (b Backtests) Create(ctx context.Context, payload client.BacktestCreationPayload) (int, error) {
+func (b Backtests) Create(ctx context.Context, payload client.BacktestCreationPayload) (uint, error) {
 	// Set message
-	msg := asyncapi.NewBacktestsCreateRequestMessage()
-	msg.Set(payload)
+	reqMsg := asyncapi.NewBacktestsCreateRequestMessage()
+	reqMsg.Set(payload)
 
-	return 0, nil
+	// Send request
+	respMsg, err := b.ctrl.WaitForBacktestsCreateResponse(ctx, reqMsg, func() error {
+		return b.ctrl.PublishBacktestsCreateRequest(reqMsg)
+	})
+	if err != nil {
+		return 0, err
+	}
+
+	// Check error
+	if respMsg.Payload.Error != nil {
+		return 0, fmt.Errorf("%d Error: %s", respMsg.Payload.Error.Code, respMsg.Payload.Error.Message)
+	}
+
+	return uint(respMsg.Payload.ID), nil
+}
+
+func (b Backtests) Subscribe(ctx context.Context, backtestID uint, exchange, pair string) error {
+	// Set message
+	reqMsg := asyncapi.NewBacktestsSubscribeRequestMessage()
+	reqMsg.Set(backtestID, exchange, pair)
+
+	// Send request
+	respMsg, err := b.ctrl.WaitForBacktestsSubscribeResponse(ctx, reqMsg, func() error {
+		return b.ctrl.PublishBacktestsSubscribeRequest(reqMsg)
+	})
+	if err != nil {
+		return err
+	}
+
+	// Check error
+	if respMsg.Payload.Error != nil {
+		return fmt.Errorf("%d Error: %s", respMsg.Payload.Error.Code, respMsg.Payload.Error.Message)
+	}
+
+	return nil
+}
+
+func (b Backtests) Advance(ctx context.Context, backtestID uint) error {
+	// Set message
+	reqMsg := asyncapi.NewBacktestsAdvanceRequestMessage()
+	reqMsg.Set(backtestID)
+
+	// Send request
+	respMsg, err := b.ctrl.WaitForBacktestsAdvanceResponse(ctx, reqMsg, func() error {
+		return b.ctrl.PublishBacktestsAdvanceRequest(reqMsg)
+	})
+	if err != nil {
+		return err
+	}
+
+	// Check error
+	if respMsg.Payload.Error != nil {
+		return fmt.Errorf("%d Error: %s", respMsg.Payload.Error.Code, respMsg.Payload.Error.Message)
+	}
+
+	return nil
+}
+
+func (b Backtests) CreateOrder(ctx context.Context, payload client.OrderCreationPayload) error {
+	// Set message
+	reqMsg := asyncapi.NewBacktestsOrdersCreateRequestMessage()
+	reqMsg.Set(payload)
+
+	// Send request
+	respMsg, err := b.ctrl.WaitForBacktestsOrdersCreateResponse(ctx, reqMsg, func() error {
+		return b.ctrl.PublishBacktestsOrdersCreateRequest(reqMsg)
+	})
+	if err != nil {
+		return err
+	}
+
+	// Check error
+	if respMsg.Payload.Error != nil {
+		return fmt.Errorf("%d Error: %s", respMsg.Payload.Error.Code, respMsg.Payload.Error.Message)
+	}
+
+	return nil
+}
+
+func (b Backtests) GetAccounts(ctx context.Context, backtestID uint) (map[string]account.Account, error) {
+	// Set message
+	reqMsg := asyncapi.NewBacktestsAccountsListRequestMessage()
+	reqMsg.Set(backtestID)
+
+	// Send request
+	respMsg, err := b.ctrl.WaitForBacktestsAccountsListResponse(ctx, reqMsg, func() error {
+		return b.ctrl.PublishBacktestsAccountsListRequest(reqMsg)
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	// Check error
+	if respMsg.Payload.Error != nil {
+		return nil, fmt.Errorf("%d Error: %s", respMsg.Payload.Error.Code, respMsg.Payload.Error.Message)
+	}
+
+	return respMsg.ToModel(), nil
 }
 
 func (b Backtests) Close() {

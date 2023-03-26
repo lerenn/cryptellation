@@ -22,6 +22,7 @@ func TickEventFromCandlestick(
 	cs candlestick.Candlestick,
 ) (Event, error) {
 	return NewTickEvent(t, tick.Tick{
+		Time:       t,
 		PairSymbol: pairSymbol,
 		Price:      cs.PriceByType(currentPriceType),
 		Exchange:   exchange,

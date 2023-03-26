@@ -36,7 +36,7 @@ func (d *DB) Reset() error {
 	}
 
 	for _, entity := range entities {
-		if err := d.client.Debug().Session(&gorm.Session{AllowGlobalUpdate: true}).Delete(entity).Error; err != nil {
+		if err := d.client.Session(&gorm.Session{AllowGlobalUpdate: true}).Delete(entity).Error; err != nil {
 			return fmt.Errorf("emptying %T table: %w", entity, err)
 		}
 	}

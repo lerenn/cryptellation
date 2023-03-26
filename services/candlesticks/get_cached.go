@@ -2,6 +2,7 @@ package candlesticks
 
 import (
 	"context"
+	"log"
 	"time"
 
 	"github.com/digital-feather/cryptellation/pkg/candlestick"
@@ -15,6 +16,8 @@ const (
 )
 
 func (app candlesticks) GetCached(ctx context.Context, payload GetCachedPayload) (*candlestick.List, error) {
+	log.Printf("Get candlesticks for %+v", payload)
+
 	start, end := payload.Period.RoundInterval(payload.Start, payload.End)
 
 	id := candlestick.ListID{
@@ -24,11 +27,14 @@ func (app candlesticks) GetCached(ctx context.Context, payload GetCachedPayload)
 	}
 	cl := candlestick.NewEmptyList(id)
 
+	// Read candlesticks from database
 	if err := app.db.ReadCandlesticks(ctx, cl, start, end, payload.Limit); err != nil {
 		return nil, err
 	}
+	log.Printf("Read %d candlesticks from %s to %s (limit: %d)", cl.Len(), start, end, payload.Limit)
 
 	if !cl.AreMissing(start, end, payload.Limit) {
+		log.Printf("No candlestick missing, returning the list with %d candlesticks.", cl.Len())
 		return cl, nil
 	}
 

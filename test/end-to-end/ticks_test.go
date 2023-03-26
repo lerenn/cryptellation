@@ -36,6 +36,14 @@ func (suite *TicksSuite) TearDownSuite() {
 	suite.client.Close()
 }
 
+// func (suite *TicksSuite) TestManualCleanUp() {
+// 	err := suite.client.Unregister(context.Background(), client.TicksFilterPayload{
+// 		ExchangeName: "binance",
+// 		PairSymbol:   "BTC-USDT",
+// 	})
+// 	suite.Require().NoError(err)
+// }
+
 func (suite *TicksSuite) TestListen() {
 	// Register listener
 	err := suite.client.Register(context.Background(), client.TicksFilterPayload{

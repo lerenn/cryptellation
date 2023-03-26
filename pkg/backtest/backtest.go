@@ -107,6 +107,10 @@ func New(ctx context.Context, payload NewPayload) (Backtest, error) {
 	}, nil
 }
 
+func (bt Backtest) CurrentTime() string {
+	return fmt.Sprintf("%s [%s]", bt.CurrentCsTick.Time, bt.CurrentCsTick.PriceType)
+}
+
 func (bt Backtest) MarshalBinary() ([]byte, error) {
 	return json.Marshal(bt)
 }
@@ -163,11 +167,13 @@ func (bt *Backtest) CreateTickSubscription(exchangeName string, pairSymbol strin
 }
 
 func (bt *Backtest) AddOrder(ord order.Order, cs candlestick.Candlestick) error {
+	// Get exchange account
 	exchangeAccount, ok := bt.Accounts[ord.ExchangeName]
 	if !ok {
 		return fmt.Errorf("error with orders exchange %q: %w", ord.ExchangeName, ErrInvalidExchange)
 	}
 
+	// Get base and quote based on symbol
 	baseSymbol, quoteSymbol, err := pair.ParsePairSymbol(ord.PairSymbol)
 	if err != nil {
 		return fmt.Errorf("error when parsing order pair symbol: %w", err)
@@ -178,9 +184,12 @@ func (bt *Backtest) AddOrder(ord order.Order, cs candlestick.Candlestick) error 
 	if ord.Side == order.SideIsBuy {
 		available, ok := exchangeAccount.Balances[quoteSymbol]
 		if !ok {
-			return ErrNotEnoughAsset
+			return fmt.Errorf("%w: no %s on %s", ErrNotEnoughAsset, quoteSymbol, ord.PairSymbol)
 		} else if quoteEquivalentQty > available {
-			return ErrNotEnoughAsset
+			return fmt.Errorf(
+				"%w: not enough %s on %s (min=%f, got=%f)",
+				ErrNotEnoughAsset, quoteSymbol, ord.PairSymbol,
+				quoteEquivalentQty, available)
 		}
 
 		bt.Accounts[ord.ExchangeName].Balances[quoteSymbol] -= quoteEquivalentQty
@@ -188,9 +197,12 @@ func (bt *Backtest) AddOrder(ord order.Order, cs candlestick.Candlestick) error 
 	} else {
 		available, ok := exchangeAccount.Balances[baseSymbol]
 		if !ok {
-			return ErrNotEnoughAsset
+			return fmt.Errorf("%w: no %s on %s", ErrNotEnoughAsset, baseSymbol, ord.PairSymbol)
 		} else if ord.Quantity > available {
-			return ErrNotEnoughAsset
+			return fmt.Errorf(
+				"%w: not enough %s on %s (min=%f, got=%f)",
+				ErrNotEnoughAsset, baseSymbol, ord.PairSymbol,
+				ord.Quantity, available)
 		}
 
 		bt.Accounts[ord.ExchangeName].Balances[quoteSymbol] += quoteEquivalentQty

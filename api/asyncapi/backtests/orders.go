@@ -3,6 +3,7 @@ package backtests
 import (
 	"time"
 
+	client "github.com/digital-feather/cryptellation/clients/go"
 	"github.com/digital-feather/cryptellation/pkg/order"
 	"github.com/digital-feather/cryptellation/pkg/utils"
 )
@@ -14,7 +15,19 @@ func (msg *BacktestsOrdersListResponseMessage) Set(orders []order.Order) {
 	}
 }
 
-func (msg *BacktestsOrdersCreateRequestMessage) ToModel() (order.Order, error) {
+func (msg *BacktestsOrdersCreateRequestMessage) Set(payload client.OrderCreationPayload) {
+	// Backtest
+	msg.Payload.ID = BacktestIDSchema(payload.BacktestID)
+
+	// Order
+	msg.Payload.Order.ExchangeName = ExchangeNameSchema(payload.ExchangeName)
+	msg.Payload.Order.PairSymbol = PairSymbolSchema(payload.PairSymbol)
+	msg.Payload.Order.Type = OrderTypeSchema(payload.Type)
+	msg.Payload.Order.Side = OrderSideSchema(payload.Side)
+	msg.Payload.Order.Quantity = payload.Quantity
+}
+
+func (msg BacktestsOrdersCreateRequestMessage) ToModel() (order.Order, error) {
 	return orderModelFromAPI(msg.Payload.Order)
 }
 
