@@ -3,7 +3,7 @@ info:
   title: Backtests Service
   version: 1.0.0
   description: >
-    This service is providing a simulation on historic data.
+    This service is providing simulations on historical data.
 channels:
   backtests.create.request:
     publish:
