@@ -57,7 +57,7 @@ func (a *Adapter) Publish(tick tick.Tick) error {
 	msg.Payload.Time = asyncapi.DateSchema(tick.Time)
 
 	// Send message
-	return a.app.PublishTicksListenExchangePair(asyncapi.TicksListenExchangePairParameters{
+	return a.app.PublishCryptellationTicksListenExchangePair(asyncapi.CryptellationTicksListenExchangePairParameters{
 		Exchange: asyncapi.ExchangeNameSchema(tick.Exchange),
 		Pair:     asyncapi.PairSymbolSchema(tick.PairSymbol),
 	}, msg)

@@ -19,11 +19,11 @@ func newSubscriber(controller *AppController, app backtests.Interface) subscribe
 	}
 }
 
-func (s subscriber) BacktestsAccountsListRequest(msg BacktestsAccountsListRequestMessage, _ bool) {
+func (s subscriber) CryptellationBacktestsAccountsListRequest(msg BacktestsAccountsListRequestMessage, _ bool) {
 	// Prepare response and set send at the end
 	resp := NewBacktestsAccountsListResponseMessage()
 	resp.SetAsResponseFrom(msg)
-	defer func() { _ = s.controller.PublishBacktestsAccountsListResponse(resp) }()
+	defer func() { _ = s.controller.PublishCryptellationBacktestsAccountsListResponse(resp) }()
 
 	// Get accounts
 	accounts, err := s.backtests.GetAccounts(context.Background(), uint(msg.Payload.ID))
@@ -39,11 +39,11 @@ func (s subscriber) BacktestsAccountsListRequest(msg BacktestsAccountsListReques
 	resp.Set(accounts)
 }
 
-func (s subscriber) BacktestsAdvanceRequest(msg BacktestsAdvanceRequestMessage, _ bool) {
+func (s subscriber) CryptellationBacktestsAdvanceRequest(msg BacktestsAdvanceRequestMessage, _ bool) {
 	// Prepare response and set send at the end
 	resp := NewBacktestsAdvanceResponseMessage()
 	resp.SetAsResponseFrom(msg)
-	defer func() { _ = s.controller.PublishBacktestsAdvanceResponse(resp) }()
+	defer func() { _ = s.controller.PublishCryptellationBacktestsAdvanceResponse(resp) }()
 
 	// Advance application
 	err := s.backtests.Advance(context.Background(), uint(msg.Payload.ID))
@@ -56,11 +56,11 @@ func (s subscriber) BacktestsAdvanceRequest(msg BacktestsAdvanceRequestMessage, 
 	}
 }
 
-func (s subscriber) BacktestsCreateRequest(msg BacktestsCreateRequestMessage, _ bool) {
+func (s subscriber) CryptellationBacktestsCreateRequest(msg BacktestsCreateRequestMessage, _ bool) {
 	// Prepare response and set send at the end
 	resp := NewBacktestsCreateResponseMessage()
 	resp.SetAsResponseFrom(msg)
-	defer func() { _ = s.controller.PublishBacktestsCreateResponse(resp) }()
+	defer func() { _ = s.controller.PublishCryptellationBacktestsCreateResponse(resp) }()
 
 	// Get model request from message payload
 	req, err := msg.ToModel()
@@ -86,11 +86,11 @@ func (s subscriber) BacktestsCreateRequest(msg BacktestsCreateRequestMessage, _ 
 	resp.Payload.ID = int64(id)
 }
 
-func (s subscriber) BacktestsOrdersCreateRequest(msg BacktestsOrdersCreateRequestMessage, _ bool) {
+func (s subscriber) CryptellationBacktestsOrdersCreateRequest(msg BacktestsOrdersCreateRequestMessage, _ bool) {
 	// Prepare response and set send at the end
 	resp := NewBacktestsOrdersCreateResponseMessage()
 	resp.SetAsResponseFrom(msg)
-	defer func() { _ = s.controller.PublishBacktestsOrdersCreateResponse(resp) }()
+	defer func() { _ = s.controller.PublishCryptellationBacktestsOrdersCreateResponse(resp) }()
 
 	// Set order model from API
 	order, err := msg.ToModel()
@@ -113,11 +113,11 @@ func (s subscriber) BacktestsOrdersCreateRequest(msg BacktestsOrdersCreateReques
 	}
 }
 
-func (s subscriber) BacktestsOrdersListRequest(msg BacktestsOrdersListRequestMessage, _ bool) {
+func (s subscriber) CryptellationBacktestsOrdersListRequest(msg BacktestsOrdersListRequestMessage, _ bool) {
 	// Prepare response and set send at the end
 	resp := NewBacktestsOrdersListResponseMessage()
 	resp.SetAsResponseFrom(msg)
-	defer func() { _ = s.controller.PublishBacktestsOrdersListResponse(resp) }()
+	defer func() { _ = s.controller.PublishCryptellationBacktestsOrdersListResponse(resp) }()
 
 	// Get list of orders
 	list, err := s.backtests.GetOrders(context.Background(), uint(msg.Payload.ID))
@@ -133,11 +133,11 @@ func (s subscriber) BacktestsOrdersListRequest(msg BacktestsOrdersListRequestMes
 	resp.Set(list)
 }
 
-func (s subscriber) BacktestsSubscribeRequest(msg BacktestsSubscribeRequestMessage, _ bool) {
+func (s subscriber) CryptellationBacktestsSubscribeRequest(msg BacktestsSubscribeRequestMessage, _ bool) {
 	// Prepare response and set send at the end
 	resp := NewBacktestsSubscribeResponseMessage()
 	resp.SetAsResponseFrom(msg)
-	defer func() { _ = s.controller.PublishBacktestsSubscribeResponse(resp) }()
+	defer func() { _ = s.controller.PublishCryptellationBacktestsSubscribeResponse(resp) }()
 
 	// Set subscription
 	err := s.backtests.SubscribeToEvents(

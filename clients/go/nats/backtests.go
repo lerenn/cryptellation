@@ -81,7 +81,7 @@ func (b Backtests) ListenEvents(ctx context.Context, backtestID uint) (<-chan ev
 	}
 
 	// Listen to channel
-	return ch, b.ctrl.SubscribeBacktestsEventsID(asyncapi.BacktestsEventsIDParameters{
+	return ch, b.ctrl.SubscribeCryptellationBacktestsEventsID(asyncapi.CryptellationBacktestsEventsIDParameters{
 		ID: int64(backtestID),
 	}, callback)
 }
@@ -92,8 +92,8 @@ func (b Backtests) Create(ctx context.Context, payload client.BacktestCreationPa
 	reqMsg.Set(payload)
 
 	// Send request
-	respMsg, err := b.ctrl.WaitForBacktestsCreateResponse(ctx, reqMsg, func() error {
-		return b.ctrl.PublishBacktestsCreateRequest(reqMsg)
+	respMsg, err := b.ctrl.WaitForCryptellationBacktestsCreateResponse(ctx, reqMsg, func() error {
+		return b.ctrl.PublishCryptellationBacktestsCreateRequest(reqMsg)
 	})
 	if err != nil {
 		return 0, err
@@ -113,8 +113,8 @@ func (b Backtests) Subscribe(ctx context.Context, backtestID uint, exchange, pai
 	reqMsg.Set(backtestID, exchange, pair)
 
 	// Send request
-	respMsg, err := b.ctrl.WaitForBacktestsSubscribeResponse(ctx, reqMsg, func() error {
-		return b.ctrl.PublishBacktestsSubscribeRequest(reqMsg)
+	respMsg, err := b.ctrl.WaitForCryptellationBacktestsSubscribeResponse(ctx, reqMsg, func() error {
+		return b.ctrl.PublishCryptellationBacktestsSubscribeRequest(reqMsg)
 	})
 	if err != nil {
 		return err
@@ -134,8 +134,8 @@ func (b Backtests) Advance(ctx context.Context, backtestID uint) error {
 	reqMsg.Set(backtestID)
 
 	// Send request
-	respMsg, err := b.ctrl.WaitForBacktestsAdvanceResponse(ctx, reqMsg, func() error {
-		return b.ctrl.PublishBacktestsAdvanceRequest(reqMsg)
+	respMsg, err := b.ctrl.WaitForCryptellationBacktestsAdvanceResponse(ctx, reqMsg, func() error {
+		return b.ctrl.PublishCryptellationBacktestsAdvanceRequest(reqMsg)
 	})
 	if err != nil {
 		return err
@@ -155,8 +155,8 @@ func (b Backtests) CreateOrder(ctx context.Context, payload client.OrderCreation
 	reqMsg.Set(payload)
 
 	// Send request
-	respMsg, err := b.ctrl.WaitForBacktestsOrdersCreateResponse(ctx, reqMsg, func() error {
-		return b.ctrl.PublishBacktestsOrdersCreateRequest(reqMsg)
+	respMsg, err := b.ctrl.WaitForCryptellationBacktestsOrdersCreateResponse(ctx, reqMsg, func() error {
+		return b.ctrl.PublishCryptellationBacktestsOrdersCreateRequest(reqMsg)
 	})
 	if err != nil {
 		return err
@@ -176,8 +176,8 @@ func (b Backtests) GetAccounts(ctx context.Context, backtestID uint) (map[string
 	reqMsg.Set(backtestID)
 
 	// Send request
-	respMsg, err := b.ctrl.WaitForBacktestsAccountsListResponse(ctx, reqMsg, func() error {
-		return b.ctrl.PublishBacktestsAccountsListRequest(reqMsg)
+	respMsg, err := b.ctrl.WaitForCryptellationBacktestsAccountsListResponse(ctx, reqMsg, func() error {
+		return b.ctrl.PublishCryptellationBacktestsAccountsListRequest(reqMsg)
 	})
 	if err != nil {
 		return nil, err

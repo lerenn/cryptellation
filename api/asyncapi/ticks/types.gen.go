@@ -36,6 +36,14 @@ var (
 	ErrSubscriptionCanceled = fmt.Errorf("%w: the subscription has been canceled", ErrAsyncAPI)
 )
 
+type Logger interface {
+	// Info logs information based on a message and key-value elements
+	Info(msg string, keyvals ...interface{})
+
+	// Error logs error based on a message and key-value elements
+	Error(msg string, keyvals ...interface{})
+}
+
 type MessageWithCorrelationID interface {
 	CorrelationID() string
 }
@@ -49,8 +57,8 @@ func (e *Error) Error() string {
 	return fmt.Sprintf("channel %q: err %v", e.Channel, e.Err)
 }
 
-// TicksListenExchangePairParameters represents TicksListenExchangePair channel parameters
-type TicksListenExchangePairParameters struct {
+// CryptellationTicksListenExchangePairParameters represents CryptellationTicksListenExchangePair channel parameters
+type CryptellationTicksListenExchangePairParameters struct {
 	// Description: Filter for ticks by exchange name
 	Exchange ExchangeNameSchema
 	// Description: Filter for ticks by pair symbol

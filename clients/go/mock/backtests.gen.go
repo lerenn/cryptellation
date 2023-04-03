@@ -9,6 +9,7 @@ import (
 	reflect "reflect"
 
 	client "github.com/digital-feather/cryptellation/clients/go"
+	account "github.com/digital-feather/cryptellation/pkg/account"
 	event "github.com/digital-feather/cryptellation/pkg/event"
 	gomock "github.com/golang/mock/gomock"
 )
@@ -36,6 +37,20 @@ func (m *MockBacktests) EXPECT() *MockBacktestsMockRecorder {
 	return m.recorder
 }
 
+// Advance mocks base method.
+func (m *MockBacktests) Advance(ctx context.Context, backtestID uint) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Advance", ctx, backtestID)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Advance indicates an expected call of Advance.
+func (mr *MockBacktestsMockRecorder) Advance(ctx, backtestID interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Advance", reflect.TypeOf((*MockBacktests)(nil).Advance), ctx, backtestID)
+}
+
 // Close mocks base method.
 func (m *MockBacktests) Close() {
 	m.ctrl.T.Helper()
@@ -61,6 +76,35 @@ func (m *MockBacktests) Create(ctx context.Context, payload client.BacktestCreat
 func (mr *MockBacktestsMockRecorder) Create(ctx, payload interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockBacktests)(nil).Create), ctx, payload)
+}
+
+// CreateOrder mocks base method.
+func (m *MockBacktests) CreateOrder(ctx context.Context, payload client.OrderCreationPayload) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateOrder", ctx, payload)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// CreateOrder indicates an expected call of CreateOrder.
+func (mr *MockBacktestsMockRecorder) CreateOrder(ctx, payload interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateOrder", reflect.TypeOf((*MockBacktests)(nil).CreateOrder), ctx, payload)
+}
+
+// GetAccounts mocks base method.
+func (m *MockBacktests) GetAccounts(ctx context.Context, backtestID uint) (map[string]account.Account, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetAccounts", ctx, backtestID)
+	ret0, _ := ret[0].(map[string]account.Account)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetAccounts indicates an expected call of GetAccounts.
+func (mr *MockBacktestsMockRecorder) GetAccounts(ctx, backtestID interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAccounts", reflect.TypeOf((*MockBacktests)(nil).GetAccounts), ctx, backtestID)
 }
 
 // ListenEvents mocks base method.

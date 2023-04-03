@@ -39,8 +39,8 @@ func (t Ticks) Register(ctx context.Context, payload client.TicksFilterPayload) 
 	msg.Set(payload)
 
 	// Send message
-	resp, err := t.ctrl.WaitForTicksRegisterResponse(ctx, msg, func() error {
-		return t.ctrl.PublishTicksRegisterRequest(msg)
+	resp, err := t.ctrl.WaitForCryptellationTicksRegisterResponse(ctx, msg, func() error {
+		return t.ctrl.PublishCryptellationTicksRegisterRequest(msg)
 	})
 	if err != nil {
 		return err
@@ -58,7 +58,7 @@ func (t Ticks) Listen(ctx context.Context, payload client.TicksFilterPayload) (<
 	ch := make(chan tick.Tick, 256)
 
 	// Create params for channel path
-	params := asyncapi.TicksListenExchangePairParameters{
+	params := asyncapi.CryptellationTicksListenExchangePairParameters{
 		Exchange: asyncapi.ExchangeNameSchema(payload.ExchangeName),
 		Pair:     asyncapi.PairSymbolSchema(payload.PairSymbol),
 	}
@@ -80,7 +80,7 @@ func (t Ticks) Listen(ctx context.Context, payload client.TicksFilterPayload) (<
 	}
 
 	// Listen to channel
-	return ch, t.ctrl.SubscribeTicksListenExchangePair(params, callback)
+	return ch, t.ctrl.SubscribeCryptellationTicksListenExchangePair(params, callback)
 }
 
 func (t Ticks) Unregister(ctx context.Context, payload client.TicksFilterPayload) error {
@@ -89,8 +89,8 @@ func (t Ticks) Unregister(ctx context.Context, payload client.TicksFilterPayload
 	msg.Set(payload)
 
 	// Send message
-	resp, err := t.ctrl.WaitForTicksUnregisterResponse(ctx, msg, func() error {
-		return t.ctrl.PublishTicksUnregisterRequest(msg)
+	resp, err := t.ctrl.WaitForCryptellationTicksUnregisterResponse(ctx, msg, func() error {
+		return t.ctrl.PublishCryptellationTicksUnregisterRequest(msg)
 	})
 	if err != nil {
 		return err

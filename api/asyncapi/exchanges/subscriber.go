@@ -19,11 +19,11 @@ func newSubscriber(controller *AppController, app exchanges.Interface) subscribe
 	}
 }
 
-func (s subscriber) ExchangesListRequest(msg ExchangesRequestMessage, _ bool) {
+func (s subscriber) CryptellationExchangesListRequest(msg ExchangesRequestMessage, _ bool) {
 	// Prepare response and set send at the end
 	resp := NewExchangesResponseMessage()
 	resp.SetAsResponseFrom(msg)
-	defer func() { _ = s.controller.PublishExchangesListResponse(resp) }()
+	defer func() { _ = s.controller.PublishCryptellationExchangesListResponse(resp) }()
 
 	// Change from requests type to application types
 	exchangesNames := msg.ToModel()

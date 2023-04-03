@@ -9,23 +9,23 @@ import (
 
 // AppSubscriber represents all handlers that are expecting messages for App
 type AppSubscriber interface {
-	// BacktestsAccountsListRequest
-	BacktestsAccountsListRequest(msg BacktestsAccountsListRequestMessage, done bool)
+	// CryptellationBacktestsAccountsListRequest
+	CryptellationBacktestsAccountsListRequest(msg BacktestsAccountsListRequestMessage, done bool)
 
-	// BacktestsAdvanceRequest
-	BacktestsAdvanceRequest(msg BacktestsAdvanceRequestMessage, done bool)
+	// CryptellationBacktestsAdvanceRequest
+	CryptellationBacktestsAdvanceRequest(msg BacktestsAdvanceRequestMessage, done bool)
 
-	// BacktestsCreateRequest
-	BacktestsCreateRequest(msg BacktestsCreateRequestMessage, done bool)
+	// CryptellationBacktestsCreateRequest
+	CryptellationBacktestsCreateRequest(msg BacktestsCreateRequestMessage, done bool)
 
-	// BacktestsOrdersCreateRequest
-	BacktestsOrdersCreateRequest(msg BacktestsOrdersCreateRequestMessage, done bool)
+	// CryptellationBacktestsOrdersCreateRequest
+	CryptellationBacktestsOrdersCreateRequest(msg BacktestsOrdersCreateRequestMessage, done bool)
 
-	// BacktestsOrdersListRequest
-	BacktestsOrdersListRequest(msg BacktestsOrdersListRequestMessage, done bool)
+	// CryptellationBacktestsOrdersListRequest
+	CryptellationBacktestsOrdersListRequest(msg BacktestsOrdersListRequestMessage, done bool)
 
-	// BacktestsSubscribeRequest
-	BacktestsSubscribeRequest(msg BacktestsSubscribeRequestMessage, done bool)
+	// CryptellationBacktestsSubscribeRequest
+	CryptellationBacktestsSubscribeRequest(msg BacktestsSubscribeRequestMessage, done bool)
 }
 
 // AppController is the structure that provides publishing capabilities to the
@@ -33,7 +33,7 @@ type AppSubscriber interface {
 type AppController struct {
 	brokerController BrokerController
 	stopSubscribers  map[string]chan interface{}
-	errChan          chan Error
+	logger           Logger
 }
 
 // NewAppController links the App to the broker
@@ -45,25 +45,36 @@ func NewAppController(bs BrokerController) (*AppController, error) {
 	return &AppController{
 		brokerController: bs,
 		stopSubscribers:  make(map[string]chan interface{}),
-		errChan:          make(chan Error, 256),
 	}, nil
 }
 
-// Errors will give back the channel that contains errors and that you can listen to handle errors
-// Please take a look at Error struct form information on error
-func (c AppController) Errors() <-chan Error {
-	return c.errChan
+// AttachLogger attaches a logger that will log operations on controller
+func (c *AppController) AttachLogger(logger Logger) {
+	c.logger = logger
+	c.brokerController.AttachLogger(logger)
+}
+
+// logError logs error if the logger has been set
+func (c AppController) logError(msg string, keyvals ...interface{}) {
+	if c.logger != nil {
+		keyvals = append(keyvals, "module", "asyncapi", "controller", "App")
+		c.logger.Error(msg, keyvals...)
+	}
+}
+
+// logInfo logs information if the logger has been set
+func (c AppController) logInfo(msg string, keyvals ...interface{}) {
+	if c.logger != nil {
+		keyvals = append(keyvals, "module", "asyncapi", "controller", "App")
+		c.logger.Info(msg, keyvals...)
+	}
 }
 
 // Close will clean up any existing resources on the controller
 func (c *AppController) Close() {
 	// Unsubscribing remaining channels
+	c.logInfo("Closing App controller")
 	c.UnsubscribeAll()
-	// Close the channel and put its reference to nil, if not already closed (= being nil)
-	if c.errChan != nil {
-		close(c.errChan)
-		c.errChan = nil
-	}
 }
 
 // SubscribeAll will subscribe to channels without parameters on which the app is expecting messages.
@@ -73,22 +84,22 @@ func (c *AppController) SubscribeAll(as AppSubscriber) error {
 		return ErrNilAppSubscriber
 	}
 
-	if err := c.SubscribeBacktestsAccountsListRequest(as.BacktestsAccountsListRequest); err != nil {
+	if err := c.SubscribeCryptellationBacktestsAccountsListRequest(as.CryptellationBacktestsAccountsListRequest); err != nil {
 		return err
 	}
-	if err := c.SubscribeBacktestsAdvanceRequest(as.BacktestsAdvanceRequest); err != nil {
+	if err := c.SubscribeCryptellationBacktestsAdvanceRequest(as.CryptellationBacktestsAdvanceRequest); err != nil {
 		return err
 	}
-	if err := c.SubscribeBacktestsCreateRequest(as.BacktestsCreateRequest); err != nil {
+	if err := c.SubscribeCryptellationBacktestsCreateRequest(as.CryptellationBacktestsCreateRequest); err != nil {
 		return err
 	}
-	if err := c.SubscribeBacktestsOrdersCreateRequest(as.BacktestsOrdersCreateRequest); err != nil {
+	if err := c.SubscribeCryptellationBacktestsOrdersCreateRequest(as.CryptellationBacktestsOrdersCreateRequest); err != nil {
 		return err
 	}
-	if err := c.SubscribeBacktestsOrdersListRequest(as.BacktestsOrdersListRequest); err != nil {
+	if err := c.SubscribeCryptellationBacktestsOrdersListRequest(as.CryptellationBacktestsOrdersListRequest); err != nil {
 		return err
 	}
-	if err := c.SubscribeBacktestsSubscribeRequest(as.BacktestsSubscribeRequest); err != nil {
+	if err := c.SubscribeCryptellationBacktestsSubscribeRequest(as.CryptellationBacktestsSubscribeRequest); err != nil {
 		return err
 	}
 
@@ -98,12 +109,12 @@ func (c *AppController) SubscribeAll(as AppSubscriber) error {
 // UnsubscribeAll will unsubscribe all remaining subscribed channels
 func (c *AppController) UnsubscribeAll() {
 	// Unsubscribe channels with no parameters (if any)
-	c.UnsubscribeBacktestsAccountsListRequest()
-	c.UnsubscribeBacktestsAdvanceRequest()
-	c.UnsubscribeBacktestsCreateRequest()
-	c.UnsubscribeBacktestsOrdersCreateRequest()
-	c.UnsubscribeBacktestsOrdersListRequest()
-	c.UnsubscribeBacktestsSubscribeRequest()
+	c.UnsubscribeCryptellationBacktestsAccountsListRequest()
+	c.UnsubscribeCryptellationBacktestsAdvanceRequest()
+	c.UnsubscribeCryptellationBacktestsCreateRequest()
+	c.UnsubscribeCryptellationBacktestsOrdersCreateRequest()
+	c.UnsubscribeCryptellationBacktestsOrdersListRequest()
+	c.UnsubscribeCryptellationBacktestsSubscribeRequest()
 
 	// Unsubscribe remaining channels
 	for n, stopChan := range c.stopSubscribers {
@@ -112,24 +123,28 @@ func (c *AppController) UnsubscribeAll() {
 	}
 }
 
-// SubscribeBacktestsAccountsListRequest will subscribe to new messages from 'backtests.accounts.list.request' channel.
+// SubscribeCryptellationBacktestsAccountsListRequest will subscribe to new messages from 'cryptellation.backtests.accounts.list.request' channel.
 //
 // Callback function 'fn' will be called each time a new message is received.
 // The 'done' argument indicates when the subscription is canceled and can be
 // used to clean up resources.
-func (c *AppController) SubscribeBacktestsAccountsListRequest(fn func(msg BacktestsAccountsListRequestMessage, done bool)) error {
+func (c *AppController) SubscribeCryptellationBacktestsAccountsListRequest(fn func(msg BacktestsAccountsListRequestMessage, done bool)) error {
 	// Get channel path
-	path := "backtests.accounts.list.request"
+	path := "cryptellation.backtests.accounts.list.request"
 
 	// Check if there is already a subscription
 	_, exists := c.stopSubscribers[path]
 	if exists {
-		return fmt.Errorf("%w: %q channel is already subscribed", ErrAlreadySubscribedChannel, path)
+		err := fmt.Errorf("%w: %q channel is already subscribed", ErrAlreadySubscribedChannel, path)
+		c.logError(err.Error(), "channel", path)
+		return err
 	}
 
 	// Subscribe to broker channel
+	c.logInfo("Subscribing to channel", "channel", path, "operation", "subscribe")
 	msgs, stop, err := c.brokerController.Subscribe(path)
 	if err != nil {
+		c.logError(err.Error(), "channel", path, "operation", "subscribe")
 		return err
 	}
 
@@ -142,11 +157,12 @@ func (c *AppController) SubscribeBacktestsAccountsListRequest(fn func(msg Backte
 			// Process message
 			msg, err := newBacktestsAccountsListRequestMessageFromUniversalMessage(um)
 			if err != nil {
-				c.handleError(path, err)
+				c.logError(err.Error(), "channel", path, "operation", "subscribe", "message", msg)
 			}
 
 			// Send info if message is correct or susbcription is closed
 			if err == nil || !open {
+				c.logInfo("Received new message", "channel", path, "operation", "subscribe", "message", msg)
 				fn(msg, !open)
 			}
 
@@ -163,10 +179,10 @@ func (c *AppController) SubscribeBacktestsAccountsListRequest(fn func(msg Backte
 	return nil
 }
 
-// UnsubscribeBacktestsAccountsListRequest will unsubscribe messages from 'backtests.accounts.list.request' channel
-func (c *AppController) UnsubscribeBacktestsAccountsListRequest() {
+// UnsubscribeCryptellationBacktestsAccountsListRequest will unsubscribe messages from 'cryptellation.backtests.accounts.list.request' channel
+func (c *AppController) UnsubscribeCryptellationBacktestsAccountsListRequest() {
 	// Get channel path
-	path := "backtests.accounts.list.request"
+	path := "cryptellation.backtests.accounts.list.request"
 
 	// Get stop channel
 	stopChan, exists := c.stopSubscribers[path]
@@ -175,25 +191,30 @@ func (c *AppController) UnsubscribeBacktestsAccountsListRequest() {
 	}
 
 	// Stop the channel and remove the entry
+	c.logInfo("Unsubscribing from channel", "channel", path, "operation", "unsubscribe")
 	stopChan <- true
 	delete(c.stopSubscribers, path)
-} // SubscribeBacktestsAdvanceRequest will subscribe to new messages from 'backtests.advance.request' channel.
+} // SubscribeCryptellationBacktestsAdvanceRequest will subscribe to new messages from 'cryptellation.backtests.advance.request' channel.
 // Callback function 'fn' will be called each time a new message is received.
 // The 'done' argument indicates when the subscription is canceled and can be
 // used to clean up resources.
-func (c *AppController) SubscribeBacktestsAdvanceRequest(fn func(msg BacktestsAdvanceRequestMessage, done bool)) error {
+func (c *AppController) SubscribeCryptellationBacktestsAdvanceRequest(fn func(msg BacktestsAdvanceRequestMessage, done bool)) error {
 	// Get channel path
-	path := "backtests.advance.request"
+	path := "cryptellation.backtests.advance.request"
 
 	// Check if there is already a subscription
 	_, exists := c.stopSubscribers[path]
 	if exists {
-		return fmt.Errorf("%w: %q channel is already subscribed", ErrAlreadySubscribedChannel, path)
+		err := fmt.Errorf("%w: %q channel is already subscribed", ErrAlreadySubscribedChannel, path)
+		c.logError(err.Error(), "channel", path)
+		return err
 	}
 
 	// Subscribe to broker channel
+	c.logInfo("Subscribing to channel", "channel", path, "operation", "subscribe")
 	msgs, stop, err := c.brokerController.Subscribe(path)
 	if err != nil {
+		c.logError(err.Error(), "channel", path, "operation", "subscribe")
 		return err
 	}
 
@@ -206,11 +227,12 @@ func (c *AppController) SubscribeBacktestsAdvanceRequest(fn func(msg BacktestsAd
 			// Process message
 			msg, err := newBacktestsAdvanceRequestMessageFromUniversalMessage(um)
 			if err != nil {
-				c.handleError(path, err)
+				c.logError(err.Error(), "channel", path, "operation", "subscribe", "message", msg)
 			}
 
 			// Send info if message is correct or susbcription is closed
 			if err == nil || !open {
+				c.logInfo("Received new message", "channel", path, "operation", "subscribe", "message", msg)
 				fn(msg, !open)
 			}
 
@@ -227,10 +249,10 @@ func (c *AppController) SubscribeBacktestsAdvanceRequest(fn func(msg BacktestsAd
 	return nil
 }
 
-// UnsubscribeBacktestsAdvanceRequest will unsubscribe messages from 'backtests.advance.request' channel
-func (c *AppController) UnsubscribeBacktestsAdvanceRequest() {
+// UnsubscribeCryptellationBacktestsAdvanceRequest will unsubscribe messages from 'cryptellation.backtests.advance.request' channel
+func (c *AppController) UnsubscribeCryptellationBacktestsAdvanceRequest() {
 	// Get channel path
-	path := "backtests.advance.request"
+	path := "cryptellation.backtests.advance.request"
 
 	// Get stop channel
 	stopChan, exists := c.stopSubscribers[path]
@@ -239,25 +261,30 @@ func (c *AppController) UnsubscribeBacktestsAdvanceRequest() {
 	}
 
 	// Stop the channel and remove the entry
+	c.logInfo("Unsubscribing from channel", "channel", path, "operation", "unsubscribe")
 	stopChan <- true
 	delete(c.stopSubscribers, path)
-} // SubscribeBacktestsCreateRequest will subscribe to new messages from 'backtests.create.request' channel.
+} // SubscribeCryptellationBacktestsCreateRequest will subscribe to new messages from 'cryptellation.backtests.create.request' channel.
 // Callback function 'fn' will be called each time a new message is received.
 // The 'done' argument indicates when the subscription is canceled and can be
 // used to clean up resources.
-func (c *AppController) SubscribeBacktestsCreateRequest(fn func(msg BacktestsCreateRequestMessage, done bool)) error {
+func (c *AppController) SubscribeCryptellationBacktestsCreateRequest(fn func(msg BacktestsCreateRequestMessage, done bool)) error {
 	// Get channel path
-	path := "backtests.create.request"
+	path := "cryptellation.backtests.create.request"
 
 	// Check if there is already a subscription
 	_, exists := c.stopSubscribers[path]
 	if exists {
-		return fmt.Errorf("%w: %q channel is already subscribed", ErrAlreadySubscribedChannel, path)
+		err := fmt.Errorf("%w: %q channel is already subscribed", ErrAlreadySubscribedChannel, path)
+		c.logError(err.Error(), "channel", path)
+		return err
 	}
 
 	// Subscribe to broker channel
+	c.logInfo("Subscribing to channel", "channel", path, "operation", "subscribe")
 	msgs, stop, err := c.brokerController.Subscribe(path)
 	if err != nil {
+		c.logError(err.Error(), "channel", path, "operation", "subscribe")
 		return err
 	}
 
@@ -270,11 +297,12 @@ func (c *AppController) SubscribeBacktestsCreateRequest(fn func(msg BacktestsCre
 			// Process message
 			msg, err := newBacktestsCreateRequestMessageFromUniversalMessage(um)
 			if err != nil {
-				c.handleError(path, err)
+				c.logError(err.Error(), "channel", path, "operation", "subscribe", "message", msg)
 			}
 
 			// Send info if message is correct or susbcription is closed
 			if err == nil || !open {
+				c.logInfo("Received new message", "channel", path, "operation", "subscribe", "message", msg)
 				fn(msg, !open)
 			}
 
@@ -291,10 +319,10 @@ func (c *AppController) SubscribeBacktestsCreateRequest(fn func(msg BacktestsCre
 	return nil
 }
 
-// UnsubscribeBacktestsCreateRequest will unsubscribe messages from 'backtests.create.request' channel
-func (c *AppController) UnsubscribeBacktestsCreateRequest() {
+// UnsubscribeCryptellationBacktestsCreateRequest will unsubscribe messages from 'cryptellation.backtests.create.request' channel
+func (c *AppController) UnsubscribeCryptellationBacktestsCreateRequest() {
 	// Get channel path
-	path := "backtests.create.request"
+	path := "cryptellation.backtests.create.request"
 
 	// Get stop channel
 	stopChan, exists := c.stopSubscribers[path]
@@ -303,25 +331,30 @@ func (c *AppController) UnsubscribeBacktestsCreateRequest() {
 	}
 
 	// Stop the channel and remove the entry
+	c.logInfo("Unsubscribing from channel", "channel", path, "operation", "unsubscribe")
 	stopChan <- true
 	delete(c.stopSubscribers, path)
-} // SubscribeBacktestsOrdersCreateRequest will subscribe to new messages from 'backtests.orders.create.request' channel.
+} // SubscribeCryptellationBacktestsOrdersCreateRequest will subscribe to new messages from 'cryptellation.backtests.orders.create.request' channel.
 // Callback function 'fn' will be called each time a new message is received.
 // The 'done' argument indicates when the subscription is canceled and can be
 // used to clean up resources.
-func (c *AppController) SubscribeBacktestsOrdersCreateRequest(fn func(msg BacktestsOrdersCreateRequestMessage, done bool)) error {
+func (c *AppController) SubscribeCryptellationBacktestsOrdersCreateRequest(fn func(msg BacktestsOrdersCreateRequestMessage, done bool)) error {
 	// Get channel path
-	path := "backtests.orders.create.request"
+	path := "cryptellation.backtests.orders.create.request"
 
 	// Check if there is already a subscription
 	_, exists := c.stopSubscribers[path]
 	if exists {
-		return fmt.Errorf("%w: %q channel is already subscribed", ErrAlreadySubscribedChannel, path)
+		err := fmt.Errorf("%w: %q channel is already subscribed", ErrAlreadySubscribedChannel, path)
+		c.logError(err.Error(), "channel", path)
+		return err
 	}
 
 	// Subscribe to broker channel
+	c.logInfo("Subscribing to channel", "channel", path, "operation", "subscribe")
 	msgs, stop, err := c.brokerController.Subscribe(path)
 	if err != nil {
+		c.logError(err.Error(), "channel", path, "operation", "subscribe")
 		return err
 	}
 
@@ -334,11 +367,12 @@ func (c *AppController) SubscribeBacktestsOrdersCreateRequest(fn func(msg Backte
 			// Process message
 			msg, err := newBacktestsOrdersCreateRequestMessageFromUniversalMessage(um)
 			if err != nil {
-				c.handleError(path, err)
+				c.logError(err.Error(), "channel", path, "operation", "subscribe", "message", msg)
 			}
 
 			// Send info if message is correct or susbcription is closed
 			if err == nil || !open {
+				c.logInfo("Received new message", "channel", path, "operation", "subscribe", "message", msg)
 				fn(msg, !open)
 			}
 
@@ -355,10 +389,10 @@ func (c *AppController) SubscribeBacktestsOrdersCreateRequest(fn func(msg Backte
 	return nil
 }
 
-// UnsubscribeBacktestsOrdersCreateRequest will unsubscribe messages from 'backtests.orders.create.request' channel
-func (c *AppController) UnsubscribeBacktestsOrdersCreateRequest() {
+// UnsubscribeCryptellationBacktestsOrdersCreateRequest will unsubscribe messages from 'cryptellation.backtests.orders.create.request' channel
+func (c *AppController) UnsubscribeCryptellationBacktestsOrdersCreateRequest() {
 	// Get channel path
-	path := "backtests.orders.create.request"
+	path := "cryptellation.backtests.orders.create.request"
 
 	// Get stop channel
 	stopChan, exists := c.stopSubscribers[path]
@@ -367,25 +401,30 @@ func (c *AppController) UnsubscribeBacktestsOrdersCreateRequest() {
 	}
 
 	// Stop the channel and remove the entry
+	c.logInfo("Unsubscribing from channel", "channel", path, "operation", "unsubscribe")
 	stopChan <- true
 	delete(c.stopSubscribers, path)
-} // SubscribeBacktestsOrdersListRequest will subscribe to new messages from 'backtests.orders.list.request' channel.
+} // SubscribeCryptellationBacktestsOrdersListRequest will subscribe to new messages from 'cryptellation.backtests.orders.list.request' channel.
 // Callback function 'fn' will be called each time a new message is received.
 // The 'done' argument indicates when the subscription is canceled and can be
 // used to clean up resources.
-func (c *AppController) SubscribeBacktestsOrdersListRequest(fn func(msg BacktestsOrdersListRequestMessage, done bool)) error {
+func (c *AppController) SubscribeCryptellationBacktestsOrdersListRequest(fn func(msg BacktestsOrdersListRequestMessage, done bool)) error {
 	// Get channel path
-	path := "backtests.orders.list.request"
+	path := "cryptellation.backtests.orders.list.request"
 
 	// Check if there is already a subscription
 	_, exists := c.stopSubscribers[path]
 	if exists {
-		return fmt.Errorf("%w: %q channel is already subscribed", ErrAlreadySubscribedChannel, path)
+		err := fmt.Errorf("%w: %q channel is already subscribed", ErrAlreadySubscribedChannel, path)
+		c.logError(err.Error(), "channel", path)
+		return err
 	}
 
 	// Subscribe to broker channel
+	c.logInfo("Subscribing to channel", "channel", path, "operation", "subscribe")
 	msgs, stop, err := c.brokerController.Subscribe(path)
 	if err != nil {
+		c.logError(err.Error(), "channel", path, "operation", "subscribe")
 		return err
 	}
 
@@ -398,11 +437,12 @@ func (c *AppController) SubscribeBacktestsOrdersListRequest(fn func(msg Backtest
 			// Process message
 			msg, err := newBacktestsOrdersListRequestMessageFromUniversalMessage(um)
 			if err != nil {
-				c.handleError(path, err)
+				c.logError(err.Error(), "channel", path, "operation", "subscribe", "message", msg)
 			}
 
 			// Send info if message is correct or susbcription is closed
 			if err == nil || !open {
+				c.logInfo("Received new message", "channel", path, "operation", "subscribe", "message", msg)
 				fn(msg, !open)
 			}
 
@@ -419,10 +459,10 @@ func (c *AppController) SubscribeBacktestsOrdersListRequest(fn func(msg Backtest
 	return nil
 }
 
-// UnsubscribeBacktestsOrdersListRequest will unsubscribe messages from 'backtests.orders.list.request' channel
-func (c *AppController) UnsubscribeBacktestsOrdersListRequest() {
+// UnsubscribeCryptellationBacktestsOrdersListRequest will unsubscribe messages from 'cryptellation.backtests.orders.list.request' channel
+func (c *AppController) UnsubscribeCryptellationBacktestsOrdersListRequest() {
 	// Get channel path
-	path := "backtests.orders.list.request"
+	path := "cryptellation.backtests.orders.list.request"
 
 	// Get stop channel
 	stopChan, exists := c.stopSubscribers[path]
@@ -431,25 +471,30 @@ func (c *AppController) UnsubscribeBacktestsOrdersListRequest() {
 	}
 
 	// Stop the channel and remove the entry
+	c.logInfo("Unsubscribing from channel", "channel", path, "operation", "unsubscribe")
 	stopChan <- true
 	delete(c.stopSubscribers, path)
-} // SubscribeBacktestsSubscribeRequest will subscribe to new messages from 'backtests.subscribe.request' channel.
+} // SubscribeCryptellationBacktestsSubscribeRequest will subscribe to new messages from 'cryptellation.backtests.subscribe.request' channel.
 // Callback function 'fn' will be called each time a new message is received.
 // The 'done' argument indicates when the subscription is canceled and can be
 // used to clean up resources.
-func (c *AppController) SubscribeBacktestsSubscribeRequest(fn func(msg BacktestsSubscribeRequestMessage, done bool)) error {
+func (c *AppController) SubscribeCryptellationBacktestsSubscribeRequest(fn func(msg BacktestsSubscribeRequestMessage, done bool)) error {
 	// Get channel path
-	path := "backtests.subscribe.request"
+	path := "cryptellation.backtests.subscribe.request"
 
 	// Check if there is already a subscription
 	_, exists := c.stopSubscribers[path]
 	if exists {
-		return fmt.Errorf("%w: %q channel is already subscribed", ErrAlreadySubscribedChannel, path)
+		err := fmt.Errorf("%w: %q channel is already subscribed", ErrAlreadySubscribedChannel, path)
+		c.logError(err.Error(), "channel", path)
+		return err
 	}
 
 	// Subscribe to broker channel
+	c.logInfo("Subscribing to channel", "channel", path, "operation", "subscribe")
 	msgs, stop, err := c.brokerController.Subscribe(path)
 	if err != nil {
+		c.logError(err.Error(), "channel", path, "operation", "subscribe")
 		return err
 	}
 
@@ -462,11 +507,12 @@ func (c *AppController) SubscribeBacktestsSubscribeRequest(fn func(msg Backtests
 			// Process message
 			msg, err := newBacktestsSubscribeRequestMessageFromUniversalMessage(um)
 			if err != nil {
-				c.handleError(path, err)
+				c.logError(err.Error(), "channel", path, "operation", "subscribe", "message", msg)
 			}
 
 			// Send info if message is correct or susbcription is closed
 			if err == nil || !open {
+				c.logInfo("Received new message", "channel", path, "operation", "subscribe", "message", msg)
 				fn(msg, !open)
 			}
 
@@ -483,10 +529,10 @@ func (c *AppController) SubscribeBacktestsSubscribeRequest(fn func(msg Backtests
 	return nil
 }
 
-// UnsubscribeBacktestsSubscribeRequest will unsubscribe messages from 'backtests.subscribe.request' channel
-func (c *AppController) UnsubscribeBacktestsSubscribeRequest() {
+// UnsubscribeCryptellationBacktestsSubscribeRequest will unsubscribe messages from 'cryptellation.backtests.subscribe.request' channel
+func (c *AppController) UnsubscribeCryptellationBacktestsSubscribeRequest() {
 	// Get channel path
-	path := "backtests.subscribe.request"
+	path := "cryptellation.backtests.subscribe.request"
 
 	// Get stop channel
 	stopChan, exists := c.stopSubscribers[path]
@@ -495,112 +541,119 @@ func (c *AppController) UnsubscribeBacktestsSubscribeRequest() {
 	}
 
 	// Stop the channel and remove the entry
+	c.logInfo("Unsubscribing from channel", "channel", path, "operation", "unsubscribe")
 	stopChan <- true
 	delete(c.stopSubscribers, path)
 }
 
-// PublishBacktestsAccountsListResponse will publish messages to 'backtests.accounts.list.response' channel
-func (c *AppController) PublishBacktestsAccountsListResponse(msg BacktestsAccountsListResponseMessage) error {
+// PublishCryptellationBacktestsAccountsListResponse will publish messages to 'cryptellation.backtests.accounts.list.response' channel
+func (c *AppController) PublishCryptellationBacktestsAccountsListResponse(msg BacktestsAccountsListResponseMessage) error {
 	// Convert to UniversalMessage
 	um, err := msg.toUniversalMessage()
 	if err != nil {
 		return err
 	}
 
+	// Get channel path
+	path := "cryptellation.backtests.accounts.list.response"
+
 	// Publish on event broker
-	path := "backtests.accounts.list.response"
+	c.logInfo("Publishing to channel", "channel", path, "operation", "publish", "message", msg)
 	return c.brokerController.Publish(path, um)
 }
 
-// PublishBacktestsAdvanceResponse will publish messages to 'backtests.advance.response' channel
-func (c *AppController) PublishBacktestsAdvanceResponse(msg BacktestsAdvanceResponseMessage) error {
+// PublishCryptellationBacktestsAdvanceResponse will publish messages to 'cryptellation.backtests.advance.response' channel
+func (c *AppController) PublishCryptellationBacktestsAdvanceResponse(msg BacktestsAdvanceResponseMessage) error {
 	// Convert to UniversalMessage
 	um, err := msg.toUniversalMessage()
 	if err != nil {
 		return err
 	}
 
+	// Get channel path
+	path := "cryptellation.backtests.advance.response"
+
 	// Publish on event broker
-	path := "backtests.advance.response"
+	c.logInfo("Publishing to channel", "channel", path, "operation", "publish", "message", msg)
 	return c.brokerController.Publish(path, um)
 }
 
-// PublishBacktestsCreateResponse will publish messages to 'backtests.create.response' channel
-func (c *AppController) PublishBacktestsCreateResponse(msg BacktestsCreateResponseMessage) error {
+// PublishCryptellationBacktestsCreateResponse will publish messages to 'cryptellation.backtests.create.response' channel
+func (c *AppController) PublishCryptellationBacktestsCreateResponse(msg BacktestsCreateResponseMessage) error {
 	// Convert to UniversalMessage
 	um, err := msg.toUniversalMessage()
 	if err != nil {
 		return err
 	}
 
+	// Get channel path
+	path := "cryptellation.backtests.create.response"
+
 	// Publish on event broker
-	path := "backtests.create.response"
+	c.logInfo("Publishing to channel", "channel", path, "operation", "publish", "message", msg)
 	return c.brokerController.Publish(path, um)
 }
 
-// PublishBacktestsEventsID will publish messages to 'backtests.events.{id}' channel
-func (c *AppController) PublishBacktestsEventsID(params BacktestsEventsIDParameters, msg BacktestsEventMessage) error {
+// PublishCryptellationBacktestsEventsID will publish messages to 'cryptellation.backtests.events.{id}' channel
+func (c *AppController) PublishCryptellationBacktestsEventsID(params CryptellationBacktestsEventsIDParameters, msg BacktestsEventMessage) error {
 	// Convert to UniversalMessage
 	um, err := msg.toUniversalMessage()
 	if err != nil {
 		return err
 	}
 
+	// Get channel path
+	path := fmt.Sprintf("cryptellation.backtests.events.%v", params.ID)
+
 	// Publish on event broker
-	path := fmt.Sprintf("backtests.events.%v", params.ID)
+	c.logInfo("Publishing to channel", "channel", path, "operation", "publish", "message", msg)
 	return c.brokerController.Publish(path, um)
 }
 
-// PublishBacktestsOrdersCreateResponse will publish messages to 'backtests.orders.create.response' channel
-func (c *AppController) PublishBacktestsOrdersCreateResponse(msg BacktestsOrdersCreateResponseMessage) error {
+// PublishCryptellationBacktestsOrdersCreateResponse will publish messages to 'cryptellation.backtests.orders.create.response' channel
+func (c *AppController) PublishCryptellationBacktestsOrdersCreateResponse(msg BacktestsOrdersCreateResponseMessage) error {
 	// Convert to UniversalMessage
 	um, err := msg.toUniversalMessage()
 	if err != nil {
 		return err
 	}
 
+	// Get channel path
+	path := "cryptellation.backtests.orders.create.response"
+
 	// Publish on event broker
-	path := "backtests.orders.create.response"
+	c.logInfo("Publishing to channel", "channel", path, "operation", "publish", "message", msg)
 	return c.brokerController.Publish(path, um)
 }
 
-// PublishBacktestsOrdersListResponse will publish messages to 'backtests.orders.list.response' channel
-func (c *AppController) PublishBacktestsOrdersListResponse(msg BacktestsOrdersListResponseMessage) error {
+// PublishCryptellationBacktestsOrdersListResponse will publish messages to 'cryptellation.backtests.orders.list.response' channel
+func (c *AppController) PublishCryptellationBacktestsOrdersListResponse(msg BacktestsOrdersListResponseMessage) error {
 	// Convert to UniversalMessage
 	um, err := msg.toUniversalMessage()
 	if err != nil {
 		return err
 	}
 
+	// Get channel path
+	path := "cryptellation.backtests.orders.list.response"
+
 	// Publish on event broker
-	path := "backtests.orders.list.response"
+	c.logInfo("Publishing to channel", "channel", path, "operation", "publish", "message", msg)
 	return c.brokerController.Publish(path, um)
 }
 
-// PublishBacktestsSubscribeResponse will publish messages to 'backtests.subscribe.response' channel
-func (c *AppController) PublishBacktestsSubscribeResponse(msg BacktestsSubscribeResponseMessage) error {
+// PublishCryptellationBacktestsSubscribeResponse will publish messages to 'cryptellation.backtests.subscribe.response' channel
+func (c *AppController) PublishCryptellationBacktestsSubscribeResponse(msg BacktestsSubscribeResponseMessage) error {
 	// Convert to UniversalMessage
 	um, err := msg.toUniversalMessage()
 	if err != nil {
 		return err
 	}
 
+	// Get channel path
+	path := "cryptellation.backtests.subscribe.response"
+
 	// Publish on event broker
-	path := "backtests.subscribe.response"
+	c.logInfo("Publishing to channel", "channel", path, "operation", "publish", "message", msg)
 	return c.brokerController.Publish(path, um)
-}
-
-func (c *AppController) handleError(channelName string, err error) {
-	// Wrap error with the channel name
-	errWrapped := Error{
-		Channel: channelName,
-		Err:     err,
-	}
-
-	// Send it to the error channel
-	select {
-	case c.errChan <- errWrapped:
-	default:
-		// Drop error if it's full or closed
-	}
 }

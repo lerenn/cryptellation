@@ -9,8 +9,8 @@ import (
 
 // AppSubscriber represents all handlers that are expecting messages for App
 type AppSubscriber interface {
-	// CandlesticksListRequest
-	CandlesticksListRequest(msg CandlesticksListRequestMessage, done bool)
+	// CryptellationCandlesticksListRequest
+	CryptellationCandlesticksListRequest(msg CandlesticksListRequestMessage, done bool)
 }
 
 // AppController is the structure that provides publishing capabilities to the
@@ -18,7 +18,7 @@ type AppSubscriber interface {
 type AppController struct {
 	brokerController BrokerController
 	stopSubscribers  map[string]chan interface{}
-	errChan          chan Error
+	logger           Logger
 }
 
 // NewAppController links the App to the broker
@@ -30,25 +30,36 @@ func NewAppController(bs BrokerController) (*AppController, error) {
 	return &AppController{
 		brokerController: bs,
 		stopSubscribers:  make(map[string]chan interface{}),
-		errChan:          make(chan Error, 256),
 	}, nil
 }
 
-// Errors will give back the channel that contains errors and that you can listen to handle errors
-// Please take a look at Error struct form information on error
-func (c AppController) Errors() <-chan Error {
-	return c.errChan
+// AttachLogger attaches a logger that will log operations on controller
+func (c *AppController) AttachLogger(logger Logger) {
+	c.logger = logger
+	c.brokerController.AttachLogger(logger)
+}
+
+// logError logs error if the logger has been set
+func (c AppController) logError(msg string, keyvals ...interface{}) {
+	if c.logger != nil {
+		keyvals = append(keyvals, "module", "asyncapi", "controller", "App")
+		c.logger.Error(msg, keyvals...)
+	}
+}
+
+// logInfo logs information if the logger has been set
+func (c AppController) logInfo(msg string, keyvals ...interface{}) {
+	if c.logger != nil {
+		keyvals = append(keyvals, "module", "asyncapi", "controller", "App")
+		c.logger.Info(msg, keyvals...)
+	}
 }
 
 // Close will clean up any existing resources on the controller
 func (c *AppController) Close() {
 	// Unsubscribing remaining channels
+	c.logInfo("Closing App controller")
 	c.UnsubscribeAll()
-	// Close the channel and put its reference to nil, if not already closed (= being nil)
-	if c.errChan != nil {
-		close(c.errChan)
-		c.errChan = nil
-	}
 }
 
 // SubscribeAll will subscribe to channels without parameters on which the app is expecting messages.
@@ -58,7 +69,7 @@ func (c *AppController) SubscribeAll(as AppSubscriber) error {
 		return ErrNilAppSubscriber
 	}
 
-	if err := c.SubscribeCandlesticksListRequest(as.CandlesticksListRequest); err != nil {
+	if err := c.SubscribeCryptellationCandlesticksListRequest(as.CryptellationCandlesticksListRequest); err != nil {
 		return err
 	}
 
@@ -68,7 +79,7 @@ func (c *AppController) SubscribeAll(as AppSubscriber) error {
 // UnsubscribeAll will unsubscribe all remaining subscribed channels
 func (c *AppController) UnsubscribeAll() {
 	// Unsubscribe channels with no parameters (if any)
-	c.UnsubscribeCandlesticksListRequest()
+	c.UnsubscribeCryptellationCandlesticksListRequest()
 
 	// Unsubscribe remaining channels
 	for n, stopChan := range c.stopSubscribers {
@@ -77,24 +88,28 @@ func (c *AppController) UnsubscribeAll() {
 	}
 }
 
-// SubscribeCandlesticksListRequest will subscribe to new messages from 'candlesticks.list.request' channel.
+// SubscribeCryptellationCandlesticksListRequest will subscribe to new messages from 'cryptellation.candlesticks.list.request' channel.
 //
 // Callback function 'fn' will be called each time a new message is received.
 // The 'done' argument indicates when the subscription is canceled and can be
 // used to clean up resources.
-func (c *AppController) SubscribeCandlesticksListRequest(fn func(msg CandlesticksListRequestMessage, done bool)) error {
+func (c *AppController) SubscribeCryptellationCandlesticksListRequest(fn func(msg CandlesticksListRequestMessage, done bool)) error {
 	// Get channel path
-	path := "candlesticks.list.request"
+	path := "cryptellation.candlesticks.list.request"
 
 	// Check if there is already a subscription
 	_, exists := c.stopSubscribers[path]
 	if exists {
-		return fmt.Errorf("%w: %q channel is already subscribed", ErrAlreadySubscribedChannel, path)
+		err := fmt.Errorf("%w: %q channel is already subscribed", ErrAlreadySubscribedChannel, path)
+		c.logError(err.Error(), "channel", path)
+		return err
 	}
 
 	// Subscribe to broker channel
+	c.logInfo("Subscribing to channel", "channel", path, "operation", "subscribe")
 	msgs, stop, err := c.brokerController.Subscribe(path)
 	if err != nil {
+		c.logError(err.Error(), "channel", path, "operation", "subscribe")
 		return err
 	}
 
@@ -107,11 +122,12 @@ func (c *AppController) SubscribeCandlesticksListRequest(fn func(msg Candlestick
 			// Process message
 			msg, err := newCandlesticksListRequestMessageFromUniversalMessage(um)
 			if err != nil {
-				c.handleError(path, err)
+				c.logError(err.Error(), "channel", path, "operation", "subscribe", "message", msg)
 			}
 
 			// Send info if message is correct or susbcription is closed
 			if err == nil || !open {
+				c.logInfo("Received new message", "channel", path, "operation", "subscribe", "message", msg)
 				fn(msg, !open)
 			}
 
@@ -128,10 +144,10 @@ func (c *AppController) SubscribeCandlesticksListRequest(fn func(msg Candlestick
 	return nil
 }
 
-// UnsubscribeCandlesticksListRequest will unsubscribe messages from 'candlesticks.list.request' channel
-func (c *AppController) UnsubscribeCandlesticksListRequest() {
+// UnsubscribeCryptellationCandlesticksListRequest will unsubscribe messages from 'cryptellation.candlesticks.list.request' channel
+func (c *AppController) UnsubscribeCryptellationCandlesticksListRequest() {
 	// Get channel path
-	path := "candlesticks.list.request"
+	path := "cryptellation.candlesticks.list.request"
 
 	// Get stop channel
 	stopChan, exists := c.stopSubscribers[path]
@@ -140,34 +156,23 @@ func (c *AppController) UnsubscribeCandlesticksListRequest() {
 	}
 
 	// Stop the channel and remove the entry
+	c.logInfo("Unsubscribing from channel", "channel", path, "operation", "unsubscribe")
 	stopChan <- true
 	delete(c.stopSubscribers, path)
 }
 
-// PublishCandlesticksListResponse will publish messages to 'candlesticks.list.response' channel
-func (c *AppController) PublishCandlesticksListResponse(msg CandlesticksListResponseMessage) error {
+// PublishCryptellationCandlesticksListResponse will publish messages to 'cryptellation.candlesticks.list.response' channel
+func (c *AppController) PublishCryptellationCandlesticksListResponse(msg CandlesticksListResponseMessage) error {
 	// Convert to UniversalMessage
 	um, err := msg.toUniversalMessage()
 	if err != nil {
 		return err
 	}
 
+	// Get channel path
+	path := "cryptellation.candlesticks.list.response"
+
 	// Publish on event broker
-	path := "candlesticks.list.response"
+	c.logInfo("Publishing to channel", "channel", path, "operation", "publish", "message", msg)
 	return c.brokerController.Publish(path, um)
-}
-
-func (c *AppController) handleError(channelName string, err error) {
-	// Wrap error with the channel name
-	errWrapped := Error{
-		Channel: channelName,
-		Err:     err,
-	}
-
-	// Send it to the error channel
-	select {
-	case c.errChan <- errWrapped:
-	default:
-		// Drop error if it's full or closed
-	}
 }

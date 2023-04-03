@@ -10,14 +10,14 @@ import (
 
 // ClientSubscriber represents all handlers that are expecting messages for Client
 type ClientSubscriber interface {
-	// TicksListenExchangePair
-	TicksListenExchangePair(msg TickMessage, done bool)
+	// CryptellationTicksListenExchangePair
+	CryptellationTicksListenExchangePair(msg TickMessage, done bool)
 
-	// TicksRegisterResponse
-	TicksRegisterResponse(msg RegisteringResponseMessage, done bool)
+	// CryptellationTicksRegisterResponse
+	CryptellationTicksRegisterResponse(msg RegisteringResponseMessage, done bool)
 
-	// TicksUnregisterResponse
-	TicksUnregisterResponse(msg RegisteringResponseMessage, done bool)
+	// CryptellationTicksUnregisterResponse
+	CryptellationTicksUnregisterResponse(msg RegisteringResponseMessage, done bool)
 }
 
 // ClientController is the structure that provides publishing capabilities to the
@@ -25,7 +25,7 @@ type ClientSubscriber interface {
 type ClientController struct {
 	brokerController BrokerController
 	stopSubscribers  map[string]chan interface{}
-	errChan          chan Error
+	logger           Logger
 }
 
 // NewClientController links the Client to the broker
@@ -37,25 +37,36 @@ func NewClientController(bs BrokerController) (*ClientController, error) {
 	return &ClientController{
 		brokerController: bs,
 		stopSubscribers:  make(map[string]chan interface{}),
-		errChan:          make(chan Error, 256),
 	}, nil
 }
 
-// Errors will give back the channel that contains errors and that you can listen to handle errors
-// Please take a look at Error struct form information on error
-func (c ClientController) Errors() <-chan Error {
-	return c.errChan
+// AttachLogger attaches a logger that will log operations on controller
+func (c *ClientController) AttachLogger(logger Logger) {
+	c.logger = logger
+	c.brokerController.AttachLogger(logger)
+}
+
+// logError logs error if the logger has been set
+func (c ClientController) logError(msg string, keyvals ...interface{}) {
+	if c.logger != nil {
+		keyvals = append(keyvals, "module", "asyncapi", "controller", "Client")
+		c.logger.Error(msg, keyvals...)
+	}
+}
+
+// logInfo logs information if the logger has been set
+func (c ClientController) logInfo(msg string, keyvals ...interface{}) {
+	if c.logger != nil {
+		keyvals = append(keyvals, "module", "asyncapi", "controller", "Client")
+		c.logger.Info(msg, keyvals...)
+	}
 }
 
 // Close will clean up any existing resources on the controller
 func (c *ClientController) Close() {
 	// Unsubscribing remaining channels
+	c.logInfo("Closing Client controller")
 	c.UnsubscribeAll()
-	// Close the channel and put its reference to nil, if not already closed (= being nil)
-	if c.errChan != nil {
-		close(c.errChan)
-		c.errChan = nil
-	}
 }
 
 // SubscribeAll will subscribe to channels without parameters on which the app is expecting messages.
@@ -65,10 +76,10 @@ func (c *ClientController) SubscribeAll(as ClientSubscriber) error {
 		return ErrNilClientSubscriber
 	}
 
-	if err := c.SubscribeTicksRegisterResponse(as.TicksRegisterResponse); err != nil {
+	if err := c.SubscribeCryptellationTicksRegisterResponse(as.CryptellationTicksRegisterResponse); err != nil {
 		return err
 	}
-	if err := c.SubscribeTicksUnregisterResponse(as.TicksUnregisterResponse); err != nil {
+	if err := c.SubscribeCryptellationTicksUnregisterResponse(as.CryptellationTicksUnregisterResponse); err != nil {
 		return err
 	}
 
@@ -78,8 +89,8 @@ func (c *ClientController) SubscribeAll(as ClientSubscriber) error {
 // UnsubscribeAll will unsubscribe all remaining subscribed channels
 func (c *ClientController) UnsubscribeAll() {
 	// Unsubscribe channels with no parameters (if any)
-	c.UnsubscribeTicksRegisterResponse()
-	c.UnsubscribeTicksUnregisterResponse()
+	c.UnsubscribeCryptellationTicksRegisterResponse()
+	c.UnsubscribeCryptellationTicksUnregisterResponse()
 
 	// Unsubscribe remaining channels
 	for n, stopChan := range c.stopSubscribers {
@@ -88,24 +99,28 @@ func (c *ClientController) UnsubscribeAll() {
 	}
 }
 
-// SubscribeTicksListenExchangePair will subscribe to new messages from 'ticks.listen.{exchange}.{pair}' channel.
+// SubscribeCryptellationTicksListenExchangePair will subscribe to new messages from 'cryptellation.ticks.listen.{exchange}.{pair}' channel.
 //
 // Callback function 'fn' will be called each time a new message is received.
 // The 'done' argument indicates when the subscription is canceled and can be
 // used to clean up resources.
-func (c *ClientController) SubscribeTicksListenExchangePair(params TicksListenExchangePairParameters, fn func(msg TickMessage, done bool)) error {
+func (c *ClientController) SubscribeCryptellationTicksListenExchangePair(params CryptellationTicksListenExchangePairParameters, fn func(msg TickMessage, done bool)) error {
 	// Get channel path
-	path := fmt.Sprintf("ticks.listen.%v.%v", params.Exchange, params.Pair)
+	path := fmt.Sprintf("cryptellation.ticks.listen.%v.%v", params.Exchange, params.Pair)
 
 	// Check if there is already a subscription
 	_, exists := c.stopSubscribers[path]
 	if exists {
-		return fmt.Errorf("%w: %q channel is already subscribed", ErrAlreadySubscribedChannel, path)
+		err := fmt.Errorf("%w: %q channel is already subscribed", ErrAlreadySubscribedChannel, path)
+		c.logError(err.Error(), "channel", path)
+		return err
 	}
 
 	// Subscribe to broker channel
+	c.logInfo("Subscribing to channel", "channel", path, "operation", "subscribe")
 	msgs, stop, err := c.brokerController.Subscribe(path)
 	if err != nil {
+		c.logError(err.Error(), "channel", path, "operation", "subscribe")
 		return err
 	}
 
@@ -118,11 +133,12 @@ func (c *ClientController) SubscribeTicksListenExchangePair(params TicksListenEx
 			// Process message
 			msg, err := newTickMessageFromUniversalMessage(um)
 			if err != nil {
-				c.handleError(path, err)
+				c.logError(err.Error(), "channel", path, "operation", "subscribe", "message", msg)
 			}
 
 			// Send info if message is correct or susbcription is closed
 			if err == nil || !open {
+				c.logInfo("Received new message", "channel", path, "operation", "subscribe", "message", msg)
 				fn(msg, !open)
 			}
 
@@ -139,10 +155,10 @@ func (c *ClientController) SubscribeTicksListenExchangePair(params TicksListenEx
 	return nil
 }
 
-// UnsubscribeTicksListenExchangePair will unsubscribe messages from 'ticks.listen.{exchange}.{pair}' channel
-func (c *ClientController) UnsubscribeTicksListenExchangePair(params TicksListenExchangePairParameters) {
+// UnsubscribeCryptellationTicksListenExchangePair will unsubscribe messages from 'cryptellation.ticks.listen.{exchange}.{pair}' channel
+func (c *ClientController) UnsubscribeCryptellationTicksListenExchangePair(params CryptellationTicksListenExchangePairParameters) {
 	// Get channel path
-	path := fmt.Sprintf("ticks.listen.%v.%v", params.Exchange, params.Pair)
+	path := fmt.Sprintf("cryptellation.ticks.listen.%v.%v", params.Exchange, params.Pair)
 
 	// Get stop channel
 	stopChan, exists := c.stopSubscribers[path]
@@ -151,25 +167,30 @@ func (c *ClientController) UnsubscribeTicksListenExchangePair(params TicksListen
 	}
 
 	// Stop the channel and remove the entry
+	c.logInfo("Unsubscribing from channel", "channel", path, "operation", "unsubscribe")
 	stopChan <- true
 	delete(c.stopSubscribers, path)
-} // SubscribeTicksRegisterResponse will subscribe to new messages from 'ticks.register.response' channel.
+} // SubscribeCryptellationTicksRegisterResponse will subscribe to new messages from 'cryptellation.ticks.register.response' channel.
 // Callback function 'fn' will be called each time a new message is received.
 // The 'done' argument indicates when the subscription is canceled and can be
 // used to clean up resources.
-func (c *ClientController) SubscribeTicksRegisterResponse(fn func(msg RegisteringResponseMessage, done bool)) error {
+func (c *ClientController) SubscribeCryptellationTicksRegisterResponse(fn func(msg RegisteringResponseMessage, done bool)) error {
 	// Get channel path
-	path := "ticks.register.response"
+	path := "cryptellation.ticks.register.response"
 
 	// Check if there is already a subscription
 	_, exists := c.stopSubscribers[path]
 	if exists {
-		return fmt.Errorf("%w: %q channel is already subscribed", ErrAlreadySubscribedChannel, path)
+		err := fmt.Errorf("%w: %q channel is already subscribed", ErrAlreadySubscribedChannel, path)
+		c.logError(err.Error(), "channel", path)
+		return err
 	}
 
 	// Subscribe to broker channel
+	c.logInfo("Subscribing to channel", "channel", path, "operation", "subscribe")
 	msgs, stop, err := c.brokerController.Subscribe(path)
 	if err != nil {
+		c.logError(err.Error(), "channel", path, "operation", "subscribe")
 		return err
 	}
 
@@ -182,11 +203,12 @@ func (c *ClientController) SubscribeTicksRegisterResponse(fn func(msg Registerin
 			// Process message
 			msg, err := newRegisteringResponseMessageFromUniversalMessage(um)
 			if err != nil {
-				c.handleError(path, err)
+				c.logError(err.Error(), "channel", path, "operation", "subscribe", "message", msg)
 			}
 
 			// Send info if message is correct or susbcription is closed
 			if err == nil || !open {
+				c.logInfo("Received new message", "channel", path, "operation", "subscribe", "message", msg)
 				fn(msg, !open)
 			}
 
@@ -203,10 +225,10 @@ func (c *ClientController) SubscribeTicksRegisterResponse(fn func(msg Registerin
 	return nil
 }
 
-// UnsubscribeTicksRegisterResponse will unsubscribe messages from 'ticks.register.response' channel
-func (c *ClientController) UnsubscribeTicksRegisterResponse() {
+// UnsubscribeCryptellationTicksRegisterResponse will unsubscribe messages from 'cryptellation.ticks.register.response' channel
+func (c *ClientController) UnsubscribeCryptellationTicksRegisterResponse() {
 	// Get channel path
-	path := "ticks.register.response"
+	path := "cryptellation.ticks.register.response"
 
 	// Get stop channel
 	stopChan, exists := c.stopSubscribers[path]
@@ -215,25 +237,30 @@ func (c *ClientController) UnsubscribeTicksRegisterResponse() {
 	}
 
 	// Stop the channel and remove the entry
+	c.logInfo("Unsubscribing from channel", "channel", path, "operation", "unsubscribe")
 	stopChan <- true
 	delete(c.stopSubscribers, path)
-} // SubscribeTicksUnregisterResponse will subscribe to new messages from 'ticks.unregister.response' channel.
+} // SubscribeCryptellationTicksUnregisterResponse will subscribe to new messages from 'cryptellation.ticks.unregister.response' channel.
 // Callback function 'fn' will be called each time a new message is received.
 // The 'done' argument indicates when the subscription is canceled and can be
 // used to clean up resources.
-func (c *ClientController) SubscribeTicksUnregisterResponse(fn func(msg RegisteringResponseMessage, done bool)) error {
+func (c *ClientController) SubscribeCryptellationTicksUnregisterResponse(fn func(msg RegisteringResponseMessage, done bool)) error {
 	// Get channel path
-	path := "ticks.unregister.response"
+	path := "cryptellation.ticks.unregister.response"
 
 	// Check if there is already a subscription
 	_, exists := c.stopSubscribers[path]
 	if exists {
-		return fmt.Errorf("%w: %q channel is already subscribed", ErrAlreadySubscribedChannel, path)
+		err := fmt.Errorf("%w: %q channel is already subscribed", ErrAlreadySubscribedChannel, path)
+		c.logError(err.Error(), "channel", path)
+		return err
 	}
 
 	// Subscribe to broker channel
+	c.logInfo("Subscribing to channel", "channel", path, "operation", "subscribe")
 	msgs, stop, err := c.brokerController.Subscribe(path)
 	if err != nil {
+		c.logError(err.Error(), "channel", path, "operation", "subscribe")
 		return err
 	}
 
@@ -246,11 +273,12 @@ func (c *ClientController) SubscribeTicksUnregisterResponse(fn func(msg Register
 			// Process message
 			msg, err := newRegisteringResponseMessageFromUniversalMessage(um)
 			if err != nil {
-				c.handleError(path, err)
+				c.logError(err.Error(), "channel", path, "operation", "subscribe", "message", msg)
 			}
 
 			// Send info if message is correct or susbcription is closed
 			if err == nil || !open {
+				c.logInfo("Received new message", "channel", path, "operation", "subscribe", "message", msg)
 				fn(msg, !open)
 			}
 
@@ -267,10 +295,10 @@ func (c *ClientController) SubscribeTicksUnregisterResponse(fn func(msg Register
 	return nil
 }
 
-// UnsubscribeTicksUnregisterResponse will unsubscribe messages from 'ticks.unregister.response' channel
-func (c *ClientController) UnsubscribeTicksUnregisterResponse() {
+// UnsubscribeCryptellationTicksUnregisterResponse will unsubscribe messages from 'cryptellation.ticks.unregister.response' channel
+func (c *ClientController) UnsubscribeCryptellationTicksUnregisterResponse() {
 	// Get channel path
-	path := "ticks.unregister.response"
+	path := "cryptellation.ticks.unregister.response"
 
 	// Get stop channel
 	stopChan, exists := c.stopSubscribers[path]
@@ -279,62 +307,56 @@ func (c *ClientController) UnsubscribeTicksUnregisterResponse() {
 	}
 
 	// Stop the channel and remove the entry
+	c.logInfo("Unsubscribing from channel", "channel", path, "operation", "unsubscribe")
 	stopChan <- true
 	delete(c.stopSubscribers, path)
 }
 
-// PublishTicksRegisterRequest will publish messages to 'ticks.register.request' channel
-func (c *ClientController) PublishTicksRegisterRequest(msg RegisteringRequestMessage) error {
+// PublishCryptellationTicksRegisterRequest will publish messages to 'cryptellation.ticks.register.request' channel
+func (c *ClientController) PublishCryptellationTicksRegisterRequest(msg RegisteringRequestMessage) error {
 	// Convert to UniversalMessage
 	um, err := msg.toUniversalMessage()
 	if err != nil {
 		return err
 	}
 
+	// Get channel path
+	path := "cryptellation.ticks.register.request"
+
 	// Publish on event broker
-	path := "ticks.register.request"
+	c.logInfo("Publishing to channel", "channel", path, "operation", "publish", "message", msg)
 	return c.brokerController.Publish(path, um)
 }
 
-// PublishTicksUnregisterRequest will publish messages to 'ticks.unregister.request' channel
-func (c *ClientController) PublishTicksUnregisterRequest(msg RegisteringRequestMessage) error {
+// PublishCryptellationTicksUnregisterRequest will publish messages to 'cryptellation.ticks.unregister.request' channel
+func (c *ClientController) PublishCryptellationTicksUnregisterRequest(msg RegisteringRequestMessage) error {
 	// Convert to UniversalMessage
 	um, err := msg.toUniversalMessage()
 	if err != nil {
 		return err
 	}
 
+	// Get channel path
+	path := "cryptellation.ticks.unregister.request"
+
 	// Publish on event broker
-	path := "ticks.unregister.request"
+	c.logInfo("Publishing to channel", "channel", path, "operation", "publish", "message", msg)
 	return c.brokerController.Publish(path, um)
 }
 
-func (c *ClientController) handleError(channelName string, err error) {
-	// Wrap error with the channel name
-	errWrapped := Error{
-		Channel: channelName,
-		Err:     err,
-	}
-
-	// Send it to the error channel
-	select {
-	case c.errChan <- errWrapped:
-	default:
-		// Drop error if it's full or closed
-	}
-}
-
-// WaitForTicksRegisterResponse will wait for a specific message by its correlation ID
+// WaitForCryptellationTicksRegisterResponse will wait for a specific message by its correlation ID
 //
 // The pub function is the publication function that should be used to send the message
 // It will be called after subscribing to the channel to avoid race condition, and potentially loose the message
-func (cc *ClientController) WaitForTicksRegisterResponse(ctx context.Context, msg MessageWithCorrelationID, pub func() error) (RegisteringResponseMessage, error) {
+func (cc *ClientController) WaitForCryptellationTicksRegisterResponse(ctx context.Context, publishMsg MessageWithCorrelationID, pub func() error) (RegisteringResponseMessage, error) {
 	// Get channel path
-	path := "ticks.register.response"
+	path := "cryptellation.ticks.register.response"
 
 	// Subscribe to broker channel
+	cc.logInfo("Wait for response", "channel", path, "operation", "wait-for", "correlation-id", publishMsg.CorrelationID())
 	msgs, stop, err := cc.brokerController.Subscribe(path)
 	if err != nil {
+		cc.logError(err.Error(), "channel", path, "operation", "wait-for")
 		return RegisteringResponseMessage{}, err
 	}
 
@@ -342,6 +364,7 @@ func (cc *ClientController) WaitForTicksRegisterResponse(ctx context.Context, ms
 	defer func() { stop <- true }()
 
 	// Execute publication
+	cc.logInfo("Sending request", "channel", path, "operation", "wait-for", "message", publishMsg, "correlation-id", publishMsg.CorrelationID())
 	if err := pub(); err != nil {
 		return RegisteringResponseMessage{}, err
 	}
@@ -353,33 +376,37 @@ func (cc *ClientController) WaitForTicksRegisterResponse(ctx context.Context, ms
 			// Get new message
 			msg, err := newRegisteringResponseMessageFromUniversalMessage(um)
 			if err != nil {
-				cc.handleError(path, err)
+				cc.logError(err.Error(), "channel", path, "operation", "wait-for")
 			}
 
 			// If valid message with corresponding correlation ID, return message
-			if err == nil &&
-				msg.Headers.CorrelationID != nil && msg.CorrelationID() == *msg.Headers.CorrelationID {
+			if err == nil && publishMsg.CorrelationID() == msg.CorrelationID() {
+				cc.logInfo("Received expected message", "channel", path, "operation", "wait-for", "message", msg, "correlation-id", msg.CorrelationID())
 				return msg, nil
 			} else if !open { // If message is invalid or not corresponding and the subscription is closed, then return error
+				cc.logError("Channel closed before getting message", "channel", path, "operation", "wait-for", "correlation-id", publishMsg.CorrelationID())
 				return RegisteringResponseMessage{}, ErrSubscriptionCanceled
 			}
 		case <-ctx.Done(): // Return error if context is done
+			cc.logError("Context done before getting message", "channel", path, "operation", "wait-for", "correlation-id", publishMsg.CorrelationID())
 			return RegisteringResponseMessage{}, ErrContextCanceled
 		}
 	}
 }
 
-// WaitForTicksUnregisterResponse will wait for a specific message by its correlation ID
+// WaitForCryptellationTicksUnregisterResponse will wait for a specific message by its correlation ID
 //
 // The pub function is the publication function that should be used to send the message
 // It will be called after subscribing to the channel to avoid race condition, and potentially loose the message
-func (cc *ClientController) WaitForTicksUnregisterResponse(ctx context.Context, msg MessageWithCorrelationID, pub func() error) (RegisteringResponseMessage, error) {
+func (cc *ClientController) WaitForCryptellationTicksUnregisterResponse(ctx context.Context, publishMsg MessageWithCorrelationID, pub func() error) (RegisteringResponseMessage, error) {
 	// Get channel path
-	path := "ticks.unregister.response"
+	path := "cryptellation.ticks.unregister.response"
 
 	// Subscribe to broker channel
+	cc.logInfo("Wait for response", "channel", path, "operation", "wait-for", "correlation-id", publishMsg.CorrelationID())
 	msgs, stop, err := cc.brokerController.Subscribe(path)
 	if err != nil {
+		cc.logError(err.Error(), "channel", path, "operation", "wait-for")
 		return RegisteringResponseMessage{}, err
 	}
 
@@ -387,6 +414,7 @@ func (cc *ClientController) WaitForTicksUnregisterResponse(ctx context.Context, 
 	defer func() { stop <- true }()
 
 	// Execute publication
+	cc.logInfo("Sending request", "channel", path, "operation", "wait-for", "message", publishMsg, "correlation-id", publishMsg.CorrelationID())
 	if err := pub(); err != nil {
 		return RegisteringResponseMessage{}, err
 	}
@@ -398,17 +426,19 @@ func (cc *ClientController) WaitForTicksUnregisterResponse(ctx context.Context, 
 			// Get new message
 			msg, err := newRegisteringResponseMessageFromUniversalMessage(um)
 			if err != nil {
-				cc.handleError(path, err)
+				cc.logError(err.Error(), "channel", path, "operation", "wait-for")
 			}
 
 			// If valid message with corresponding correlation ID, return message
-			if err == nil &&
-				msg.Headers.CorrelationID != nil && msg.CorrelationID() == *msg.Headers.CorrelationID {
+			if err == nil && publishMsg.CorrelationID() == msg.CorrelationID() {
+				cc.logInfo("Received expected message", "channel", path, "operation", "wait-for", "message", msg, "correlation-id", msg.CorrelationID())
 				return msg, nil
 			} else if !open { // If message is invalid or not corresponding and the subscription is closed, then return error
+				cc.logError("Channel closed before getting message", "channel", path, "operation", "wait-for", "correlation-id", publishMsg.CorrelationID())
 				return RegisteringResponseMessage{}, ErrSubscriptionCanceled
 			}
 		case <-ctx.Done(): // Return error if context is done
+			cc.logError("Context done before getting message", "channel", path, "operation", "wait-for", "correlation-id", publishMsg.CorrelationID())
 			return RegisteringResponseMessage{}, ErrContextCanceled
 		}
 	}

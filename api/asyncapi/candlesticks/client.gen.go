@@ -10,8 +10,8 @@ import (
 
 // ClientSubscriber represents all handlers that are expecting messages for Client
 type ClientSubscriber interface {
-	// CandlesticksListResponse
-	CandlesticksListResponse(msg CandlesticksListResponseMessage, done bool)
+	// CryptellationCandlesticksListResponse
+	CryptellationCandlesticksListResponse(msg CandlesticksListResponseMessage, done bool)
 }
 
 // ClientController is the structure that provides publishing capabilities to the
@@ -19,7 +19,7 @@ type ClientSubscriber interface {
 type ClientController struct {
 	brokerController BrokerController
 	stopSubscribers  map[string]chan interface{}
-	errChan          chan Error
+	logger           Logger
 }
 
 // NewClientController links the Client to the broker
@@ -31,25 +31,36 @@ func NewClientController(bs BrokerController) (*ClientController, error) {
 	return &ClientController{
 		brokerController: bs,
 		stopSubscribers:  make(map[string]chan interface{}),
-		errChan:          make(chan Error, 256),
 	}, nil
 }
 
-// Errors will give back the channel that contains errors and that you can listen to handle errors
-// Please take a look at Error struct form information on error
-func (c ClientController) Errors() <-chan Error {
-	return c.errChan
+// AttachLogger attaches a logger that will log operations on controller
+func (c *ClientController) AttachLogger(logger Logger) {
+	c.logger = logger
+	c.brokerController.AttachLogger(logger)
+}
+
+// logError logs error if the logger has been set
+func (c ClientController) logError(msg string, keyvals ...interface{}) {
+	if c.logger != nil {
+		keyvals = append(keyvals, "module", "asyncapi", "controller", "Client")
+		c.logger.Error(msg, keyvals...)
+	}
+}
+
+// logInfo logs information if the logger has been set
+func (c ClientController) logInfo(msg string, keyvals ...interface{}) {
+	if c.logger != nil {
+		keyvals = append(keyvals, "module", "asyncapi", "controller", "Client")
+		c.logger.Info(msg, keyvals...)
+	}
 }
 
 // Close will clean up any existing resources on the controller
 func (c *ClientController) Close() {
 	// Unsubscribing remaining channels
+	c.logInfo("Closing Client controller")
 	c.UnsubscribeAll()
-	// Close the channel and put its reference to nil, if not already closed (= being nil)
-	if c.errChan != nil {
-		close(c.errChan)
-		c.errChan = nil
-	}
 }
 
 // SubscribeAll will subscribe to channels without parameters on which the app is expecting messages.
@@ -59,7 +70,7 @@ func (c *ClientController) SubscribeAll(as ClientSubscriber) error {
 		return ErrNilClientSubscriber
 	}
 
-	if err := c.SubscribeCandlesticksListResponse(as.CandlesticksListResponse); err != nil {
+	if err := c.SubscribeCryptellationCandlesticksListResponse(as.CryptellationCandlesticksListResponse); err != nil {
 		return err
 	}
 
@@ -69,7 +80,7 @@ func (c *ClientController) SubscribeAll(as ClientSubscriber) error {
 // UnsubscribeAll will unsubscribe all remaining subscribed channels
 func (c *ClientController) UnsubscribeAll() {
 	// Unsubscribe channels with no parameters (if any)
-	c.UnsubscribeCandlesticksListResponse()
+	c.UnsubscribeCryptellationCandlesticksListResponse()
 
 	// Unsubscribe remaining channels
 	for n, stopChan := range c.stopSubscribers {
@@ -78,24 +89,28 @@ func (c *ClientController) UnsubscribeAll() {
 	}
 }
 
-// SubscribeCandlesticksListResponse will subscribe to new messages from 'candlesticks.list.response' channel.
+// SubscribeCryptellationCandlesticksListResponse will subscribe to new messages from 'cryptellation.candlesticks.list.response' channel.
 //
 // Callback function 'fn' will be called each time a new message is received.
 // The 'done' argument indicates when the subscription is canceled and can be
 // used to clean up resources.
-func (c *ClientController) SubscribeCandlesticksListResponse(fn func(msg CandlesticksListResponseMessage, done bool)) error {
+func (c *ClientController) SubscribeCryptellationCandlesticksListResponse(fn func(msg CandlesticksListResponseMessage, done bool)) error {
 	// Get channel path
-	path := "candlesticks.list.response"
+	path := "cryptellation.candlesticks.list.response"
 
 	// Check if there is already a subscription
 	_, exists := c.stopSubscribers[path]
 	if exists {
-		return fmt.Errorf("%w: %q channel is already subscribed", ErrAlreadySubscribedChannel, path)
+		err := fmt.Errorf("%w: %q channel is already subscribed", ErrAlreadySubscribedChannel, path)
+		c.logError(err.Error(), "channel", path)
+		return err
 	}
 
 	// Subscribe to broker channel
+	c.logInfo("Subscribing to channel", "channel", path, "operation", "subscribe")
 	msgs, stop, err := c.brokerController.Subscribe(path)
 	if err != nil {
+		c.logError(err.Error(), "channel", path, "operation", "subscribe")
 		return err
 	}
 
@@ -108,11 +123,12 @@ func (c *ClientController) SubscribeCandlesticksListResponse(fn func(msg Candles
 			// Process message
 			msg, err := newCandlesticksListResponseMessageFromUniversalMessage(um)
 			if err != nil {
-				c.handleError(path, err)
+				c.logError(err.Error(), "channel", path, "operation", "subscribe", "message", msg)
 			}
 
 			// Send info if message is correct or susbcription is closed
 			if err == nil || !open {
+				c.logInfo("Received new message", "channel", path, "operation", "subscribe", "message", msg)
 				fn(msg, !open)
 			}
 
@@ -129,10 +145,10 @@ func (c *ClientController) SubscribeCandlesticksListResponse(fn func(msg Candles
 	return nil
 }
 
-// UnsubscribeCandlesticksListResponse will unsubscribe messages from 'candlesticks.list.response' channel
-func (c *ClientController) UnsubscribeCandlesticksListResponse() {
+// UnsubscribeCryptellationCandlesticksListResponse will unsubscribe messages from 'cryptellation.candlesticks.list.response' channel
+func (c *ClientController) UnsubscribeCryptellationCandlesticksListResponse() {
 	// Get channel path
-	path := "candlesticks.list.response"
+	path := "cryptellation.candlesticks.list.response"
 
 	// Get stop channel
 	stopChan, exists := c.stopSubscribers[path]
@@ -141,49 +157,40 @@ func (c *ClientController) UnsubscribeCandlesticksListResponse() {
 	}
 
 	// Stop the channel and remove the entry
+	c.logInfo("Unsubscribing from channel", "channel", path, "operation", "unsubscribe")
 	stopChan <- true
 	delete(c.stopSubscribers, path)
 }
 
-// PublishCandlesticksListRequest will publish messages to 'candlesticks.list.request' channel
-func (c *ClientController) PublishCandlesticksListRequest(msg CandlesticksListRequestMessage) error {
+// PublishCryptellationCandlesticksListRequest will publish messages to 'cryptellation.candlesticks.list.request' channel
+func (c *ClientController) PublishCryptellationCandlesticksListRequest(msg CandlesticksListRequestMessage) error {
 	// Convert to UniversalMessage
 	um, err := msg.toUniversalMessage()
 	if err != nil {
 		return err
 	}
 
+	// Get channel path
+	path := "cryptellation.candlesticks.list.request"
+
 	// Publish on event broker
-	path := "candlesticks.list.request"
+	c.logInfo("Publishing to channel", "channel", path, "operation", "publish", "message", msg)
 	return c.brokerController.Publish(path, um)
 }
 
-func (c *ClientController) handleError(channelName string, err error) {
-	// Wrap error with the channel name
-	errWrapped := Error{
-		Channel: channelName,
-		Err:     err,
-	}
-
-	// Send it to the error channel
-	select {
-	case c.errChan <- errWrapped:
-	default:
-		// Drop error if it's full or closed
-	}
-}
-
-// WaitForCandlesticksListResponse will wait for a specific message by its correlation ID
+// WaitForCryptellationCandlesticksListResponse will wait for a specific message by its correlation ID
 //
 // The pub function is the publication function that should be used to send the message
 // It will be called after subscribing to the channel to avoid race condition, and potentially loose the message
-func (cc *ClientController) WaitForCandlesticksListResponse(ctx context.Context, msg MessageWithCorrelationID, pub func() error) (CandlesticksListResponseMessage, error) {
+func (cc *ClientController) WaitForCryptellationCandlesticksListResponse(ctx context.Context, publishMsg MessageWithCorrelationID, pub func() error) (CandlesticksListResponseMessage, error) {
 	// Get channel path
-	path := "candlesticks.list.response"
+	path := "cryptellation.candlesticks.list.response"
 
 	// Subscribe to broker channel
+	cc.logInfo("Wait for response", "channel", path, "operation", "wait-for", "correlation-id", publishMsg.CorrelationID())
 	msgs, stop, err := cc.brokerController.Subscribe(path)
 	if err != nil {
+		cc.logError(err.Error(), "channel", path, "operation", "wait-for")
 		return CandlesticksListResponseMessage{}, err
 	}
 
@@ -191,6 +198,7 @@ func (cc *ClientController) WaitForCandlesticksListResponse(ctx context.Context,
 	defer func() { stop <- true }()
 
 	// Execute publication
+	cc.logInfo("Sending request", "channel", path, "operation", "wait-for", "message", publishMsg, "correlation-id", publishMsg.CorrelationID())
 	if err := pub(); err != nil {
 		return CandlesticksListResponseMessage{}, err
 	}
@@ -202,17 +210,19 @@ func (cc *ClientController) WaitForCandlesticksListResponse(ctx context.Context,
 			// Get new message
 			msg, err := newCandlesticksListResponseMessageFromUniversalMessage(um)
 			if err != nil {
-				cc.handleError(path, err)
+				cc.logError(err.Error(), "channel", path, "operation", "wait-for")
 			}
 
 			// If valid message with corresponding correlation ID, return message
-			if err == nil &&
-				msg.Headers.CorrelationID != nil && msg.CorrelationID() == *msg.Headers.CorrelationID {
+			if err == nil && publishMsg.CorrelationID() == msg.CorrelationID() {
+				cc.logInfo("Received expected message", "channel", path, "operation", "wait-for", "message", msg, "correlation-id", msg.CorrelationID())
 				return msg, nil
 			} else if !open { // If message is invalid or not corresponding and the subscription is closed, then return error
+				cc.logError("Channel closed before getting message", "channel", path, "operation", "wait-for", "correlation-id", publishMsg.CorrelationID())
 				return CandlesticksListResponseMessage{}, ErrSubscriptionCanceled
 			}
 		case <-ctx.Done(): // Return error if context is done
+			cc.logError("Context done before getting message", "channel", path, "operation", "wait-for", "correlation-id", publishMsg.CorrelationID())
 			return CandlesticksListResponseMessage{}, ErrContextCanceled
 		}
 	}

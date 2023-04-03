@@ -1,11 +1,11 @@
 asyncapi: 2.5.0
 info:
-  title: Backtests Service
+  title: Cryptellation Backtests Service
   version: 1.0.0
   description: >
     This service is providing simulations on historical data.
 channels:
-  backtests.create.request:
+  cryptellation.backtests.create.request:
     publish:
       operationId: backtestsCreateRequest
       description: Request a new backtest
@@ -13,7 +13,7 @@ channels:
         - name: backtest creation
       message:
         $ref: '#/components/messages/BacktestsCreateRequest'
-  backtests.create.response:
+  cryptellation.backtests.create.response:
     subscribe:
       operationId: backtestsCreateResponse
       description: Response to a new backtest request
@@ -22,7 +22,7 @@ channels:
       message:
         $ref: '#/components/messages/BacktestsCreateResponse'
 
-  backtests.subscribe.request:
+  cryptellation.backtests.subscribe.request:
     publish:
       operationId: backtestsSubscribeRequest
       description: Subscribe to a backtest events
@@ -30,7 +30,7 @@ channels:
         - name: backtest subscribe
       message:
         $ref: '#/components/messages/BacktestsSubscribeRequest'
-  backtests.subscribe.response:
+  cryptellation.backtests.subscribe.response:
     subscribe:
       operationId: backtestsSubscribeResponse
       description: Response to a backtest events subscription
@@ -39,7 +39,7 @@ channels:
       message:
         $ref: '#/components/messages/BacktestsSubscribeResponse'
 
-  backtests.advance.request:
+  cryptellation.backtests.advance.request:
     publish:
       operationId: backtestsAdvanceRequest
       description: Ask for new events on backtest
@@ -47,7 +47,7 @@ channels:
         - name: backtest advance
       message:
         $ref: '#/components/messages/BacktestsAdvanceRequest'
-  backtests.advance.response:
+  cryptellation.backtests.advance.response:
     subscribe:
       operationId: backtestsAdvanceResponse
       description: Response to new events request
@@ -56,7 +56,7 @@ channels:
       message:
         $ref: '#/components/messages/BacktestsAdvanceResponse'
 
-  backtests.orders.create.request:
+  cryptellation.backtests.orders.create.request:
     publish:
       operationId: backtestsOrdersCreateRequest
       description: Create a new order for a backtest
@@ -64,7 +64,7 @@ channels:
         - name: backtest order creation
       message:
         $ref: '#/components/messages/BacktestsOrdersCreateRequest'
-  backtests.orders.create.response:
+  cryptellation.backtests.orders.create.response:
     subscribe:
       operationId: backtestsOrdersCreateResponse
       description: Response to a new order creation
@@ -73,7 +73,7 @@ channels:
       message:
         $ref: '#/components/messages/BacktestsOrdersCreateResponse'
 
-  backtests.orders.list.request:
+  cryptellation.backtests.orders.list.request:
     publish:
       operationId: backtestsOrdersListRequest
       description: List orders from a backtest
@@ -81,7 +81,7 @@ channels:
         - name: backtest orders list
       message:
         $ref: '#/components/messages/BacktestsOrdersListRequest'
-  backtests.orders.list.response:
+  cryptellation.backtests.orders.list.response:
     subscribe:
       operationId: backtestsOrdersListResponse
       description: Response to a orders list request
@@ -90,7 +90,7 @@ channels:
       message:
         $ref: '#/components/messages/BacktestsOrdersListResponse'
 
-  backtests.accounts.list.request:
+  cryptellation.backtests.accounts.list.request:
     publish:
       operationId: backtestsAccountsListRequest
       description: List accounts from a backtest
@@ -98,7 +98,7 @@ channels:
         - name: backtest accounts list
       message:
         $ref: '#/components/messages/BacktestsAccountsListRequest'
-  backtests.accounts.list.response:
+  cryptellation.backtests.accounts.list.response:
     subscribe:
       operationId: backtestsAccountsListResponse
       description: Response to a accounts list request
@@ -107,7 +107,7 @@ channels:
       message:
         $ref: '#/components/messages/BacktestsAccountsListResponse'
 
-  backtests.events.{id}:
+  cryptellation.backtests.events.{id}:
     parameters:
       id:
         description: Backtest identifier

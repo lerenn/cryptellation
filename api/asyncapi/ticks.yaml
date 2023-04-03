@@ -1,11 +1,11 @@
 asyncapi: 2.5.0
 info:
-  title: Ticks Service
+  title: Cryptellation Ticks Service
   version: 1.0.0
   description: >
     This service is serving ticks in real time, proxying exchanges API.
 channels:
-  ticks.register.request:
+  cryptellation.ticks.register.request:
     publish:
       operationId: ticksRegisterRequest
       description: Register to listen a specific symbol ticks
@@ -13,7 +13,7 @@ channels:
         - name: register
       message:
         $ref: '#/components/messages/RegisteringRequest'
-  ticks.register.response:
+  cryptellation.ticks.register.response:
     subscribe:
       operationId: ticksRegisterResponse
       description: Response to registering for listening to specific symbol ticks
@@ -21,7 +21,7 @@ channels:
         - name: register
       message:
         $ref: '#/components/messages/RegisteringResponse'
-  ticks.listen.{exchange}.{pair}:
+  cryptellation.ticks.listen.{exchange}.{pair}:
     parameters:
       exchange:
         description: Filter for ticks by exchange name
@@ -38,7 +38,7 @@ channels:
         - name: listen
       message:
         $ref: '#/components/messages/Tick'
-  ticks.unregister.request:
+  cryptellation.ticks.unregister.request:
     publish:
       operationId: ticksUnregister
       description: Unregister from listening to a specific symbol ticks
@@ -46,7 +46,7 @@ channels:
         - name: unregister
       message:
         $ref: '#/components/messages/RegisteringRequest'
-  ticks.unregister.response:
+  cryptellation.ticks.unregister.response:
     subscribe:
       operationId: ticksUnegisterResponse
       description: Response to unregistering for listening to specific symbol ticks

@@ -39,8 +39,8 @@ func (ex Exchanges) Read(ctx context.Context, names ...string) ([]exchange.Excha
 	reqMsg.Set(names...)
 
 	// Send request
-	respMsg, err := ex.ctrl.WaitForExchangesListResponse(ctx, reqMsg, func() error {
-		return ex.ctrl.PublishExchangesListRequest(reqMsg)
+	respMsg, err := ex.ctrl.WaitForCryptellationExchangesListResponse(ctx, reqMsg, func() error {
+		return ex.ctrl.PublishCryptellationExchangesListRequest(reqMsg)
 	})
 	if err != nil {
 		return nil, err

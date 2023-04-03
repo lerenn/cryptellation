@@ -39,8 +39,8 @@ func (c Candlesticks) Read(ctx context.Context, payload client.ReadCandlesticksP
 	reqMsg.Set(payload)
 
 	// Send request
-	respMsg, err := c.ctrl.WaitForCandlesticksListResponse(ctx, reqMsg, func() error {
-		return c.ctrl.PublishCandlesticksListRequest(reqMsg)
+	respMsg, err := c.ctrl.WaitForCryptellationCandlesticksListResponse(ctx, reqMsg, func() error {
+		return c.ctrl.PublishCryptellationCandlesticksListRequest(reqMsg)
 	})
 	if err != nil {
 		return nil, err

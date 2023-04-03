@@ -58,7 +58,7 @@ func (a *Adapter) Publish(backtestID uint, evt event.Event) error {
 	}
 
 	// Send message
-	return a.app.PublishBacktestsEventsID(asyncapi.BacktestsEventsIDParameters{
+	return a.app.PublishCryptellationBacktestsEventsID(asyncapi.CryptellationBacktestsEventsIDParameters{
 		ID: int64(backtestID),
 	}, msg)
 }

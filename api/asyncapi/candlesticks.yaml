@@ -1,12 +1,12 @@
 asyncapi: 2.5.0
 info:
-  title: Candlesticks Service
+  title: Cryptellation Candlesticks Service
   version: 1.0.0
   description: >
     This service is serving candlesticks history through a caching system that is
     proxying exchanges API.
 channels:
-  candlesticks.list.request:
+  cryptellation.candlesticks.list.request:
     publish:
       operationId: candlesticksListRequest
       description: Request a candlestick list from historic data
@@ -15,7 +15,7 @@ channels:
       message:
         $ref: '#/components/messages/CandlesticksListRequest'
 
-  candlesticks.list.response:
+  cryptellation.candlesticks.list.response:
     subscribe:
       operationId: candlesticksListResponse
       description: Response to a list request, with the corresponding candlestick list 
