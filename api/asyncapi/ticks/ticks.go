@@ -1,9 +1,9 @@
-// Backtests
-//go:generate asyncapi-codegen -g application -p ticks -i ./../ticks.yaml -o ./app.gen.go
-//go:generate asyncapi-codegen -g client      -p ticks -i ./../ticks.yaml -o ./client.gen.go
-//go:generate asyncapi-codegen -g broker      -p ticks -i ./../ticks.yaml -o ./broker.gen.go
-//go:generate asyncapi-codegen -g types       -p ticks -i ./../ticks.yaml -o ./types.gen.go
-//go:generate asyncapi-codegen -g nats        -p ticks -i ./../ticks.yaml -o ./nats.gen.go
+// Ticks
+//go:generate go run github.com/lerenn/asyncapi-codegen/cmd/asyncapi-codegen@v0.13.1 -g application -p ticks -i ./../ticks.yaml -o ./app.gen.go
+//go:generate go run github.com/lerenn/asyncapi-codegen/cmd/asyncapi-codegen@v0.13.1 -g client      -p ticks -i ./../ticks.yaml -o ./client.gen.go
+//go:generate go run github.com/lerenn/asyncapi-codegen/cmd/asyncapi-codegen@v0.13.1 -g broker      -p ticks -i ./../ticks.yaml -o ./broker.gen.go
+//go:generate go run github.com/lerenn/asyncapi-codegen/cmd/asyncapi-codegen@v0.13.1 -g types       -p ticks -i ./../ticks.yaml -o ./types.gen.go
+//go:generate go run github.com/lerenn/asyncapi-codegen/cmd/asyncapi-codegen@v0.13.1 -g nats        -p ticks -i ./../ticks.yaml -o ./nats.gen.go
 
 package ticks
 

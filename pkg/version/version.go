@@ -10,7 +10,7 @@ const (
 
 var (
 	// Version of the application
-	version = "1.0.0"
+	version = "0.8.1"
 
 	// Revision of the application
 	// "dev" is the default hash is nothing is provided,

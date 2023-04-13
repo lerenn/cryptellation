@@ -1,9 +1,9 @@
 // Backtests
-//go:generate asyncapi-codegen -g application -p backtests -i ./../backtests.yaml -o ./app.gen.go
-//go:generate asyncapi-codegen -g client      -p backtests -i ./../backtests.yaml -o ./client.gen.go
-//go:generate asyncapi-codegen -g broker      -p backtests -i ./../backtests.yaml -o ./broker.gen.go
-//go:generate asyncapi-codegen -g types       -p backtests -i ./../backtests.yaml -o ./types.gen.go
-//go:generate asyncapi-codegen -g nats        -p backtests -i ./../backtests.yaml -o ./nats.gen.go
+//go:generate go run github.com/lerenn/asyncapi-codegen/cmd/asyncapi-codegen@v0.13.1 -g application -p backtests -i ./../backtests.yaml -o ./app.gen.go
+//go:generate go run github.com/lerenn/asyncapi-codegen/cmd/asyncapi-codegen@v0.13.1 -g client      -p backtests -i ./../backtests.yaml -o ./client.gen.go
+//go:generate go run github.com/lerenn/asyncapi-codegen/cmd/asyncapi-codegen@v0.13.1 -g broker      -p backtests -i ./../backtests.yaml -o ./broker.gen.go
+//go:generate go run github.com/lerenn/asyncapi-codegen/cmd/asyncapi-codegen@v0.13.1 -g types       -p backtests -i ./../backtests.yaml -o ./types.gen.go
+//go:generate go run github.com/lerenn/asyncapi-codegen/cmd/asyncapi-codegen@v0.13.1 -g nats        -p backtests -i ./../backtests.yaml -o ./nats.gen.go
 
 package backtests
 

@@ -40,9 +40,6 @@ endif
 
 .PHONY: generate ## Generate specified code across the codebase
 generate:
-ifeq ($(shell which protoc &> /dev/null; echo $$?),1)
-	@echo "No protobuff compiler (protoc) detected. Please install it."
-endif
 	@go generate ./...
 
 .PHONY: test/clean
