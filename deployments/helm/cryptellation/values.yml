@@ -15,25 +15,25 @@ credentials:
       password:
 services:
   backtests:
-    image: digital-feather/cryptellation:latest
+    image: digitalfeather/cryptellation:latest
     sqldb:
       database: backtests
     health:
       port: 9000
   candlesticks:
-    image: digital-feather/cryptellation:latest
+    image: digitalfeather/cryptellation:latest
     sqldb:
       database: candlesticks
     health:
       port: 9000
   exchanges:
-    image: digital-feather/cryptellation:latest
+    image: digitalfeather/cryptellation:latest
     sqldb:
       database: exchanges
     health:
       port: 9000
   ticks:
-    image: digital-feather/cryptellation:latest
+    image: digitalfeather/cryptellation:latest
     sqldb:
       database: ticks
     health:

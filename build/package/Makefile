@@ -1,6 +1,6 @@
 .DEFAULT_GOAL     	= help
 
-DOCKER_IMAGE_PREFIX = digital-feather/cryptellation
+DOCKER_IMAGE_PREFIX = digitalfeather/cryptellation
 
 RELEASE_VER			= $(shell grep "version = " ../../pkg/version/version.go | head -n 1 | cut -d \" -f 2)
 
@@ -29,7 +29,8 @@ build: build/build build/run ## Build local docker image
 
 .PHONY: push
 push: build ## Push docker image
-	@docker push $(DOCKER_IMAGE):${RELEASE_VER}
+	docker push $(DOCKER_IMAGE_PREFIX):${RELEASE_VER}
+	docker push $(DOCKER_IMAGE_PREFIX):latest
 
 .PHONY: push/local
 push/local: build

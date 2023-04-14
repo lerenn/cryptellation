@@ -15,25 +15,25 @@ credentials:
       password:
 services:
   backtests:
-    image: localhost:5000/digital-feather/cryptellation
+    image: localhost:5000/digitalfeather/cryptellation
     sqldb:
       database: backtests
     health:
       port: 9000
   candlesticks:
-    image: localhost:5000/digital-feather/cryptellation
+    image: localhost:5000/digitalfeather/cryptellation
     sqldb:
       database: candlesticks
     health:
       port: 9000
   exchanges:
-    image: localhost:5000/digital-feather/cryptellation
+    image: localhost:5000/digitalfeather/cryptellation
     sqldb:
       database: exchanges
     health:
       port: 9000
   ticks:
-    image: localhost:5000/digital-feather/cryptellation
+    image: localhost:5000/digitalfeather/cryptellation
     sqldb:
       database: ticks
     health:

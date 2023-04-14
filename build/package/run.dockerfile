@@ -1,4 +1,4 @@
-ARG BUILD_IMAGE=digital-feather/cryptellation:build
+ARG BUILD_IMAGE=digitalfeather/cryptellation:build
 
 # Get build image
 FROM ${BUILD_IMAGE} AS BUILD

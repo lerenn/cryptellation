@@ -3,7 +3,7 @@ MINIKUBE_NODES      := 3
 NODE_MEMORY         := 2g
 CLUSTER_NAME        := cryptellation-devel
 
-DOCKER_IMAGE_PREFIX := digital-feather/cryptellation
+DOCKER_IMAGE_PREFIX := digitalfeather/cryptellation
 
 .PHONY: deploy
 deploy: deploy/infra deploy/datastore deploy/event-broker ## Deploys everything, except Cryptellation System
