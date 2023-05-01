@@ -44,31 +44,7 @@ spec:
             configMapKeyRef:
               key:  nats.port
               name: cryptellation-credentials
-        - name: "SQLDB_USER"
-          valueFrom:
-            configMapKeyRef:
-              key:  sqldb.user
-              name: cryptellation-credentials
-        - name: "SQLDB_PASSWORD"
-          valueFrom:
-            configMapKeyRef:
-              key:  sqldb.password
-              name: cryptellation-credentials
-        - name: "SQLDB_HOST"
-          valueFrom:
-            configMapKeyRef:
-              key:  sqldb.host
-              name: cryptellation-credentials
-        - name: "SQLDB_PORT"
-          valueFrom:
-            configMapKeyRef:
-              key:  sqldb.port
-              name: cryptellation-credentials
-        - name: "SQLDB_DATABASE"
-          valueFrom:
-            configMapKeyRef:
-              key:  ticks.sqldb.database
-              name: cryptellation-config
+        {{- include "common.env" "ticks" | indent 8 }}
         resources: {}
       initContainers:
       {{- include "dependencies.cockroachdb.init-container" . | indent 6 }}
@@ -76,31 +52,7 @@ spec:
         image: {{ .Values.services.ticks.image }}
         command: [ "cryptellation-ticks", "migrations", "migrate" ]
         env:
-        - name: "SQLDB_USER"
-          valueFrom:
-            configMapKeyRef:
-              key:  sqldb.user
-              name: cryptellation-credentials
-        - name: "SQLDB_PASSWORD"
-          valueFrom:
-            configMapKeyRef:
-              key:  sqldb.password
-              name: cryptellation-credentials
-        - name: "SQLDB_HOST"
-          valueFrom:
-            configMapKeyRef:
-              key:  sqldb.host
-              name: cryptellation-credentials
-        - name: "SQLDB_PORT"
-          valueFrom:
-            configMapKeyRef:
-              key:  sqldb.port
-              name: cryptellation-credentials
-        - name: "SQLDB_DATABASE"
-          valueFrom:
-            configMapKeyRef:
-              key:  ticks.sqldb.database
-              name: cryptellation-config
+        {{- include "common.env" "ticks" | indent 8 }}
       volumes:
         {{- include "dependencies.cockroachdb.volumes" . | indent 8 }}
 status: {}
