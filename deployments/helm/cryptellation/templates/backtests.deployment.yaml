@@ -22,11 +22,11 @@ spec:
         livenessProbe:
           httpGet:
             path: /liveness
-            port: {{ .Values.services.backtests.health.port | default 9000 }}
+            port: {{ (.Values.services.backtests.health).port | default 9000 }}
         readinessProbe:
           httpGet:
             path: /readiness
-            port: {{ .Values.services.backtests.health.port | default 9000 }}
+            port: {{ (.Values.services.backtests.health).port | default 9000 }}
         command: [ "cryptellation-backtests", "serve" ]
         env:
         - name: "HEALTH_PORT"

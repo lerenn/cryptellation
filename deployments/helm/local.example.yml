@@ -1,0 +1,42 @@
+# Specific section for dependencies
+cockroachdb:
+  enabled: true
+  statefulset:
+    resources:
+      limits:
+        cpu: 100m
+        memory: 512Mi
+      requests:
+        cpu: 100m
+        memory: 512Mi
+    securityContext:
+      enabled: false
+  init:
+    provisioning:
+      enabled: true
+    securityContext:
+      enabled: false
+  securityContext:
+    enabled: false
+  tls:
+    enabled: false
+nats:
+  enabled: true
+
+# Specific section for credentials
+credentials:
+  exchanges:
+    binance:
+      api_key:
+      secret_key:
+
+# Specific section for services
+services:
+  backtests:
+    image: localhost:5000/digitalfeather/cryptellation
+  candlesticks:
+    image: localhost:5000/digitalfeather/cryptellation
+  exchanges:
+    image: localhost:5000/digitalfeather/cryptellation
+  ticks:
+    image: localhost:5000/digitalfeather/cryptellation

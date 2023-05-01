@@ -1,3 +1,29 @@
+# Specific section for dependencies
+cockroachdb:
+  enabled: true
+  statefulset:
+    resources:
+      limits:
+        cpu: 100m
+        memory: 512Mi
+      requests:
+        cpu: 100m
+        memory: 512Mi
+    securityContext:
+      enabled: false
+  init:
+    provisioning:
+      enabled: true
+    securityContext:
+      enabled: false
+  securityContext:
+    enabled: false
+  tls:
+    enabled: false
+nats:
+  enabled: true
+
+# Specific section for credentials
 credentials:
   exchanges:
     binance:
@@ -5,14 +31,16 @@ credentials:
       secret_key:
   event_brokers:
     nats:
-      host:
-      port:
+      host: "{{ .Release.Name }}-nats.{{ .Release.Namespace }}.svc.cluster.local"
+      port: 4222
   datastores:
     sqldb:
-      host:
-      port:
-      user:
+      host: "{{ .Release.Name }}-cockroachdb-public.{{ .Release.Namespace }}.svc.cluster.local"
+      port: 26257
+      user: root
       password:
+
+# Specific section for services
 services:
   backtests:
     image: digitalfeather/cryptellation:latest

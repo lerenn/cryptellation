@@ -22,11 +22,11 @@ spec:
         livenessProbe:
           httpGet:
             path: /liveness
-            port: {{ .Values.services.candlesticks.health.port | default 9000 }}
+            port: {{ (.Values.services.candlesticks.health).port | default 9000 }}
         readinessProbe:
           httpGet:
             path: /readiness
-            port: {{ .Values.services.candlesticks.health.port | default 9000 }}
+            port: {{ (.Values.services.candlesticks.health).port | default 9000 }}
         command: [ "cryptellation-candlesticks", "serve" ]
         env:
         - name: "BINANCE_API_KEY"
