@@ -81,7 +81,8 @@ spec:
               name: cryptellation-config
         resources: {}
       initContainers:
-      - name: init-exchanges-sqldb
+      {{- include "dependencies.cockroachdb.init-container" . | indent 6 }}
+      - name: init-sql-database
         image: {{ .Values.services.exchanges.image }}
         command: [ "cryptellation-exchanges", "migrations", "migrate" ]
         env:
@@ -110,4 +111,6 @@ spec:
             configMapKeyRef:
               key:  exchanges.sqldb.database
               name: cryptellation-config
+      volumes:
+        {{- include "dependencies.cockroachdb.volumes" . | indent 8 }}
 status: {}
