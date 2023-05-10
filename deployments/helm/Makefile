@@ -3,7 +3,7 @@ MINIKUBE_NODES      := 3
 NODE_MEMORY         := 2g
 CLUSTER_NAME        := cryptellation-devel
 
-DOCKER_IMAGE_PREFIX := digitalfeather/cryptellation
+DOCKER_IMAGE_PREFIX := lerenn/cryptellation
 
 .PHONY: deploy/local
 deploy/local: deploy/local/infra deploy/local/cryptellation ## Deploys everything locally

@@ -4,10 +4,10 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/digital-feather/cryptellation/pkg/config"
-	"github.com/digital-feather/cryptellation/pkg/exchange"
-	"github.com/digital-feather/cryptellation/services/exchanges/io/exchanges"
-	"github.com/digital-feather/cryptellation/services/exchanges/io/exchanges/adapters/binance"
+	"github.com/lerenn/cryptellation/pkg/config"
+	"github.com/lerenn/cryptellation/pkg/exchange"
+	"github.com/lerenn/cryptellation/services/exchanges/io/exchanges"
+	"github.com/lerenn/cryptellation/services/exchanges/io/exchanges/adapters/binance"
 )
 
 type Exchanges struct {

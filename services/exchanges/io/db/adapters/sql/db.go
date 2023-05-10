@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/digital-feather/cryptellation/pkg/config"
-	"github.com/digital-feather/cryptellation/services/exchanges/io/db/adapters/sql/entities"
+	"github.com/lerenn/cryptellation/pkg/config"
+	"github.com/lerenn/cryptellation/services/exchanges/io/db/adapters/sql/entities"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )

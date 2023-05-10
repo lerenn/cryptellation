@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/digital-feather/cryptellation/pkg/candlestick"
-	"github.com/digital-feather/cryptellation/services/candlesticks/io/db"
-	"github.com/digital-feather/cryptellation/services/candlesticks/io/db/adapters/sql/entities"
+	"github.com/lerenn/cryptellation/pkg/candlestick"
+	"github.com/lerenn/cryptellation/services/candlesticks/io/db"
+	"github.com/lerenn/cryptellation/services/candlesticks/io/db/adapters/sql/entities"
 )
 
 func (d *DB) CreateCandlesticks(ctx context.Context, cs *candlestick.List) error {

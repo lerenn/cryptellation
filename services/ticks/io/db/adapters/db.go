@@ -3,10 +3,10 @@ package db
 import (
 	"errors"
 
-	"github.com/digital-feather/cryptellation/pkg/config"
-	"github.com/digital-feather/cryptellation/services/ticks/io/db"
-	"github.com/digital-feather/cryptellation/services/ticks/io/db/adapters/redis"
-	"github.com/digital-feather/cryptellation/services/ticks/io/db/adapters/sql"
+	"github.com/lerenn/cryptellation/pkg/config"
+	"github.com/lerenn/cryptellation/services/ticks/io/db"
+	"github.com/lerenn/cryptellation/services/ticks/io/db/adapters/redis"
+	"github.com/lerenn/cryptellation/services/ticks/io/db/adapters/sql"
 )
 
 var (

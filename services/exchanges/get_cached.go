@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/digital-feather/cryptellation/pkg/exchange"
+	"github.com/lerenn/cryptellation/pkg/exchange"
 )
 
 const DefaultExpirationDuration = time.Hour

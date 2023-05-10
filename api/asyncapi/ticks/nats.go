@@ -1,8 +1,8 @@
 package ticks
 
 import (
-	"github.com/digital-feather/cryptellation/pkg/config"
-	"github.com/digital-feather/cryptellation/services/ticks"
+	"github.com/lerenn/cryptellation/pkg/config"
+	"github.com/lerenn/cryptellation/services/ticks"
 	"github.com/nats-io/nats.go"
 )
 

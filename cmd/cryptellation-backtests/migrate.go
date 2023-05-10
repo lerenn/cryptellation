@@ -3,9 +3,9 @@ package main
 import (
 	"log"
 
-	"github.com/digital-feather/cryptellation/pkg/config"
-	"github.com/digital-feather/cryptellation/services/backtests/io/db/adapters/sql/migrations"
 	"github.com/go-gormigrate/gormigrate/v2"
+	"github.com/lerenn/cryptellation/pkg/config"
+	"github.com/lerenn/cryptellation/services/backtests/io/db/adapters/sql/migrations"
 	"github.com/spf13/cobra"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"

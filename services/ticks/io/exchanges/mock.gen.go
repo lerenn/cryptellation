@@ -7,7 +7,7 @@ package exchanges
 import (
 	reflect "reflect"
 
-	tick "github.com/digital-feather/cryptellation/pkg/tick"
+	tick "github.com/lerenn/cryptellation/pkg/tick"
 	gomock "github.com/golang/mock/gomock"
 )
 

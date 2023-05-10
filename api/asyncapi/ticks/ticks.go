@@ -10,8 +10,8 @@ package ticks
 import (
 	"time"
 
-	client "github.com/digital-feather/cryptellation/clients/go"
-	"github.com/digital-feather/cryptellation/pkg/tick"
+	client "github.com/lerenn/cryptellation/clients/go"
+	"github.com/lerenn/cryptellation/pkg/tick"
 )
 
 func (msg *RegisteringRequestMessage) Set(payload client.TicksFilterPayload) {

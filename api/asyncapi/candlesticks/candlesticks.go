@@ -10,11 +10,11 @@ package candlesticks
 import (
 	"time"
 
-	client "github.com/digital-feather/cryptellation/clients/go"
-	"github.com/digital-feather/cryptellation/pkg/candlestick"
-	"github.com/digital-feather/cryptellation/pkg/period"
-	"github.com/digital-feather/cryptellation/pkg/utils"
-	"github.com/digital-feather/cryptellation/services/candlesticks"
+	client "github.com/lerenn/cryptellation/clients/go"
+	"github.com/lerenn/cryptellation/pkg/candlestick"
+	"github.com/lerenn/cryptellation/pkg/period"
+	"github.com/lerenn/cryptellation/pkg/utils"
+	"github.com/lerenn/cryptellation/services/candlesticks"
 )
 
 func (msg *CandlesticksListRequestMessage) Set(payload client.ReadCandlesticksPayload) {

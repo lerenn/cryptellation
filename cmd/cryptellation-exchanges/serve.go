@@ -8,12 +8,12 @@ import (
 	"strconv"
 	"syscall"
 
-	asyncapi "github.com/digital-feather/cryptellation/api/asyncapi/exchanges"
-	"github.com/digital-feather/cryptellation/pkg/config"
-	"github.com/digital-feather/cryptellation/pkg/http/health"
-	"github.com/digital-feather/cryptellation/services/exchanges"
-	"github.com/digital-feather/cryptellation/services/exchanges/io/db/adapters/sql"
-	exchangesAdapter "github.com/digital-feather/cryptellation/services/exchanges/io/exchanges/adapters"
+	asyncapi "github.com/lerenn/cryptellation/api/asyncapi/exchanges"
+	"github.com/lerenn/cryptellation/pkg/config"
+	"github.com/lerenn/cryptellation/pkg/http/health"
+	"github.com/lerenn/cryptellation/services/exchanges"
+	"github.com/lerenn/cryptellation/services/exchanges/io/db/adapters/sql"
+	exchangesAdapter "github.com/lerenn/cryptellation/services/exchanges/io/exchanges/adapters"
 	"github.com/spf13/cobra"
 )
 

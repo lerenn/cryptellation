@@ -5,7 +5,7 @@ FROM golang:alpine
 ENV CGO_ENABLED 0
 
 # Set the workdir
-WORKDIR /go/src/github.com/digital-feather/cryptellation
+WORKDIR /go/src/github.com/lerenn/cryptellation
 
 # Install dependencies
 COPY go.mod go.sum ./

@@ -1,6 +1,6 @@
 package entities
 
-import "github.com/digital-feather/cryptellation/pkg/event"
+import "github.com/lerenn/cryptellation/pkg/event"
 
 type TickSubscription struct {
 	ID           uint `gorm:"primaryKey"`

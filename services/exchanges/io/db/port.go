@@ -6,7 +6,7 @@ package db
 import (
 	"context"
 
-	"github.com/digital-feather/cryptellation/pkg/exchange"
+	"github.com/lerenn/cryptellation/pkg/exchange"
 )
 
 type Port interface {

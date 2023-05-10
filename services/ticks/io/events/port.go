@@ -4,7 +4,7 @@
 package events
 
 import (
-	"github.com/digital-feather/cryptellation/pkg/tick"
+	"github.com/lerenn/cryptellation/pkg/tick"
 )
 
 type Port interface {

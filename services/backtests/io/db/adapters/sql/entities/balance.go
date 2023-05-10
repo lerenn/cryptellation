@@ -1,7 +1,7 @@
 package entities
 
 import (
-	"github.com/digital-feather/cryptellation/pkg/account"
+	"github.com/lerenn/cryptellation/pkg/account"
 )
 
 type Balance struct {

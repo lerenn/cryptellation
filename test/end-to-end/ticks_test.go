@@ -5,9 +5,9 @@ import (
 	"testing"
 	"time"
 
-	client "github.com/digital-feather/cryptellation/clients/go"
-	natsClient "github.com/digital-feather/cryptellation/clients/go/nats"
-	"github.com/digital-feather/cryptellation/pkg/config"
+	client "github.com/lerenn/cryptellation/clients/go"
+	natsClient "github.com/lerenn/cryptellation/clients/go/nats"
+	"github.com/lerenn/cryptellation/pkg/config"
 	"github.com/stretchr/testify/suite"
 )
 

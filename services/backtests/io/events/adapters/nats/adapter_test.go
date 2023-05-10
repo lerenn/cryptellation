@@ -3,8 +3,8 @@ package nats
 import (
 	"testing"
 
-	"github.com/digital-feather/cryptellation/pkg/config"
-	"github.com/digital-feather/cryptellation/services/backtests/io/events/tests"
+	"github.com/lerenn/cryptellation/pkg/config"
+	"github.com/lerenn/cryptellation/services/backtests/io/events/tests"
 	"github.com/stretchr/testify/suite"
 )
 

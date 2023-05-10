@@ -10,13 +10,13 @@ package backtests
 import (
 	"time"
 
-	client "github.com/digital-feather/cryptellation/clients/go"
-	"github.com/digital-feather/cryptellation/pkg/account"
-	"github.com/digital-feather/cryptellation/pkg/backtest"
-	"github.com/digital-feather/cryptellation/pkg/event"
-	"github.com/digital-feather/cryptellation/pkg/period"
-	"github.com/digital-feather/cryptellation/pkg/tick"
-	"github.com/digital-feather/cryptellation/pkg/utils"
+	client "github.com/lerenn/cryptellation/clients/go"
+	"github.com/lerenn/cryptellation/pkg/account"
+	"github.com/lerenn/cryptellation/pkg/backtest"
+	"github.com/lerenn/cryptellation/pkg/event"
+	"github.com/lerenn/cryptellation/pkg/period"
+	"github.com/lerenn/cryptellation/pkg/tick"
+	"github.com/lerenn/cryptellation/pkg/utils"
 )
 
 func (msg *BacktestsCreateRequestMessage) Set(payload client.BacktestCreationPayload) {

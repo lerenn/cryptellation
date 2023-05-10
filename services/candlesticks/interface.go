@@ -3,7 +3,7 @@ package candlesticks
 import (
 	"context"
 
-	"github.com/digital-feather/cryptellation/pkg/candlestick"
+	"github.com/lerenn/cryptellation/pkg/candlestick"
 )
 
 type Interface interface {

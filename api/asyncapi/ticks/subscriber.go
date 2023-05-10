@@ -5,7 +5,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/digital-feather/cryptellation/services/ticks"
+	"github.com/lerenn/cryptellation/services/ticks"
 )
 
 type subscriber struct {

@@ -1,8 +1,8 @@
 package candlesticks
 
 import (
-	"github.com/digital-feather/cryptellation/pkg/config"
-	"github.com/digital-feather/cryptellation/services/candlesticks"
+	"github.com/lerenn/cryptellation/pkg/config"
+	"github.com/lerenn/cryptellation/services/candlesticks"
 	"github.com/nats-io/nats.go"
 )
 

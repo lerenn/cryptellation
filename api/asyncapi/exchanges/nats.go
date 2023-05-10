@@ -1,8 +1,8 @@
 package exchanges
 
 import (
-	"github.com/digital-feather/cryptellation/pkg/config"
-	"github.com/digital-feather/cryptellation/services/exchanges"
+	"github.com/lerenn/cryptellation/pkg/config"
+	"github.com/lerenn/cryptellation/services/exchanges"
 	"github.com/nats-io/nats.go"
 )
 

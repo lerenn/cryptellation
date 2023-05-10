@@ -3,9 +3,9 @@ package sql
 import (
 	"context"
 
-	"github.com/digital-feather/cryptellation/pkg/backtest"
-	"github.com/digital-feather/cryptellation/services/backtests/io/db"
-	"github.com/digital-feather/cryptellation/services/backtests/io/db/adapters/sql/entities"
+	"github.com/lerenn/cryptellation/pkg/backtest"
+	"github.com/lerenn/cryptellation/services/backtests/io/db"
+	"github.com/lerenn/cryptellation/services/backtests/io/db/adapters/sql/entities"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 )

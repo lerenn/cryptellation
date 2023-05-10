@@ -7,9 +7,9 @@ import (
 	"context"
 	"time"
 
-	"github.com/digital-feather/cryptellation/pkg/account"
-	"github.com/digital-feather/cryptellation/pkg/event"
-	"github.com/digital-feather/cryptellation/pkg/order"
+	"github.com/lerenn/cryptellation/pkg/account"
+	"github.com/lerenn/cryptellation/pkg/event"
+	"github.com/lerenn/cryptellation/pkg/order"
 )
 
 type Backtests interface {

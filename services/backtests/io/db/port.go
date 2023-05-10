@@ -7,7 +7,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/digital-feather/cryptellation/pkg/backtest"
+	"github.com/lerenn/cryptellation/pkg/backtest"
 )
 
 const (

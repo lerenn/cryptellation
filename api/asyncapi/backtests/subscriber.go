@@ -4,7 +4,7 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/digital-feather/cryptellation/services/backtests"
+	"github.com/lerenn/cryptellation/services/backtests"
 )
 
 type subscriber struct {

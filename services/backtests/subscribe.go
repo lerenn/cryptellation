@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/digital-feather/cryptellation/pkg/backtest"
+	"github.com/lerenn/cryptellation/pkg/backtest"
 )
 
 func (b Backtests) SubscribeToEvents(ctx context.Context, backtestId uint, exchange, pairSymbol string) error {

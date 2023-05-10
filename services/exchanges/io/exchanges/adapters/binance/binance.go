@@ -6,8 +6,8 @@ import (
 	"time"
 
 	client "github.com/adshao/go-binance/v2"
-	"github.com/digital-feather/cryptellation/pkg/config"
-	"github.com/digital-feather/cryptellation/pkg/exchange"
+	"github.com/lerenn/cryptellation/pkg/config"
+	"github.com/lerenn/cryptellation/pkg/exchange"
 )
 
 var (

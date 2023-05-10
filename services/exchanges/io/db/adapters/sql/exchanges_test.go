@@ -3,8 +3,8 @@ package sql
 import (
 	"testing"
 
-	"github.com/digital-feather/cryptellation/pkg/config"
-	"github.com/digital-feather/cryptellation/services/exchanges/io/db/tests"
+	"github.com/lerenn/cryptellation/pkg/config"
+	"github.com/lerenn/cryptellation/services/exchanges/io/db/tests"
 	"github.com/stretchr/testify/suite"
 )
 

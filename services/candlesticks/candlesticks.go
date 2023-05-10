@@ -1,8 +1,8 @@
 package candlesticks
 
 import (
-	db "github.com/digital-feather/cryptellation/services/candlesticks/io/db"
-	"github.com/digital-feather/cryptellation/services/candlesticks/io/exchanges"
+	db "github.com/lerenn/cryptellation/services/candlesticks/io/db"
+	"github.com/lerenn/cryptellation/services/candlesticks/io/exchanges"
 )
 
 type candlesticks struct {

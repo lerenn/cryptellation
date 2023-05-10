@@ -4,10 +4,10 @@ import (
 	"context"
 	"fmt"
 
-	asyncapi "github.com/digital-feather/cryptellation/api/asyncapi/ticks"
-	client "github.com/digital-feather/cryptellation/clients/go"
-	"github.com/digital-feather/cryptellation/pkg/config"
-	"github.com/digital-feather/cryptellation/pkg/tick"
+	asyncapi "github.com/lerenn/cryptellation/api/asyncapi/ticks"
+	client "github.com/lerenn/cryptellation/clients/go"
+	"github.com/lerenn/cryptellation/pkg/config"
+	"github.com/lerenn/cryptellation/pkg/tick"
 	"github.com/nats-io/nats.go"
 )
 

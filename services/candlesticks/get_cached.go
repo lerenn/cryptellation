@@ -5,8 +5,8 @@ import (
 	"log"
 	"time"
 
-	"github.com/digital-feather/cryptellation/pkg/candlestick"
-	"github.com/digital-feather/cryptellation/services/candlesticks/io/exchanges"
+	"github.com/lerenn/cryptellation/pkg/candlestick"
+	"github.com/lerenn/cryptellation/services/candlesticks/io/exchanges"
 )
 
 const (

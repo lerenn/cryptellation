@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/digital-feather/cryptellation/pkg/tick"
+	"github.com/lerenn/cryptellation/pkg/tick"
 	"github.com/stretchr/testify/suite"
 )
 

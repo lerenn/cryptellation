@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"log"
 
-	client "github.com/digital-feather/cryptellation/clients/go"
-	"github.com/digital-feather/cryptellation/pkg/backtest"
-	"github.com/digital-feather/cryptellation/pkg/event"
+	client "github.com/lerenn/cryptellation/clients/go"
+	"github.com/lerenn/cryptellation/pkg/backtest"
+	"github.com/lerenn/cryptellation/pkg/event"
 )
 
 func (b Backtests) Advance(ctx context.Context, backtestId uint) error {

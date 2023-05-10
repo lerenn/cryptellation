@@ -6,10 +6,10 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/digital-feather/cryptellation/pkg/config"
 	"github.com/go-redis/redis/v8"
 	"github.com/go-redsync/redsync/v4"
 	"github.com/go-redsync/redsync/v4/redis/goredis/v8"
+	"github.com/lerenn/cryptellation/pkg/config"
 )
 
 const (

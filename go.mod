@@ -1,4 +1,4 @@
-module github.com/digital-feather/cryptellation
+module github.com/lerenn/cryptellation
 
 go 1.18
 

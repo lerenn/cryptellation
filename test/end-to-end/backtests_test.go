@@ -5,14 +5,14 @@ import (
 	"testing"
 	"time"
 
-	client "github.com/digital-feather/cryptellation/clients/go"
-	"github.com/digital-feather/cryptellation/clients/go/nats"
-	"github.com/digital-feather/cryptellation/pkg/account"
-	"github.com/digital-feather/cryptellation/pkg/config"
-	"github.com/digital-feather/cryptellation/pkg/event"
-	"github.com/digital-feather/cryptellation/pkg/order"
-	"github.com/digital-feather/cryptellation/pkg/tick"
-	"github.com/digital-feather/cryptellation/pkg/utils"
+	client "github.com/lerenn/cryptellation/clients/go"
+	"github.com/lerenn/cryptellation/clients/go/nats"
+	"github.com/lerenn/cryptellation/pkg/account"
+	"github.com/lerenn/cryptellation/pkg/config"
+	"github.com/lerenn/cryptellation/pkg/event"
+	"github.com/lerenn/cryptellation/pkg/order"
+	"github.com/lerenn/cryptellation/pkg/tick"
+	"github.com/lerenn/cryptellation/pkg/utils"
 	"github.com/stretchr/testify/suite"
 )
 

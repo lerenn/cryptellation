@@ -4,12 +4,12 @@ import (
 	"context"
 	"testing"
 
-	"github.com/digital-feather/cryptellation/clients/go/mock"
-	"github.com/digital-feather/cryptellation/pkg/backtest"
-	"github.com/digital-feather/cryptellation/pkg/event"
-	"github.com/digital-feather/cryptellation/services/backtests/io/db"
-	"github.com/digital-feather/cryptellation/services/backtests/io/events"
 	"github.com/golang/mock/gomock"
+	"github.com/lerenn/cryptellation/clients/go/mock"
+	"github.com/lerenn/cryptellation/pkg/backtest"
+	"github.com/lerenn/cryptellation/pkg/event"
+	"github.com/lerenn/cryptellation/services/backtests/io/db"
+	"github.com/lerenn/cryptellation/services/backtests/io/events"
 	"github.com/stretchr/testify/suite"
 )
 

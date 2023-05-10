@@ -4,9 +4,9 @@ import (
 	"context"
 	"testing"
 
-	client "github.com/digital-feather/cryptellation/clients/go"
-	"github.com/digital-feather/cryptellation/clients/go/nats"
-	"github.com/digital-feather/cryptellation/pkg/config"
+	client "github.com/lerenn/cryptellation/clients/go"
+	"github.com/lerenn/cryptellation/clients/go/nats"
+	"github.com/lerenn/cryptellation/pkg/config"
 	"github.com/stretchr/testify/suite"
 )
 

@@ -3,8 +3,8 @@ package event
 import (
 	"time"
 
-	"github.com/digital-feather/cryptellation/pkg/candlestick"
-	"github.com/digital-feather/cryptellation/pkg/tick"
+	"github.com/lerenn/cryptellation/pkg/candlestick"
+	"github.com/lerenn/cryptellation/pkg/tick"
 )
 
 func NewTickEvent(t time.Time, content tick.Tick) Event {

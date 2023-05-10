@@ -8,8 +8,8 @@ import (
 	context "context"
 	reflect "reflect"
 
-	client "github.com/digital-feather/cryptellation/clients/go"
-	candlestick "github.com/digital-feather/cryptellation/pkg/candlestick"
+	client "github.com/lerenn/cryptellation/clients/go"
+	candlestick "github.com/lerenn/cryptellation/pkg/candlestick"
 	gomock "github.com/golang/mock/gomock"
 )
 

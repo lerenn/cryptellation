@@ -3,7 +3,7 @@ package exchanges
 import (
 	"context"
 
-	"github.com/digital-feather/cryptellation/pkg/exchange"
+	"github.com/lerenn/cryptellation/pkg/exchange"
 )
 
 type Interface interface {

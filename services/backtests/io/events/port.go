@@ -4,7 +4,7 @@
 package events
 
 import (
-	"github.com/digital-feather/cryptellation/pkg/event"
+	"github.com/lerenn/cryptellation/pkg/event"
 )
 
 type Port interface {

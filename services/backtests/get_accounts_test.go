@@ -3,10 +3,10 @@ package backtests
 import (
 	"testing"
 
-	"github.com/digital-feather/cryptellation/clients/go/mock"
-	"github.com/digital-feather/cryptellation/services/backtests/io/db"
-	"github.com/digital-feather/cryptellation/services/backtests/io/events"
 	"github.com/golang/mock/gomock"
+	"github.com/lerenn/cryptellation/clients/go/mock"
+	"github.com/lerenn/cryptellation/services/backtests/io/db"
+	"github.com/lerenn/cryptellation/services/backtests/io/events"
 	"github.com/stretchr/testify/suite"
 )
 

@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 
-	"github.com/digital-feather/cryptellation/services/ticks/io/db/adapters/sql/entities"
+	"github.com/lerenn/cryptellation/services/ticks/io/db/adapters/sql/entities"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 )

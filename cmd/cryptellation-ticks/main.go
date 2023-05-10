@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/digital-feather/cryptellation/pkg/version"
+	"github.com/lerenn/cryptellation/pkg/version"
 	"github.com/spf13/cobra"
 )
 

@@ -3,8 +3,8 @@ package sql
 import (
 	"fmt"
 
-	"github.com/digital-feather/cryptellation/pkg/config"
-	"github.com/digital-feather/cryptellation/services/backtests/io/db/adapters/sql/entities"
+	"github.com/lerenn/cryptellation/pkg/config"
+	"github.com/lerenn/cryptellation/services/backtests/io/db/adapters/sql/entities"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )

@@ -1,8 +1,8 @@
 package exchanges
 
 import (
-	"github.com/digital-feather/cryptellation/services/exchanges/io/db"
-	"github.com/digital-feather/cryptellation/services/exchanges/io/exchanges"
+	"github.com/lerenn/cryptellation/services/exchanges/io/db"
+	"github.com/lerenn/cryptellation/services/exchanges/io/exchanges"
 )
 
 type Exchanges struct {

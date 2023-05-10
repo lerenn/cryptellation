@@ -8,12 +8,12 @@ import (
 	"strconv"
 	"syscall"
 
-	asyncapi "github.com/digital-feather/cryptellation/api/asyncapi/candlesticks"
-	"github.com/digital-feather/cryptellation/pkg/config"
-	"github.com/digital-feather/cryptellation/pkg/http/health"
-	"github.com/digital-feather/cryptellation/services/candlesticks"
-	"github.com/digital-feather/cryptellation/services/candlesticks/io/db/adapters/sql"
-	exchanges "github.com/digital-feather/cryptellation/services/candlesticks/io/exchanges/adapters"
+	asyncapi "github.com/lerenn/cryptellation/api/asyncapi/candlesticks"
+	"github.com/lerenn/cryptellation/pkg/config"
+	"github.com/lerenn/cryptellation/pkg/http/health"
+	"github.com/lerenn/cryptellation/services/candlesticks"
+	"github.com/lerenn/cryptellation/services/candlesticks/io/db/adapters/sql"
+	exchanges "github.com/lerenn/cryptellation/services/candlesticks/io/exchanges/adapters"
 	"github.com/spf13/cobra"
 )
 

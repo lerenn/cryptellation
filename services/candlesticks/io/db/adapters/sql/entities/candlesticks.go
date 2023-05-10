@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/digital-feather/cryptellation/pkg/candlestick"
-	"github.com/digital-feather/cryptellation/pkg/period"
+	"github.com/lerenn/cryptellation/pkg/candlestick"
+	"github.com/lerenn/cryptellation/pkg/period"
 	"golang.org/x/xerrors"
 )
 

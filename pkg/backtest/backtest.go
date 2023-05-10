@@ -7,12 +7,12 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/digital-feather/cryptellation/pkg/account"
-	"github.com/digital-feather/cryptellation/pkg/candlestick"
-	"github.com/digital-feather/cryptellation/pkg/event"
-	"github.com/digital-feather/cryptellation/pkg/order"
-	"github.com/digital-feather/cryptellation/pkg/pair"
-	"github.com/digital-feather/cryptellation/pkg/period"
+	"github.com/lerenn/cryptellation/pkg/account"
+	"github.com/lerenn/cryptellation/pkg/candlestick"
+	"github.com/lerenn/cryptellation/pkg/event"
+	"github.com/lerenn/cryptellation/pkg/order"
+	"github.com/lerenn/cryptellation/pkg/pair"
+	"github.com/lerenn/cryptellation/pkg/period"
 )
 
 var (

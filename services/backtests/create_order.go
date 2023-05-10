@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"log"
 
-	client "github.com/digital-feather/cryptellation/clients/go"
-	"github.com/digital-feather/cryptellation/pkg/backtest"
-	"github.com/digital-feather/cryptellation/pkg/order"
+	client "github.com/lerenn/cryptellation/clients/go"
+	"github.com/lerenn/cryptellation/pkg/backtest"
+	"github.com/lerenn/cryptellation/pkg/order"
 )
 
 func (b Backtests) CreateOrder(ctx context.Context, backtestId uint, order order.Order) error {

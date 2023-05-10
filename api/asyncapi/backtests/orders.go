@@ -3,9 +3,9 @@ package backtests
 import (
 	"time"
 
-	client "github.com/digital-feather/cryptellation/clients/go"
-	"github.com/digital-feather/cryptellation/pkg/order"
-	"github.com/digital-feather/cryptellation/pkg/utils"
+	client "github.com/lerenn/cryptellation/clients/go"
+	"github.com/lerenn/cryptellation/pkg/order"
+	"github.com/lerenn/cryptellation/pkg/utils"
 )
 
 func (msg *BacktestsOrdersListResponseMessage) Set(orders []order.Order) {

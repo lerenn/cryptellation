@@ -3,8 +3,8 @@ package redis
 import (
 	"testing"
 
-	"github.com/digital-feather/cryptellation/pkg/config"
-	"github.com/digital-feather/cryptellation/services/ticks/io/db/tests"
+	"github.com/lerenn/cryptellation/pkg/config"
+	"github.com/lerenn/cryptellation/services/ticks/io/db/tests"
 	"github.com/stretchr/testify/suite"
 )
 

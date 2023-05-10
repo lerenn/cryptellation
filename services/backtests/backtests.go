@@ -1,9 +1,9 @@
 package backtests
 
 import (
-	client "github.com/digital-feather/cryptellation/clients/go"
-	"github.com/digital-feather/cryptellation/services/backtests/io/db"
-	"github.com/digital-feather/cryptellation/services/backtests/io/events"
+	client "github.com/lerenn/cryptellation/clients/go"
+	"github.com/lerenn/cryptellation/services/backtests/io/db"
+	"github.com/lerenn/cryptellation/services/backtests/io/events"
 )
 
 // Test interface implementation

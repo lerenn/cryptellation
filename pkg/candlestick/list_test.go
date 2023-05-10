@@ -5,8 +5,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/digital-feather/cryptellation/pkg/period"
-	"github.com/digital-feather/cryptellation/pkg/timeserie"
+	"github.com/lerenn/cryptellation/pkg/period"
+	"github.com/lerenn/cryptellation/pkg/timeserie"
 	"github.com/stretchr/testify/suite"
 )
 

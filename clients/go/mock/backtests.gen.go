@@ -8,9 +8,9 @@ import (
 	context "context"
 	reflect "reflect"
 
-	client "github.com/digital-feather/cryptellation/clients/go"
-	account "github.com/digital-feather/cryptellation/pkg/account"
-	event "github.com/digital-feather/cryptellation/pkg/event"
+	client "github.com/lerenn/cryptellation/clients/go"
+	account "github.com/lerenn/cryptellation/pkg/account"
+	event "github.com/lerenn/cryptellation/pkg/event"
 	gomock "github.com/golang/mock/gomock"
 )
 

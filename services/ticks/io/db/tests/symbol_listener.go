@@ -3,7 +3,7 @@ package tests
 import (
 	"context"
 
-	"github.com/digital-feather/cryptellation/services/ticks/io/db"
+	"github.com/lerenn/cryptellation/services/ticks/io/db"
 	"github.com/stretchr/testify/suite"
 )
 

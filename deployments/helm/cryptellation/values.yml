@@ -43,25 +43,25 @@ credentials:
 # Specific section for services
 services:
   backtests:
-    image: digitalfeather/cryptellation:latest
+    image: lerenn/cryptellation:latest
     sqldb:
       database: backtests
     health:
       port: 9000
   candlesticks:
-    image: digitalfeather/cryptellation:latest
+    image: lerenn/cryptellation:latest
     sqldb:
       database: candlesticks
     health:
       port: 9000
   exchanges:
-    image: digitalfeather/cryptellation:latest
+    image: lerenn/cryptellation:latest
     sqldb:
       database: exchanges
     health:
       port: 9000
   ticks:
-    image: digitalfeather/cryptellation:latest
+    image: lerenn/cryptellation:latest
     sqldb:
       database: ticks
     health:

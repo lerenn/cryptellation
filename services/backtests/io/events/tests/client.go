@@ -4,9 +4,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/digital-feather/cryptellation/pkg/event"
-	"github.com/digital-feather/cryptellation/pkg/tick"
-	"github.com/digital-feather/cryptellation/services/backtests/io/events"
+	"github.com/lerenn/cryptellation/pkg/event"
+	"github.com/lerenn/cryptellation/pkg/tick"
+	"github.com/lerenn/cryptellation/services/backtests/io/events"
 	"github.com/stretchr/testify/suite"
 )
 

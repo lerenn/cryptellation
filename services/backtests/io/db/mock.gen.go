@@ -8,7 +8,7 @@ import (
 	context "context"
 	reflect "reflect"
 
-	backtest "github.com/digital-feather/cryptellation/pkg/backtest"
+	backtest "github.com/lerenn/cryptellation/pkg/backtest"
 	gomock "github.com/golang/mock/gomock"
 )
 

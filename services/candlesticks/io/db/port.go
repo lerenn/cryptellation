@@ -7,7 +7,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/digital-feather/cryptellation/pkg/candlestick"
+	"github.com/lerenn/cryptellation/pkg/candlestick"
 )
 
 type Port interface {

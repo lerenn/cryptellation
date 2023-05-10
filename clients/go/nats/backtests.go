@@ -6,12 +6,12 @@ import (
 	"log"
 	"time"
 
-	asyncapi "github.com/digital-feather/cryptellation/api/asyncapi/backtests"
-	client "github.com/digital-feather/cryptellation/clients/go"
-	"github.com/digital-feather/cryptellation/pkg/account"
-	"github.com/digital-feather/cryptellation/pkg/config"
-	"github.com/digital-feather/cryptellation/pkg/event"
-	"github.com/digital-feather/cryptellation/pkg/tick"
+	asyncapi "github.com/lerenn/cryptellation/api/asyncapi/backtests"
+	client "github.com/lerenn/cryptellation/clients/go"
+	"github.com/lerenn/cryptellation/pkg/account"
+	"github.com/lerenn/cryptellation/pkg/config"
+	"github.com/lerenn/cryptellation/pkg/event"
+	"github.com/lerenn/cryptellation/pkg/tick"
 	"github.com/nats-io/nats.go"
 )
 

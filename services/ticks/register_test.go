@@ -6,11 +6,11 @@ import (
 	"testing"
 	"time"
 
-	"github.com/digital-feather/cryptellation/pkg/tick"
-	"github.com/digital-feather/cryptellation/services/ticks/io/db"
-	"github.com/digital-feather/cryptellation/services/ticks/io/events"
-	"github.com/digital-feather/cryptellation/services/ticks/io/exchanges"
 	"github.com/golang/mock/gomock"
+	"github.com/lerenn/cryptellation/pkg/tick"
+	"github.com/lerenn/cryptellation/services/ticks/io/db"
+	"github.com/lerenn/cryptellation/services/ticks/io/events"
+	"github.com/lerenn/cryptellation/services/ticks/io/exchanges"
 	"github.com/stretchr/testify/suite"
 )
 

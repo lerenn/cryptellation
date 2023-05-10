@@ -8,13 +8,13 @@ import (
 	"strconv"
 	"syscall"
 
-	asyncapi "github.com/digital-feather/cryptellation/api/asyncapi/ticks"
-	"github.com/digital-feather/cryptellation/pkg/config"
-	"github.com/digital-feather/cryptellation/pkg/http/health"
-	"github.com/digital-feather/cryptellation/services/ticks"
-	"github.com/digital-feather/cryptellation/services/ticks/io/db/adapters/sql"
-	natsAdapter "github.com/digital-feather/cryptellation/services/ticks/io/events/adapters/nats"
-	exchanges "github.com/digital-feather/cryptellation/services/ticks/io/exchanges/adapters"
+	asyncapi "github.com/lerenn/cryptellation/api/asyncapi/ticks"
+	"github.com/lerenn/cryptellation/pkg/config"
+	"github.com/lerenn/cryptellation/pkg/http/health"
+	"github.com/lerenn/cryptellation/services/ticks"
+	"github.com/lerenn/cryptellation/services/ticks/io/db/adapters/sql"
+	natsAdapter "github.com/lerenn/cryptellation/services/ticks/io/events/adapters/nats"
+	exchanges "github.com/lerenn/cryptellation/services/ticks/io/exchanges/adapters"
 	"github.com/spf13/cobra"
 )
 

@@ -3,8 +3,8 @@ package tests
 import (
 	"time"
 
-	"github.com/digital-feather/cryptellation/pkg/tick"
-	"github.com/digital-feather/cryptellation/services/ticks/io/events"
+	"github.com/lerenn/cryptellation/pkg/tick"
+	"github.com/lerenn/cryptellation/services/ticks/io/events"
 	"github.com/stretchr/testify/suite"
 )
 

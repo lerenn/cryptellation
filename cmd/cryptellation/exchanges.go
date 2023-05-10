@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	client "github.com/digital-feather/cryptellation/clients/go"
-	"github.com/digital-feather/cryptellation/clients/go/nats"
+	client "github.com/lerenn/cryptellation/clients/go"
+	"github.com/lerenn/cryptellation/clients/go/nats"
 	"github.com/spf13/cobra"
 )
 

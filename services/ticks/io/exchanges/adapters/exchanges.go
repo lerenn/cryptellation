@@ -3,10 +3,10 @@ package exchanges
 import (
 	"fmt"
 
-	"github.com/digital-feather/cryptellation/pkg/config"
-	"github.com/digital-feather/cryptellation/pkg/tick"
-	"github.com/digital-feather/cryptellation/services/ticks/io/exchanges"
-	"github.com/digital-feather/cryptellation/services/ticks/io/exchanges/adapters/binance"
+	"github.com/lerenn/cryptellation/pkg/config"
+	"github.com/lerenn/cryptellation/pkg/tick"
+	"github.com/lerenn/cryptellation/services/ticks/io/exchanges"
+	"github.com/lerenn/cryptellation/services/ticks/io/exchanges/adapters/binance"
 )
 
 type Exchanges struct {

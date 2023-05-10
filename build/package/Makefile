@@ -1,6 +1,6 @@
 .DEFAULT_GOAL     	= help
 
-DOCKER_IMAGE_PREFIX = digitalfeather/cryptellation
+DOCKER_IMAGE_PREFIX = lerenn/cryptellation
 
 RELEASE_VER			= $(shell grep "version = " ../../pkg/version/version.go | head -n 1 | cut -d \" -f 2)
 

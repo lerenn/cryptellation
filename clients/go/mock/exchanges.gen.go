@@ -8,7 +8,7 @@ import (
 	context "context"
 	reflect "reflect"
 
-	exchange "github.com/digital-feather/cryptellation/pkg/exchange"
+	exchange "github.com/lerenn/cryptellation/pkg/exchange"
 	gomock "github.com/golang/mock/gomock"
 )
 

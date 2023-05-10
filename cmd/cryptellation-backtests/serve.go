@@ -8,13 +8,13 @@ import (
 	"strconv"
 	"syscall"
 
-	asyncapi "github.com/digital-feather/cryptellation/api/asyncapi/backtests"
-	natsClient "github.com/digital-feather/cryptellation/clients/go/nats"
-	"github.com/digital-feather/cryptellation/pkg/config"
-	"github.com/digital-feather/cryptellation/pkg/http/health"
-	"github.com/digital-feather/cryptellation/services/backtests"
-	"github.com/digital-feather/cryptellation/services/backtests/io/db/adapters/sql"
-	natsAdapter "github.com/digital-feather/cryptellation/services/backtests/io/events/adapters/nats"
+	asyncapi "github.com/lerenn/cryptellation/api/asyncapi/backtests"
+	natsClient "github.com/lerenn/cryptellation/clients/go/nats"
+	"github.com/lerenn/cryptellation/pkg/config"
+	"github.com/lerenn/cryptellation/pkg/http/health"
+	"github.com/lerenn/cryptellation/services/backtests"
+	"github.com/lerenn/cryptellation/services/backtests/io/db/adapters/sql"
+	natsAdapter "github.com/lerenn/cryptellation/services/backtests/io/events/adapters/nats"
 	"github.com/spf13/cobra"
 )
 

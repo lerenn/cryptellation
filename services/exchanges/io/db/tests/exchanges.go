@@ -4,8 +4,8 @@ import (
 	"context"
 	"time"
 
-	"github.com/digital-feather/cryptellation/pkg/exchange"
-	"github.com/digital-feather/cryptellation/services/exchanges/io/db"
+	"github.com/lerenn/cryptellation/pkg/exchange"
+	"github.com/lerenn/cryptellation/services/exchanges/io/db"
 	"github.com/stretchr/testify/suite"
 )
 

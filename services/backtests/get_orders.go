@@ -3,7 +3,7 @@ package backtests
 import (
 	"context"
 
-	"github.com/digital-feather/cryptellation/pkg/order"
+	"github.com/lerenn/cryptellation/pkg/order"
 )
 
 func (b Backtests) GetOrders(ctx context.Context, backtestId uint) ([]order.Order, error) {

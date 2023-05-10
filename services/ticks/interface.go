@@ -3,7 +3,7 @@ package ticks
 import (
 	"context"
 
-	"github.com/digital-feather/cryptellation/pkg/tick"
+	"github.com/lerenn/cryptellation/pkg/tick"
 )
 
 type Interface interface {

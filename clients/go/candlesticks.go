@@ -7,8 +7,8 @@ import (
 	"context"
 	"time"
 
-	"github.com/digital-feather/cryptellation/pkg/candlestick"
-	"github.com/digital-feather/cryptellation/pkg/period"
+	"github.com/lerenn/cryptellation/pkg/candlestick"
+	"github.com/lerenn/cryptellation/pkg/period"
 )
 
 type Candlesticks interface {

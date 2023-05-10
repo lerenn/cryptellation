@@ -1,8 +1,8 @@
 package backtests
 
 import (
-	"github.com/digital-feather/cryptellation/pkg/config"
-	"github.com/digital-feather/cryptellation/services/backtests"
+	"github.com/lerenn/cryptellation/pkg/config"
+	"github.com/lerenn/cryptellation/services/backtests"
 	"github.com/nats-io/nats.go"
 )
 
