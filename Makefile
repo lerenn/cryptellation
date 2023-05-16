@@ -2,8 +2,9 @@
 .DEFAULT_GOAL := help
 
 .PHONY: clean
-clean: test/clean ## Clean everything
-	$(MAKE) -C tools/minikube-env clean
+clean: ## Clean everything
+	$(MAKE) -C deployments/helm clean
+	$(MAKE) -C test clean
 
 .PHONY: lint
 lint: ## Lint the code
@@ -12,8 +13,8 @@ ifeq ($(shell which golangci-lint &> /dev/null; echo $$?),1)
 endif
 	@LOG_LEVEL=error golangci-lint run
 
-.PHONY: generate ## Generate specified code across the codebase
-generate:
+.PHONY: generate
+generate: ## Generate specified code across the codebase
 	@go generate ./...
 
 .PHONY: test

@@ -14,16 +14,21 @@ type DB struct {
 }
 
 func New(c config.SQL) (*DB, error) {
+	// Validate configuration
+	if err := c.Validate(); err != nil {
+		return nil, err
+	}
+
+	// Generate SQL client
 	client, err := gorm.Open(postgres.Open(c.URL()), DefaultGormConfig)
 	if err != nil {
 		return nil, fmt.Errorf("opening sqldb connection: %w", err)
 	}
 
-	db := &DB{
+	// Return client
+	return &DB{
 		client: client,
-	}
-
-	return db, nil
+	}, nil
 }
 
 func (d *DB) Reset() error {

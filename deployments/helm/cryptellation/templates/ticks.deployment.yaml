@@ -29,21 +29,6 @@ spec:
             port: {{ (.Values.services.ticks.health).port | default 9000 }}
         command: [ "cryptellation-ticks", "serve" ]
         env:
-        - name: "HEALTH_PORT"
-          valueFrom:
-            configMapKeyRef:
-              key:  ticks.health.port
-              name: cryptellation-config
-        - name: "NATS_HOST"
-          valueFrom:
-            configMapKeyRef:
-              key:  nats.host
-              name: cryptellation-credentials
-        - name: "NATS_PORT"
-          valueFrom:
-            configMapKeyRef:
-              key:  nats.port
-              name: cryptellation-credentials
         {{- include "common.env" "ticks" | indent 8 }}
         resources: {}
       initContainers:

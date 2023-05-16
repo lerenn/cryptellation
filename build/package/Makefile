@@ -7,16 +7,16 @@ RELEASE_VER			= $(shell grep "version = " ../../pkg/version/version.go | head -n
 # Force shell to bash for Gitlab CI
 SHELL             := /bin/bash
 
-.PHONY: build/build
-build/build:
+.PHONY: __build/build
+__build/build:
 	@DOCKER_BUILDKIT=1 docker build \
 		-f ./build.dockerfile \
 		-t $(DOCKER_IMAGE_PREFIX):build-$(RELEASE_VER) \
 		-t $(DOCKER_IMAGE_PREFIX):build \
 		../..
 
-.PHONY: build/run
-build/run:
+.PHONY: __build/run
+__build/run:
 	@DOCKER_BUILDKIT=1 docker build \
 		-f ./run.dockerfile \
 		--build-arg BUILD_IMAGE=$(DOCKER_IMAGE_PREFIX):build-$(RELEASE_VER) \
@@ -33,7 +33,7 @@ push: build ## Push docker image
 	docker push $(DOCKER_IMAGE_PREFIX):latest
 
 .PHONY: push/local
-push/local: build
+push/local: build ## Push docker image on local repository
 	@docker tag $(DOCKER_IMAGE_PREFIX):$(RELEASE_VER) localhost:5000/$(DOCKER_IMAGE_PREFIX):$(RELEASE_VER)
 	@docker push localhost:5000/$(DOCKER_IMAGE_PREFIX):$(RELEASE_VER)
 	@docker tag $(DOCKER_IMAGE_PREFIX):latest localhost:5000/$(DOCKER_IMAGE_PREFIX):latest
