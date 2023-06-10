@@ -1,8 +1,8 @@
 package ticks
 
 import (
+	"github.com/lerenn/cryptellation/internal/core/ticks"
 	"github.com/lerenn/cryptellation/pkg/config"
-	"github.com/lerenn/cryptellation/services/ticks"
 	"github.com/nats-io/nats.go"
 )
 

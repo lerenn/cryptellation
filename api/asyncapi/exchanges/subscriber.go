@@ -4,7 +4,7 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/lerenn/cryptellation/services/exchanges"
+	"github.com/lerenn/cryptellation/internal/core/exchanges"
 )
 
 type subscriber struct {

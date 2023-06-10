@@ -5,7 +5,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/lerenn/cryptellation/services/ticks"
+	"github.com/lerenn/cryptellation/internal/core/ticks"
 )
 
 type subscriber struct {

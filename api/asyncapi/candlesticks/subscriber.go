@@ -4,7 +4,7 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/lerenn/cryptellation/services/candlesticks"
+	"github.com/lerenn/cryptellation/internal/core/candlesticks"
 )
 
 type subscriber struct {

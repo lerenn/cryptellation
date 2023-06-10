@@ -9,11 +9,11 @@ import (
 	"syscall"
 
 	asyncapi "github.com/lerenn/cryptellation/api/asyncapi/exchanges"
+	"github.com/lerenn/cryptellation/internal/core/exchanges"
+	"github.com/lerenn/cryptellation/internal/core/exchanges/io/db/adapters/sql"
+	exchangesAdapter "github.com/lerenn/cryptellation/internal/core/exchanges/io/exchanges/adapters"
 	"github.com/lerenn/cryptellation/pkg/config"
 	"github.com/lerenn/cryptellation/pkg/http/health"
-	"github.com/lerenn/cryptellation/services/exchanges"
-	"github.com/lerenn/cryptellation/services/exchanges/io/db/adapters/sql"
-	exchangesAdapter "github.com/lerenn/cryptellation/services/exchanges/io/exchanges/adapters"
 	"github.com/spf13/cobra"
 )
 

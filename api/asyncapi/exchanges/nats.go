@@ -1,8 +1,8 @@
 package exchanges
 
 import (
+	"github.com/lerenn/cryptellation/internal/core/exchanges"
 	"github.com/lerenn/cryptellation/pkg/config"
-	"github.com/lerenn/cryptellation/services/exchanges"
 	"github.com/nats-io/nats.go"
 )
 

@@ -1,8 +1,8 @@
 package backtests
 
 import (
+	"github.com/lerenn/cryptellation/internal/core/backtests"
 	"github.com/lerenn/cryptellation/pkg/config"
-	"github.com/lerenn/cryptellation/services/backtests"
 	"github.com/nats-io/nats.go"
 )
 

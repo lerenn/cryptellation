@@ -4,8 +4,8 @@ import (
 	"log"
 
 	"github.com/go-gormigrate/gormigrate/v2"
+	"github.com/lerenn/cryptellation/internal/core/backtests/io/db/adapters/sql/migrations"
 	"github.com/lerenn/cryptellation/pkg/config"
-	"github.com/lerenn/cryptellation/services/backtests/io/db/adapters/sql/migrations"
 	"github.com/spf13/cobra"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
