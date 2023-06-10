@@ -6,7 +6,7 @@ package exchanges
 import (
 	"context"
 
-	"github.com/lerenn/cryptellation/pkg/exchange"
+	"github.com/lerenn/cryptellation/pkg/models/exchange"
 )
 
 type Port interface {

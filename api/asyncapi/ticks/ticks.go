@@ -11,7 +11,7 @@ import (
 	"time"
 
 	client "github.com/lerenn/cryptellation/clients/go"
-	"github.com/lerenn/cryptellation/pkg/tick"
+	"github.com/lerenn/cryptellation/pkg/models/tick"
 )
 
 func (msg *RegisteringRequestMessage) Set(payload client.TicksFilterPayload) {

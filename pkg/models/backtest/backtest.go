@@ -7,12 +7,12 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/lerenn/cryptellation/pkg/account"
-	"github.com/lerenn/cryptellation/pkg/candlestick"
-	"github.com/lerenn/cryptellation/pkg/event"
-	"github.com/lerenn/cryptellation/pkg/order"
-	"github.com/lerenn/cryptellation/pkg/pair"
-	"github.com/lerenn/cryptellation/pkg/period"
+	"github.com/lerenn/cryptellation/pkg/models/account"
+	"github.com/lerenn/cryptellation/pkg/models/candlestick"
+	"github.com/lerenn/cryptellation/pkg/models/event"
+	"github.com/lerenn/cryptellation/pkg/models/order"
+	"github.com/lerenn/cryptellation/pkg/models/pair"
+	"github.com/lerenn/cryptellation/pkg/models/period"
 )
 
 var (

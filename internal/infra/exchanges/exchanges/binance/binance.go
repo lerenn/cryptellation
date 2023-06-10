@@ -7,7 +7,7 @@ import (
 
 	client "github.com/adshao/go-binance/v2"
 	"github.com/lerenn/cryptellation/pkg/config"
-	"github.com/lerenn/cryptellation/pkg/exchange"
+	"github.com/lerenn/cryptellation/pkg/models/exchange"
 )
 
 var (

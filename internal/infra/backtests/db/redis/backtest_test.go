@@ -6,11 +6,11 @@ import (
 	"testing"
 	"time"
 
-	"github.com/lerenn/cryptellation/internal/core/backtests/io/db/test"
-	"github.com/lerenn/cryptellation/pkg/account"
-	"github.com/lerenn/cryptellation/pkg/backtest"
-	"github.com/lerenn/cryptellation/pkg/candlestick"
-	"github.com/lerenn/cryptellation/pkg/period"
+	"github.com/lerenn/cryptellation/internal/core/backtests/io/db"
+	"github.com/lerenn/cryptellation/pkg/models/account"
+	"github.com/lerenn/cryptellation/pkg/models/backtest"
+	"github.com/lerenn/cryptellation/pkg/models/candlestick"
+	"github.com/lerenn/cryptellation/pkg/models/period"
 	"github.com/stretchr/testify/suite"
 )
 
@@ -19,7 +19,7 @@ func TestBacktestSuite(t *testing.T) {
 }
 
 type BacktestSuite struct {
-	test.BacktestSuite
+	db.BacktestSuite
 }
 
 func (suite *BacktestSuite) SetupTest() {

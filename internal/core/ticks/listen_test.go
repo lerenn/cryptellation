@@ -8,7 +8,7 @@ import (
 	"github.com/lerenn/cryptellation/internal/core/ticks/io/db"
 	"github.com/lerenn/cryptellation/internal/core/ticks/io/events"
 	"github.com/lerenn/cryptellation/internal/core/ticks/io/exchanges"
-	"github.com/lerenn/cryptellation/pkg/tick"
+	"github.com/lerenn/cryptellation/pkg/models/tick"
 	"github.com/stretchr/testify/suite"
 )
 

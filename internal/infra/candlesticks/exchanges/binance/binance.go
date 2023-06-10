@@ -6,8 +6,8 @@ import (
 
 	client "github.com/adshao/go-binance/v2"
 	"github.com/lerenn/cryptellation/internal/core/candlesticks/io/exchanges"
-	"github.com/lerenn/cryptellation/pkg/candlestick"
 	"github.com/lerenn/cryptellation/pkg/config"
+	"github.com/lerenn/cryptellation/pkg/models/candlestick"
 )
 
 const Name = "binance"

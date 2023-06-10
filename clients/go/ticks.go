@@ -6,7 +6,7 @@ package client
 import (
 	"context"
 
-	"github.com/lerenn/cryptellation/pkg/tick"
+	"github.com/lerenn/cryptellation/pkg/models/tick"
 )
 
 type Ticks interface {

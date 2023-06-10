@@ -3,7 +3,7 @@ package nats
 import (
 	"testing"
 
-	"github.com/lerenn/cryptellation/internal/core/ticks/io/events/tests"
+	"github.com/lerenn/cryptellation/internal/core/ticks/io/events"
 	"github.com/lerenn/cryptellation/pkg/config"
 	"github.com/stretchr/testify/suite"
 )
@@ -13,7 +13,7 @@ func TestNATSSuite(t *testing.T) {
 }
 
 type NATSSuite struct {
-	tests.EventsClientSuite
+	events.EventsClientSuite
 }
 
 func (suite *NATSSuite) SetupTest() {

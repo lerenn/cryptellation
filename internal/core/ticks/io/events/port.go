@@ -4,7 +4,7 @@
 package events
 
 import (
-	"github.com/lerenn/cryptellation/pkg/tick"
+	"github.com/lerenn/cryptellation/pkg/models/tick"
 )
 
 type Port interface {

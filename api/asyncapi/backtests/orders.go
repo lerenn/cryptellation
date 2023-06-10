@@ -4,7 +4,7 @@ import (
 	"time"
 
 	client "github.com/lerenn/cryptellation/clients/go"
-	"github.com/lerenn/cryptellation/pkg/order"
+	"github.com/lerenn/cryptellation/pkg/models/order"
 	"github.com/lerenn/cryptellation/pkg/utils"
 )
 

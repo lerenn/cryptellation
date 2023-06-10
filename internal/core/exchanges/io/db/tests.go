@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/lerenn/cryptellation/pkg/exchange"
+	"github.com/lerenn/cryptellation/pkg/models/exchange"
 	"github.com/stretchr/testify/suite"
 )
 

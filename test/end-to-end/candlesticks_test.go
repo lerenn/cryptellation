@@ -7,9 +7,9 @@ import (
 
 	client "github.com/lerenn/cryptellation/clients/go"
 	"github.com/lerenn/cryptellation/clients/go/nats"
-	"github.com/lerenn/cryptellation/pkg/candlestick"
 	"github.com/lerenn/cryptellation/pkg/config"
-	"github.com/lerenn/cryptellation/pkg/period"
+	"github.com/lerenn/cryptellation/pkg/models/candlestick"
+	"github.com/lerenn/cryptellation/pkg/models/period"
 	"github.com/lerenn/cryptellation/pkg/utils"
 	"github.com/stretchr/testify/suite"
 )

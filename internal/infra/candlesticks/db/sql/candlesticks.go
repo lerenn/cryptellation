@@ -7,7 +7,7 @@ import (
 
 	"github.com/lerenn/cryptellation/internal/core/candlesticks/io/db"
 	"github.com/lerenn/cryptellation/internal/infra/candlesticks/db/sql/entities"
-	"github.com/lerenn/cryptellation/pkg/candlestick"
+	"github.com/lerenn/cryptellation/pkg/models/candlestick"
 )
 
 func (d *DB) CreateCandlesticks(ctx context.Context, cs *candlestick.List) error {

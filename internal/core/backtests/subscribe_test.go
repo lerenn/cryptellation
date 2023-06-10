@@ -8,8 +8,8 @@ import (
 	"github.com/lerenn/cryptellation/clients/go/mock"
 	"github.com/lerenn/cryptellation/internal/core/backtests/io/db"
 	"github.com/lerenn/cryptellation/internal/core/backtests/io/events"
-	"github.com/lerenn/cryptellation/pkg/backtest"
-	"github.com/lerenn/cryptellation/pkg/event"
+	"github.com/lerenn/cryptellation/pkg/models/backtest"
+	"github.com/lerenn/cryptellation/pkg/models/event"
 	"github.com/stretchr/testify/suite"
 )
 

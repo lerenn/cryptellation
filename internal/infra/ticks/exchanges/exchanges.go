@@ -6,7 +6,7 @@ import (
 	"github.com/lerenn/cryptellation/internal/core/ticks/io/exchanges"
 	"github.com/lerenn/cryptellation/internal/infra/ticks/exchanges/binance"
 	"github.com/lerenn/cryptellation/pkg/config"
-	"github.com/lerenn/cryptellation/pkg/tick"
+	"github.com/lerenn/cryptellation/pkg/models/tick"
 )
 
 type Exchanges struct {

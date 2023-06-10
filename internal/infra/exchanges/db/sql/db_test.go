@@ -8,7 +8,7 @@ import (
 
 	"github.com/lerenn/cryptellation/internal/infra/exchanges/db/sql/entities"
 	"github.com/lerenn/cryptellation/pkg/config"
-	"github.com/lerenn/cryptellation/pkg/exchange"
+	"github.com/lerenn/cryptellation/pkg/models/exchange"
 	"github.com/stretchr/testify/suite"
 )
 

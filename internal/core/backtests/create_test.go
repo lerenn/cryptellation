@@ -9,12 +9,12 @@ import (
 	"github.com/lerenn/cryptellation/clients/go/mock"
 	"github.com/lerenn/cryptellation/internal/core/backtests/io/db"
 	"github.com/lerenn/cryptellation/internal/core/backtests/io/events"
-	"github.com/lerenn/cryptellation/pkg/account"
-	"github.com/lerenn/cryptellation/pkg/backtest"
-	"github.com/lerenn/cryptellation/pkg/candlestick"
-	"github.com/lerenn/cryptellation/pkg/event"
-	"github.com/lerenn/cryptellation/pkg/order"
-	"github.com/lerenn/cryptellation/pkg/period"
+	"github.com/lerenn/cryptellation/pkg/models/account"
+	"github.com/lerenn/cryptellation/pkg/models/backtest"
+	"github.com/lerenn/cryptellation/pkg/models/candlestick"
+	"github.com/lerenn/cryptellation/pkg/models/event"
+	"github.com/lerenn/cryptellation/pkg/models/order"
+	"github.com/lerenn/cryptellation/pkg/models/period"
 	"github.com/stretchr/testify/suite"
 )
 

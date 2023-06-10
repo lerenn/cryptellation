@@ -4,8 +4,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/lerenn/cryptellation/pkg/event"
-	"github.com/lerenn/cryptellation/pkg/tick"
+	"github.com/lerenn/cryptellation/pkg/models/event"
+	"github.com/lerenn/cryptellation/pkg/models/tick"
 	"github.com/stretchr/testify/suite"
 )
 

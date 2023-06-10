@@ -5,7 +5,7 @@ import (
 
 	"github.com/lerenn/cryptellation/internal/core/backtests/io/db"
 	"github.com/lerenn/cryptellation/internal/infra/backtests/db/sql/entities"
-	"github.com/lerenn/cryptellation/pkg/backtest"
+	"github.com/lerenn/cryptellation/pkg/models/backtest"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 )

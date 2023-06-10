@@ -3,9 +3,9 @@ package backtests
 import (
 	"context"
 
-	"github.com/lerenn/cryptellation/pkg/account"
-	"github.com/lerenn/cryptellation/pkg/backtest"
-	"github.com/lerenn/cryptellation/pkg/order"
+	"github.com/lerenn/cryptellation/pkg/models/account"
+	"github.com/lerenn/cryptellation/pkg/models/backtest"
+	"github.com/lerenn/cryptellation/pkg/models/order"
 )
 
 type Interface interface {

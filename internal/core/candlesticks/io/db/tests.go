@@ -4,8 +4,8 @@ import (
 	"context"
 	"time"
 
-	"github.com/lerenn/cryptellation/pkg/candlestick"
-	"github.com/lerenn/cryptellation/pkg/period"
+	"github.com/lerenn/cryptellation/pkg/models/candlestick"
+	"github.com/lerenn/cryptellation/pkg/models/period"
 	"github.com/stretchr/testify/suite"
 )
 

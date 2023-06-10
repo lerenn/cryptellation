@@ -6,8 +6,8 @@ import (
 
 	asyncapi "github.com/lerenn/cryptellation/api/asyncapi/candlesticks"
 	client "github.com/lerenn/cryptellation/clients/go"
-	"github.com/lerenn/cryptellation/pkg/candlestick"
 	"github.com/lerenn/cryptellation/pkg/config"
+	"github.com/lerenn/cryptellation/pkg/models/candlestick"
 	"github.com/nats-io/nats.go"
 )
 

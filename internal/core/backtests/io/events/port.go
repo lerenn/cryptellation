@@ -4,7 +4,7 @@
 package events
 
 import (
-	"github.com/lerenn/cryptellation/pkg/event"
+	"github.com/lerenn/cryptellation/pkg/models/event"
 )
 
 type Port interface {

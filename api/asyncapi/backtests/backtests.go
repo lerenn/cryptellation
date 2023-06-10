@@ -11,11 +11,11 @@ import (
 	"time"
 
 	client "github.com/lerenn/cryptellation/clients/go"
-	"github.com/lerenn/cryptellation/pkg/account"
-	"github.com/lerenn/cryptellation/pkg/backtest"
-	"github.com/lerenn/cryptellation/pkg/event"
-	"github.com/lerenn/cryptellation/pkg/period"
-	"github.com/lerenn/cryptellation/pkg/tick"
+	"github.com/lerenn/cryptellation/pkg/models/account"
+	"github.com/lerenn/cryptellation/pkg/models/backtest"
+	"github.com/lerenn/cryptellation/pkg/models/event"
+	"github.com/lerenn/cryptellation/pkg/models/period"
+	"github.com/lerenn/cryptellation/pkg/models/tick"
 	"github.com/lerenn/cryptellation/pkg/utils"
 )
 

@@ -3,7 +3,7 @@ package entities
 import (
 	"time"
 
-	"github.com/lerenn/cryptellation/pkg/order"
+	"github.com/lerenn/cryptellation/pkg/models/order"
 )
 
 type Order struct {

@@ -3,7 +3,7 @@ package ticks
 import (
 	"context"
 
-	"github.com/lerenn/cryptellation/pkg/tick"
+	"github.com/lerenn/cryptellation/pkg/models/tick"
 )
 
 type Interface interface {

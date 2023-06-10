@@ -6,8 +6,8 @@ import (
 
 	"github.com/lerenn/cryptellation/internal/core/candlesticks/io/exchanges"
 	"github.com/lerenn/cryptellation/internal/infra/candlesticks/exchanges/binance"
-	"github.com/lerenn/cryptellation/pkg/candlestick"
 	"github.com/lerenn/cryptellation/pkg/config"
+	"github.com/lerenn/cryptellation/pkg/models/candlestick"
 )
 
 type Exchanges struct {

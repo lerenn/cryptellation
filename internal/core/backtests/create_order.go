@@ -6,8 +6,8 @@ import (
 	"log"
 
 	client "github.com/lerenn/cryptellation/clients/go"
-	"github.com/lerenn/cryptellation/pkg/backtest"
-	"github.com/lerenn/cryptellation/pkg/order"
+	"github.com/lerenn/cryptellation/pkg/models/backtest"
+	"github.com/lerenn/cryptellation/pkg/models/order"
 )
 
 func (b Backtests) CreateOrder(ctx context.Context, backtestId uint, order order.Order) error {

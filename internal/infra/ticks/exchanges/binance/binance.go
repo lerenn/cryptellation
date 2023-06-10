@@ -6,8 +6,8 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/lerenn/cryptellation/pkg/pair"
-	"github.com/lerenn/cryptellation/pkg/tick"
+	"github.com/lerenn/cryptellation/pkg/models/pair"
+	"github.com/lerenn/cryptellation/pkg/models/tick"
 
 	client "github.com/adshao/go-binance/v2"
 )

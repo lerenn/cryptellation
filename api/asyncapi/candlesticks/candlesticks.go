@@ -12,8 +12,8 @@ import (
 
 	client "github.com/lerenn/cryptellation/clients/go"
 	"github.com/lerenn/cryptellation/internal/core/candlesticks"
-	"github.com/lerenn/cryptellation/pkg/candlestick"
-	"github.com/lerenn/cryptellation/pkg/period"
+	"github.com/lerenn/cryptellation/pkg/models/candlestick"
+	"github.com/lerenn/cryptellation/pkg/models/period"
 	"github.com/lerenn/cryptellation/pkg/utils"
 )
 

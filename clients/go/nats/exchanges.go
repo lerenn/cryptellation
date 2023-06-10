@@ -7,7 +7,7 @@ import (
 	asyncapi "github.com/lerenn/cryptellation/api/asyncapi/exchanges"
 	client "github.com/lerenn/cryptellation/clients/go"
 	"github.com/lerenn/cryptellation/pkg/config"
-	"github.com/lerenn/cryptellation/pkg/exchange"
+	"github.com/lerenn/cryptellation/pkg/models/exchange"
 	"github.com/nats-io/nats.go"
 )
 

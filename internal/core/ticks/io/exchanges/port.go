@@ -3,7 +3,7 @@
 
 package exchanges
 
-import "github.com/lerenn/cryptellation/pkg/tick"
+import "github.com/lerenn/cryptellation/pkg/models/tick"
 
 type Port interface {
 	ListenSymbol(exchange, symbol string) (chan tick.Tick, chan struct{}, error)

@@ -1,6 +1,6 @@
 package backtests
 
-import "github.com/lerenn/cryptellation/pkg/account"
+import "github.com/lerenn/cryptellation/pkg/models/account"
 
 func (msg *BacktestsAccountsListRequestMessage) Set(backtestID uint) {
 	msg.Payload.ID = BacktestIDSchema(backtestID)

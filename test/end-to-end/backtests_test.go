@@ -7,11 +7,11 @@ import (
 
 	client "github.com/lerenn/cryptellation/clients/go"
 	"github.com/lerenn/cryptellation/clients/go/nats"
-	"github.com/lerenn/cryptellation/pkg/account"
 	"github.com/lerenn/cryptellation/pkg/config"
-	"github.com/lerenn/cryptellation/pkg/event"
-	"github.com/lerenn/cryptellation/pkg/order"
-	"github.com/lerenn/cryptellation/pkg/tick"
+	"github.com/lerenn/cryptellation/pkg/models/account"
+	"github.com/lerenn/cryptellation/pkg/models/event"
+	"github.com/lerenn/cryptellation/pkg/models/order"
+	"github.com/lerenn/cryptellation/pkg/models/tick"
 	"github.com/lerenn/cryptellation/pkg/utils"
 	"github.com/stretchr/testify/suite"
 )

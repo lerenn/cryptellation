@@ -6,7 +6,7 @@ package exchanges
 import (
 	"context"
 
-	"github.com/lerenn/cryptellation/pkg/candlestick"
+	"github.com/lerenn/cryptellation/pkg/models/candlestick"
 )
 
 type Port interface {

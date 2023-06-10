@@ -5,8 +5,8 @@ import (
 	"time"
 
 	binance "github.com/adshao/go-binance/v2"
-	"github.com/lerenn/cryptellation/pkg/candlestick"
-	"github.com/lerenn/cryptellation/pkg/period"
+	"github.com/lerenn/cryptellation/pkg/models/candlestick"
+	"github.com/lerenn/cryptellation/pkg/models/period"
 )
 
 var testCasesKLineToCandlestick = []struct {

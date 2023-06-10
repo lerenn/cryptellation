@@ -9,7 +9,7 @@ import (
 	reflect "reflect"
 	time "time"
 
-	candlestick "github.com/lerenn/cryptellation/pkg/candlestick"
+	candlestick "github.com/lerenn/cryptellation/pkg/models/candlestick"
 	gomock "github.com/golang/mock/gomock"
 )
 

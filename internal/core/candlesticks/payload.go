@@ -3,7 +3,7 @@ package candlesticks
 import (
 	"time"
 
-	"github.com/lerenn/cryptellation/pkg/period"
+	"github.com/lerenn/cryptellation/pkg/models/period"
 )
 
 type GetCachedPayload struct {

@@ -3,7 +3,7 @@ package backtests
 import (
 	"context"
 
-	"github.com/lerenn/cryptellation/pkg/account"
+	"github.com/lerenn/cryptellation/pkg/models/account"
 )
 
 func (b Backtests) GetAccounts(ctx context.Context, backtestId uint) (map[string]account.Account, error) {

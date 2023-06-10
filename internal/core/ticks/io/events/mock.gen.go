@@ -7,7 +7,7 @@ package events
 import (
 	reflect "reflect"
 
-	tick "github.com/lerenn/cryptellation/pkg/tick"
+	tick "github.com/lerenn/cryptellation/pkg/models/tick"
 	gomock "github.com/golang/mock/gomock"
 )
 

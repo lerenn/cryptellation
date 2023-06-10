@@ -7,7 +7,7 @@ import (
 	client "github.com/lerenn/cryptellation/clients/go"
 	natsClient "github.com/lerenn/cryptellation/clients/go/nats"
 	"github.com/lerenn/cryptellation/pkg/config"
-	"github.com/lerenn/cryptellation/pkg/tick"
+	"github.com/lerenn/cryptellation/pkg/models/tick"
 	"github.com/nats-io/nats.go"
 )
 

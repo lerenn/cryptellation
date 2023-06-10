@@ -6,9 +6,9 @@ import (
 	"time"
 
 	"github.com/lerenn/cryptellation/internal/core/candlesticks/io/exchanges"
-	"github.com/lerenn/cryptellation/pkg/candlestick"
 	"github.com/lerenn/cryptellation/pkg/config"
-	"github.com/lerenn/cryptellation/pkg/period"
+	"github.com/lerenn/cryptellation/pkg/models/candlestick"
+	"github.com/lerenn/cryptellation/pkg/models/period"
 	"github.com/stretchr/testify/suite"
 )
 

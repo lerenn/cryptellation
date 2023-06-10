@@ -9,8 +9,8 @@ import (
 	reflect "reflect"
 
 	client "github.com/lerenn/cryptellation/clients/go"
-	account "github.com/lerenn/cryptellation/pkg/account"
-	event "github.com/lerenn/cryptellation/pkg/event"
+	account "github.com/lerenn/cryptellation/pkg/models/account"
+	event "github.com/lerenn/cryptellation/pkg/models/event"
 	gomock "github.com/golang/mock/gomock"
 )
 
