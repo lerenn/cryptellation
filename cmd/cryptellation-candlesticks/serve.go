@@ -10,8 +10,8 @@ import (
 
 	asyncapi "github.com/lerenn/cryptellation/api/asyncapi/candlesticks"
 	"github.com/lerenn/cryptellation/internal/core/candlesticks"
-	"github.com/lerenn/cryptellation/internal/core/candlesticks/io/db/adapters/sql"
-	exchanges "github.com/lerenn/cryptellation/internal/core/candlesticks/io/exchanges/adapters"
+	"github.com/lerenn/cryptellation/internal/infra/candlesticks/db/sql"
+	"github.com/lerenn/cryptellation/internal/infra/candlesticks/exchanges"
 	"github.com/lerenn/cryptellation/pkg/config"
 	"github.com/lerenn/cryptellation/pkg/http/health"
 	"github.com/spf13/cobra"

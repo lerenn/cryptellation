@@ -10,8 +10,8 @@ import (
 
 	asyncapi "github.com/lerenn/cryptellation/api/asyncapi/exchanges"
 	"github.com/lerenn/cryptellation/internal/core/exchanges"
-	"github.com/lerenn/cryptellation/internal/core/exchanges/io/db/adapters/sql"
-	exchangesAdapter "github.com/lerenn/cryptellation/internal/core/exchanges/io/exchanges/adapters"
+	"github.com/lerenn/cryptellation/internal/infra/exchanges/db/sql"
+	exchangesAdapter "github.com/lerenn/cryptellation/internal/infra/exchanges/exchanges"
 	"github.com/lerenn/cryptellation/pkg/config"
 	"github.com/lerenn/cryptellation/pkg/http/health"
 	"github.com/spf13/cobra"
