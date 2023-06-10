@@ -8,8 +8,8 @@ import (
 	context "context"
 	reflect "reflect"
 
-	exchange "github.com/lerenn/cryptellation/pkg/models/exchange"
 	gomock "github.com/golang/mock/gomock"
+	exchange "github.com/lerenn/cryptellation/pkg/models/exchange"
 )
 
 // MockPort is a mock of Port interface.

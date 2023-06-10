@@ -7,8 +7,8 @@ package exchanges
 import (
 	reflect "reflect"
 
-	tick "github.com/lerenn/cryptellation/pkg/models/tick"
 	gomock "github.com/golang/mock/gomock"
+	tick "github.com/lerenn/cryptellation/pkg/models/tick"
 )
 
 // MockPort is a mock of Port interface.
