@@ -5,7 +5,7 @@ import (
 	"log"
 	"time"
 
-	"github.com/lerenn/cryptellation/internal/core/candlesticks/io/exchanges"
+	"github.com/lerenn/cryptellation/internal/core/candlesticks/ports/exchanges"
 	"github.com/lerenn/cryptellation/pkg/models/candlestick"
 )
 

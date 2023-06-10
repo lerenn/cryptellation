@@ -3,7 +3,7 @@ package exchanges
 import (
 	"fmt"
 
-	"github.com/lerenn/cryptellation/internal/core/ticks/io/exchanges"
+	"github.com/lerenn/cryptellation/internal/core/ticks/ports/exchanges"
 	"github.com/lerenn/cryptellation/internal/infra/ticks/exchanges/binance"
 	"github.com/lerenn/cryptellation/pkg/config"
 	"github.com/lerenn/cryptellation/pkg/models/tick"

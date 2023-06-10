@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/lerenn/cryptellation/internal/core/candlesticks/io/exchanges"
+	"github.com/lerenn/cryptellation/internal/core/candlesticks/ports/exchanges"
 	"github.com/lerenn/cryptellation/internal/infra/candlesticks/exchanges/binance"
 	"github.com/lerenn/cryptellation/pkg/config"
 	"github.com/lerenn/cryptellation/pkg/models/candlestick"

@@ -3,7 +3,7 @@ package sql
 import (
 	"testing"
 
-	"github.com/lerenn/cryptellation/internal/core/candlesticks/io/db"
+	"github.com/lerenn/cryptellation/internal/core/candlesticks/ports/db"
 	"github.com/lerenn/cryptellation/pkg/config"
 	"github.com/lerenn/cryptellation/pkg/utils"
 	"github.com/stretchr/testify/suite"

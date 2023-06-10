@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/lerenn/cryptellation/internal/core/backtests/io/db"
+	"github.com/lerenn/cryptellation/internal/core/backtests/ports/db"
 	"github.com/lerenn/cryptellation/pkg/models/account"
 	"github.com/lerenn/cryptellation/pkg/models/backtest"
 	"github.com/lerenn/cryptellation/pkg/models/candlestick"

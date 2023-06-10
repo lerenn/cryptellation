@@ -1,8 +1,8 @@
 package exchanges
 
 import (
-	"github.com/lerenn/cryptellation/internal/core/exchanges/io/db"
-	"github.com/lerenn/cryptellation/internal/core/exchanges/io/exchanges"
+	"github.com/lerenn/cryptellation/internal/core/exchanges/ports/db"
+	"github.com/lerenn/cryptellation/internal/core/exchanges/ports/exchanges"
 )
 
 type Exchanges struct {

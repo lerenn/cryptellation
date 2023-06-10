@@ -1,8 +1,8 @@
 package candlesticks
 
 import (
-	db "github.com/lerenn/cryptellation/internal/core/candlesticks/io/db"
-	"github.com/lerenn/cryptellation/internal/core/candlesticks/io/exchanges"
+	db "github.com/lerenn/cryptellation/internal/core/candlesticks/ports/db"
+	"github.com/lerenn/cryptellation/internal/core/candlesticks/ports/exchanges"
 )
 
 type candlesticks struct {

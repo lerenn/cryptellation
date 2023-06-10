@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/lerenn/cryptellation/internal/core/exchanges/io/exchanges"
+	"github.com/lerenn/cryptellation/internal/core/exchanges/ports/exchanges"
 	"github.com/lerenn/cryptellation/internal/infra/exchanges/exchanges/binance"
 	"github.com/lerenn/cryptellation/pkg/config"
 	"github.com/lerenn/cryptellation/pkg/models/exchange"

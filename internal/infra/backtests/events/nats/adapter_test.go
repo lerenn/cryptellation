@@ -3,7 +3,7 @@ package nats
 import (
 	"testing"
 
-	"github.com/lerenn/cryptellation/internal/core/backtests/io/events"
+	"github.com/lerenn/cryptellation/internal/core/backtests/ports/events"
 	"github.com/lerenn/cryptellation/pkg/config"
 	"github.com/stretchr/testify/suite"
 )

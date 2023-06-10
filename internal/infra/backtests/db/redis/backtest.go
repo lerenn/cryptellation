@@ -10,7 +10,7 @@ import (
 	"github.com/go-redis/redis/v8"
 	"github.com/go-redsync/redsync/v4"
 	"github.com/go-redsync/redsync/v4/redis/goredis/v8"
-	"github.com/lerenn/cryptellation/internal/core/backtests/io/db"
+	"github.com/lerenn/cryptellation/internal/core/backtests/ports/db"
 	"github.com/lerenn/cryptellation/pkg/models/backtest"
 )
 

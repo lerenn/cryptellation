@@ -8,8 +8,8 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/suite"
 
-	"github.com/lerenn/cryptellation/internal/core/exchanges/io/db"
-	"github.com/lerenn/cryptellation/internal/core/exchanges/io/exchanges"
+	"github.com/lerenn/cryptellation/internal/core/exchanges/ports/db"
+	"github.com/lerenn/cryptellation/internal/core/exchanges/ports/exchanges"
 	"github.com/lerenn/cryptellation/pkg/models/exchange"
 )
 

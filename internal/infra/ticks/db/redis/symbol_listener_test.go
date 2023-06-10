@@ -3,7 +3,7 @@ package redis
 import (
 	"testing"
 
-	"github.com/lerenn/cryptellation/internal/core/ticks/io/db/tests"
+	"github.com/lerenn/cryptellation/internal/core/ticks/ports/db"
 	"github.com/lerenn/cryptellation/pkg/config"
 	"github.com/stretchr/testify/suite"
 )
@@ -13,7 +13,7 @@ func TestRedisVdbSuite(t *testing.T) {
 }
 
 type RedisVdbSuite struct {
-	tests.SymbolListenerSuite
+	db.SymbolListenerSuite
 }
 
 func (suite *RedisVdbSuite) SetupTest() {

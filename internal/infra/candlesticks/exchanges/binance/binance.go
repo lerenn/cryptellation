@@ -5,7 +5,7 @@ import (
 	"time"
 
 	client "github.com/adshao/go-binance/v2"
-	"github.com/lerenn/cryptellation/internal/core/candlesticks/io/exchanges"
+	"github.com/lerenn/cryptellation/internal/core/candlesticks/ports/exchanges"
 	"github.com/lerenn/cryptellation/pkg/config"
 	"github.com/lerenn/cryptellation/pkg/models/candlestick"
 )

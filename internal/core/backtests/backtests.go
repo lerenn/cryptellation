@@ -2,8 +2,8 @@ package backtests
 
 import (
 	client "github.com/lerenn/cryptellation/clients/go"
-	"github.com/lerenn/cryptellation/internal/core/backtests/io/db"
-	"github.com/lerenn/cryptellation/internal/core/backtests/io/events"
+	"github.com/lerenn/cryptellation/internal/core/backtests/ports/db"
+	"github.com/lerenn/cryptellation/internal/core/backtests/ports/events"
 )
 
 // Test interface implementation

@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/lerenn/cryptellation/internal/core/exchanges/io/db"
+	"github.com/lerenn/cryptellation/internal/core/exchanges/ports/db"
 	"github.com/lerenn/cryptellation/internal/infra/exchanges/db/sql/entities"
 	"github.com/lerenn/cryptellation/pkg/models/exchange"
 	"gorm.io/gorm"

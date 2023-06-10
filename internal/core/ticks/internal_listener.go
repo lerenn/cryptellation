@@ -5,9 +5,9 @@ import (
 	"log"
 	"time"
 
-	"github.com/lerenn/cryptellation/internal/core/ticks/io/db"
-	"github.com/lerenn/cryptellation/internal/core/ticks/io/events"
-	"github.com/lerenn/cryptellation/internal/core/ticks/io/exchanges"
+	"github.com/lerenn/cryptellation/internal/core/ticks/ports/db"
+	"github.com/lerenn/cryptellation/internal/core/ticks/ports/events"
+	"github.com/lerenn/cryptellation/internal/core/ticks/ports/exchanges"
 	"github.com/lerenn/cryptellation/pkg/models/tick"
 )
 
