@@ -8,8 +8,8 @@ import (
 	"strconv"
 	"syscall"
 
-	asyncapi "github.com/lerenn/cryptellation/api/asyncapi/candlesticks"
 	"github.com/lerenn/cryptellation/internal/core/candlesticks"
+	asyncapi "github.com/lerenn/cryptellation/internal/ctrl/candlesticks"
 	"github.com/lerenn/cryptellation/internal/infra/candlesticks/db/sql"
 	"github.com/lerenn/cryptellation/internal/infra/candlesticks/exchanges"
 	"github.com/lerenn/cryptellation/pkg/config"

@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	asyncapi "github.com/lerenn/cryptellation/api/asyncapi/exchanges"
 	client "github.com/lerenn/cryptellation/clients/go"
+	asyncapi "github.com/lerenn/cryptellation/internal/ctrl/exchanges"
 	"github.com/lerenn/cryptellation/pkg/config"
 	"github.com/lerenn/cryptellation/pkg/models/exchange"
 	"github.com/nats-io/nats.go"

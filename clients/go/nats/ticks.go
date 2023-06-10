@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	asyncapi "github.com/lerenn/cryptellation/api/asyncapi/ticks"
 	client "github.com/lerenn/cryptellation/clients/go"
+	asyncapi "github.com/lerenn/cryptellation/internal/ctrl/ticks"
 	"github.com/lerenn/cryptellation/pkg/config"
 	"github.com/lerenn/cryptellation/pkg/models/tick"
 	"github.com/nats-io/nats.go"

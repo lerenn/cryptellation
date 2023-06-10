@@ -8,9 +8,9 @@ import (
 	"strconv"
 	"syscall"
 
-	asyncapi "github.com/lerenn/cryptellation/api/asyncapi/backtests"
 	natsClient "github.com/lerenn/cryptellation/clients/go/nats"
 	"github.com/lerenn/cryptellation/internal/core/backtests"
+	asyncapi "github.com/lerenn/cryptellation/internal/ctrl/backtests"
 	"github.com/lerenn/cryptellation/internal/infra/backtests/db/sql"
 	natsAdapter "github.com/lerenn/cryptellation/internal/infra/backtests/events/nats"
 	"github.com/lerenn/cryptellation/pkg/config"

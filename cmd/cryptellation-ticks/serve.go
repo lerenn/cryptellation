@@ -8,8 +8,8 @@ import (
 	"strconv"
 	"syscall"
 
-	asyncapi "github.com/lerenn/cryptellation/api/asyncapi/ticks"
 	"github.com/lerenn/cryptellation/internal/core/ticks"
+	asyncapi "github.com/lerenn/cryptellation/internal/ctrl/ticks"
 	"github.com/lerenn/cryptellation/internal/infra/ticks/db/sql"
 	natsAdapter "github.com/lerenn/cryptellation/internal/infra/ticks/events/nats"
 	exchanges "github.com/lerenn/cryptellation/internal/infra/ticks/exchanges"

@@ -3,9 +3,9 @@ package nats
 import (
 	"context"
 
-	asyncapi "github.com/lerenn/cryptellation/api/asyncapi/backtests"
 	client "github.com/lerenn/cryptellation/clients/go"
 	natsClient "github.com/lerenn/cryptellation/clients/go/nats"
+	asyncapi "github.com/lerenn/cryptellation/internal/ctrl/backtests"
 	"github.com/lerenn/cryptellation/pkg/config"
 	"github.com/lerenn/cryptellation/pkg/models/event"
 	"github.com/nats-io/nats.go"

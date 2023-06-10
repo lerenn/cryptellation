@@ -8,8 +8,8 @@ import (
 	"strconv"
 	"syscall"
 
-	asyncapi "github.com/lerenn/cryptellation/api/asyncapi/exchanges"
 	"github.com/lerenn/cryptellation/internal/core/exchanges"
+	asyncapi "github.com/lerenn/cryptellation/internal/ctrl/exchanges"
 	"github.com/lerenn/cryptellation/internal/infra/exchanges/db/sql"
 	exchangesAdapter "github.com/lerenn/cryptellation/internal/infra/exchanges/exchanges"
 	"github.com/lerenn/cryptellation/pkg/config"

@@ -1,9 +1,9 @@
 // Exchanges
-//go:generate go run github.com/lerenn/asyncapi-codegen/cmd/asyncapi-codegen@v0.13.1 -g application -p exchanges -i ./../exchanges.yaml -o ./app.gen.go
-//go:generate go run github.com/lerenn/asyncapi-codegen/cmd/asyncapi-codegen@v0.13.1 -g client      -p exchanges -i ./../exchanges.yaml -o ./client.gen.go
-//go:generate go run github.com/lerenn/asyncapi-codegen/cmd/asyncapi-codegen@v0.13.1 -g broker      -p exchanges -i ./../exchanges.yaml -o ./broker.gen.go
-//go:generate go run github.com/lerenn/asyncapi-codegen/cmd/asyncapi-codegen@v0.13.1 -g types       -p exchanges -i ./../exchanges.yaml -o ./types.gen.go
-//go:generate go run github.com/lerenn/asyncapi-codegen/cmd/asyncapi-codegen@v0.13.1 -g nats        -p exchanges -i ./../exchanges.yaml -o ./nats.gen.go
+//go:generate go run github.com/lerenn/asyncapi-codegen/cmd/asyncapi-codegen@v0.13.1 -g application -p exchanges -i ./../../../api/asyncapi/exchanges.yaml -o ./app.gen.go
+//go:generate go run github.com/lerenn/asyncapi-codegen/cmd/asyncapi-codegen@v0.13.1 -g client      -p exchanges -i ./../../../api/asyncapi/exchanges.yaml -o ./client.gen.go
+//go:generate go run github.com/lerenn/asyncapi-codegen/cmd/asyncapi-codegen@v0.13.1 -g broker      -p exchanges -i ./../../../api/asyncapi/exchanges.yaml -o ./broker.gen.go
+//go:generate go run github.com/lerenn/asyncapi-codegen/cmd/asyncapi-codegen@v0.13.1 -g types       -p exchanges -i ./../../../api/asyncapi/exchanges.yaml -o ./types.gen.go
+//go:generate go run github.com/lerenn/asyncapi-codegen/cmd/asyncapi-codegen@v0.13.1 -g nats        -p exchanges -i ./../../../api/asyncapi/exchanges.yaml -o ./nats.gen.go
 
 package exchanges
 

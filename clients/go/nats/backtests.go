@@ -6,8 +6,8 @@ import (
 	"log"
 	"time"
 
-	asyncapi "github.com/lerenn/cryptellation/api/asyncapi/backtests"
 	client "github.com/lerenn/cryptellation/clients/go"
+	asyncapi "github.com/lerenn/cryptellation/internal/ctrl/backtests"
 	"github.com/lerenn/cryptellation/pkg/config"
 	"github.com/lerenn/cryptellation/pkg/models/account"
 	"github.com/lerenn/cryptellation/pkg/models/event"
