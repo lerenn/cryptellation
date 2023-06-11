@@ -32,11 +32,6 @@ credentials:
 
 # Specific section for services
 services:
-  backtests:
-    image: localhost:5000/lerenn/cryptellation
-  candlesticks:
-    image: localhost:5000/lerenn/cryptellation
-  exchanges:
-    image: localhost:5000/lerenn/cryptellation
-  ticks:
-    image: localhost:5000/lerenn/cryptellation
+  image:
+    repository: localhost:5000/lerenn/cryptellation
+    tag: latest

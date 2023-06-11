@@ -15,18 +15,26 @@ spec:
       labels:
         app: candlesticks
     spec:
+      initContainers:
+      {{- include "dependencies.cockroachdb.init-container" . | indent 6 }}
+      - name: init-sql-database
+        image: {{ .Values.services.image.repository | default "lerenn/cryptellation" }}:{{ .Values.services.image.tag | default "latest" }}
+        imagePullPolicy: {{ .Values.services.image.pullPolicy | default "Always" }}
+        command: [ "cryptellation-candlesticks", "migrations", "migrate" ]
+        env:
+        {{- include "common.env" "candlesticks" | indent 8 }}
       containers:
       - name: candlesticks
-        image: {{ .Values.services.candlesticks.image }}
-        imagePullPolicy: IfNotPresent
+        image: {{ .Values.services.image.repository | default "lerenn/cryptellation" }}:{{ .Values.services.image.tag | default "latest" }}
+        imagePullPolicy: {{ .Values.services.image.pullPolicy | default "Always" }}
         livenessProbe:
           httpGet:
             path: /liveness
-            port: {{ (.Values.services.candlesticks.health).port | default 9000 }}
+            port: {{ ((.Values.services.candlesticks).health).port | default 9000 }}
         readinessProbe:
           httpGet:
             path: /readiness
-            port: {{ (.Values.services.candlesticks.health).port | default 9000 }}
+            port: {{ ((.Values.services.candlesticks).health).port | default 9000 }}
         command: [ "cryptellation-candlesticks", "serve" ]
         env:
         - name: "BINANCE_API_KEY"
@@ -41,13 +49,6 @@ spec:
               name: cryptellation-credentials
         {{- include "common.env" "candlesticks" | indent 8 }}
         resources: {}
-      initContainers:
-      {{- include "dependencies.cockroachdb.init-container" . | indent 6 }}
-      - name: init-sql-database
-        image: {{ .Values.services.candlesticks.image }}
-        command: [ "cryptellation-candlesticks", "migrations", "migrate" ]
-        env:
-        {{- include "common.env" "candlesticks" | indent 8 }}
       volumes:
         {{- include "dependencies.cockroachdb.volumes" . | indent 8 }}
 status: {}

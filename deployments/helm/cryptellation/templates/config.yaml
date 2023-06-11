@@ -4,17 +4,17 @@ metadata:
     name: cryptellation-config
 data:
     # Backtests
-    backtests.sqldb.database: "{{ (.Values.services.backtests.sqldb).database | default "backtests" }}"
-    backtests.health.port: "{{ (.Values.services.backtests.health).port | default 9000 }}"
+    backtests.sqldb.database: "{{ ((.Values.services.backtests).sqldb).database | default "backtests" }}"
+    backtests.health.port: "{{ ((.Values.services.backtests).health).port | default 9000 }}"
     
     # Candlesticks
-    candlesticks.sqldb.database: "{{ (.Values.services.candlesticks.sqldb).database | default "candlesticks"}}"
-    candlesticks.health.port: "{{ (.Values.services.candlesticks.health).port | default 9000 }}"
+    candlesticks.sqldb.database: "{{ ((.Values.services.candlesticks).sqldb).database | default "candlesticks"}}"
+    candlesticks.health.port: "{{ ((.Values.services.candlesticks).health).port | default 9000 }}"
 
     # Exchanges
-    exchanges.sqldb.database: "{{ (.Values.services.exchanges.sqldb).database | default "exchanges" }}"
-    exchanges.health.port: "{{ (.Values.services.exchanges.health).port | default 9000 }}"
+    exchanges.sqldb.database: "{{ ((.Values.services.exchanges).sqldb).database | default "exchanges" }}"
+    exchanges.health.port: "{{ ((.Values.services.exchanges).health).port | default 9000 }}"
 
     # Exchanges
-    ticks.sqldb.database: "{{ (.Values.services.ticks.sqldb).database | default "ticks" }}"
-    ticks.health.port: "{{ (.Values.services.ticks.health).port | default 9000 }}"
+    ticks.sqldb.database: "{{ ((.Values.services.ticks).sqldb).database | default "ticks" }}"
+    ticks.health.port: "{{ ((.Values.services.ticks).health).port | default 9000 }}"

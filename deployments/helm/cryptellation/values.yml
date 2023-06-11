@@ -42,26 +42,27 @@ credentials:
 
 # Specific section for services
 services:
+  repository:
+    image:
+      repository: lerenn/cryptellation
+      tag: 0.8.2
+      pullPolicy: Always
   backtests:
-    image: lerenn/cryptellation:latest
     sqldb:
       database: backtests
     health:
       port: 9000
   candlesticks:
-    image: lerenn/cryptellation:latest
     sqldb:
       database: candlesticks
     health:
       port: 9000
   exchanges:
-    image: lerenn/cryptellation:latest
     sqldb:
       database: exchanges
     health:
       port: 9000
   ticks:
-    image: lerenn/cryptellation:latest
     sqldb:
       database: ticks
     health:
