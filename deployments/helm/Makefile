@@ -1,5 +1,9 @@
 DOCKER_IMAGE_PREFIX := lerenn/cryptellation
 
+.PHONY: clean
+clean: ## Clean everything
+	@rm *.tgz
+
 .PHONY: deploy/local
 deploy/local: ## Deploy cryptellation on local environment
 	@kubectl port-forward --namespace kube-system service/registry 5000:80 &> /dev/null & FORWARD_PID="$$!"; \
@@ -14,6 +18,10 @@ deploy: ## Deploy cryptellation helm chart
 .PHONY: delete
 delete: ## Delete cryptellation helm chart deployment
 	@helm delete cryptellation || true
+
+.PHONY: package
+package: ## Package the helm chart
+	@helm package cryptellation
 
 .PHONY: help
 help: ## Display this help message
