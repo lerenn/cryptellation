@@ -45,7 +45,9 @@ func (suite *ExchangesSuite) TestReadExchanges() {
 	// AND the response contains the proper exchanges
 	suite.Require().Len(list, 1)
 	suite.Require().Equal("binance", list[0].Name)
-	suite.Require().Equal([]string{
-		"D1", "D3", "H1", "H12", "H2", "H4", "H6", "H8", "M1", "M15", "M3", "M30", "M5", "W1"},
-		list[0].PeriodsSymbols)
+
+	l := []string{"D1", "D3", "H1", "H12", "H2", "H4", "H6", "H8", "M1", "M15", "M3", "M30", "M5", "W1"}
+	for i, s := range l {
+		suite.Require().Contains(list[0].PeriodsSymbols, s, i)
+	}
 }

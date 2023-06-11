@@ -25,7 +25,7 @@ __build/run:
 		../..
 
 .PHONY: build 
-build: build/build build/run ## Build local docker image
+build: __build/build __build/run ## Build local docker image
 
 .PHONY: push
 push: build ## Push docker image
