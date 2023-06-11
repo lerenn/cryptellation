@@ -3,7 +3,8 @@
 
 .PHONY: clean
 clean: ## Clean everything
-	$(MAKE) -C deployments/helm clean
+	$(MAKE) -C build/package clean
+	$(MAKE) -C deployments clean
 	$(MAKE) -C test clean
 
 .PHONY: lint

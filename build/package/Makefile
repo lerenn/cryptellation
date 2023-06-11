@@ -1,6 +1,6 @@
 .DEFAULT_GOAL     	= help
 
-DOCKER_IMAGE_PREFIX = lerenn/cryptellation
+DOCKER_IMAGE_NAME = lerenn/cryptellation
 
 RELEASE_VER			= $(shell grep "version = " ../../pkg/version/version.go | head -n 1 | cut -d \" -f 2)
 
@@ -11,17 +11,17 @@ SHELL             := /bin/bash
 __build/build:
 	@DOCKER_BUILDKIT=1 docker build \
 		-f ./build.dockerfile \
-		-t $(DOCKER_IMAGE_PREFIX):build-$(RELEASE_VER) \
-		-t $(DOCKER_IMAGE_PREFIX):build \
+		-t $(DOCKER_IMAGE_NAME):build-$(RELEASE_VER) \
+		-t $(DOCKER_IMAGE_NAME):build \
 		../..
 
 .PHONY: __build/run
 __build/run:
 	@DOCKER_BUILDKIT=1 docker build \
 		-f ./run.dockerfile \
-		--build-arg BUILD_IMAGE=$(DOCKER_IMAGE_PREFIX):build-$(RELEASE_VER) \
-		-t $(DOCKER_IMAGE_PREFIX):$(RELEASE_VER) \
-		-t $(DOCKER_IMAGE_PREFIX):latest \
+		--build-arg BUILD_IMAGE=$(DOCKER_IMAGE_NAME):build-$(RELEASE_VER) \
+		-t $(DOCKER_IMAGE_NAME):$(RELEASE_VER) \
+		-t $(DOCKER_IMAGE_NAME):latest \
 		../..
 
 .PHONY: build 
@@ -29,15 +29,20 @@ build: __build/build __build/run ## Build local docker image
 
 .PHONY: push
 push: build ## Push docker image
-	docker push $(DOCKER_IMAGE_PREFIX):${RELEASE_VER}
-	docker push $(DOCKER_IMAGE_PREFIX):latest
+	docker push $(DOCKER_IMAGE_NAME):${RELEASE_VER}
+	docker push $(DOCKER_IMAGE_NAME):latest
 
 .PHONY: push/local
 push/local: build ## Push docker image on local repository
-	@docker tag $(DOCKER_IMAGE_PREFIX):$(RELEASE_VER) localhost:5000/$(DOCKER_IMAGE_PREFIX):$(RELEASE_VER)
-	@docker push localhost:5000/$(DOCKER_IMAGE_PREFIX):$(RELEASE_VER)
-	@docker tag $(DOCKER_IMAGE_PREFIX):latest localhost:5000/$(DOCKER_IMAGE_PREFIX):latest
-	@docker push localhost:5000/$(DOCKER_IMAGE_PREFIX):latest
+	@docker tag $(DOCKER_IMAGE_NAME):$(RELEASE_VER) localhost:5000/$(DOCKER_IMAGE_NAME):$(RELEASE_VER)
+	@docker push localhost:5000/$(DOCKER_IMAGE_NAME):$(RELEASE_VER)
+	@docker tag $(DOCKER_IMAGE_NAME):latest localhost:5000/$(DOCKER_IMAGE_NAME):latest
+	@docker push localhost:5000/$(DOCKER_IMAGE_NAME):latest
+
+.PHONY: clean
+clean: ## Clean all docker images
+	@docker images | grep localhost:5000/$(DOCKER_IMAGE_NAME) | tr -s ' ' | cut -d ' ' -f 2 | xargs -I {} docker rmi localhost:5000/$(DOCKER_IMAGE_NAME):{}
+	@docker images | grep $(DOCKER_IMAGE_NAME) | tr -s ' ' | cut -d ' ' -f 2 | xargs -I {} docker rmi $(DOCKER_IMAGE_NAME):{}
 
 .PHONY: help
 help: ## Display this help message

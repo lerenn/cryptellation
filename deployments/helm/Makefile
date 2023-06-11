@@ -15,9 +15,6 @@ deploy: ## Deploy cryptellation helm chart
 delete: ## Delete cryptellation helm chart deployment
 	@helm delete cryptellation || true
 
-.PHONY: clean
-clean: delete/local ## Clean everything
-
 .PHONY: help
 help: ## Display this help message
 	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_\/-]+:.*?## / {printf "\033[34m%-30s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST) | \

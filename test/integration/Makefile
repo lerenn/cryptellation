@@ -1,11 +1,14 @@
 .PHONY: all
-.DEFAULT_GOAL := help
+.DEFAULT_GOAL  := help
 
-DOCKER_COMPOSE := docker-compose -p cryptellation
+NAMESPACE      := cryptellation
+
+DOCKER_COMPOSE := docker-compose -p $(NAMESPACE)
 
 .PHONY: clean
 clean: ## Clean up tests
 	@$(DOCKER_COMPOSE) -f ./docker-compose.yml down
+	@docker rmi $(NAMESPACE)_tests || true
 	@rm -f cover.out
 
 .PHONY: run

@@ -28,7 +28,6 @@ minikube/delete: ## Delete the minikube cluster
 
 .PHONY: clean
 clean: ## Clean everything
-	@make -C helm clean
 	@make minikube/delete
 
 .PHONY: help
