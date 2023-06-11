@@ -9,7 +9,7 @@ import (
 	"syscall"
 
 	"github.com/lerenn/cryptellation/internal/core/exchanges"
-	asyncapi "github.com/lerenn/cryptellation/internal/ctrl/exchanges"
+	"github.com/lerenn/cryptellation/internal/ctrl/exchanges/events"
 	"github.com/lerenn/cryptellation/internal/infra/exchanges/db/sql"
 	exchangesAdapter "github.com/lerenn/cryptellation/internal/infra/exchanges/exchanges"
 	"github.com/lerenn/cryptellation/pkg/config"
@@ -45,7 +45,7 @@ func initApp() (exchanges.Interface, error) {
 
 func initController(component exchanges.Interface) (func(), error) {
 	// Init NATS controller
-	natsController, err := asyncapi.NewNATS(config.LoadNATSConfigFromEnv(), component)
+	natsController, err := events.NewNATS(config.LoadNATSConfigFromEnv(), component)
 	if err != nil {
 		return func() {}, err
 	}

@@ -9,7 +9,7 @@ import (
 	"syscall"
 
 	"github.com/lerenn/cryptellation/internal/core/candlesticks"
-	asyncapi "github.com/lerenn/cryptellation/internal/ctrl/candlesticks"
+	"github.com/lerenn/cryptellation/internal/ctrl/candlesticks/events"
 	"github.com/lerenn/cryptellation/internal/infra/candlesticks/db/sql"
 	"github.com/lerenn/cryptellation/internal/infra/candlesticks/exchanges"
 	"github.com/lerenn/cryptellation/pkg/config"
@@ -45,7 +45,7 @@ func initApp() (candlesticks.Interface, error) {
 
 func initController(component candlesticks.Interface) (func(), error) {
 	// Init NATS controller
-	natsController, err := asyncapi.NewNATS(config.LoadNATSConfigFromEnv(), component)
+	natsController, err := events.NewNATS(config.LoadNATSConfigFromEnv(), component)
 	if err != nil {
 		return func() {}, err
 	}

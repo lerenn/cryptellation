@@ -10,7 +10,7 @@ import (
 
 	natsClient "github.com/lerenn/cryptellation/clients/go/nats"
 	"github.com/lerenn/cryptellation/internal/core/backtests"
-	asyncapi "github.com/lerenn/cryptellation/internal/ctrl/backtests"
+	"github.com/lerenn/cryptellation/internal/ctrl/backtests/events"
 	"github.com/lerenn/cryptellation/internal/infra/backtests/db/sql"
 	natsAdapter "github.com/lerenn/cryptellation/internal/infra/backtests/events/nats"
 	"github.com/lerenn/cryptellation/pkg/config"
@@ -52,7 +52,7 @@ func initApp() (backtests.Interface, error) {
 
 func initController(component backtests.Interface) (func(), error) {
 	// Init NATS controller
-	natsController, err := asyncapi.NewNATS(config.LoadNATSConfigFromEnv(), component)
+	natsController, err := events.NewNATS(config.LoadNATSConfigFromEnv(), component)
 	if err != nil {
 		return func() {}, err
 	}

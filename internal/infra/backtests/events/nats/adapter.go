@@ -5,7 +5,7 @@ import (
 
 	client "github.com/lerenn/cryptellation/clients/go"
 	natsClient "github.com/lerenn/cryptellation/clients/go/nats"
-	asyncapi "github.com/lerenn/cryptellation/internal/ctrl/backtests"
+	"github.com/lerenn/cryptellation/internal/ctrl/backtests/events"
 	"github.com/lerenn/cryptellation/pkg/config"
 	"github.com/lerenn/cryptellation/pkg/models/event"
 	"github.com/nats-io/nats.go"
@@ -13,7 +13,7 @@ import (
 
 type Adapter struct {
 	nc     *nats.Conn
-	app    *asyncapi.AppController
+	app    *events.AppController
 	client client.Backtests
 }
 
@@ -30,7 +30,7 @@ func New(c config.NATS) (*Adapter, error) {
 	}
 
 	// Create new app controller
-	app, err := asyncapi.NewAppController(asyncapi.NewNATSController(nc))
+	app, err := events.NewAppController(events.NewNATSController(nc))
 	if err != nil {
 		return nil, err
 	}
@@ -50,7 +50,7 @@ func New(c config.NATS) (*Adapter, error) {
 
 func (a *Adapter) Publish(backtestID uint, evt event.Event) error {
 	// Generated message
-	msg := asyncapi.NewBacktestsEventMessage()
+	msg := events.NewBacktestsEventMessage()
 
 	// Set from event
 	if err := msg.Set(evt); err != nil {
@@ -58,7 +58,7 @@ func (a *Adapter) Publish(backtestID uint, evt event.Event) error {
 	}
 
 	// Send message
-	return a.app.PublishCryptellationBacktestsEventsID(asyncapi.CryptellationBacktestsEventsIDParameters{
+	return a.app.PublishCryptellationBacktestsEventsID(events.CryptellationBacktestsEventsIDParameters{
 		ID: int64(backtestID),
 	}, msg)
 }

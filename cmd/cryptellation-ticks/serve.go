@@ -9,7 +9,7 @@ import (
 	"syscall"
 
 	"github.com/lerenn/cryptellation/internal/core/ticks"
-	asyncapi "github.com/lerenn/cryptellation/internal/ctrl/ticks"
+	"github.com/lerenn/cryptellation/internal/ctrl/ticks/events"
 	"github.com/lerenn/cryptellation/internal/infra/ticks/db/sql"
 	natsAdapter "github.com/lerenn/cryptellation/internal/infra/ticks/events/nats"
 	exchanges "github.com/lerenn/cryptellation/internal/infra/ticks/exchanges"
@@ -52,7 +52,7 @@ func initApp() (ticks.Interface, error) {
 
 func initController(component ticks.Interface) (func(), error) {
 	// Init NATS controller
-	natsController, err := asyncapi.NewNATS(config.LoadNATSConfigFromEnv(), component)
+	natsController, err := events.NewNATS(config.LoadNATSConfigFromEnv(), component)
 	if err != nil {
 		return func() {}, err
 	}

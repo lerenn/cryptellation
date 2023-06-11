@@ -5,7 +5,7 @@ import (
 
 	client "github.com/lerenn/cryptellation/clients/go"
 	natsClient "github.com/lerenn/cryptellation/clients/go/nats"
-	asyncapi "github.com/lerenn/cryptellation/internal/ctrl/ticks"
+	"github.com/lerenn/cryptellation/internal/ctrl/ticks/events"
 	"github.com/lerenn/cryptellation/pkg/config"
 	"github.com/lerenn/cryptellation/pkg/models/tick"
 	"github.com/nats-io/nats.go"
@@ -13,7 +13,7 @@ import (
 
 type Adapter struct {
 	nc     *nats.Conn
-	app    *asyncapi.AppController
+	app    *events.AppController
 	client client.Ticks
 }
 
@@ -30,7 +30,7 @@ func New(c config.NATS) (*Adapter, error) {
 	}
 
 	// Create new app controller
-	app, err := asyncapi.NewAppController(asyncapi.NewNATSController(nc))
+	app, err := events.NewAppController(events.NewNATSController(nc))
 	if err != nil {
 		return nil, err
 	}
@@ -50,16 +50,16 @@ func New(c config.NATS) (*Adapter, error) {
 
 func (a *Adapter) Publish(tick tick.Tick) error {
 	// Generated message
-	msg := asyncapi.NewTickMessage()
-	msg.Payload.Exchange = asyncapi.ExchangeNameSchema(tick.Exchange)
-	msg.Payload.PairSymbol = asyncapi.PairSymbolSchema(tick.PairSymbol)
+	msg := events.NewTickMessage()
+	msg.Payload.Exchange = events.ExchangeNameSchema(tick.Exchange)
+	msg.Payload.PairSymbol = events.PairSymbolSchema(tick.PairSymbol)
 	msg.Payload.Price = tick.Price
-	msg.Payload.Time = asyncapi.DateSchema(tick.Time)
+	msg.Payload.Time = events.DateSchema(tick.Time)
 
 	// Send message
-	return a.app.PublishCryptellationTicksListenExchangePair(asyncapi.CryptellationTicksListenExchangePairParameters{
-		Exchange: asyncapi.ExchangeNameSchema(tick.Exchange),
-		Pair:     asyncapi.PairSymbolSchema(tick.PairSymbol),
+	return a.app.PublishCryptellationTicksListenExchangePair(events.CryptellationTicksListenExchangePairParameters{
+		Exchange: events.ExchangeNameSchema(tick.Exchange),
+		Pair:     events.PairSymbolSchema(tick.PairSymbol),
 	}, msg)
 }
 

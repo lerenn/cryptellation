@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	client "github.com/lerenn/cryptellation/clients/go"
-	asyncapi "github.com/lerenn/cryptellation/internal/ctrl/ticks"
+	"github.com/lerenn/cryptellation/internal/ctrl/ticks/events"
 	"github.com/lerenn/cryptellation/pkg/config"
 	"github.com/lerenn/cryptellation/pkg/models/tick"
 	"github.com/nats-io/nats.go"
@@ -13,7 +13,7 @@ import (
 
 type Ticks struct {
 	nats *nats.Conn
-	ctrl *asyncapi.ClientController
+	ctrl *events.ClientController
 }
 
 func NewTicks(c config.NATS) (client.Ticks, error) {
@@ -22,7 +22,7 @@ func NewTicks(c config.NATS) (client.Ticks, error) {
 		return nil, err
 	}
 
-	ctrl, err := asyncapi.NewClientController(asyncapi.NewNATSController(conn))
+	ctrl, err := events.NewClientController(events.NewNATSController(conn))
 	if err != nil {
 		return nil, err
 	}
@@ -35,7 +35,7 @@ func NewTicks(c config.NATS) (client.Ticks, error) {
 
 func (t Ticks) Register(ctx context.Context, payload client.TicksFilterPayload) error {
 	// Generate message
-	msg := asyncapi.NewRegisteringRequestMessage()
+	msg := events.NewRegisteringRequestMessage()
 	msg.Set(payload)
 
 	// Send message
@@ -58,13 +58,13 @@ func (t Ticks) Listen(ctx context.Context, payload client.TicksFilterPayload) (<
 	ch := make(chan tick.Tick, 256)
 
 	// Create params for channel path
-	params := asyncapi.CryptellationTicksListenExchangePairParameters{
-		Exchange: asyncapi.ExchangeNameSchema(payload.ExchangeName),
-		Pair:     asyncapi.PairSymbolSchema(payload.PairSymbol),
+	params := events.CryptellationTicksListenExchangePairParameters{
+		Exchange: events.ExchangeNameSchema(payload.ExchangeName),
+		Pair:     events.PairSymbolSchema(payload.PairSymbol),
 	}
 
 	// Create callback when a tick appears
-	callback := func(msg asyncapi.TickMessage, done bool) {
+	callback := func(msg events.TickMessage, done bool) {
 		// Check if done
 		if done {
 			close(ch)
@@ -85,7 +85,7 @@ func (t Ticks) Listen(ctx context.Context, payload client.TicksFilterPayload) (<
 
 func (t Ticks) Unregister(ctx context.Context, payload client.TicksFilterPayload) error {
 	// Generate message
-	msg := asyncapi.NewRegisteringRequestMessage()
+	msg := events.NewRegisteringRequestMessage()
 	msg.Set(payload)
 
 	// Send message

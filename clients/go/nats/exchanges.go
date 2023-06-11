@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	client "github.com/lerenn/cryptellation/clients/go"
-	asyncapi "github.com/lerenn/cryptellation/internal/ctrl/exchanges"
+	"github.com/lerenn/cryptellation/internal/ctrl/exchanges/events"
 	"github.com/lerenn/cryptellation/pkg/config"
 	"github.com/lerenn/cryptellation/pkg/models/exchange"
 	"github.com/nats-io/nats.go"
@@ -13,7 +13,7 @@ import (
 
 type Exchanges struct {
 	nats *nats.Conn
-	ctrl *asyncapi.ClientController
+	ctrl *events.ClientController
 }
 
 func NewExchanges(c config.NATS) (client.Exchanges, error) {
@@ -22,7 +22,7 @@ func NewExchanges(c config.NATS) (client.Exchanges, error) {
 		return nil, err
 	}
 
-	ctrl, err := asyncapi.NewClientController(asyncapi.NewNATSController(conn))
+	ctrl, err := events.NewClientController(events.NewNATSController(conn))
 	if err != nil {
 		return nil, err
 	}
@@ -35,7 +35,7 @@ func NewExchanges(c config.NATS) (client.Exchanges, error) {
 
 func (ex Exchanges) Read(ctx context.Context, names ...string) ([]exchange.Exchange, error) {
 	// Set message
-	reqMsg := asyncapi.NewExchangesRequestMessage()
+	reqMsg := events.NewExchangesRequestMessage()
 	reqMsg.Set(names...)
 
 	// Send request
