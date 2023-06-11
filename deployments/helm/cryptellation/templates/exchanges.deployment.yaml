@@ -18,23 +18,23 @@ spec:
       initContainers:
       {{- include "dependencies.cockroachdb.init-container" . | indent 6 }}
       - name: init-sql-database
-        image: {{ .Values.services.image.repository | default "lerenn/cryptellation" }}:{{ .Values.services.image.tag | default "latest" }}
-        imagePullPolicy: {{ .Values.services.image.pullPolicy | default "Always" }}
+        image: {{ (.Values.services).image.repository | default "lerenn/cryptellation" }}:{{ (.Values.services).image.tag | default "latest" }}
+        imagePullPolicy: {{ (.Values.services).image.pullPolicy | default "Always" }}
         command: [ "cryptellation-exchanges", "migrations", "migrate" ]
         env:
         {{- include "common.env" "exchanges" | indent 8 }}
       containers:
       - name: exchanges
-        image: {{ .Values.services.image.repository | default "lerenn/cryptellation" }}:{{ .Values.services.image.tag | default "latest" }}
-        imagePullPolicy: {{ .Values.services.image.pullPolicy | default "Always" }}
+        image: {{ (.Values.services).image.repository | default "lerenn/cryptellation" }}:{{ (.Values.services).image.tag | default "latest" }}
+        imagePullPolicy: {{ (.Values.services).image.pullPolicy | default "Always" }}
         livenessProbe:
           httpGet:
             path: /liveness
-            port: {{ ((.Values.services.exchanges).health).port | default 9000 }}
+            port: {{ (((.Values.services).exchanges).health).port | default 9000 }}
         readinessProbe:
           httpGet:
             path: /readiness
-            port: {{ ((.Values.services.exchanges).health).port | default 9000 }}
+            port: {{ (((.Values.services).exchanges).health).port | default 9000 }}
         command: [ "cryptellation-exchanges", "serve" ]
         env:
         - name: "BINANCE_API_KEY"

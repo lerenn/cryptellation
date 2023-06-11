@@ -2,7 +2,7 @@ DOCKER_IMAGE_PREFIX := lerenn/cryptellation
 
 .PHONY: clean
 clean: ## Clean everything
-	@rm *.tgz
+	@rm *.tgz || true
 
 .PHONY: deploy/local
 deploy/local: ## Deploy cryptellation on local environment

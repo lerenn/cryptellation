@@ -42,11 +42,10 @@ credentials:
 
 # Specific section for services
 services:
-  repository:
-    image:
-      repository: lerenn/cryptellation
-      tag: 0.8.2
-      pullPolicy: Always
+  image:
+    repository: lerenn/cryptellation
+    tag: 0.8.2
+    pullPolicy: Always
   backtests:
     sqldb:
       database: backtests
