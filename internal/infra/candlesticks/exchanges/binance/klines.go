@@ -77,11 +77,7 @@ func KLineToCandlestick(k binance.Kline, p period.Symbol, now time.Time) (time.T
 
 // KLinesToCandlesticks will transform a slice of binance format for Candlestick
 func KLinesToCandlesticks(pair string, period period.Symbol, kl []*binance.Kline, now time.Time) (*candlestick.List, error) {
-	cs := candlestick.NewEmptyList(candlestick.ListID{
-		ExchangeName: Name,
-		PairSymbol:   pair,
-		Period:       period,
-	})
+	cs := candlestick.NewEmptyList(Name, pair, period)
 	for _, k := range kl {
 		t, c, err := KLineToCandlestick(*k, period, now)
 		if err != nil {

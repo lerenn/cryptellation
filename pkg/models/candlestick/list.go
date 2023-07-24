@@ -16,108 +16,59 @@ var (
 	ErrPairMismatch     = errors.New("pair-mismatch")
 )
 
-type ListID struct {
+type List struct {
 	ExchangeName string
 	PairSymbol   string
 	Period       period.Symbol
+	timeserie.TimeSerie[Candlestick]
 }
 
-func (lid ListID) String() string {
-	return fmt.Sprintf("%s - %s - %s", lid.ExchangeName, lid.PairSymbol, lid.Period)
-}
-
-type List struct {
-	id           ListID
-	candleSticks *timeserie.TimeSerie
-}
-
-func NewEmptyList(id ListID) *List {
+func NewEmptyList(exchangeName, pairSymbol string, period period.Symbol) *List {
 	return &List{
-		id:           id,
-		candleSticks: timeserie.New(),
+		ExchangeName: exchangeName,
+		PairSymbol:   pairSymbol,
+		Period:       period,
+		TimeSerie:    *timeserie.New[Candlestick](),
 	}
 }
 
-func NewList(id ListID, candlesticks ...TimedCandlestick) (*List, error) {
-	l := NewEmptyList(id)
-
-	for _, c := range candlesticks {
-		if err := l.Set(c.Time, c.Candlestick); err != nil {
-			return nil, err
-		}
-	}
-
-	return l, nil
-}
-
-func (l List) ID() ListID {
-	return l.id
-}
-
-func (l List) ExchangeName() string {
-	return l.id.ExchangeName
-}
-
-func (l List) PairSymbol() string {
-	return l.id.PairSymbol
-}
-
-func (l List) Period() period.Symbol {
-	return l.id.Period
-}
-
-func (l List) Len() int {
-	return l.candleSticks.Len()
-}
-
-func (l List) Get(t time.Time) (Candlestick, bool) {
-	data, exist := l.candleSticks.Get(t)
-	if !exist {
-		return Candlestick{}, false
-	}
-	return data.(Candlestick), true
+func NewEmptyListFrom(l *List) *List {
+	return NewEmptyList(l.ExchangeName, l.PairSymbol, l.Period)
 }
 
 func (l *List) Set(t time.Time, c Candlestick) error {
-	if !l.id.Period.IsAligned(t) {
+	if !l.Period.IsAligned(t) {
 		return ErrPeriodMismatch
 	}
 
-	l.candleSticks.Set(t, c)
+	l.TimeSerie.Set(t, c)
 	return nil
 }
 
-func (l *List) MergeTimeSeries(ts timeserie.TimeSerie, options *timeserie.MergeOptions) error {
-	if err := ts.Loop(func(t time.Time, obj interface{}) (bool, error) {
-		if _, isCandlestick := obj.(Candlestick); !isCandlestick {
-			return false, ErrCandlestickType
-		}
-		return false, nil
-	}); err != nil {
-		return err
-	}
-
-	return l.candleSticks.Merge(ts, options)
-}
-
-func (l *List) Merge(l2 List, options *timeserie.MergeOptions) error {
-	if l.id.ExchangeName != l2.id.ExchangeName {
+func (l *List) Merge(l2 *List, options *timeserie.MergeOptions) error {
+	if l.ExchangeName != l2.ExchangeName {
 		return ErrExchangeMismatch
-	} else if l.id.PairSymbol != l2.id.PairSymbol {
+	} else if l.PairSymbol != l2.PairSymbol {
 		return ErrPairMismatch
-	} else if l.id.Period != l2.id.Period {
+	} else if l.Period != l2.Period {
 		return ErrPeriodMismatch
 	}
 
-	return l.candleSticks.Merge(*l2.candleSticks, options)
+	return l.TimeSerie.Merge(l2.TimeSerie, options)
 }
 
-func (l *List) ReplaceUncomplete(l2 List) error {
-	return l.Loop(func(t time.Time, cs Candlestick) (bool, error) {
+func (l List) Extract(start, end time.Time, limit uint) *List {
+	el := NewEmptyList(l.ExchangeName, l.PairSymbol, l.Period)
+	el.TimeSerie = *l.TimeSerie.Extract(start, end, int(limit))
+	return el
+}
+
+func (l *List) ReplaceUncomplete(l2 *List) {
+	_ = l.Loop(func(t time.Time, cs Candlestick) (bool, error) {
 		if cs.Uncomplete {
 			ucs, exists := l2.Get(t)
 			if exists {
-				return false, l.Set(t, ucs)
+				l.TimeSerie.Set(t, ucs)
 			}
 		}
 		return false, nil
@@ -138,66 +89,20 @@ func (l *List) HasUncomplete() bool {
 	return hasUncomplete
 }
 
-func (l *List) Delete(t ...time.Time) {
-	l.candleSticks.Delete(t...)
-}
-
-func (l *List) Loop(callback func(t time.Time, cs Candlestick) (bool, error)) error {
-	return l.candleSticks.Loop(func(t time.Time, obj interface{}) (bool, error) {
-		cs := obj.(Candlestick)
-		return callback(t, cs)
-	})
-}
-
-func (l List) First() (TimedCandlestick, bool) {
-	t, data, ok := l.candleSticks.First()
-	if !ok {
-		return TimedCandlestick{}, false
-	}
-
-	return TimedCandlestick{Time: t, Candlestick: data.(Candlestick)}, true
-}
-
-func (l List) Last() (TimedCandlestick, bool) {
-	t, data, ok := l.candleSticks.Last()
-	if !ok {
-		return TimedCandlestick{}, false
-	}
-
-	return TimedCandlestick{Time: t, Candlestick: data.(Candlestick)}, true
-}
-
-func (l List) Extract(start, end time.Time, limit uint) *List {
-	el := NewEmptyList(l.id)
-	el.candleSticks = l.candleSticks.Extract(start, end)
-
-	if limit == 0 || el.Len() < int(limit) {
-		return el
-	}
-
-	return el.FirstN(limit)
-}
-
-func (l List) FirstN(limit uint) *List {
-	el := NewEmptyList(l.id)
-	el.candleSticks = l.candleSticks.FirstN(limit)
-	return el
-}
-
-func MergeListIntoOneCandlestick(csl *List, per period.Symbol) TimedCandlestick {
+func MergeListIntoOneCandlestick(csl *List, per period.Symbol) (time.Time, Candlestick) {
 	if csl.Len() == 0 {
-		return TimedCandlestick{}
+		return time.Unix(0, 0), Candlestick{}
 	}
 
-	mcs, _ := csl.First()
-	mts := per.RoundTime(mcs.Time)
+	mts, mcs, _ := csl.TimeSerie.First()
+	mts = per.RoundTime(mts)
 
 	_ = csl.Loop(func(t time.Time, cs Candlestick) (bool, error) {
 		if !per.RoundTime(t).Equal(mts) {
 			return true, nil
 		}
 
-		if t.Equal(mcs.Time) {
+		if t.Equal(mts) {
 			return false, nil
 		}
 
@@ -213,11 +118,11 @@ func MergeListIntoOneCandlestick(csl *List, per period.Symbol) TimedCandlestick 
 		return false, nil
 	})
 
-	return mcs
+	return mts, mcs
 }
 
 func (l List) String() string {
-	txt := fmt.Sprintf("# %s\n", l.id.String())
+	txt := fmt.Sprintf("# %s - %s - %s\n", l.ExchangeName, l.PairSymbol, l.Period.String())
 
 	_ = l.Loop(func(t time.Time, cs Candlestick) (bool, error) {
 		uncomplete := ""
@@ -243,7 +148,7 @@ func (l List) String() string {
 // AreMissing checks if there is missing candlesticks between two times
 // Time order: start < end
 func (cl List) AreMissing(end, start time.Time, limit uint) bool {
-	expectedCount := int(cl.Period().CountBetweenTimes(end, start)) + 1
+	expectedCount := int(cl.Period.CountBetweenTimes(end, start)) + 1
 	qty := cl.Len()
 
 	if qty < expectedCount && (limit == 0 || uint(qty) < limit) {

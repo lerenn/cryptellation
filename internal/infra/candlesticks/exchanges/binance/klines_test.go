@@ -82,12 +82,12 @@ func TestKLinesToCandlesticks(t *testing.T) {
 		t.Error("There should be no error:", err)
 	}
 
-	if cs.ExchangeName() != Name {
-		t.Fatal("Exchange should be binance, but is", cs.ExchangeName())
-	} else if cs.PairSymbol() != p {
-		t.Fatal("Pair should be", p, "but is", cs.PairSymbol())
-	} else if cs.Period() != period.M1 {
-		t.Fatal("Period should be", period.M1, "but is", cs.Period())
+	if cs.ExchangeName != Name {
+		t.Fatal("Exchange should be binance, but is", cs.ExchangeName)
+	} else if cs.PairSymbol != p {
+		t.Fatal("Pair should be", p, "but is", cs.PairSymbol)
+	} else if cs.Period != period.M1 {
+		t.Fatal("Period should be", period.M1, "but is", cs.Period)
 	}
 
 	for i, test := range testCasesKLineToCandlestick {

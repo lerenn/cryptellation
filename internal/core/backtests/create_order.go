@@ -24,13 +24,13 @@ func (b Backtests) CreateOrder(ctx context.Context, backtestId uint, order order
 			return fmt.Errorf("could not get candlesticks from service: %w", err)
 		}
 
-		tcs, notEmpty := list.First()
+		_, cs, notEmpty := list.First()
 		if !notEmpty {
 			return backtest.ErrNoDataForOrderValidation
 		}
 
 		log.Printf("Adding %+v order to %d backtest", order, backtestId)
-		if err := bt.AddOrder(order, tcs.Candlestick); err != nil {
+		if err := bt.AddOrder(order, cs); err != nil {
 			return err
 		}
 

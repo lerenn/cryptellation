@@ -90,11 +90,7 @@ func (suite *AdvanceSuite) TestWithoutAccount() {
 		Start:        utils.ToReference(time.Unix(0, 0)),
 		End:          utils.ToReference(time.Unix(120, 0)),
 		Limit:        1,
-	}).Return(candlestick.NewEmptyList(candlestick.ListID{
-		ExchangeName: "exchange",
-		PairSymbol:   "ETH-USDT",
-		Period:       period.M1,
-	}), nil)
+	}).Return(candlestick.NewEmptyList("exchange", "ETH-USDT", period.M1), nil)
 
 	// Set Events expected calls
 	suite.events.EXPECT().Publish(uint(1234), event.NewStatusEvent(time.Unix(120, 0), event.Status{Finished: true}))

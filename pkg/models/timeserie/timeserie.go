@@ -9,29 +9,19 @@ var (
 	ErrTimeStampAlreadyExists error = errors.New("timestamp-already-exists")
 )
 
-type key int64
-
-func newKey(t time.Time) key {
-	return key(t.UnixNano())
-}
-
-func (k key) ToTime() time.Time {
-	return time.Unix(0, int64(k))
-}
-
-type TimeSerie struct {
-	data        map[key]interface{}
+type TimeSerie[T any] struct {
+	data        map[key]T
 	orderedKeys []key
 }
 
-func New() *TimeSerie {
-	return &TimeSerie{
-		data:        make(map[key]interface{}),
+func New[T any]() *TimeSerie[T] {
+	return &TimeSerie[T]{
+		data:        make(map[key]T),
 		orderedKeys: make([]key, 0),
 	}
 }
 
-func (ts *TimeSerie) Set(t time.Time, d interface{}) *TimeSerie {
+func (ts *TimeSerie[T]) Set(t time.Time, d T) *TimeSerie[T] {
 	k := newKey(t)
 
 	ts.addKey(k)
@@ -40,7 +30,7 @@ func (ts *TimeSerie) Set(t time.Time, d interface{}) *TimeSerie {
 	return ts
 }
 
-func (ts *TimeSerie) addKey(k key) {
+func (ts *TimeSerie[T]) addKey(k key) {
 	if _, exists := ts.data[k]; exists {
 		return
 	}
@@ -64,12 +54,12 @@ func (ts *TimeSerie) addKey(k key) {
 	}
 }
 
-func (ts *TimeSerie) Get(t time.Time) (interface{}, bool) {
+func (ts *TimeSerie[T]) Get(t time.Time) (T, bool) {
 	data, exists := ts.data[newKey(t)]
 	return data, exists
 }
 
-func (ts *TimeSerie) Len() int {
+func (ts *TimeSerie[T]) Len() int {
 	return len(ts.orderedKeys)
 }
 
@@ -77,7 +67,7 @@ type MergeOptions struct {
 	ErrorOnCollision bool
 }
 
-func (ts *TimeSerie) Merge(ts2 TimeSerie, options *MergeOptions) error {
+func (ts *TimeSerie[T]) Merge(ts2 TimeSerie[T], options *MergeOptions) error {
 	if options != nil && options.ErrorOnCollision {
 		for pos := range ts2.data {
 			if _, exists := ts.Get(pos.ToTime()); exists {
@@ -93,7 +83,7 @@ func (ts *TimeSerie) Merge(ts2 TimeSerie, options *MergeOptions) error {
 	return nil
 }
 
-func (ts *TimeSerie) Delete(t ...time.Time) {
+func (ts *TimeSerie[T]) Delete(t ...time.Time) {
 	for _, ti := range t {
 		k := newKey(ti)
 
@@ -120,7 +110,7 @@ func (ts *TimeSerie) Delete(t ...time.Time) {
 	}
 }
 
-func (ts *TimeSerie) Loop(callback func(time.Time, interface{}) (bool, error)) error {
+func (ts *TimeSerie[T]) Loop(callback func(time.Time, T) (bool, error)) error {
 	for _, t := range ts.orderedKeys {
 		if shouldBreak, err := callback(t.ToTime(), ts.data[t]); err != nil {
 			return err
@@ -132,28 +122,29 @@ func (ts *TimeSerie) Loop(callback func(time.Time, interface{}) (bool, error)) e
 	return nil
 }
 
-func (ts TimeSerie) First() (time.Time, interface{}, bool) {
+func (ts TimeSerie[T]) First() (time.Time, T, bool) {
 	if ts.Len() == 0 {
-		return time.Unix(0, 0), nil, false
+		return time.Unix(0, 0), *new(T), false
 	}
 
 	t := ts.orderedKeys[0]
 	return t.ToTime(), ts.data[t], true
 }
 
-func (ts TimeSerie) Last() (time.Time, interface{}, bool) {
+func (ts TimeSerie[T]) Last() (time.Time, T, bool) {
 	if ts.Len() == 0 {
-		return time.Unix(0, 0), nil, false
+		return time.Unix(0, 0), *new(T), false
 	}
 
 	t := ts.orderedKeys[ts.Len()-1]
 	return t.ToTime(), ts.data[t], true
 }
 
-func (ts TimeSerie) Extract(start, end time.Time) *TimeSerie {
-	ets := New()
+func (ts TimeSerie[T]) Extract(start, end time.Time, limit int) *TimeSerie[T] {
+	ets := New[T]()
 
-	_ = ts.Loop(func(t time.Time, obj interface{}) (bool, error) {
+	count := 0
+	_ = ts.Loop(func(t time.Time, obj T) (bool, error) {
 		if t.Before(start) {
 			return false, nil
 		}
@@ -163,21 +154,27 @@ func (ts TimeSerie) Extract(start, end time.Time) *TimeSerie {
 		}
 
 		ets.Set(t, obj)
+
+		count++
+		if limit > 0 && count >= limit {
+			return true, nil
+		}
+
 		return false, nil
 	})
 
 	return ets
 }
 
-func (ts TimeSerie) FirstN(limit uint) *TimeSerie {
-	ets := New()
+func (ts TimeSerie[T]) FirstN(limit uint) *TimeSerie[T] {
+	ets := New[T]()
 
 	if limit == 0 {
 		return ets
 	}
 
 	var count uint
-	_ = ts.Loop(func(t time.Time, obj interface{}) (bool, error) {
+	_ = ts.Loop(func(t time.Time, obj T) (bool, error) {
 		ets.Set(t, obj)
 		count++
 		return count >= limit, nil

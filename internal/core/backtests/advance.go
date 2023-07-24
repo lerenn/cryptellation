@@ -58,12 +58,12 @@ func (b Backtests) readActualEvents(ctx context.Context, bt backtest.Backtest) (
 			return nil, fmt.Errorf("could not get candlesticks from service: %w", err)
 		}
 
-		tcs, exists := list.First()
+		t, cs, exists := list.TimeSerie.First()
 		if !exists {
 			continue
 		}
 
-		evt, err := event.TickEventFromCandlestick(sub.ExchangeName, sub.PairSymbol, bt.CurrentCsTick.PriceType, tcs.Time, tcs.Candlestick)
+		evt, err := event.TickEventFromCandlestick(sub.ExchangeName, sub.PairSymbol, bt.CurrentCsTick.PriceType, t, cs)
 		if err != nil {
 			return nil, fmt.Errorf("turning candlestick into event: %w", err)
 		}

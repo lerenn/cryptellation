@@ -18,13 +18,13 @@ type TimeSerieSuite struct {
 }
 
 func (suite *TimeSerieSuite) TestNew() {
-	ts := New()
+	ts := New[string]()
 	suite.Require().Len(ts.data, 0)
 	suite.Require().Len(ts.orderedKeys, 0)
 }
 
 func (suite *TimeSerieSuite) TestSet() {
-	ts := New()
+	ts := New[string]()
 
 	ts2 := ts.Set(time.Unix(1, 0), "new")
 	suite.Require().Equal(ts, ts2)
@@ -62,7 +62,7 @@ func (suite *TimeSerieSuite) TestSet() {
 }
 
 func (suite *TimeSerieSuite) TestGet() {
-	ts := New()
+	ts := New[string]()
 	for i := 0; i < 100; i++ {
 		ts.Set(time.Unix(int64(i), 0), fmt.Sprintf("element-%d", i))
 	}
@@ -73,11 +73,11 @@ func (suite *TimeSerieSuite) TestGet() {
 
 	data, exists = ts.Get(time.Unix(int64(200), 0))
 	suite.Require().False(exists)
-	suite.Require().Nil(data)
+	suite.Require().Equal(data, "")
 }
 
 func (suite *TimeSerieSuite) TestLen() {
-	ts := New()
+	ts := New[string]()
 	for i := 0; i < 100; i++ {
 		suite.Require().Equal(i, ts.Len())
 		ts.Set(time.Unix(int64(i), 0), fmt.Sprintf("element-%d", i))
@@ -85,7 +85,7 @@ func (suite *TimeSerieSuite) TestLen() {
 }
 
 func (suite *TimeSerieSuite) TestMerge() {
-	ts, ts2 := New(), New()
+	ts, ts2 := New[string](), New[string]()
 	for i := 0; i < 10; i++ {
 		ts.Set(time.Unix(int64(i), 0), fmt.Sprintf("element-%d", i))
 		ts2.Set(time.Unix(int64(i)+10, 0), fmt.Sprintf("element-%d", i+10))
@@ -100,7 +100,7 @@ func (suite *TimeSerieSuite) TestMerge() {
 }
 
 func (suite *TimeSerieSuite) TestMergeWithoutCollision() {
-	ts, ts2 := New(), New()
+	ts, ts2 := New[string](), New[string]()
 	for i := 0; i < 10; i++ {
 		ts.Set(time.Unix(int64(i), 0), fmt.Sprintf("element-%d", i))
 		ts2.Set(time.Unix(int64(i+10), 0), fmt.Sprintf("element-%d", i+10))
@@ -117,7 +117,7 @@ func (suite *TimeSerieSuite) TestMergeWithoutCollision() {
 }
 
 func (suite *TimeSerieSuite) TestMergeWithCollision() {
-	ts, ts2 := New(), New()
+	ts, ts2 := New[string](), New[string]()
 	for i := 0; i < 10; i++ {
 		ts.Set(time.Unix(int64(i), 0), fmt.Sprintf("element-%d", i))
 		ts2.Set(time.Unix(int64(i)+5, 0), fmt.Sprintf("element-%d", i+10))
@@ -134,7 +134,7 @@ func (suite *TimeSerieSuite) TestMergeWithCollision() {
 }
 
 func (suite *TimeSerieSuite) TestDelete() {
-	ts := New()
+	ts := New[string]()
 	for i := 0; i < 100; i++ {
 		ts.Set(time.Unix(int64(i), 0), fmt.Sprintf("element-%d", i))
 	}
@@ -178,14 +178,14 @@ type loopTestObject struct {
 }
 
 func (suite *TimeSerieSuite) TestLoop() {
-	ts := New()
+	ts := New[string]()
 
 	ts.Set(time.Unix(0, 0), "zero")
 	ts.Set(time.Unix(1, 0), "un")
 	ts.Set(time.Unix(2, 0), "deux")
 
 	tsList := []loopTestObject{}
-	suite.Require().NoError(ts.Loop(func(ts time.Time, obj interface{}) (bool, error) {
+	suite.Require().NoError(ts.Loop(func(ts time.Time, obj string) (bool, error) {
 		tsList = append(tsList, loopTestObject{
 			Time: ts,
 			Obj:  obj,
@@ -203,14 +203,14 @@ func (suite *TimeSerieSuite) TestLoop() {
 }
 
 func (suite *TimeSerieSuite) TestLoopBreak() {
-	ts := New()
+	ts := New[string]()
 
 	ts.Set(time.Unix(0, 0), "zero")
 	ts.Set(time.Unix(1, 0), "un")
 	ts.Set(time.Unix(2, 0), "deux")
 
 	tsList := []loopTestObject{}
-	suite.Require().NoError(ts.Loop(func(ts time.Time, obj interface{}) (bool, error) {
+	suite.Require().NoError(ts.Loop(func(ts time.Time, obj string) (bool, error) {
 		tsList = append(tsList, loopTestObject{
 			Time: ts,
 			Obj:  obj,
@@ -229,14 +229,14 @@ func (suite *TimeSerieSuite) TestLoopBreak() {
 }
 
 func (suite *TimeSerieSuite) TestLoopError() {
-	ts := New()
+	ts := New[string]()
 
 	ts.Set(time.Unix(0, 0), "zero")
 	ts.Set(time.Unix(1, 0), "un")
 	ts.Set(time.Unix(2, 0), "deux")
 
 	tsList := []loopTestObject{}
-	suite.Require().Error(ts.Loop(func(ts time.Time, obj interface{}) (bool, error) {
+	suite.Require().Error(ts.Loop(func(ts time.Time, obj string) (bool, error) {
 		tsList = append(tsList, loopTestObject{
 			Time: ts,
 			Obj:  obj,
@@ -255,7 +255,7 @@ func (suite *TimeSerieSuite) TestLoopError() {
 }
 
 func (suite *TimeSerieSuite) TestFirst() {
-	ts := New()
+	ts := New[string]()
 
 	_, _, ok := ts.First()
 	suite.Require().False(ok)
@@ -280,7 +280,7 @@ func (suite *TimeSerieSuite) TestFirst() {
 }
 
 func (suite *TimeSerieSuite) TestLast() {
-	ts := New()
+	ts := New[string]()
 
 	_, _, ok := ts.Last()
 	suite.Require().False(ok)
@@ -317,12 +317,12 @@ func (suite *TimeSerieSuite) TestLast() {
 }
 
 func (suite *TimeSerieSuite) TestExtract() {
-	ts := New()
+	ts := New[int64]()
 	for i := int64(0); i < 4; i++ {
 		ts.Set(time.Unix(60*i, 0), i)
 	}
 
-	nl := ts.Extract(time.Unix(60, 0), time.Unix(120, 0))
+	nl := ts.Extract(time.Unix(60, 0), time.Unix(120, 0), 0)
 	suite.Require().Equal(2, nl.Len())
 
 	obj, exists := nl.Get(time.Unix(60, 0))
@@ -334,8 +334,25 @@ func (suite *TimeSerieSuite) TestExtract() {
 	suite.Require().Equal(int64(2), obj)
 }
 
+func (suite *TimeSerieSuite) TestExtractWithLimit() {
+	ts := New[int64]()
+	for i := int64(0); i < 4; i++ {
+		ts.Set(time.Unix(60*i, 0), i)
+	}
+
+	nl := ts.Extract(time.Unix(60, 0), time.Unix(120, 0), 1)
+	suite.Require().Equal(1, nl.Len())
+
+	obj, exists := nl.Get(time.Unix(60, 0))
+	suite.Require().True(exists)
+	suite.Require().Equal(int64(1), obj)
+
+	obj, exists = nl.Get(time.Unix(120, 0))
+	suite.Require().False(exists)
+}
+
 func (suite *TimeSerieSuite) TestFirstN() {
-	ts := New()
+	ts := New[int64]()
 	for i := int64(0); i < 4; i++ {
 		ts.Set(time.Unix(60*i, 0), i)
 	}

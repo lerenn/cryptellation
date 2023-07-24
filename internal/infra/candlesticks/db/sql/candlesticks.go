@@ -21,9 +21,9 @@ func (d *DB) ReadCandlesticks(ctx context.Context, cs *candlestick.List, start, 
 		pair_symbol = ? AND
 		period_symbol = ? AND
 		time BETWEEN ? AND ?`,
-		cs.ExchangeName(),
-		cs.PairSymbol(),
-		cs.Period().String(),
+		cs.ExchangeName,
+		cs.PairSymbol,
+		cs.Period.String(),
 		start, end)
 
 	if limit != 0 {

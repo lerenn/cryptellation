@@ -34,9 +34,7 @@ func (suite *GetCachedSuite) setMocksForAllExistWithNoneInDB() context.Context {
 	ctx := context.Background()
 
 	// Set list that will be pulled from exchange and created in DB
-	l := candlestick.NewEmptyList(candlestick.ListID{
-		ExchangeName: "exchange", PairSymbol: "ETH-USDC", Period: period.M1,
-	})
+	l := candlestick.NewEmptyList("exchange", "ETH-USDC", period.M1)
 	for i := int64(0); i < 100; i++ {
 		suite.Require().NoError(l.Set(time.Unix(i*60, 0), candlestick.Candlestick{Open: float64(60 * i)}))
 	}
@@ -44,9 +42,7 @@ func (suite *GetCachedSuite) setMocksForAllExistWithNoneInDB() context.Context {
 	// Set first call to know how much candlestick there is in the database
 	suite.db.EXPECT().ReadCandlesticks(
 		ctx,
-		candlestick.NewEmptyList(
-			candlestick.ListID{ExchangeName: "exchange", PairSymbol: "ETH-USDC", Period: period.M1},
-		),
+		candlestick.NewEmptyList("exchange", "ETH-USDC", period.M1),
 		time.Unix(0, 0),
 		time.Unix(540, 0),
 		uint(0),
@@ -55,9 +51,7 @@ func (suite *GetCachedSuite) setMocksForAllExistWithNoneInDB() context.Context {
 	// Set call to check which candlestick exists or not
 	suite.db.EXPECT().ReadCandlesticks(
 		ctx,
-		candlestick.NewEmptyList(
-			candlestick.ListID{ExchangeName: "exchange", PairSymbol: "ETH-USDC", Period: period.M1},
-		),
+		candlestick.NewEmptyList("exchange", "ETH-USDC", period.M1),
 		time.Unix(0, 0),
 		time.Unix(5940, 0),
 		uint(0),
@@ -110,16 +104,12 @@ func (suite *GetCachedSuite) TestAllExistWithNoneInDB() {
 func (suite *GetCachedSuite) setMocksForNoneExistWithNoneInDB() context.Context {
 	ctx := context.Background()
 
-	l := candlestick.NewEmptyList(candlestick.ListID{
-		ExchangeName: "exchange", PairSymbol: "ETH-USDC", Period: period.M1,
-	})
+	l := candlestick.NewEmptyList("exchange", "ETH-USDC", period.M1)
 
 	// Set list that will be pulled from exchange and created in DB
 	suite.db.EXPECT().ReadCandlesticks(
 		ctx,
-		candlestick.NewEmptyList(
-			candlestick.ListID{ExchangeName: "exchange", PairSymbol: "ETH-USDC", Period: period.M1},
-		),
+		candlestick.NewEmptyList("exchange", "ETH-USDC", period.M1),
 		time.Unix(0, 0),
 		time.Unix(540, 0),
 		uint(0),
@@ -162,16 +152,12 @@ func (suite *GetCachedSuite) TestNoneExistWithNoneInDB() {
 func (suite *GetCachedSuite) setMocksForFromDBAndService() context.Context {
 	ctx := context.Background()
 
-	id := candlestick.ListID{
-		ExchangeName: "exchange", PairSymbol: "ETH-USDC", Period: period.M1,
-	}
-
-	dbl := candlestick.NewEmptyList(id)
+	dbl := candlestick.NewEmptyList("exchange", "ETH-USDC", period.M1)
 	for i := int64(0); i < 10; i++ {
 		suite.Require().NoError(dbl.Set(time.Unix(i*60, 0), candlestick.Candlestick{Close: 4321}))
 	}
 
-	exchl := candlestick.NewEmptyList(id)
+	exchl := candlestick.NewEmptyList("exchange", "ETH-USDC", period.M1)
 	for i := int64(10); i < 110; i++ {
 		suite.Require().NoError(exchl.Set(time.Unix(i*60, 0), candlestick.Candlestick{Close: 1234}))
 	}
@@ -179,27 +165,23 @@ func (suite *GetCachedSuite) setMocksForFromDBAndService() context.Context {
 	// Set list that will be pulled from exchange and created in DB
 	suite.db.EXPECT().ReadCandlesticks(
 		ctx,
-		candlestick.NewEmptyList(
-			candlestick.ListID{ExchangeName: "exchange", PairSymbol: "ETH-USDC", Period: period.M1},
-		),
+		candlestick.NewEmptyList("exchange", "ETH-USDC", period.M1),
 		time.Unix(0, 0),
 		time.Unix(1140, 0),
 		uint(0),
 	).DoAndReturn(func(ctx context.Context, cs *candlestick.List, start, end time.Time, limit uint) error {
-		return cs.Merge(*dbl, nil)
+		return cs.Merge(dbl, nil)
 	})
 
 	// Set first call to know how much candlestick there is in the database
 	suite.db.EXPECT().ReadCandlesticks(
 		ctx,
-		candlestick.NewEmptyList(
-			candlestick.ListID{ExchangeName: "exchange", PairSymbol: "ETH-USDC", Period: period.M1},
-		),
+		candlestick.NewEmptyList("exchange", "ETH-USDC", period.M1),
 		time.Unix(0, 0),
 		time.Unix(6540, 0),
 		uint(0),
 	).DoAndReturn(func(ctx context.Context, cs *candlestick.List, start, end time.Time, limit uint) error {
-		return cs.Merge(*dbl, nil)
+		return cs.Merge(dbl, nil)
 	})
 
 	// Set call for creating candlesticks in database
@@ -252,17 +234,13 @@ func (suite *GetCachedSuite) TestFromDBAndService() {
 func (suite *GetCachedSuite) setMocksForFromDBAndServiceWithUncomplete() context.Context {
 	ctx := context.Background()
 
-	id := candlestick.ListID{
-		ExchangeName: "exchange", PairSymbol: "ETH-USDC", Period: period.M1,
-	}
-
-	dbl := candlestick.NewEmptyList(id)
+	dbl := candlestick.NewEmptyList("exchange", "ETH-USDC", period.M1)
 	for i := int64(0); i < 10; i++ {
 		suite.Require().NoError(dbl.Set(time.Unix(i*60, 0), candlestick.Candlestick{Close: 4321}))
 	}
 	suite.Require().NoError(dbl.Set(time.Unix(540, 0), candlestick.Candlestick{Close: 4321, Uncomplete: true}))
 
-	exchl := candlestick.NewEmptyList(id)
+	exchl := candlestick.NewEmptyList("exchange", "ETH-USDC", period.M1)
 	for i := int64(0); i < 100; i++ {
 		suite.Require().NoError(exchl.Set(time.Unix(i*60, 0), candlestick.Candlestick{Close: 1234}))
 	}
@@ -270,31 +248,27 @@ func (suite *GetCachedSuite) setMocksForFromDBAndServiceWithUncomplete() context
 	// Set list that will be pulled from exchange and created in DB
 	suite.db.EXPECT().ReadCandlesticks(
 		ctx,
-		candlestick.NewEmptyList(
-			candlestick.ListID{ExchangeName: "exchange", PairSymbol: "ETH-USDC", Period: period.M1},
-		),
+		candlestick.NewEmptyList("exchange", "ETH-USDC", period.M1),
 		time.Unix(0, 0),
 		time.Unix(1140, 0),
 		uint(0),
 	).DoAndReturn(func(ctx context.Context, cs *candlestick.List, start, end time.Time, limit uint) error {
-		return cs.Merge(*dbl, nil)
+		return cs.Merge(dbl, nil)
 	})
 
 	// Set first call to know how much candlestick there is in the database
 	suite.db.EXPECT().ReadCandlesticks(
 		ctx,
-		candlestick.NewEmptyList(
-			candlestick.ListID{ExchangeName: "exchange", PairSymbol: "ETH-USDC", Period: period.M1},
-		),
+		candlestick.NewEmptyList("exchange", "ETH-USDC", period.M1),
 		time.Unix(0, 0),
 		time.Unix(5940, 0),
 		uint(0),
 	).DoAndReturn(func(ctx context.Context, cs *candlestick.List, start, end time.Time, limit uint) error {
-		return cs.Merge(*dbl, nil)
+		return cs.Merge(dbl, nil)
 	})
 
 	// Set call for creating candlesticks in database
-	createdl := candlestick.NewEmptyList(id)
+	createdl := candlestick.NewEmptyList("exchange", "ETH-USDC", period.M1)
 	for i := int64(10); i < 100; i++ {
 		suite.Require().NoError(createdl.Set(time.Unix(i*60, 0), candlestick.Candlestick{Close: 1234}))
 	}

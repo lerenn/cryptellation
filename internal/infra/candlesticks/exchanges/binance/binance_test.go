@@ -45,8 +45,8 @@ func (suite *BinanceSuite) TestGetCandlesticks() {
 			End:        te,
 		})
 	suite.Require().NoError(err)
-	suite.Require().Equal(p, cs.PairSymbol())
-	suite.Require().Equal(period.M1, cs.Period())
+	suite.Require().Equal(p, cs.PairSymbol)
+	suite.Require().Equal(period.M1, cs.Period)
 
 	expected := candlestick.Candlestick{
 		Open:   16084.16,

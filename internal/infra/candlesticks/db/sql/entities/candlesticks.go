@@ -55,7 +55,7 @@ func FromModelListToEntityList(list *candlestick.List) []Candlestick {
 	entities := make([]Candlestick, 0, list.Len())
 	_ = list.Loop(func(t time.Time, cs candlestick.Candlestick) (bool, error) {
 		c := Candlestick{}
-		c.FromModel(list.ExchangeName(), list.PairSymbol(), list.Period().String(), t, cs)
+		c.FromModel(list.ExchangeName, list.PairSymbol, list.Period.String(), t, cs)
 		entities = append(entities, c)
 		return false, nil
 	})
@@ -74,25 +74,21 @@ func FromEntityListToModelList(entities []Candlestick) (*candlestick.List, error
 		return nil, fmt.Errorf("from candlestick entity to list: %w", err)
 	}
 
-	list := candlestick.NewEmptyList(candlestick.ListID{
-		ExchangeName: entities[0].ExchangeName,
-		PairSymbol:   entities[0].PairSymbol,
-		Period:       per,
-	})
+	list := candlestick.NewEmptyList(entities[0].ExchangeName, entities[0].PairSymbol, per)
 
 	for _, e := range entities {
-		if e.ExchangeName != list.ExchangeName() {
-			txt := fmt.Sprintf("incompatible exchanges for same list: %q and %q", e.ExchangeName, list.ExchangeName())
+		if e.ExchangeName != list.ExchangeName {
+			txt := fmt.Sprintf("incompatible exchanges for same list: %q and %q", e.ExchangeName, list.ExchangeName)
 			return nil, xerrors.New(txt)
 		}
 
-		if e.PairSymbol != list.PairSymbol() {
-			txt := fmt.Sprintf("incompatible pair for same list: %q and %q", e.PairSymbol, list.PairSymbol())
+		if e.PairSymbol != list.PairSymbol {
+			txt := fmt.Sprintf("incompatible pair for same list: %q and %q", e.PairSymbol, list.PairSymbol)
 			return nil, xerrors.New(txt)
 		}
 
-		if e.PeriodSymbol != list.Period().String() {
-			txt := fmt.Sprintf("incompatible period for same list: %q and %q", e.PeriodSymbol, list.Period().String())
+		if e.PeriodSymbol != list.Period.String() {
+			txt := fmt.Sprintf("incompatible period for same list: %q and %q", e.PeriodSymbol, list.Period.String())
 			return nil, xerrors.New(txt)
 		}
 
