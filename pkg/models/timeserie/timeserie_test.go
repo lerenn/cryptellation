@@ -347,7 +347,7 @@ func (suite *TimeSerieSuite) TestExtractWithLimit() {
 	suite.Require().True(exists)
 	suite.Require().Equal(int64(1), obj)
 
-	obj, exists = nl.Get(time.Unix(120, 0))
+	_, exists = nl.Get(time.Unix(120, 0))
 	suite.Require().False(exists)
 }
 
