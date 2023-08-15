@@ -46,7 +46,7 @@ func (msg *SmaRequestMessage) ToModel() (indicators.GetCachedSMAPayload, error) 
 func (msg *SmaResponseMessage) Set(ts *timeserie.TimeSerie[float64]) {
 	count := 0
 	data := make(NumericTimeSerieSchema, ts.Len())
-	ts.Loop(func(t time.Time, v float64) (bool, error) {
+	_ = ts.Loop(func(t time.Time, v float64) (bool, error) {
 		point := data[count]
 
 		// Set point
