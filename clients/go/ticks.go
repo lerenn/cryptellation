@@ -1,5 +1,5 @@
 // Generate code for mock
-//go:generate go run github.com/golang/mock/mockgen -source=ticks.go -destination=mock/ticks.gen.go -package mock
+//go:generate go run go.uber.org/mock/mockgen@v0.2.0 -source=ticks.go -destination=mock/ticks.gen.go -package mock
 
 package client
 

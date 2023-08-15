@@ -5,7 +5,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/golang/mock/gomock"
 	client "github.com/lerenn/cryptellation/clients/go"
 	"github.com/lerenn/cryptellation/clients/go/mock"
 	"github.com/lerenn/cryptellation/internal/core/backtests/ports/db"
@@ -16,6 +15,7 @@ import (
 	"github.com/lerenn/cryptellation/pkg/models/period"
 	"github.com/lerenn/cryptellation/pkg/utils"
 	"github.com/stretchr/testify/suite"
+	"go.uber.org/mock/gomock"
 )
 
 func TestAdvanceSuite(t *testing.T) {

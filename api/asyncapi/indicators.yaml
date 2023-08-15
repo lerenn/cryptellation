@@ -1,0 +1,181 @@
+asyncapi: 2.5.0
+info:
+  title: Cryptellation Indicators Service
+  version: 1.0.0
+  description: >
+    This service is serving indicators history through a caching system that is
+    proxying exchanges API.
+channels:
+  cryptellation.indicators.sma.request:
+    publish:
+      operationId: SmaRequest
+      description: Request a simple moving average timeserie
+      tags:
+        - name: candlestick sma
+      message:
+        $ref: '#/components/messages/SmaRequest'
+
+  cryptellation.indicators.sma.response:
+    subscribe:
+      operationId: SmaResponse
+      description: Response to a simple moving average timeserie request
+      tags:
+        - name: candlestick sma
+      message:
+        $ref: '#/components/messages/SmaResponse'
+
+components:
+  messages:
+    SmaRequest:
+      headers:
+        type: object
+        properties:
+          correlationId:
+            description: Correlation ID set by client
+            type: string
+      payload:
+        type: object
+        description: Candlestick SMA request with filters and time boundaries
+        required:
+          - exchangeName
+          - pairSymbol
+          - periodSymbol
+          - periodNumber
+          - limit
+        properties:
+          exchangeName:
+            $ref: '#/components/schemas/ExchangeName'
+            description: Requested candlesticks exchange name
+          pairSymbol:
+            $ref: '#/components/schemas/PairSymbol'
+            description: Requested candlesticks pair symbol
+          periodSymbol:
+            $ref: '#/components/schemas/PeriodSymbol'
+            description: Requested candlesticks period symbol
+          periodNumber:
+            $ref: '#/components/schemas/NumberOfPeriods'
+          priceType:
+            $ref: '#/components/schemas/PriceType'
+          start:
+            $ref: '#/components/schemas/Date'
+            default: "1970-01-01T0:00:00.000Z"
+            description: Date-time for the oldest candlestick (RFC3339)
+          end:
+            $ref: '#/components/schemas/Date'
+            default: <date-time of the request processing>
+            description: Date-time for the newest candlestick (RFC3339)
+          limit:
+            $ref: '#/components/schemas/Limit'
+            description: The maximum candlesticks to retrieve (0 = unlimited)
+      correlationId:
+        description: Default Correlation ID
+        location: $message.header#/correlationId
+    SmaResponse:
+      headers:
+        type: object
+        properties:
+          correlationId:
+            description: Correlation ID set by client on corresponding request
+            type: string
+      payload:
+        type: object
+        oneOf:
+        - properties:
+            data:
+              $ref: '#/components/schemas/NumericTimeSerie'
+        - properties:
+            error:
+              $ref: '#/components/schemas/Error'
+      correlationId:
+        description: Default Correlation ID
+        location: $message.header#/correlationId
+
+  schemas:
+    ExchangeName:
+      type: string
+      description: Exchange name
+      examples:
+        - Binance
+    NumericTimeSerie:
+      type: array
+      description: A list of timed numbers
+      items:
+        type: object
+        required:
+          - time
+          - value
+        properties:
+          time:
+            $ref: '#/components/schemas/Date'
+          value:
+            type: number
+            format: double
+            description: Numerical value
+            examples:
+              - 0.5
+    PairSymbol:
+      type: string
+      description: Pair symbol
+      examples:
+        - ETH-USDC
+    PriceType:
+      type: string
+      description: Type of price from a candlestick
+      default: close
+      enum:
+        - open
+        - high
+        - low
+        - close
+    PeriodSymbol:
+      type: string
+      description: Period symbol
+      default: M1
+      enum:
+        - M1
+        - M3
+        - M5
+        - M15
+        - M30
+        - H1
+        - H2
+        - H4
+        - H6
+        - H8
+        - H12
+        - D1
+        - D3
+        - W1
+    Date:
+      type: string
+      format: date-time
+      description: Date-Time format according to RFC3339
+      examples:
+        - "1985-04-12T23:20:50.52Z"
+        - "1937-01-01T12:00:27.87+00:20"
+    Limit:
+      type: integer
+      format: int32
+      default: 0
+      description: The maximum quantity to retrieve (0 = unlimited)
+    Error:
+      type: object
+      description: Response to a failed call
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          description: Code to identify the error type, based on HTTP errors
+        message:
+          type: string
+          description: Main error reason
+          examples:
+            - "Invalid request: no time specified"
+    NumberOfPeriods:
+      type: integer
+      format: int32
+      description: Number of periods used
+
+

@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: indicators
+  name: indicators
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: indicators
+  strategy: {}
+  template:
+    metadata:
+      annotations:
+        {{if (.Values.debug).forceDeployment }}timestamp: {{ now | quote }}{{end}}
+      labels:
+        app: indicators
+    spec:
+      initContainers:
+      {{- include "dependencies.cockroachdb.init-container" . | indent 6 }}
+      - name: init-sql-database
+        image: {{ (.Values.services).image.repository | default "lerenn/cryptellation" }}:{{ (.Values.services).image.tag | default "latest" }}
+        imagePullPolicy: {{ (.Values.services).image.pullPolicy | default "Always" }}
+        command: [ "cryptellation-indicators", "migrations", "migrate" ]
+        env:
+        {{- include "common.env" "indicators" | indent 8 }}
+      containers:
+      - name: indicators
+        image: {{ (.Values.services).image.repository | default "lerenn/cryptellation" }}:{{ (.Values.services).image.tag | default "latest" }}
+        imagePullPolicy: {{ (.Values.services).image.pullPolicy | default "Always" }}
+        livenessProbe:
+          httpGet:
+            path: /liveness
+            port: {{ (((.Values.services).indicators).health).port | default 9000 }}
+        readinessProbe:
+          httpGet:
+            path: /readiness
+            port: {{ (((.Values.services).indicators).health).port | default 9000 }}
+        command: [ "cryptellation-indicators", "serve" ]
+        env:
+        {{- include "common.env" "indicators" | indent 8 }}
+        resources: {}
+      volumes:
+        {{- include "dependencies.cockroachdb.volumes" . | indent 8 }}
+status: {}

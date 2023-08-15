@@ -63,6 +63,10 @@ func (suite *CandlestickListSuite) TestNewWithUnalignedCandlestick() {
 	suite.Require().Error(l.Set(t, cs))
 }
 
+func (suite *CandlestickListSuite) TestMustSet() {
+	// TODO: set
+}
+
 func (suite *CandlestickListSuite) TestSet() {
 	p := "BTC-USDC"
 	csList := NewEmptyList("exchange", p, period.M1)

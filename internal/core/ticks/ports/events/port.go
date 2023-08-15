@@ -1,5 +1,5 @@
 // Generate code for mock
-//go:generate go run github.com/golang/mock/mockgen -source=port.go -destination=mock.gen.go -package events
+//go:generate go run go.uber.org/mock/mockgen@v0.2.0 -source=port.go -destination=mock.gen.go -package events
 
 package events
 

@@ -3,6 +3,8 @@ package timeserie
 import (
 	"errors"
 	"time"
+
+	"github.com/lerenn/cryptellation/pkg/utils"
 )
 
 var (
@@ -181,4 +183,16 @@ func (ts TimeSerie[T]) FirstN(limit uint) *TimeSerie[T] {
 	})
 
 	return ets
+}
+
+// AreMissing checks if there is missing candlesticks between two times
+func (ts TimeSerie[T]) AreMissing(t1, t2 time.Time, interval time.Duration, limit uint) bool {
+	expectedCount := int(utils.CountBetweenTimes(t1, t2, interval)) + 1
+	qty := ts.Len()
+
+	if qty < expectedCount && (limit == 0 || uint(qty) < limit) {
+		return true
+	}
+
+	return false
 }

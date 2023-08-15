@@ -5,7 +5,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/golang/mock/gomock"
 	"github.com/lerenn/cryptellation/clients/go/mock"
 	"github.com/lerenn/cryptellation/internal/core/backtests/ports/db"
 	"github.com/lerenn/cryptellation/internal/core/backtests/ports/events"
@@ -16,6 +15,7 @@ import (
 	"github.com/lerenn/cryptellation/pkg/models/order"
 	"github.com/lerenn/cryptellation/pkg/models/period"
 	"github.com/stretchr/testify/suite"
+	"go.uber.org/mock/gomock"
 )
 
 func TestCreationSuite(t *testing.T) {

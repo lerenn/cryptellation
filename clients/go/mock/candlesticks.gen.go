@@ -8,9 +8,9 @@ import (
 	context "context"
 	reflect "reflect"
 
-	gomock "github.com/golang/mock/gomock"
 	client "github.com/lerenn/cryptellation/clients/go"
 	candlestick "github.com/lerenn/cryptellation/pkg/models/candlestick"
+	gomock "go.uber.org/mock/gomock"
 )
 
 // MockCandlesticks is a mock of Candlesticks interface.

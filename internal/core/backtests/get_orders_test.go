@@ -3,11 +3,11 @@ package backtests
 import (
 	"testing"
 
-	"github.com/golang/mock/gomock"
 	"github.com/lerenn/cryptellation/clients/go/mock"
 	"github.com/lerenn/cryptellation/internal/core/backtests/ports/db"
 	"github.com/lerenn/cryptellation/internal/core/backtests/ports/events"
 	"github.com/stretchr/testify/suite"
+	"go.uber.org/mock/gomock"
 )
 
 func TestGetOrdersSuite(t *testing.T) {

@@ -12,6 +12,8 @@ spec:
   strategy: {}
   template:
     metadata:
+      annotations:
+        {{if (.Values.debug).forceDeployment }}timestamp: {{ now | quote }}{{end}}
       labels:
         app: exchanges
     spec:

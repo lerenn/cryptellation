@@ -7,8 +7,8 @@ package events
 import (
 	reflect "reflect"
 
-	gomock "github.com/golang/mock/gomock"
 	event "github.com/lerenn/cryptellation/pkg/models/event"
+	gomock "go.uber.org/mock/gomock"
 )
 
 // MockPort is a mock of Port interface.

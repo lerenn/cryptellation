@@ -9,8 +9,8 @@ import (
 	reflect "reflect"
 	time "time"
 
-	gomock "github.com/golang/mock/gomock"
 	candlestick "github.com/lerenn/cryptellation/pkg/models/candlestick"
+	gomock "go.uber.org/mock/gomock"
 )
 
 // MockPort is a mock of Port interface.

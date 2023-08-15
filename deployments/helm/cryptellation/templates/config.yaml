@@ -15,6 +15,10 @@ data:
     exchanges.sqldb.database: "{{ (((.Values.services).exchanges).sqldb).database | default "exchanges" }}"
     exchanges.health.port: "{{ (((.Values.services).exchanges).health).port | default 9000 }}"
 
-    # Exchanges
+    # Indicators
+    indicators.sqldb.database: "{{ (((.Values.services).indicators).sqldb).database | default "indicators" }}"
+    indicators.health.port: "{{ (((.Values.services).indicators).health).port | default 9000 }}"
+
+    # Ticks
     ticks.sqldb.database: "{{ (((.Values.services).ticks).sqldb).database | default "ticks" }}"
     ticks.health.port: "{{ (((.Values.services).ticks).health).port | default 9000 }}"

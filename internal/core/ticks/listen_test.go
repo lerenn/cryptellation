@@ -4,12 +4,12 @@ import (
 	"testing"
 	"time"
 
-	"github.com/golang/mock/gomock"
 	"github.com/lerenn/cryptellation/internal/core/ticks/ports/db"
 	"github.com/lerenn/cryptellation/internal/core/ticks/ports/events"
 	"github.com/lerenn/cryptellation/internal/core/ticks/ports/exchanges"
 	"github.com/lerenn/cryptellation/pkg/models/tick"
 	"github.com/stretchr/testify/suite"
+	"go.uber.org/mock/gomock"
 )
 
 func TestListenSuite(t *testing.T) {

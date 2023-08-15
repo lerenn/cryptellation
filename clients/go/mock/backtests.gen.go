@@ -8,10 +8,10 @@ import (
 	context "context"
 	reflect "reflect"
 
-	gomock "github.com/golang/mock/gomock"
 	client "github.com/lerenn/cryptellation/clients/go"
 	account "github.com/lerenn/cryptellation/pkg/models/account"
 	event "github.com/lerenn/cryptellation/pkg/models/event"
+	gomock "go.uber.org/mock/gomock"
 )
 
 // MockBacktests is a mock of Backtests interface.

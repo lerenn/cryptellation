@@ -4,6 +4,8 @@ import (
 	"errors"
 	"fmt"
 	"time"
+
+	"github.com/lerenn/cryptellation/pkg/utils"
 )
 
 var (
@@ -124,11 +126,8 @@ func FromSeconds(i int64) (Symbol, error) {
 }
 
 // CountBetweenTimes returns the number of candlesticks between times
-// Time order: start < end
-func (s Symbol) CountBetweenTimes(end, start time.Time) int64 {
-	roundedEnd := s.RoundTime(end)
-	roundedStart := s.RoundTime(start)
-	return (roundedStart.Unix() - roundedEnd.Unix()) / int64(s.Duration()/time.Second)
+func (s Symbol) CountBetweenTimes(t1, t2 time.Time) int64 {
+	return utils.CountBetweenTimes(t1, t2, s.Duration())
 }
 
 func UniqueArray(sym1, sym2 []Symbol) []Symbol {

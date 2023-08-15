@@ -5,12 +5,12 @@ import (
 	"testing"
 	"time"
 
-	"github.com/golang/mock/gomock"
 	db "github.com/lerenn/cryptellation/internal/core/candlesticks/ports/db"
 	"github.com/lerenn/cryptellation/internal/core/candlesticks/ports/exchanges"
 	"github.com/lerenn/cryptellation/pkg/models/candlestick"
 	"github.com/lerenn/cryptellation/pkg/models/period"
 	"github.com/stretchr/testify/suite"
+	"go.uber.org/mock/gomock"
 )
 
 func TestGetCachedSuite(t *testing.T) {

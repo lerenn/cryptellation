@@ -36,6 +36,14 @@ func NewEmptyListFrom(l *List) *List {
 	return NewEmptyList(l.ExchangeName, l.PairSymbol, l.Period)
 }
 
+func (l *List) MustSet(t time.Time, c Candlestick) *List {
+	err := l.Set(t, c)
+	if err != nil {
+		panic(err)
+	}
+	return l
+}
+
 func (l *List) Set(t time.Time, c Candlestick) error {
 	if !l.Period.IsAligned(t) {
 		return ErrPeriodMismatch
@@ -148,10 +156,7 @@ func (l List) String() string {
 // AreMissing checks if there is missing candlesticks between two times
 // Time order: start < end
 func (cl List) AreMissing(end, start time.Time, limit uint) bool {
-	expectedCount := int(cl.Period.CountBetweenTimes(end, start)) + 1
-	qty := cl.Len()
-
-	if qty < expectedCount && (limit == 0 || uint(qty) < limit) {
+	if missing := cl.TimeSerie.AreMissing(end, start, cl.Period.Duration(), limit); missing {
 		return true
 	}
 
