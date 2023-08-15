@@ -57,6 +57,11 @@ stateDiagram-v2
     User --> CryptellationForwardTests: Send orders
     User --> CryptellationExchanges: Get exchanges information
     User --> CryptellationCandlesticks: Get candlesticks
+    User --> CryptellationIndicators: Get indicators
+
+    CryptellationIndicators: <center><b>Indicators</b>\n[Cryptellation Service]\nProcess and cache common indicators.</center>
+    CryptellationIndicators --> User: Deliver calculated/cached indicators
+    CryptellationIndicators --> CryptellationCandlesticks: Get candlesticks
 
     CryptellationBacktests: <center><b>Backtests</b>\n[Cryptellation Service]\nProvide an entire environment\nfor users to execute backtests.</center>
     CryptellationBacktests --> User: Deliver simulated ticks

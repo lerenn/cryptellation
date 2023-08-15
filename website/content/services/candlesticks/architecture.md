@@ -21,7 +21,7 @@ stateDiagram-v2
     Candlesticks --> Database: Reads from\nWrites to\n[Redis/SQL]
     Candlesticks --> Exchanges: Get candlesticks\n[Exchange API]
 
-    Database: <center><b>Database</b>\n[Redis/SQL]\nStore backtests information.</center>
+    Database: <center><b>Database</b>\n[Redis/SQL]\nStore candlesticks information.</center>
 
     Exchanges: <center><b>Exchanges</b>\n[Internet Service]\nAPIs that exchanges provides to get\ninformation and execute orders.</center>
 
@@ -45,7 +45,7 @@ stateDiagram-v2
     User: <center><b>User</b>\n[Application]\nService user</center>
     User --> NATSController: Get request [NATS]
 
-    Database: <center><b>Database</b>\n[Redis/SQL]\nStore backtests information.</center>
+    Database: <center><b>Database</b>\n[Redis/SQL]\nStore candlesticks information.</center>
 
     NATSController: <center><b>NATS Controller</b>\n[Controller]\nReceives NATS request and redirect\nthem to the correct commands/queries.</center>
     NATSController --> CachedReadCandlesticks: Request candlesticks

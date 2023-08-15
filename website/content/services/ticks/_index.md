@@ -2,6 +2,7 @@
 title: "Ticks"
 date: 2023-03-27T16:32:56+02:00
 description: Service serving ticks in real time, proxying exchanges API.
+weight: 5
 ---
 
 ## Table of content
