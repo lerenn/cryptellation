@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/lerenn/asyncapi-codegen/pkg/log"
 	client "github.com/lerenn/cryptellation/clients/go"
 	"github.com/lerenn/cryptellation/internal/ctrl/ticks/events"
 	"github.com/lerenn/cryptellation/pkg/config"
@@ -26,6 +27,7 @@ func NewTicks(c config.NATS) (client.Ticks, error) {
 	if err != nil {
 		return nil, err
 	}
+	ctrl.SetLogger(log.NewECS())
 
 	return Ticks{
 		nats: conn,

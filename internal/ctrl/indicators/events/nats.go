@@ -1,13 +1,14 @@
 // SMA
-//go:generate go run github.com/lerenn/asyncapi-codegen/cmd/asyncapi-codegen@v0.13.1 -g application -p events -i ./../../../../api/asyncapi/indicators.yaml -o ./app.gen.go
-//go:generate go run github.com/lerenn/asyncapi-codegen/cmd/asyncapi-codegen@v0.13.1 -g client      -p events -i ./../../../../api/asyncapi/indicators.yaml -o ./client.gen.go
-//go:generate go run github.com/lerenn/asyncapi-codegen/cmd/asyncapi-codegen@v0.13.1 -g broker      -p events -i ./../../../../api/asyncapi/indicators.yaml -o ./broker.gen.go
-//go:generate go run github.com/lerenn/asyncapi-codegen/cmd/asyncapi-codegen@v0.13.1 -g types       -p events -i ./../../../../api/asyncapi/indicators.yaml -o ./types.gen.go
-//go:generate go run github.com/lerenn/asyncapi-codegen/cmd/asyncapi-codegen@v0.13.1 -g nats        -p events -i ./../../../../api/asyncapi/indicators.yaml -o ./nats.gen.go
+//go:generate go run github.com/lerenn/asyncapi-codegen/cmd/asyncapi-codegen@v0.15.0 -g application -p events -i ./../../../../api/asyncapi/indicators.yaml -o ./app.gen.go
+//go:generate go run github.com/lerenn/asyncapi-codegen/cmd/asyncapi-codegen@v0.15.0 -g client      -p events -i ./../../../../api/asyncapi/indicators.yaml -o ./client.gen.go
+//go:generate go run github.com/lerenn/asyncapi-codegen/cmd/asyncapi-codegen@v0.15.0 -g broker      -p events -i ./../../../../api/asyncapi/indicators.yaml -o ./broker.gen.go
+//go:generate go run github.com/lerenn/asyncapi-codegen/cmd/asyncapi-codegen@v0.15.0 -g types       -p events -i ./../../../../api/asyncapi/indicators.yaml -o ./types.gen.go
+//go:generate go run github.com/lerenn/asyncapi-codegen/cmd/asyncapi-codegen@v0.15.0 -g nats        -p events -i ./../../../../api/asyncapi/indicators.yaml -o ./nats.gen.go
 
 package events
 
 import (
+	"github.com/lerenn/asyncapi-codegen/pkg/log"
 	"github.com/lerenn/cryptellation/internal/core/indicators"
 	"github.com/lerenn/cryptellation/pkg/config"
 	"github.com/nats-io/nats.go"
@@ -44,6 +45,7 @@ func (s *NATS) Listen() error {
 	if err != nil {
 		return err
 	}
+	s.controller.SetLogger(log.NewECS())
 
 	return s.controller.SubscribeAll(newSubscriber(s.controller, s.indicators))
 }

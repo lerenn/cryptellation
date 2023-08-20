@@ -41,8 +41,8 @@ push/local: build ## Push docker image on local repository
 
 .PHONY: clean
 clean: ## Clean all docker images
-	@docker images | grep localhost:5000/$(DOCKER_IMAGE_NAME) | tr -s ' ' | cut -d ' ' -f 3 | xargs -I {} docker rmi {}
-	@docker images | grep $(DOCKER_IMAGE_NAME) | tr -s ' ' | cut -d ' ' -f 3 | xargs -I {} docker rmi {}
+	@docker images | grep localhost:5000/$(DOCKER_IMAGE_NAME) | tr -s ' ' | cut -d ' ' -f 3 | xargs -I {} docker rmi -f {}
+	@docker images | grep $(DOCKER_IMAGE_NAME) | tr -s ' ' | cut -d ' ' -f 3 | xargs -I {} docker rmi -f {}
 
 .PHONY: help
 help: ## Display this help message

@@ -3,9 +3,9 @@
 
 .PHONY: clean
 clean: ## Clean everything
-	$(MAKE) -C build/package clean
 	$(MAKE) -C deployments clean
 	$(MAKE) -C test clean
+	$(MAKE) -C build/package clean
 
 .PHONY: lint
 lint: ## Lint the code

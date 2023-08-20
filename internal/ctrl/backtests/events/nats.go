@@ -1,6 +1,7 @@
 package events
 
 import (
+	"github.com/lerenn/asyncapi-codegen/pkg/log"
 	"github.com/lerenn/cryptellation/internal/core/backtests"
 	"github.com/lerenn/cryptellation/pkg/config"
 	"github.com/nats-io/nats.go"
@@ -37,6 +38,7 @@ func (s *NATS) Listen() error {
 	if err != nil {
 		return err
 	}
+	s.controller.SetLogger(log.NewECS())
 
 	return s.controller.SubscribeAll(newSubscriber(s.controller, s.exchanges))
 }

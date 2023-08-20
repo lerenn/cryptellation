@@ -3,9 +3,9 @@ package nats
 import (
 	"context"
 	"fmt"
-	"log"
 	"time"
 
+	"github.com/lerenn/asyncapi-codegen/pkg/log"
 	client "github.com/lerenn/cryptellation/clients/go"
 	"github.com/lerenn/cryptellation/internal/ctrl/backtests/events"
 	"github.com/lerenn/cryptellation/pkg/config"
@@ -30,6 +30,7 @@ func NewBacktests(c config.NATS) (client.Backtests, error) {
 	if err != nil {
 		return nil, err
 	}
+	ctrl.SetLogger(log.NewECS())
 
 	return Backtests{
 		nats: conn,
@@ -68,7 +69,15 @@ func (b Backtests) ListenEvents(ctx context.Context, backtestID uint) (<-chan ev
 				Price:      msg.Payload.Content.Price,
 			}
 		default:
-			log.Printf("received unknown event type: %s", msg.Payload.Type)
+			logCtx := log.Context{
+				Module:    "backtests",
+				Provider:  "app",
+				Action:    "BacktestsEventMessage",
+				Operation: "subscribe",
+				Message:   msg,
+				// TODO: put correlation-id
+			}
+			b.ctrl.LogError(logCtx, fmt.Sprintf("received unknown event type: %s", msg.Payload.Type))
 			return
 		}
 
