@@ -92,11 +92,6 @@ func (suite *IndicatorsSuite) TestUpsert() {
 		Set(time.Unix(60, 0), 2).
 		Set(time.Unix(120, 0), 3).
 		Set(time.Unix(180, 0), 4)
-	ts2 := timeserie.New[float64]().
-		Set(time.Unix(120, 0), 4).
-		Set(time.Unix(180, 0), 5).
-		Set(time.Unix(240, 0), 6).
-		Set(time.Unix(300, 0), 7)
 
 	// Write data from ts1
 	writePayload := WriteSMAPayload{
@@ -110,14 +105,20 @@ func (suite *IndicatorsSuite) TestUpsert() {
 	err := suite.DB.UpsertSMA(context.Background(), writePayload)
 	suite.Require().NoError(err)
 
-	// Write data from ts2
+	// Update data
+	ts.Set(time.Unix(120, 0), 4).
+		Set(time.Unix(180, 0), 5).
+		Set(time.Unix(240, 0), 6).
+		Set(time.Unix(300, 0), 7)
+
+	// Write update data from ts
 	writePayload = WriteSMAPayload{
 		ExchangeName: exchangeName,
 		PairSymbol:   pairSymbol,
 		Period:       per,
 		PeriodNumber: periodNumber,
 		PriceType:    priceType,
-		TimeSerie:    ts2,
+		TimeSerie:    ts,
 	}
 	err = suite.DB.UpsertSMA(context.Background(), writePayload)
 	suite.Require().NoError(err)
@@ -135,11 +136,11 @@ func (suite *IndicatorsSuite) TestUpsert() {
 	suite.Require().NoError(err)
 
 	// Check that data is the same
-	suite.Require().Equal(ts2.Len(), rts.Len())
+	suite.Require().Equal(4, rts.Len())
 
 	// Check values
 	for i := int64(0); i < 4; i++ {
-		expectedValue, exists := ts2.Get(time.Unix(i*60, 0))
+		expectedValue, exists := ts.Get(time.Unix(i*60, 0))
 		suite.Require().True(exists, i)
 		value, exists := rts.Get(time.Unix(i*60, 0))
 		suite.Require().True(exists, i)
