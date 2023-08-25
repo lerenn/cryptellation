@@ -38,7 +38,7 @@ func (suite *BacktestsSuite) SetupSuite() {
 }
 
 func (suite *BacktestsSuite) TearDownSuite() {
-	suite.client.Close()
+	suite.client.Close(context.Background())
 }
 
 func (suite *BacktestsSuite) TestBacktestAdvance() {

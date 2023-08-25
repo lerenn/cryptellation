@@ -36,7 +36,7 @@ func (suite *IndicatorsSuite) SetupSuite() {
 }
 
 func (suite *IndicatorsSuite) TearDownSuite() {
-	suite.client.Close()
+	suite.client.Close(context.Background())
 }
 
 func (suite *IndicatorsSuite) TestGetSMA() {

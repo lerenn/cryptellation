@@ -11,5 +11,5 @@ import (
 
 type Exchanges interface {
 	Read(ctx context.Context, names ...string) ([]exchange.Exchange, error)
-	Close()
+	Close(ctx context.Context)
 }

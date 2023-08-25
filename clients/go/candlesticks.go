@@ -13,7 +13,7 @@ import (
 
 type Candlesticks interface {
 	Read(ctx context.Context, payload ReadCandlesticksPayload) (*candlestick.List, error)
-	Close()
+	Close(ctx context.Context)
 }
 
 type ReadCandlesticksPayload struct {

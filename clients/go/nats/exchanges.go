@@ -41,8 +41,8 @@ func (ex Exchanges) Read(ctx context.Context, names ...string) ([]exchange.Excha
 	reqMsg.Set(names...)
 
 	// Send request
-	respMsg, err := ex.ctrl.WaitForCryptellationExchangesListResponse(ctx, reqMsg, func() error {
-		return ex.ctrl.PublishCryptellationExchangesListRequest(reqMsg)
+	respMsg, err := ex.ctrl.WaitForCryptellationExchangesListResponse(ctx, reqMsg, func(ctx context.Context) error {
+		return ex.ctrl.PublishCryptellationExchangesListRequest(ctx, reqMsg)
 	})
 	if err != nil {
 		return nil, err
@@ -57,7 +57,7 @@ func (ex Exchanges) Read(ctx context.Context, names ...string) ([]exchange.Excha
 	return respMsg.ToModel(), nil
 }
 
-func (ex Exchanges) Close() {
-	ex.ctrl.Close()
+func (ex Exchanges) Close(ctx context.Context) {
+	ex.ctrl.Close(ctx)
 	ex.nats.Close()
 }

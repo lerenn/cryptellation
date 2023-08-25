@@ -37,15 +37,15 @@ func (m *MockCandlesticks) EXPECT() *MockCandlesticksMockRecorder {
 }
 
 // Close mocks base method.
-func (m *MockCandlesticks) Close() {
+func (m *MockCandlesticks) Close(ctx context.Context) {
 	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "Close")
+	m.ctrl.Call(m, "Close", ctx)
 }
 
 // Close indicates an expected call of Close.
-func (mr *MockCandlesticksMockRecorder) Close() *gomock.Call {
+func (mr *MockCandlesticksMockRecorder) Close(ctx interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Close", reflect.TypeOf((*MockCandlesticks)(nil).Close))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Close", reflect.TypeOf((*MockCandlesticks)(nil).Close), ctx)
 }
 
 // Read mocks base method.

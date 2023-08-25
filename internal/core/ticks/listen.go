@@ -1,7 +1,11 @@
 package ticks
 
-import "github.com/lerenn/cryptellation/pkg/models/tick"
+import (
+	"context"
 
-func (t Ticks) Listen(exchange, pairSymbol string) (<-chan tick.Tick, error) {
-	return t.events.Subscribe(pairSymbol)
+	"github.com/lerenn/cryptellation/pkg/models/tick"
+)
+
+func (t Ticks) Listen(ctx context.Context, exchange, pairSymbol string) (<-chan tick.Tick, error) {
+	return t.events.Subscribe(ctx, pairSymbol)
 }

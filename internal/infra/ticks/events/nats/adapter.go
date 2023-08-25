@@ -48,7 +48,7 @@ func New(c config.NATS) (*Adapter, error) {
 	}, nil
 }
 
-func (a *Adapter) Publish(tick tick.Tick) error {
+func (a *Adapter) Publish(ctx context.Context, tick tick.Tick) error {
 	// Generated message
 	msg := events.NewTickMessage()
 	msg.Payload.Exchange = events.ExchangeNameSchema(tick.Exchange)
@@ -57,21 +57,22 @@ func (a *Adapter) Publish(tick tick.Tick) error {
 	msg.Payload.Time = events.DateSchema(tick.Time)
 
 	// Send message
-	return a.app.PublishCryptellationTicksListenExchangePair(events.CryptellationTicksListenExchangePairParameters{
-		Exchange: events.ExchangeNameSchema(tick.Exchange),
-		Pair:     events.PairSymbolSchema(tick.PairSymbol),
-	}, msg)
+	return a.app.PublishCryptellationTicksListenExchangePair(ctx,
+		events.CryptellationTicksListenExchangePairParameters{
+			Exchange: events.ExchangeNameSchema(tick.Exchange),
+			Pair:     events.PairSymbolSchema(tick.PairSymbol),
+		}, msg)
 }
 
-func (a *Adapter) Subscribe(symbol string) (<-chan tick.Tick, error) {
-	return a.client.Listen(context.Background(), client.TicksFilterPayload{
+func (a *Adapter) Subscribe(ctx context.Context, symbol string) (<-chan tick.Tick, error) {
+	return a.client.Listen(ctx, client.TicksFilterPayload{
 		ExchangeName: "*",
 		PairSymbol:   symbol,
 	})
 }
 
-func (a *Adapter) Close() {
+func (a *Adapter) Close(ctx context.Context) {
 	if a.app != nil {
-		a.app.Close()
+		a.app.Close(ctx)
 	}
 }

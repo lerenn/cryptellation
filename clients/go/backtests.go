@@ -19,7 +19,7 @@ type Backtests interface {
 	GetAccounts(ctx context.Context, backtestID uint) (map[string]account.Account, error)
 	Subscribe(ctx context.Context, backtestID uint, exchange, pair string) error
 	ListenEvents(ctx context.Context, backtestID uint) (<-chan event.Event, error)
-	Close()
+	Close(ctx context.Context)
 }
 
 type BacktestCreationPayload struct {

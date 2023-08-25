@@ -4,11 +4,13 @@
 package events
 
 import (
+	"context"
+
 	"github.com/lerenn/cryptellation/pkg/models/event"
 )
 
 type Port interface {
-	Publish(backtestID uint, event event.Event) error
-	Subscribe(backtestID uint) (<-chan event.Event, error)
-	Close()
+	Publish(ctx context.Context, backtestID uint, event event.Event) error
+	Subscribe(ctx context.Context, backtestID uint) (<-chan event.Event, error)
+	Close(ctx context.Context)
 }

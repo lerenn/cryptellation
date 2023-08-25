@@ -20,13 +20,13 @@ func newSubscriber(controller *AppController, app ticks.Interface) subscriber {
 	}
 }
 
-func (s subscriber) CryptellationTicksRegisterRequest(msg RegisteringRequestMessage, _ bool) {
+func (s subscriber) CryptellationTicksRegisterRequest(ctx context.Context, msg RegisteringRequestMessage, _ bool) {
 	log.Printf("Received register request: %+v\n", msg)
 
 	// Set response
 	resp := NewRegisteringResponseMessage()
 	resp.SetAsResponseFrom(msg)
-	defer func() { _ = s.controller.PublishCryptellationTicksRegisterResponse(resp) }()
+	defer func() { _ = s.controller.PublishCryptellationTicksRegisterResponse(ctx, resp) }()
 
 	// Register as requested
 	count, err := s.ticks.Register(
@@ -49,13 +49,13 @@ func (s subscriber) CryptellationTicksRegisterRequest(msg RegisteringRequestMess
 	resp.Payload.Count = &count
 }
 
-func (s subscriber) CryptellationTicksUnregisterRequest(msg RegisteringRequestMessage, _ bool) {
+func (s subscriber) CryptellationTicksUnregisterRequest(ctx context.Context, msg RegisteringRequestMessage, _ bool) {
 	log.Printf("Received unregister request: %+v\n", msg)
 
 	// Set response
 	resp := NewRegisteringResponseMessage()
 	resp.SetAsResponseFrom(msg)
-	defer func() { _ = s.controller.PublishCryptellationTicksUnregisterResponse(resp) }()
+	defer func() { _ = s.controller.PublishCryptellationTicksUnregisterResponse(ctx, resp) }()
 
 	// Register as requested
 	count, err := s.ticks.Unregister(

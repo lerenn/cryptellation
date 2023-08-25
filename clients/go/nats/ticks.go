@@ -41,8 +41,8 @@ func (t Ticks) Register(ctx context.Context, payload client.TicksFilterPayload) 
 	msg.Set(payload)
 
 	// Send message
-	resp, err := t.ctrl.WaitForCryptellationTicksRegisterResponse(ctx, msg, func() error {
-		return t.ctrl.PublishCryptellationTicksRegisterRequest(msg)
+	resp, err := t.ctrl.WaitForCryptellationTicksRegisterResponse(ctx, msg, func(ctx context.Context) error {
+		return t.ctrl.PublishCryptellationTicksRegisterRequest(ctx, msg)
 	})
 	if err != nil {
 		return err
@@ -66,7 +66,7 @@ func (t Ticks) Listen(ctx context.Context, payload client.TicksFilterPayload) (<
 	}
 
 	// Create callback when a tick appears
-	callback := func(msg events.TickMessage, done bool) {
+	callback := func(ctx context.Context, msg events.TickMessage, done bool) {
 		// Check if done
 		if done {
 			close(ch)
@@ -82,7 +82,7 @@ func (t Ticks) Listen(ctx context.Context, payload client.TicksFilterPayload) (<
 	}
 
 	// Listen to channel
-	return ch, t.ctrl.SubscribeCryptellationTicksListenExchangePair(params, callback)
+	return ch, t.ctrl.SubscribeCryptellationTicksListenExchangePair(ctx, params, callback)
 }
 
 func (t Ticks) Unregister(ctx context.Context, payload client.TicksFilterPayload) error {
@@ -91,8 +91,8 @@ func (t Ticks) Unregister(ctx context.Context, payload client.TicksFilterPayload
 	msg.Set(payload)
 
 	// Send message
-	resp, err := t.ctrl.WaitForCryptellationTicksUnregisterResponse(ctx, msg, func() error {
-		return t.ctrl.PublishCryptellationTicksUnregisterRequest(msg)
+	resp, err := t.ctrl.WaitForCryptellationTicksUnregisterResponse(ctx, msg, func(ctx context.Context) error {
+		return t.ctrl.PublishCryptellationTicksUnregisterRequest(ctx, msg)
 	})
 	if err != nil {
 		return err
@@ -106,7 +106,7 @@ func (t Ticks) Unregister(ctx context.Context, payload client.TicksFilterPayload
 	return nil
 }
 
-func (t Ticks) Close() {
-	t.ctrl.Close()
+func (t Ticks) Close(ctx context.Context) {
+	t.ctrl.Close(ctx)
 	t.nats.Close()
 }

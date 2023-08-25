@@ -52,15 +52,15 @@ func (mr *MockBacktestsMockRecorder) Advance(ctx, backtestID interface{}) *gomoc
 }
 
 // Close mocks base method.
-func (m *MockBacktests) Close() {
+func (m *MockBacktests) Close(ctx context.Context) {
 	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "Close")
+	m.ctrl.Call(m, "Close", ctx)
 }
 
 // Close indicates an expected call of Close.
-func (mr *MockBacktestsMockRecorder) Close() *gomock.Call {
+func (mr *MockBacktestsMockRecorder) Close(ctx interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Close", reflect.TypeOf((*MockBacktests)(nil).Close))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Close", reflect.TypeOf((*MockBacktests)(nil).Close), ctx)
 }
 
 // Create mocks base method.

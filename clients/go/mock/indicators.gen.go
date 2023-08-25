@@ -37,15 +37,15 @@ func (m *MockIndicators) EXPECT() *MockIndicatorsMockRecorder {
 }
 
 // Close mocks base method.
-func (m *MockIndicators) Close() {
+func (m *MockIndicators) Close(ctx context.Context) {
 	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "Close")
+	m.ctrl.Call(m, "Close", ctx)
 }
 
 // Close indicates an expected call of Close.
-func (mr *MockIndicatorsMockRecorder) Close() *gomock.Call {
+func (mr *MockIndicatorsMockRecorder) Close(ctx interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Close", reflect.TypeOf((*MockIndicators)(nil).Close))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Close", reflect.TypeOf((*MockIndicators)(nil).Close), ctx)
 }
 
 // SMA mocks base method.

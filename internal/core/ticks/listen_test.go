@@ -1,6 +1,7 @@
 package ticks
 
 import (
+	"context"
 	"testing"
 	"time"
 
@@ -36,7 +37,7 @@ func (suite *ListenSuite) setMocksForHappyPath() chan tick.Tick {
 	ch := make(chan tick.Tick, 1)
 
 	// Set the expected call for subscribing to the messages
-	suite.ps.EXPECT().Subscribe("SYMBOL").Return(ch, nil)
+	suite.ps.EXPECT().Subscribe(context.Background(), "SYMBOL").Return(ch, nil)
 
 	return ch
 }
@@ -45,7 +46,7 @@ func (suite *ListenSuite) TestHappyPass() {
 	ch := suite.setMocksForHappyPath()
 
 	// Make the call
-	rch, err := suite.operator.Listen("EXCHANGE", "SYMBOL")
+	rch, err := suite.operator.Listen(context.Background(), "EXCHANGE", "SYMBOL")
 
 	// Check returned values
 	suite.Require().NoError(err)

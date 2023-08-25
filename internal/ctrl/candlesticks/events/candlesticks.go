@@ -1,9 +1,9 @@
 // Candlesticks
-//go:generate go run github.com/lerenn/asyncapi-codegen/cmd/asyncapi-codegen@v0.15.0 -g application -p events -i ./../../../../api/asyncapi/candlesticks.yaml -o ./app.gen.go
-//go:generate go run github.com/lerenn/asyncapi-codegen/cmd/asyncapi-codegen@v0.15.0 -g client      -p events -i ./../../../../api/asyncapi/candlesticks.yaml -o ./client.gen.go
-//go:generate go run github.com/lerenn/asyncapi-codegen/cmd/asyncapi-codegen@v0.15.0 -g broker      -p events -i ./../../../../api/asyncapi/candlesticks.yaml -o ./broker.gen.go
-//go:generate go run github.com/lerenn/asyncapi-codegen/cmd/asyncapi-codegen@v0.15.0 -g types       -p events -i ./../../../../api/asyncapi/candlesticks.yaml -o ./types.gen.go
-//go:generate go run github.com/lerenn/asyncapi-codegen/cmd/asyncapi-codegen@v0.15.0 -g nats        -p events -i ./../../../../api/asyncapi/candlesticks.yaml -o ./nats.gen.go
+//go:generate go run github.com/lerenn/asyncapi-codegen/cmd/asyncapi-codegen@v0.16.0 -g application -p events -i ./../../../../api/asyncapi/candlesticks.yaml -o ./app.gen.go
+//go:generate go run github.com/lerenn/asyncapi-codegen/cmd/asyncapi-codegen@v0.16.0 -g client      -p events -i ./../../../../api/asyncapi/candlesticks.yaml -o ./client.gen.go
+//go:generate go run github.com/lerenn/asyncapi-codegen/cmd/asyncapi-codegen@v0.16.0 -g broker      -p events -i ./../../../../api/asyncapi/candlesticks.yaml -o ./broker.gen.go
+//go:generate go run github.com/lerenn/asyncapi-codegen/cmd/asyncapi-codegen@v0.16.0 -g types       -p events -i ./../../../../api/asyncapi/candlesticks.yaml -o ./types.gen.go
+//go:generate go run github.com/lerenn/asyncapi-codegen/cmd/asyncapi-codegen@v0.16.0 -g nats        -p events -i ./../../../../api/asyncapi/candlesticks.yaml -o ./nats.gen.go
 
 package events
 

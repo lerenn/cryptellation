@@ -41,8 +41,8 @@ func (c Candlesticks) Read(ctx context.Context, payload client.ReadCandlesticksP
 	reqMsg.Set(payload)
 
 	// Send request
-	respMsg, err := c.ctrl.WaitForCryptellationCandlesticksListResponse(ctx, reqMsg, func() error {
-		return c.ctrl.PublishCryptellationCandlesticksListRequest(reqMsg)
+	respMsg, err := c.ctrl.WaitForCryptellationCandlesticksListResponse(ctx, reqMsg, func(ctx context.Context) error {
+		return c.ctrl.PublishCryptellationCandlesticksListRequest(ctx, reqMsg)
 	})
 	if err != nil {
 		return nil, err
@@ -57,7 +57,7 @@ func (c Candlesticks) Read(ctx context.Context, payload client.ReadCandlesticksP
 	return respMsg.ToModel(payload.ExchangeName, payload.PairSymbol, payload.Period)
 }
 
-func (c Candlesticks) Close() {
-	c.ctrl.Close()
+func (c Candlesticks) Close(ctx context.Context) {
+	c.ctrl.Close(ctx)
 	c.nats.Close()
 }

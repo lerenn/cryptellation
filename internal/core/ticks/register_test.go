@@ -49,12 +49,12 @@ func (suite *RegisterSuite) setMocksForFirstRegister(ctx context.Context) (chan 
 
 	// Set call to Events when receving a tick for the exchange
 	wg := sync.WaitGroup{}
-	suite.ps.EXPECT().Publish(tick.Tick{
+	suite.ps.EXPECT().Publish(context.TODO(), tick.Tick{
 		Time:       time.Unix(60, 0),
 		PairSymbol: "SYMBOL",
 		Price:      2.0,
 		Exchange:   "EXCHANGE",
-	}).DoAndReturn(func(tick tick.Tick) error {
+	}).DoAndReturn(func(ctx context.Context, tick tick.Tick) error {
 		wg.Done()
 		return nil
 	})
@@ -62,7 +62,7 @@ func (suite *RegisterSuite) setMocksForFirstRegister(ctx context.Context) (chan 
 
 	// Set call to Events when closing the goroutine automatically
 	closeWaitGroup := sync.WaitGroup{}
-	suite.ps.EXPECT().Close().Do(func() {
+	suite.ps.EXPECT().Close(context.TODO()).Do(func(ctx context.Context) {
 		closeWaitGroup.Done()
 	})
 	closeWaitGroup.Add(1)

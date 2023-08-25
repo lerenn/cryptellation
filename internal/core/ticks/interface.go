@@ -7,7 +7,7 @@ import (
 )
 
 type Interface interface {
-	Listen(exchange, pairSymbol string) (<-chan tick.Tick, error)
+	Listen(ctx context.Context, exchange, pairSymbol string) (<-chan tick.Tick, error)
 	Register(ctx context.Context, exchange, pairSymbol string) (int64, error)
 	Unregister(ctx context.Context, exchange, pairSymbol string) (int64, error)
 }

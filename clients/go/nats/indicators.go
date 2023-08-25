@@ -41,8 +41,8 @@ func (ex Indicators) SMA(ctx context.Context, payload client.SMAPayload) (*times
 	reqMsg.Set(payload)
 
 	// Send request
-	respMsg, err := ex.ctrl.WaitForCryptellationIndicatorsSmaResponse(ctx, reqMsg, func() error {
-		return ex.ctrl.PublishCryptellationIndicatorsSmaRequest(reqMsg)
+	respMsg, err := ex.ctrl.WaitForCryptellationIndicatorsSmaResponse(ctx, reqMsg, func(ctx context.Context) error {
+		return ex.ctrl.PublishCryptellationIndicatorsSmaRequest(ctx, reqMsg)
 	})
 	if err != nil {
 		return nil, err
@@ -57,7 +57,7 @@ func (ex Indicators) SMA(ctx context.Context, payload client.SMAPayload) (*times
 	return respMsg.ToModel(), nil
 }
 
-func (ex Indicators) Close() {
-	ex.ctrl.Close()
+func (ex Indicators) Close(ctx context.Context) {
+	ex.ctrl.Close(ctx)
 	ex.nats.Close()
 }

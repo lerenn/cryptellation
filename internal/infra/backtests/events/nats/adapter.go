@@ -48,7 +48,7 @@ func New(c config.NATS) (*Adapter, error) {
 	}, nil
 }
 
-func (a *Adapter) Publish(backtestID uint, evt event.Event) error {
+func (a *Adapter) Publish(ctx context.Context, backtestID uint, evt event.Event) error {
 	// Generated message
 	msg := events.NewBacktestsEventMessage()
 
@@ -58,17 +58,17 @@ func (a *Adapter) Publish(backtestID uint, evt event.Event) error {
 	}
 
 	// Send message
-	return a.app.PublishCryptellationBacktestsEventsID(events.CryptellationBacktestsEventsIDParameters{
+	return a.app.PublishCryptellationBacktestsEventsID(ctx, events.CryptellationBacktestsEventsIDParameters{
 		ID: int64(backtestID),
 	}, msg)
 }
 
-func (a *Adapter) Subscribe(backtestID uint) (<-chan event.Event, error) {
-	return a.client.ListenEvents(context.Background(), backtestID)
+func (a *Adapter) Subscribe(ctx context.Context, backtestID uint) (<-chan event.Event, error) {
+	return a.client.ListenEvents(ctx, backtestID)
 }
 
-func (a *Adapter) Close() {
+func (a *Adapter) Close(ctx context.Context) {
 	if a.app != nil {
-		a.app.Close()
+		a.app.Close(ctx)
 	}
 }

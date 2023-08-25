@@ -1,6 +1,7 @@
 package endToEnd
 
 import (
+	"context"
 	"testing"
 
 	client "github.com/lerenn/cryptellation/clients/go"
@@ -31,7 +32,7 @@ func (suite *TicksSuite) SetupSuite() {
 }
 
 func (suite *TicksSuite) TearDownSuite() {
-	suite.client.Close()
+	suite.client.Close(context.Background())
 }
 
 // func (suite *TicksSuite) TestManualCleanUp() {

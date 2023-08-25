@@ -93,7 +93,7 @@ func (suite *AdvanceSuite) TestWithoutAccount() {
 	}).Return(candlestick.NewEmptyList("exchange", "ETH-USDT", period.M1), nil)
 
 	// Set Events expected calls
-	suite.events.EXPECT().Publish(uint(1234), event.NewStatusEvent(time.Unix(120, 0), event.Status{Finished: true}))
+	suite.events.EXPECT().Publish(context.Background(), uint(1234), event.NewStatusEvent(time.Unix(120, 0), event.Status{Finished: true}))
 
 	// Execute operation
 	err := suite.operator.Advance(context.Background(), uint(1234))

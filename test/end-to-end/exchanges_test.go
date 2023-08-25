@@ -32,7 +32,7 @@ func (suite *ExchangesSuite) SetupSuite() {
 }
 
 func (suite *ExchangesSuite) TearDownSuite() {
-	suite.client.Close()
+	suite.client.Close(context.Background())
 }
 
 func (suite *ExchangesSuite) TestReadExchanges() {

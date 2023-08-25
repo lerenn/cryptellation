@@ -1,6 +1,7 @@
 package events
 
 import (
+	context "context"
 	"time"
 
 	"github.com/lerenn/cryptellation/pkg/models/tick"
@@ -13,7 +14,7 @@ type EventsClientSuite struct {
 }
 
 func (suite *EventsClientSuite) TearDownTest() {
-	suite.Client.Close()
+	suite.Client.Close(context.Background())
 }
 
 func (suite *EventsClientSuite) TestOnePubOneSubObject() {
@@ -26,10 +27,10 @@ func (suite *EventsClientSuite) TestOnePubOneSubObject() {
 		Price:      float64(time.Now().UnixNano()),
 		Exchange:   "exchange",
 	}
-	ch, err := suite.Client.Subscribe(pairSymbol)
+	ch, err := suite.Client.Subscribe(context.Background(), pairSymbol)
 	as.NoError(err)
 
-	as.NoError(suite.Client.Publish(t))
+	as.NoError(suite.Client.Publish(context.Background(), t))
 	select {
 	case recvTick := <-ch:
 		as.Equal(t, recvTick)

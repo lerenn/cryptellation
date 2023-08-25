@@ -1,6 +1,8 @@
 package events
 
 import (
+	"context"
+
 	"github.com/lerenn/asyncapi-codegen/pkg/log"
 	"github.com/lerenn/cryptellation/internal/core/candlesticks"
 	"github.com/lerenn/cryptellation/pkg/config"
@@ -40,11 +42,11 @@ func (s *NATS) Listen() error {
 	}
 	s.controller.SetLogger(log.NewECS())
 
-	return s.controller.SubscribeAll(newSubscriber(s.controller, s.candlesticks))
+	return s.controller.SubscribeAll(context.Background(), newSubscriber(s.controller, s.candlesticks))
 }
 
 func (s *NATS) Close() {
 	if s.controller != nil {
-		s.controller.Close()
+		s.controller.Close(context.Background())
 	}
 }

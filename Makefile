@@ -20,7 +20,7 @@ generate: ## Generate specified code across the codebase
 
 .PHONY: test
 test: ## Run tests
-	@make -C test all
+	@make -C test unit integration
 
 .PHONY: help
 help: ## Display this help message

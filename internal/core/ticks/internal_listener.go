@@ -48,12 +48,12 @@ func (l *internalListener) internalLoop() {
 	lastPrice := float64(0.0)
 
 	// Close the Events listener when exiting
-	defer l.Events.Close()
+	defer l.Events.Close(context.TODO())
 
 	for {
 		t, open := <-l.ticksChan
 		if t.Price != 0 && t.Price != lastPrice {
-			err := l.Events.Publish(t)
+			err := l.Events.Publish(context.TODO(), t)
 			if err != nil {
 				log.Println("Publish error:", err)
 				continue

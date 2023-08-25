@@ -1,6 +1,7 @@
 package events
 
 import (
+	"context"
 	"testing"
 	"time"
 
@@ -30,10 +31,10 @@ func (suite *EventsClientSuite) TestOnePubOneSubObject() {
 		Finished: true,
 	}
 
-	ch, err := suite.Client.Subscribe(backtestID)
+	ch, err := suite.Client.Subscribe(context.Background(), backtestID)
 	suite.Require().NoError(err)
 
-	suite.Require().NoError(suite.Client.Publish(backtestID, event.NewTickEvent(ts, t)))
+	suite.Require().NoError(suite.Client.Publish(context.Background(), backtestID, event.NewTickEvent(ts, t)))
 	select {
 	case recvEvent := <-ch:
 		suite.checkTick(recvEvent, ts, t)
@@ -41,7 +42,7 @@ func (suite *EventsClientSuite) TestOnePubOneSubObject() {
 		suite.Require().FailNow("Timeout")
 	}
 
-	suite.Require().NoError(suite.Client.Publish(backtestID, event.NewStatusEvent(ts, st)))
+	suite.Require().NoError(suite.Client.Publish(context.Background(), backtestID, event.NewStatusEvent(ts, st)))
 	select {
 	case recvEvent := <-ch:
 		suite.checkEnd(recvEvent, ts, st)

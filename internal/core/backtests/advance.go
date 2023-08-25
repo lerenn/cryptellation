@@ -37,7 +37,7 @@ func (b Backtests) Advance(ctx context.Context, backtestId uint) error {
 		evts = append(evts, event.NewStatusEvent(bt.CurrentCsTick.Time, event.Status{
 			Finished: finished,
 		}))
-		b.broadcastEvents(backtestId, evts)
+		b.broadcastEvents(ctx, backtestId, evts)
 
 		return nil
 	})
@@ -75,13 +75,13 @@ func (b Backtests) readActualEvents(ctx context.Context, bt backtest.Backtest) (
 	return evts, nil
 }
 
-func (b Backtests) broadcastEvents(backtestId uint, evts []event.Event) {
+func (b Backtests) broadcastEvents(ctx context.Context, backtestId uint, evts []event.Event) {
 	log.Printf("Broadcasting %d events on backtest %d", len(evts), backtestId)
 
 	var count uint
 	for _, evt := range evts {
 		log.Printf("Broadcasting event %+v for backtest %d", evt, backtestId)
-		if err := b.events.Publish(backtestId, evt); err != nil {
+		if err := b.events.Publish(ctx, backtestId, evt); err != nil {
 			log.Println("WARNING: error when publishing event", evt)
 			continue
 		}

@@ -36,7 +36,7 @@ func (suite *CandlesticksSuite) SetupSuite() {
 }
 
 func (suite *CandlesticksSuite) TearDownSuite() {
-	suite.client.Close()
+	suite.client.Close(context.Background())
 }
 
 func (suite *CandlesticksSuite) TestReadCandlesticks() {
