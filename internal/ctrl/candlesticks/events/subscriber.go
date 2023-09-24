@@ -19,10 +19,10 @@ func newSubscriber(controller *AppController, app candlesticks.Interface) subscr
 	}
 }
 
-func (s subscriber) CryptellationCandlesticksListRequest(ctx context.Context, msg CandlesticksListRequestMessage, _ bool) {
+func (s subscriber) CryptellationCandlesticksListRequest(ctx context.Context, msg CandlesticksListRequestMessage) {
 	// Prepare response and set send at the end
 	resp := NewCandlesticksListResponseMessage()
-	resp.SetAsResponseFrom(msg)
+	resp.SetAsResponseFrom(&msg)
 	defer func() { _ = s.controller.PublishCryptellationCandlesticksListResponse(ctx, resp) }()
 
 	// Set list payload

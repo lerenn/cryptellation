@@ -4,34 +4,38 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/lerenn/asyncapi-codegen/pkg/log"
+	"github.com/lerenn/asyncapi-codegen/pkg/extensions"
+	"github.com/lerenn/asyncapi-codegen/pkg/extensions/brokers/nats"
+	"github.com/lerenn/asyncapi-codegen/pkg/extensions/loggers"
 	client "github.com/lerenn/cryptellation/clients/go"
 	"github.com/lerenn/cryptellation/internal/ctrl/ticks/events"
 	"github.com/lerenn/cryptellation/pkg/config"
 	"github.com/lerenn/cryptellation/pkg/models/tick"
-	"github.com/nats-io/nats.go"
 )
 
 type Ticks struct {
-	nats *nats.Conn
-	ctrl *events.ClientController
+	broker *nats.Controller
+	ctrl   *events.UserController
+	logger extensions.Logger
 }
 
 func NewTicks(c config.NATS) (client.Ticks, error) {
-	conn, err := nats.Connect(c.URL())
-	if err != nil {
-		return nil, err
-	}
+	// Create a NATS Controller
+	broker := nats.NewController(c.URL())
 
-	ctrl, err := events.NewClientController(events.NewNATSController(conn))
+	// Create a logger
+	logger := loggers.NewECS()
+
+	// Create a new user controller
+	ctrl, err := events.NewUserController(broker, events.WithLogger(logger))
 	if err != nil {
 		return nil, err
 	}
-	ctrl.SetLogger(log.NewECS())
 
 	return Ticks{
-		nats: conn,
-		ctrl: ctrl,
+		broker: broker,
+		ctrl:   ctrl,
+		logger: logger,
 	}, nil
 }
 
@@ -41,7 +45,7 @@ func (t Ticks) Register(ctx context.Context, payload client.TicksFilterPayload) 
 	msg.Set(payload)
 
 	// Send message
-	resp, err := t.ctrl.WaitForCryptellationTicksRegisterResponse(ctx, msg, func(ctx context.Context) error {
+	resp, err := t.ctrl.WaitForCryptellationTicksRegisterResponse(ctx, &msg, func(ctx context.Context) error {
 		return t.ctrl.PublishCryptellationTicksRegisterRequest(ctx, msg)
 	})
 	if err != nil {
@@ -66,13 +70,7 @@ func (t Ticks) Listen(ctx context.Context, payload client.TicksFilterPayload) (<
 	}
 
 	// Create callback when a tick appears
-	callback := func(ctx context.Context, msg events.TickMessage, done bool) {
-		// Check if done
-		if done {
-			close(ch)
-			return
-		}
-
+	callback := func(ctx context.Context, msg events.TickMessage) {
 		// Try to send tick or drop it
 		select {
 		case ch <- msg.ToModel():
@@ -91,7 +89,7 @@ func (t Ticks) Unregister(ctx context.Context, payload client.TicksFilterPayload
 	msg.Set(payload)
 
 	// Send message
-	resp, err := t.ctrl.WaitForCryptellationTicksUnregisterResponse(ctx, msg, func(ctx context.Context) error {
+	resp, err := t.ctrl.WaitForCryptellationTicksUnregisterResponse(ctx, &msg, func(ctx context.Context) error {
 		return t.ctrl.PublishCryptellationTicksUnregisterRequest(ctx, msg)
 	})
 	if err != nil {
@@ -108,5 +106,5 @@ func (t Ticks) Unregister(ctx context.Context, payload client.TicksFilterPayload
 
 func (t Ticks) Close(ctx context.Context) {
 	t.ctrl.Close(ctx)
-	t.nats.Close()
+	t.broker.Close()
 }

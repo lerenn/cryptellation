@@ -3,15 +3,17 @@ package events
 import (
 	"context"
 
-	"github.com/lerenn/asyncapi-codegen/pkg/log"
+	"github.com/lerenn/asyncapi-codegen/pkg/extensions"
+	"github.com/lerenn/asyncapi-codegen/pkg/extensions/brokers/nats"
+	"github.com/lerenn/asyncapi-codegen/pkg/extensions/loggers"
 	"github.com/lerenn/cryptellation/internal/core/candlesticks"
 	"github.com/lerenn/cryptellation/pkg/config"
-	"github.com/nats-io/nats.go"
 )
 
 type NATS struct {
-	nc           *nats.Conn
+	broker       *nats.Controller
 	controller   *AppController
+	logger       extensions.Logger
 	candlesticks candlesticks.Interface
 }
 
@@ -21,28 +23,29 @@ func NewNATS(c config.NATS, candlesticks candlesticks.Interface) (*NATS, error) 
 		return nil, err
 	}
 
-	// Connect to NATS
-	nc, err := nats.Connect(c.URL())
+	// Create a NATS Controller
+	broker := nats.NewController(c.URL())
+
+	// Create a logger
+	logger := loggers.NewECS()
+
+	// Create an App controller
+	controller, err := NewAppController(broker, WithLogger(logger))
 	if err != nil {
 		return nil, err
 	}
 
 	return &NATS{
-		nc:           nc,
+		broker:       broker,
+		controller:   controller,
+		logger:       logger,
 		candlesticks: candlesticks,
 	}, nil
 }
 
 func (s *NATS) Listen() error {
-	var err error
-
-	s.controller, err = NewAppController(NewNATSController(s.nc))
-	if err != nil {
-		return err
-	}
-	s.controller.SetLogger(log.NewECS())
-
-	return s.controller.SubscribeAll(context.Background(), newSubscriber(s.controller, s.candlesticks))
+	sub := newSubscriber(s.controller, s.candlesticks)
+	return s.controller.SubscribeAll(context.Background(), sub)
 }
 
 func (s *NATS) Close() {

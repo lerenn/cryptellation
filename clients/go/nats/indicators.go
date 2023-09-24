@@ -4,34 +4,38 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/lerenn/asyncapi-codegen/pkg/log"
+	"github.com/lerenn/asyncapi-codegen/pkg/extensions"
+	"github.com/lerenn/asyncapi-codegen/pkg/extensions/brokers/nats"
+	"github.com/lerenn/asyncapi-codegen/pkg/extensions/loggers"
 	client "github.com/lerenn/cryptellation/clients/go"
 	"github.com/lerenn/cryptellation/internal/ctrl/indicators/events"
 	"github.com/lerenn/cryptellation/pkg/config"
 	"github.com/lerenn/cryptellation/pkg/models/timeserie"
-	"github.com/nats-io/nats.go"
 )
 
 type Indicators struct {
-	nats *nats.Conn
-	ctrl *events.ClientController
+	broker *nats.Controller
+	ctrl   *events.UserController
+	logger extensions.Logger
 }
 
 func NewIndicators(c config.NATS) (client.Indicators, error) {
-	conn, err := nats.Connect(c.URL())
-	if err != nil {
-		return nil, err
-	}
+	// Create a NATS Controller
+	broker := nats.NewController(c.URL())
 
-	ctrl, err := events.NewClientController(events.NewNATSController(conn))
+	// Create a logger
+	logger := loggers.NewECS()
+
+	// Create a new user controller
+	ctrl, err := events.NewUserController(broker, events.WithLogger(logger))
 	if err != nil {
 		return nil, err
 	}
-	ctrl.SetLogger(log.NewECS())
 
 	return Indicators{
-		nats: conn,
-		ctrl: ctrl,
+		broker: broker,
+		ctrl:   ctrl,
+		logger: logger,
 	}, nil
 }
 
@@ -41,7 +45,7 @@ func (ex Indicators) SMA(ctx context.Context, payload client.SMAPayload) (*times
 	reqMsg.Set(payload)
 
 	// Send request
-	respMsg, err := ex.ctrl.WaitForCryptellationIndicatorsSmaResponse(ctx, reqMsg, func(ctx context.Context) error {
+	respMsg, err := ex.ctrl.WaitForCryptellationIndicatorsSmaResponse(ctx, &reqMsg, func(ctx context.Context) error {
 		return ex.ctrl.PublishCryptellationIndicatorsSmaRequest(ctx, reqMsg)
 	})
 	if err != nil {
@@ -59,5 +63,5 @@ func (ex Indicators) SMA(ctx context.Context, payload client.SMAPayload) (*times
 
 func (ex Indicators) Close(ctx context.Context) {
 	ex.ctrl.Close(ctx)
-	ex.nats.Close()
+	ex.broker.Close()
 }

@@ -5,39 +5,38 @@ import (
 	"fmt"
 	"time"
 
-	aapiLog "github.com/lerenn/asyncapi-codegen/pkg/log"
+	"github.com/lerenn/asyncapi-codegen/pkg/extensions"
+	"github.com/lerenn/asyncapi-codegen/pkg/extensions/brokers/nats"
+	"github.com/lerenn/asyncapi-codegen/pkg/extensions/loggers"
 	client "github.com/lerenn/cryptellation/clients/go"
 	"github.com/lerenn/cryptellation/internal/ctrl/backtests/events"
 	"github.com/lerenn/cryptellation/pkg/config"
 	"github.com/lerenn/cryptellation/pkg/models/account"
 	"github.com/lerenn/cryptellation/pkg/models/event"
 	"github.com/lerenn/cryptellation/pkg/models/tick"
-	"github.com/nats-io/nats.go"
 )
 
 type Backtests struct {
-	nats   *nats.Conn
-	ctrl   *events.ClientController
-	logger aapiLog.Logger
+	broker *nats.Controller
+	ctrl   *events.UserController
+	logger extensions.Logger
 }
 
 func NewBacktests(c config.NATS) (client.Backtests, error) {
-	conn, err := nats.Connect(c.URL())
+	// Create a NATS Controller
+	broker := nats.NewController(c.URL())
+
+	// Create a logger
+	logger := loggers.NewECS()
+
+	// Create a new user controller
+	ctrl, err := events.NewUserController(broker, events.WithLogger(logger))
 	if err != nil {
 		return nil, err
 	}
-
-	ctrl, err := events.NewClientController(events.NewNATSController(conn))
-	if err != nil {
-		return nil, err
-	}
-
-	// Set logger
-	logger := aapiLog.NewECS()
-	ctrl.SetLogger(logger)
 
 	return Backtests{
-		nats:   conn,
+		broker: broker,
 		ctrl:   ctrl,
 		logger: logger,
 	}, nil
@@ -47,13 +46,7 @@ func (b Backtests) ListenEvents(ctx context.Context, backtestID uint) (<-chan ev
 	ch := make(chan event.Event, 256)
 
 	// Create callback when a tick appears
-	callback := func(ctx context.Context, msg events.BacktestsEventMessage, done bool) {
-		// Check if done
-		if done {
-			close(ch)
-			return
-		}
-
+	callback := func(ctx context.Context, msg events.BacktestsEventMessage) {
 		// Generate event
 		e := event.Event{
 			Time: time.Time(msg.Payload.Time),
@@ -98,7 +91,7 @@ func (b Backtests) Create(ctx context.Context, payload client.BacktestCreationPa
 	reqMsg.Set(payload)
 
 	// Send request
-	respMsg, err := b.ctrl.WaitForCryptellationBacktestsCreateResponse(ctx, reqMsg, func(ctx context.Context) error {
+	respMsg, err := b.ctrl.WaitForCryptellationBacktestsCreateResponse(ctx, &reqMsg, func(ctx context.Context) error {
 		return b.ctrl.PublishCryptellationBacktestsCreateRequest(ctx, reqMsg)
 	})
 	if err != nil {
@@ -119,7 +112,7 @@ func (b Backtests) Subscribe(ctx context.Context, backtestID uint, exchange, pai
 	reqMsg.Set(backtestID, exchange, pair)
 
 	// Send request
-	respMsg, err := b.ctrl.WaitForCryptellationBacktestsSubscribeResponse(ctx, reqMsg, func(ctx context.Context) error {
+	respMsg, err := b.ctrl.WaitForCryptellationBacktestsSubscribeResponse(ctx, &reqMsg, func(ctx context.Context) error {
 		return b.ctrl.PublishCryptellationBacktestsSubscribeRequest(ctx, reqMsg)
 	})
 	if err != nil {
@@ -140,7 +133,7 @@ func (b Backtests) Advance(ctx context.Context, backtestID uint) error {
 	reqMsg.Set(backtestID)
 
 	// Send request
-	respMsg, err := b.ctrl.WaitForCryptellationBacktestsAdvanceResponse(ctx, reqMsg, func(ctx context.Context) error {
+	respMsg, err := b.ctrl.WaitForCryptellationBacktestsAdvanceResponse(ctx, &reqMsg, func(ctx context.Context) error {
 		return b.ctrl.PublishCryptellationBacktestsAdvanceRequest(ctx, reqMsg)
 	})
 	if err != nil {
@@ -161,7 +154,7 @@ func (b Backtests) CreateOrder(ctx context.Context, payload client.OrderCreation
 	reqMsg.Set(payload)
 
 	// Send request
-	respMsg, err := b.ctrl.WaitForCryptellationBacktestsOrdersCreateResponse(ctx, reqMsg, func(ctx context.Context) error {
+	respMsg, err := b.ctrl.WaitForCryptellationBacktestsOrdersCreateResponse(ctx, &reqMsg, func(ctx context.Context) error {
 		return b.ctrl.PublishCryptellationBacktestsOrdersCreateRequest(ctx, reqMsg)
 	})
 	if err != nil {
@@ -182,7 +175,7 @@ func (b Backtests) GetAccounts(ctx context.Context, backtestID uint) (map[string
 	reqMsg.Set(backtestID)
 
 	// Send request
-	respMsg, err := b.ctrl.WaitForCryptellationBacktestsAccountsListResponse(ctx, reqMsg, func(ctx context.Context) error {
+	respMsg, err := b.ctrl.WaitForCryptellationBacktestsAccountsListResponse(ctx, &reqMsg, func(ctx context.Context) error {
 		return b.ctrl.PublishCryptellationBacktestsAccountsListRequest(ctx, reqMsg)
 	})
 	if err != nil {
@@ -199,5 +192,5 @@ func (b Backtests) GetAccounts(ctx context.Context, backtestID uint) (map[string
 
 func (b Backtests) Close(ctx context.Context) {
 	b.ctrl.Close(ctx)
-	b.nats.Close()
+	b.broker.Close()
 }

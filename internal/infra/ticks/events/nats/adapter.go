@@ -3,16 +3,17 @@ package nats
 import (
 	"context"
 
+	"github.com/lerenn/asyncapi-codegen/pkg/extensions"
+	"github.com/lerenn/asyncapi-codegen/pkg/extensions/brokers/nats"
 	client "github.com/lerenn/cryptellation/clients/go"
 	natsClient "github.com/lerenn/cryptellation/clients/go/nats"
 	"github.com/lerenn/cryptellation/internal/ctrl/ticks/events"
 	"github.com/lerenn/cryptellation/pkg/config"
 	"github.com/lerenn/cryptellation/pkg/models/tick"
-	"github.com/nats-io/nats.go"
 )
 
 type Adapter struct {
-	nc     *nats.Conn
+	broker extensions.BrokerController
 	app    *events.AppController
 	client client.Ticks
 }
@@ -23,14 +24,11 @@ func New(c config.NATS) (*Adapter, error) {
 		return nil, err
 	}
 
-	// Connect to NATS
-	nc, err := nats.Connect(c.URL())
-	if err != nil {
-		return nil, err
-	}
+	// Create a NATS Controller
+	broker := nats.NewController(c.URL())
 
 	// Create new app controller
-	app, err := events.NewAppController(events.NewNATSController(nc))
+	app, err := events.NewAppController(broker)
 	if err != nil {
 		return nil, err
 	}
@@ -42,7 +40,7 @@ func New(c config.NATS) (*Adapter, error) {
 	}
 
 	return &Adapter{
-		nc:     nc,
+		broker: broker,
 		app:    app,
 		client: client,
 	}, nil

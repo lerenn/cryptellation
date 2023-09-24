@@ -20,10 +20,10 @@ func newSubscriber(controller *AppController, app indicators.Interface) subscrib
 	}
 }
 
-func (s subscriber) CryptellationIndicatorsSmaRequest(ctx context.Context, msg SmaRequestMessage, _ bool) {
+func (s subscriber) CryptellationIndicatorsSmaRequest(ctx context.Context, msg SmaRequestMessage) {
 	// Prepare response and set send at the end
 	resp := NewSmaResponseMessage()
-	resp.SetAsResponseFrom(msg)
+	resp.SetAsResponseFrom(&msg)
 	defer func() { _ = s.controller.PublishCryptellationIndicatorsSmaResponse(ctx, resp) }()
 
 	// Change from requests type to application types

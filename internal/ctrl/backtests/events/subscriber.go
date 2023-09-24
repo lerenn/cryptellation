@@ -19,10 +19,10 @@ func newSubscriber(controller *AppController, app backtests.Interface) subscribe
 	}
 }
 
-func (s subscriber) CryptellationBacktestsAccountsListRequest(ctx context.Context, msg BacktestsAccountsListRequestMessage, _ bool) {
+func (s subscriber) CryptellationBacktestsAccountsListRequest(ctx context.Context, msg BacktestsAccountsListRequestMessage) {
 	// Prepare response and set send at the end
 	resp := NewBacktestsAccountsListResponseMessage()
-	resp.SetAsResponseFrom(msg)
+	resp.SetAsResponseFrom(&msg)
 	defer func() { _ = s.controller.PublishCryptellationBacktestsAccountsListResponse(ctx, resp) }()
 
 	// Get accounts
@@ -39,10 +39,10 @@ func (s subscriber) CryptellationBacktestsAccountsListRequest(ctx context.Contex
 	resp.Set(accounts)
 }
 
-func (s subscriber) CryptellationBacktestsAdvanceRequest(ctx context.Context, msg BacktestsAdvanceRequestMessage, _ bool) {
+func (s subscriber) CryptellationBacktestsAdvanceRequest(ctx context.Context, msg BacktestsAdvanceRequestMessage) {
 	// Prepare response and set send at the end
 	resp := NewBacktestsAdvanceResponseMessage()
-	resp.SetAsResponseFrom(msg)
+	resp.SetAsResponseFrom(&msg)
 	defer func() { _ = s.controller.PublishCryptellationBacktestsAdvanceResponse(ctx, resp) }()
 
 	// Advance application
@@ -56,10 +56,10 @@ func (s subscriber) CryptellationBacktestsAdvanceRequest(ctx context.Context, ms
 	}
 }
 
-func (s subscriber) CryptellationBacktestsCreateRequest(ctx context.Context, msg BacktestsCreateRequestMessage, _ bool) {
+func (s subscriber) CryptellationBacktestsCreateRequest(ctx context.Context, msg BacktestsCreateRequestMessage) {
 	// Prepare response and set send at the end
 	resp := NewBacktestsCreateResponseMessage()
-	resp.SetAsResponseFrom(msg)
+	resp.SetAsResponseFrom(&msg)
 	defer func() { _ = s.controller.PublishCryptellationBacktestsCreateResponse(ctx, resp) }()
 
 	// Get model request from message payload
@@ -86,10 +86,10 @@ func (s subscriber) CryptellationBacktestsCreateRequest(ctx context.Context, msg
 	resp.Payload.ID = int64(id)
 }
 
-func (s subscriber) CryptellationBacktestsOrdersCreateRequest(ctx context.Context, msg BacktestsOrdersCreateRequestMessage, _ bool) {
+func (s subscriber) CryptellationBacktestsOrdersCreateRequest(ctx context.Context, msg BacktestsOrdersCreateRequestMessage) {
 	// Prepare response and set send at the end
 	resp := NewBacktestsOrdersCreateResponseMessage()
-	resp.SetAsResponseFrom(msg)
+	resp.SetAsResponseFrom(&msg)
 	defer func() { _ = s.controller.PublishCryptellationBacktestsOrdersCreateResponse(ctx, resp) }()
 
 	// Set order model from API
@@ -113,10 +113,10 @@ func (s subscriber) CryptellationBacktestsOrdersCreateRequest(ctx context.Contex
 	}
 }
 
-func (s subscriber) CryptellationBacktestsOrdersListRequest(ctx context.Context, msg BacktestsOrdersListRequestMessage, _ bool) {
+func (s subscriber) CryptellationBacktestsOrdersListRequest(ctx context.Context, msg BacktestsOrdersListRequestMessage) {
 	// Prepare response and set send at the end
 	resp := NewBacktestsOrdersListResponseMessage()
-	resp.SetAsResponseFrom(msg)
+	resp.SetAsResponseFrom(&msg)
 	defer func() { _ = s.controller.PublishCryptellationBacktestsOrdersListResponse(ctx, resp) }()
 
 	// Get list of orders
@@ -133,10 +133,10 @@ func (s subscriber) CryptellationBacktestsOrdersListRequest(ctx context.Context,
 	resp.Set(list)
 }
 
-func (s subscriber) CryptellationBacktestsSubscribeRequest(ctx context.Context, msg BacktestsSubscribeRequestMessage, _ bool) {
+func (s subscriber) CryptellationBacktestsSubscribeRequest(ctx context.Context, msg BacktestsSubscribeRequestMessage) {
 	// Prepare response and set send at the end
 	resp := NewBacktestsSubscribeResponseMessage()
-	resp.SetAsResponseFrom(msg)
+	resp.SetAsResponseFrom(&msg)
 	defer func() { _ = s.controller.PublishCryptellationBacktestsSubscribeResponse(ctx, resp) }()
 
 	// Set subscription
