@@ -1,7 +1,7 @@
 // Ticks
-//go:generate go run github.com/lerenn/asyncapi-codegen/cmd/asyncapi-codegen@v0.24.3 -g application -p events -i ./../../../../api/asyncapi/ticks.yaml -o ./app.gen.go
-//go:generate go run github.com/lerenn/asyncapi-codegen/cmd/asyncapi-codegen@v0.24.3 -g user        -p events -i ./../../../../api/asyncapi/ticks.yaml -o ./user.gen.go
-//go:generate go run github.com/lerenn/asyncapi-codegen/cmd/asyncapi-codegen@v0.24.3 -g types       -p events -i ./../../../../api/asyncapi/ticks.yaml -o ./types.gen.go
+//go:generate go run github.com/lerenn/asyncapi-codegen/cmd/asyncapi-codegen@v0.26.0 -g application -p events -i ./../../../../api/asyncapi/ticks.yaml -o ./app.gen.go
+//go:generate go run github.com/lerenn/asyncapi-codegen/cmd/asyncapi-codegen@v0.26.0 -g user        -p events -i ./../../../../api/asyncapi/ticks.yaml -o ./user.gen.go
+//go:generate go run github.com/lerenn/asyncapi-codegen/cmd/asyncapi-codegen@v0.26.0 -g types       -p events -i ./../../../../api/asyncapi/ticks.yaml -o ./types.gen.go
 
 package events
 

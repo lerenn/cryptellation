@@ -39,6 +39,9 @@ credentials:
       port: 26257
       user: root
       password:
+  opentelemetry:
+    grpc:
+      endpoint:
 
 # Specific section for services
 services:

@@ -6,7 +6,7 @@ data:
     # Backtests
     backtests.sqldb.database: "{{ (((.Values.services).backtests).sqldb).database | default "backtests" }}"
     backtests.health.port: "{{ (((.Values.services).backtests).health).port | default 9000 }}"
-    
+
     # Candlesticks
     candlesticks.sqldb.database: "{{ (((.Values.services).candlesticks).sqldb).database | default "candlesticks"}}"
     candlesticks.health.port: "{{ (((.Values.services).candlesticks).health).port | default 9000 }}"

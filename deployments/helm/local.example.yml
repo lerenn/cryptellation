@@ -29,6 +29,9 @@ credentials:
     binance:
       api_key:
       secret_key:
+  opentelemetry:
+    grpc:
+      endpoint: lgtm-opentelemetry-collector.telemetry:4317
 
 # Specific section for services
 services:

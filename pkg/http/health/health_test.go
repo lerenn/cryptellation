@@ -3,6 +3,7 @@ package health
 import (
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"testing"
 
 	"github.com/stretchr/testify/suite"
@@ -14,34 +15,44 @@ func TestHealthSuite(t *testing.T) {
 
 type HealthSuite struct {
 	suite.Suite
+	health *Health
+}
+
+func (suite *HealthSuite) SetupTest() {
+	// Set env for health
+	os.Setenv(HeathPortEnvVar, "1234")
+
+	// Create health
+	h, err := New()
+	suite.Require().NoError(err)
+	suite.health = h
 }
 
 func (suite *HealthSuite) TestLiveness() {
-	h := New()
+
 	req := httptest.NewRequest(http.MethodGet, "/liveness", nil)
 	w := httptest.NewRecorder()
-	livenessFunc := h.liveness()
+	livenessFunc := suite.health.liveness()
 
 	livenessFunc(w, req)
 	suite.Require().Equal(http.StatusOK, w.Result().StatusCode)
 }
 
 func (suite *HealthSuite) TestReadiness() {
-	h := New()
 	req := httptest.NewRequest(http.MethodGet, "/readiness", nil)
-	readinessFunc := h.readiness()
+	readinessFunc := suite.health.readiness()
 
-	h.Ready(false)
+	suite.health.Ready(false)
 	w := httptest.NewRecorder()
 	readinessFunc(w, req)
 	suite.Require().Equal(http.StatusServiceUnavailable, w.Result().StatusCode)
 
-	h.Ready(true)
+	suite.health.Ready(true)
 	w = httptest.NewRecorder()
 	readinessFunc(w, req)
 	suite.Require().Equal(http.StatusOK, w.Result().StatusCode)
 
-	h.Ready(false)
+	suite.health.Ready(false)
 	w = httptest.NewRecorder()
 	readinessFunc(w, req)
 	suite.Require().Equal(http.StatusServiceUnavailable, w.Result().StatusCode)

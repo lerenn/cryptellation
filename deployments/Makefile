@@ -26,9 +26,24 @@ minikube/stop: ## Stop the current minikube cluster
 minikube/delete: ## Delete the minikube cluster
 	@minikube delete --profile ${CLUSTER_NAME}
 
+.PHONY: minikube/deploy-lgtm
+minikube/deploy-lgtm: ## Deploy a Helm chart for telemetry
+	@helm repo add otel-lgtm-dev https://lerenn.github.io/packages/helm/otel-lgtm-dev
+	@helm upgrade --install lgtm otel-lgtm-dev/otel-lgtm-dev \
+		-n telemetry --create-namespace
+
+.PHONY: minikube/expose-grafana
+minikube/expose-grafana: ## Expose the Grafana port to 8080
+	@kubectl port-forward -n telemetry service/lgtm-grafana 8080:80
+
+.PHONY: minikube/delete-lgtm
+minikube/delete-lgtm: ## Delete telemetry resources
+	@helm delete -n telemetry lgtm || true
+	@kubectl delete all -n telemetry --all || true
+	@kubectl delete pvc -n telemetry --all || true
+
 .PHONY: clean
 clean: ## Clean everything
-	@$(MAKE) -C helm clean
 	@$(MAKE) minikube/delete
 
 .PHONY: help
