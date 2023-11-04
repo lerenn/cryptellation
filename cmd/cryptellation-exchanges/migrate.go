@@ -4,7 +4,7 @@ import (
 	"log"
 
 	"github.com/go-gormigrate/gormigrate/v2"
-	"github.com/lerenn/cryptellation/internal/infra/exchanges/db/sql/migrations"
+	"github.com/lerenn/cryptellation/internal/adapters/exchanges/db/sql/migrations"
 	"github.com/lerenn/cryptellation/pkg/config"
 	"github.com/spf13/cobra"
 	"gorm.io/driver/postgres"

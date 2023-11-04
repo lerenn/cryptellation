@@ -1,6 +1,6 @@
 package daemon
 
-import "github.com/lerenn/cryptellation/internal/core/candlesticks"
+import "github.com/lerenn/cryptellation/internal/components/candlesticks"
 
 type components struct {
 	candlesticks candlesticks.Interface

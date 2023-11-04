@@ -1,16 +1,16 @@
 package daemon
 
 import (
-	"github.com/lerenn/cryptellation/internal/ctrl/indicators/events"
+	"github.com/lerenn/cryptellation/internal/controllers/nats"
 	"github.com/lerenn/cryptellation/pkg/config"
 )
 
 type controllers struct {
-	nats *events.NATS
+	nats *nats.IndicatorsSubscriber
 }
 
 func newControllers(components components) (controllers, error) {
-	nats, err := events.NewNATS(config.LoadNATSConfigFromEnv(), components.indicators)
+	nats, err := nats.NewIndicatorsSubscriber(config.LoadNATSConfigFromEnv(), components.indicators)
 	if err != nil {
 		return controllers{}, err
 	}

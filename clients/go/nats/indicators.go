@@ -8,14 +8,14 @@ import (
 	"github.com/lerenn/asyncapi-codegen/pkg/extensions/brokers/nats"
 	"github.com/lerenn/asyncapi-codegen/pkg/extensions/loggers"
 	client "github.com/lerenn/cryptellation/clients/go"
-	"github.com/lerenn/cryptellation/internal/ctrl/indicators/events"
+	asyncapi "github.com/lerenn/cryptellation/pkg/asyncapi/indicators"
 	"github.com/lerenn/cryptellation/pkg/config"
 	"github.com/lerenn/cryptellation/pkg/models/timeserie"
 )
 
 type Indicators struct {
 	broker *nats.Controller
-	ctrl   *events.UserController
+	ctrl   *asyncapi.UserController
 	logger extensions.Logger
 }
 
@@ -27,7 +27,7 @@ func NewIndicators(c config.NATS) (client.Indicators, error) {
 	logger := loggers.NewECS()
 
 	// Create a new user controller
-	ctrl, err := events.NewUserController(broker, events.WithLogger(logger))
+	ctrl, err := asyncapi.NewUserController(broker, asyncapi.WithLogger(logger))
 	if err != nil {
 		return nil, err
 	}
@@ -41,7 +41,7 @@ func NewIndicators(c config.NATS) (client.Indicators, error) {
 
 func (ex Indicators) SMA(ctx context.Context, payload client.SMAPayload) (*timeserie.TimeSerie[float64], error) {
 	// Set message
-	reqMsg := events.NewSmaRequestMessage()
+	reqMsg := asyncapi.NewSmaRequestMessage()
 	reqMsg.Set(payload)
 
 	// Send request

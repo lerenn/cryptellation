@@ -8,14 +8,14 @@ import (
 	"github.com/lerenn/asyncapi-codegen/pkg/extensions/brokers/nats"
 	"github.com/lerenn/asyncapi-codegen/pkg/extensions/loggers"
 	client "github.com/lerenn/cryptellation/clients/go"
-	"github.com/lerenn/cryptellation/internal/ctrl/ticks/events"
+	asyncapi "github.com/lerenn/cryptellation/pkg/asyncapi/ticks"
 	"github.com/lerenn/cryptellation/pkg/config"
 	"github.com/lerenn/cryptellation/pkg/models/tick"
 )
 
 type Ticks struct {
 	broker *nats.Controller
-	ctrl   *events.UserController
+	ctrl   *asyncapi.UserController
 	logger extensions.Logger
 }
 
@@ -27,7 +27,7 @@ func NewTicks(c config.NATS) (client.Ticks, error) {
 	logger := loggers.NewECS()
 
 	// Create a new user controller
-	ctrl, err := events.NewUserController(broker, events.WithLogger(logger))
+	ctrl, err := asyncapi.NewUserController(broker, asyncapi.WithLogger(logger))
 	if err != nil {
 		return nil, err
 	}
@@ -41,7 +41,7 @@ func NewTicks(c config.NATS) (client.Ticks, error) {
 
 func (t Ticks) Register(ctx context.Context, payload client.TicksFilterPayload) error {
 	// Generate message
-	msg := events.NewRegisteringRequestMessage()
+	msg := asyncapi.NewRegisteringRequestMessage()
 	msg.Set(payload)
 
 	// Send message
@@ -64,13 +64,13 @@ func (t Ticks) Listen(ctx context.Context, payload client.TicksFilterPayload) (<
 	ch := make(chan tick.Tick, 256)
 
 	// Create params for channel path
-	params := events.CryptellationTicksListenExchangePairParameters{
-		Exchange: events.ExchangeNameSchema(payload.ExchangeName),
-		Pair:     events.PairSymbolSchema(payload.PairSymbol),
+	params := asyncapi.CryptellationTicksListenExchangePairParameters{
+		Exchange: asyncapi.ExchangeNameSchema(payload.ExchangeName),
+		Pair:     asyncapi.PairSymbolSchema(payload.PairSymbol),
 	}
 
 	// Create callback when a tick appears
-	callback := func(ctx context.Context, msg events.TickMessage) {
+	callback := func(ctx context.Context, msg asyncapi.TickMessage) {
 		// Try to send tick or drop it
 		select {
 		case ch <- msg.ToModel():
@@ -85,7 +85,7 @@ func (t Ticks) Listen(ctx context.Context, payload client.TicksFilterPayload) (<
 
 func (t Ticks) Unregister(ctx context.Context, payload client.TicksFilterPayload) error {
 	// Generate message
-	msg := events.NewRegisteringRequestMessage()
+	msg := asyncapi.NewRegisteringRequestMessage()
 	msg.Set(payload)
 
 	// Send message

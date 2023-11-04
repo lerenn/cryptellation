@@ -8,14 +8,14 @@ import (
 	"github.com/lerenn/asyncapi-codegen/pkg/extensions/brokers/nats"
 	"github.com/lerenn/asyncapi-codegen/pkg/extensions/loggers"
 	client "github.com/lerenn/cryptellation/clients/go"
-	"github.com/lerenn/cryptellation/internal/ctrl/exchanges/events"
+	asyncapi "github.com/lerenn/cryptellation/pkg/asyncapi/exchanges"
 	"github.com/lerenn/cryptellation/pkg/config"
 	"github.com/lerenn/cryptellation/pkg/models/exchange"
 )
 
 type Exchanges struct {
 	broker *nats.Controller
-	ctrl   *events.UserController
+	ctrl   *asyncapi.UserController
 	logger extensions.Logger
 }
 
@@ -27,7 +27,7 @@ func NewExchanges(c config.NATS) (client.Exchanges, error) {
 	logger := loggers.NewECS()
 
 	// Create a new user controller
-	ctrl, err := events.NewUserController(broker, events.WithLogger(logger))
+	ctrl, err := asyncapi.NewUserController(broker, asyncapi.WithLogger(logger))
 	if err != nil {
 		return nil, err
 	}
@@ -41,7 +41,7 @@ func NewExchanges(c config.NATS) (client.Exchanges, error) {
 
 func (ex Exchanges) Read(ctx context.Context, names ...string) ([]exchange.Exchange, error) {
 	// Set message
-	reqMsg := events.NewExchangesRequestMessage()
+	reqMsg := asyncapi.NewExchangesRequestMessage()
 	reqMsg.Set(names...)
 
 	// Send request

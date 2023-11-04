@@ -11,7 +11,7 @@ clean: ## Clean up tests
 
 .PHONY: unit
 unit: ## Perform unit tests
-	@go test $(shell go list ../cmd/... ../pkg/... ../internal/core/...) -coverprofile cover.out -v
+	@go test $(shell go list ../cmd/... ../pkg/... ../internal/components/... ../internal/controllers/...) -coverprofile cover.out -v
 	@go tool cover -func cover.out
 	@rm cover.out
 

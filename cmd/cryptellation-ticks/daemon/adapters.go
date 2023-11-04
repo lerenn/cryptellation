@@ -3,21 +3,22 @@ package daemon
 import (
 	"context"
 
-	"github.com/lerenn/cryptellation/internal/core/ticks/ports/db"
-	"github.com/lerenn/cryptellation/internal/core/ticks/ports/events"
-	exchangesPort "github.com/lerenn/cryptellation/internal/core/ticks/ports/exchanges"
-	"github.com/lerenn/cryptellation/internal/infra/ticks/db/sql"
-	natsAdapter "github.com/lerenn/cryptellation/internal/infra/ticks/events/nats"
-	exchangesAdapter "github.com/lerenn/cryptellation/internal/infra/ticks/exchanges"
+	"github.com/lerenn/cryptellation/internal/adapters/ticks/db/sql"
+	natsAdapter "github.com/lerenn/cryptellation/internal/adapters/ticks/events/nats"
+	exchangesAdapter "github.com/lerenn/cryptellation/internal/adapters/ticks/exchanges"
+	"github.com/lerenn/cryptellation/internal/components/ticks/ports/db"
+	"github.com/lerenn/cryptellation/internal/components/ticks/ports/events"
+	exchangesPort "github.com/lerenn/cryptellation/internal/components/ticks/ports/exchanges"
 	"github.com/lerenn/cryptellation/pkg/config"
-	"github.com/lerenn/cryptellation/pkg/config/otel"
+	"github.com/lerenn/cryptellation/pkg/telemetry"
+	"github.com/lerenn/cryptellation/pkg/telemetry/otel"
 )
 
 type adapters struct {
 	db            db.Port
 	events        events.Port
 	exchanges     exchangesPort.Port
-	otelExporters otel.Exporters
+	otelExporters telemetry.Telemetry
 }
 
 func newAdapters(ctx context.Context) (adapters, error) {

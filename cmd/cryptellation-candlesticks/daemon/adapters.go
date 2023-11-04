@@ -3,18 +3,19 @@ package daemon
 import (
 	"context"
 
-	"github.com/lerenn/cryptellation/internal/core/candlesticks/ports/db"
-	exchangesIface "github.com/lerenn/cryptellation/internal/core/candlesticks/ports/exchanges"
-	"github.com/lerenn/cryptellation/internal/infra/candlesticks/db/sql"
-	"github.com/lerenn/cryptellation/internal/infra/candlesticks/exchanges"
+	"github.com/lerenn/cryptellation/internal/adapters/candlesticks/db/sql"
+	"github.com/lerenn/cryptellation/internal/adapters/candlesticks/exchanges"
+	"github.com/lerenn/cryptellation/internal/components/candlesticks/ports/db"
+	exchangesIface "github.com/lerenn/cryptellation/internal/components/candlesticks/ports/exchanges"
 	"github.com/lerenn/cryptellation/pkg/config"
-	"github.com/lerenn/cryptellation/pkg/config/otel"
+	"github.com/lerenn/cryptellation/pkg/telemetry"
+	"github.com/lerenn/cryptellation/pkg/telemetry/otel"
 )
 
 type adapters struct {
 	db            db.Port
 	exchanges     exchangesIface.Port
-	otelExporters otel.Exporters
+	otelExporters telemetry.Telemetry
 }
 
 func newAdapters(ctx context.Context) (adapters, error) {

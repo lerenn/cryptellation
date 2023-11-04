@@ -8,14 +8,14 @@ import (
 	"github.com/lerenn/asyncapi-codegen/pkg/extensions/brokers/nats"
 	"github.com/lerenn/asyncapi-codegen/pkg/extensions/loggers"
 	client "github.com/lerenn/cryptellation/clients/go"
-	"github.com/lerenn/cryptellation/internal/ctrl/candlesticks/events"
+	asyncapi "github.com/lerenn/cryptellation/pkg/asyncapi/candlesticks"
 	"github.com/lerenn/cryptellation/pkg/config"
 	"github.com/lerenn/cryptellation/pkg/models/candlestick"
 )
 
 type Candlesticks struct {
 	broker *nats.Controller
-	ctrl   *events.UserController
+	ctrl   *asyncapi.UserController
 	logger extensions.Logger
 }
 
@@ -27,7 +27,7 @@ func NewCandlesticks(c config.NATS) (client.Candlesticks, error) {
 	logger := loggers.NewECS()
 
 	// Create a new user controller
-	ctrl, err := events.NewUserController(broker, events.WithLogger(logger))
+	ctrl, err := asyncapi.NewUserController(broker, asyncapi.WithLogger(logger))
 	if err != nil {
 		return nil, err
 	}
@@ -41,7 +41,7 @@ func NewCandlesticks(c config.NATS) (client.Candlesticks, error) {
 
 func (c Candlesticks) Read(ctx context.Context, payload client.ReadCandlesticksPayload) (*candlestick.List, error) {
 	// Set message
-	reqMsg := events.NewCandlesticksListRequestMessage()
+	reqMsg := asyncapi.NewCandlesticksListRequestMessage()
 	reqMsg.Set(payload)
 
 	// Send request

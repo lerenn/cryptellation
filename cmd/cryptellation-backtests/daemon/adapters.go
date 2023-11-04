@@ -5,19 +5,20 @@ import (
 
 	client "github.com/lerenn/cryptellation/clients/go"
 	natsClient "github.com/lerenn/cryptellation/clients/go/nats"
-	"github.com/lerenn/cryptellation/internal/core/backtests/ports/db"
-	"github.com/lerenn/cryptellation/internal/core/backtests/ports/events"
-	"github.com/lerenn/cryptellation/internal/infra/backtests/db/sql"
-	natsAdapter "github.com/lerenn/cryptellation/internal/infra/backtests/events/nats"
+	"github.com/lerenn/cryptellation/internal/adapters/backtests/db/sql"
+	natsAdapter "github.com/lerenn/cryptellation/internal/adapters/backtests/events/nats"
+	"github.com/lerenn/cryptellation/internal/components/backtests/ports/db"
+	"github.com/lerenn/cryptellation/internal/components/backtests/ports/events"
 	"github.com/lerenn/cryptellation/pkg/config"
-	"github.com/lerenn/cryptellation/pkg/config/otel"
+	"github.com/lerenn/cryptellation/pkg/telemetry"
+	"github.com/lerenn/cryptellation/pkg/telemetry/otel"
 )
 
 type adapters struct {
 	db            db.Port
 	events        events.Port
 	candlesticks  client.Candlesticks
-	otelExporters otel.Exporters
+	otelExporters telemetry.Telemetry
 }
 
 func newAdapters(ctx context.Context) (adapters, error) {

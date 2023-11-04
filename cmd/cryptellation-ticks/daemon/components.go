@@ -1,6 +1,6 @@
 package daemon
 
-import "github.com/lerenn/cryptellation/internal/core/ticks"
+import "github.com/lerenn/cryptellation/internal/components/ticks"
 
 type components struct {
 	ticks ticks.Interface

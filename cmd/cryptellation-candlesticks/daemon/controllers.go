@@ -1,16 +1,16 @@
 package daemon
 
 import (
-	"github.com/lerenn/cryptellation/internal/ctrl/candlesticks/events"
+	"github.com/lerenn/cryptellation/internal/controllers/nats"
 	"github.com/lerenn/cryptellation/pkg/config"
 )
 
 type controllers struct {
-	nats *events.NATS
+	nats *nats.CandlesticksController
 }
 
 func newControllers(components components) (controllers, error) {
-	nats, err := events.NewNATS(config.LoadNATSConfigFromEnv(), components.candlesticks)
+	nats, err := nats.NewCandlesticksController(config.LoadNATSConfigFromEnv(), components.candlesticks)
 	if err != nil {
 		return controllers{}, err
 	}

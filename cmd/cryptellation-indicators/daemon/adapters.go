@@ -5,16 +5,17 @@ import (
 
 	client "github.com/lerenn/cryptellation/clients/go"
 	natsClient "github.com/lerenn/cryptellation/clients/go/nats"
-	"github.com/lerenn/cryptellation/internal/core/indicators/ports/db"
-	"github.com/lerenn/cryptellation/internal/infra/indicators/db/sql"
+	"github.com/lerenn/cryptellation/internal/adapters/indicators/db/sql"
+	"github.com/lerenn/cryptellation/internal/components/indicators/ports/db"
 	"github.com/lerenn/cryptellation/pkg/config"
-	"github.com/lerenn/cryptellation/pkg/config/otel"
+	"github.com/lerenn/cryptellation/pkg/telemetry"
+	"github.com/lerenn/cryptellation/pkg/telemetry/otel"
 )
 
 type adapters struct {
 	db            db.Port
 	candlesticks  client.Candlesticks
-	otelExporters otel.Exporters
+	otelExporters telemetry.Telemetry
 }
 
 func newAdapters(ctx context.Context) (adapters, error) {

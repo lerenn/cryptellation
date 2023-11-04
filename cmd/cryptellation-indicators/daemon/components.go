@@ -1,6 +1,6 @@
 package daemon
 
-import "github.com/lerenn/cryptellation/internal/core/indicators"
+import "github.com/lerenn/cryptellation/internal/components/indicators"
 
 type components struct {
 	indicators indicators.Interface

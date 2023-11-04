@@ -7,7 +7,7 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/lerenn/cryptellation/pkg/http/health"
+	"github.com/lerenn/cryptellation/internal/controllers/http"
 )
 
 type Daemon struct {
@@ -17,13 +17,13 @@ type Daemon struct {
 	controllers controllers
 
 	// Specific daemon fields
-	health *health.Health
+	health *http.Health
 }
 
 func New(ctx context.Context) (Daemon, error) {
 	// Init and serve health server
 	// NOTE: health OK, but not-ready yet
-	h, err := health.New()
+	h, err := http.NewHealth()
 	if err != nil {
 		return Daemon{}, err
 	}

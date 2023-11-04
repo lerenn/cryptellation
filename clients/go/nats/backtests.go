@@ -9,7 +9,7 @@ import (
 	"github.com/lerenn/asyncapi-codegen/pkg/extensions/brokers/nats"
 	"github.com/lerenn/asyncapi-codegen/pkg/extensions/loggers"
 	client "github.com/lerenn/cryptellation/clients/go"
-	"github.com/lerenn/cryptellation/internal/ctrl/backtests/events"
+	asyncapi "github.com/lerenn/cryptellation/pkg/asyncapi/backtests"
 	"github.com/lerenn/cryptellation/pkg/config"
 	"github.com/lerenn/cryptellation/pkg/models/account"
 	"github.com/lerenn/cryptellation/pkg/models/event"
@@ -18,7 +18,7 @@ import (
 
 type Backtests struct {
 	broker *nats.Controller
-	ctrl   *events.UserController
+	ctrl   *asyncapi.UserController
 	logger extensions.Logger
 }
 
@@ -30,7 +30,7 @@ func NewBacktests(c config.NATS) (client.Backtests, error) {
 	logger := loggers.NewECS()
 
 	// Create a new user controller
-	ctrl, err := events.NewUserController(broker, events.WithLogger(logger))
+	ctrl, err := asyncapi.NewUserController(broker, asyncapi.WithLogger(logger))
 	if err != nil {
 		return nil, err
 	}
@@ -46,7 +46,7 @@ func (b Backtests) ListenEvents(ctx context.Context, backtestID uint) (<-chan ev
 	ch := make(chan event.Event, 256)
 
 	// Create callback when a tick appears
-	callback := func(ctx context.Context, msg events.BacktestsEventMessage) {
+	callback := func(ctx context.Context, msg asyncapi.BacktestsEventMessage) {
 		// Generate event
 		e := event.Event{
 			Time: time.Time(msg.Payload.Time),
@@ -80,14 +80,14 @@ func (b Backtests) ListenEvents(ctx context.Context, backtestID uint) (<-chan ev
 	}
 
 	// Listen to channel
-	return ch, b.ctrl.SubscribeCryptellationBacktestsEventsID(ctx, events.CryptellationBacktestsEventsIDParameters{
+	return ch, b.ctrl.SubscribeCryptellationBacktestsEventsID(ctx, asyncapi.CryptellationBacktestsEventsIDParameters{
 		ID: int64(backtestID),
 	}, callback)
 }
 
 func (b Backtests) Create(ctx context.Context, payload client.BacktestCreationPayload) (uint, error) {
 	// Set message
-	reqMsg := events.NewBacktestsCreateRequestMessage()
+	reqMsg := asyncapi.NewBacktestsCreateRequestMessage()
 	reqMsg.Set(payload)
 
 	// Send request
@@ -108,7 +108,7 @@ func (b Backtests) Create(ctx context.Context, payload client.BacktestCreationPa
 
 func (b Backtests) Subscribe(ctx context.Context, backtestID uint, exchange, pair string) error {
 	// Set message
-	reqMsg := events.NewBacktestsSubscribeRequestMessage()
+	reqMsg := asyncapi.NewBacktestsSubscribeRequestMessage()
 	reqMsg.Set(backtestID, exchange, pair)
 
 	// Send request
@@ -129,7 +129,7 @@ func (b Backtests) Subscribe(ctx context.Context, backtestID uint, exchange, pai
 
 func (b Backtests) Advance(ctx context.Context, backtestID uint) error {
 	// Set message
-	reqMsg := events.NewBacktestsAdvanceRequestMessage()
+	reqMsg := asyncapi.NewBacktestsAdvanceRequestMessage()
 	reqMsg.Set(backtestID)
 
 	// Send request
@@ -150,7 +150,7 @@ func (b Backtests) Advance(ctx context.Context, backtestID uint) error {
 
 func (b Backtests) CreateOrder(ctx context.Context, payload client.OrderCreationPayload) error {
 	// Set message
-	reqMsg := events.NewBacktestsOrdersCreateRequestMessage()
+	reqMsg := asyncapi.NewBacktestsOrdersCreateRequestMessage()
 	reqMsg.Set(payload)
 
 	// Send request
@@ -171,7 +171,7 @@ func (b Backtests) CreateOrder(ctx context.Context, payload client.OrderCreation
 
 func (b Backtests) GetAccounts(ctx context.Context, backtestID uint) (map[string]account.Account, error) {
 	// Set message
-	reqMsg := events.NewBacktestsAccountsListRequestMessage()
+	reqMsg := asyncapi.NewBacktestsAccountsListRequestMessage()
 	reqMsg.Set(backtestID)
 
 	// Send request

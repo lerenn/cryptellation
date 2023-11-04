@@ -1,6 +1,6 @@
 package daemon
 
-import "github.com/lerenn/cryptellation/internal/core/backtests"
+import "github.com/lerenn/cryptellation/internal/components/backtests"
 
 type components struct {
 	backtests backtests.Interface

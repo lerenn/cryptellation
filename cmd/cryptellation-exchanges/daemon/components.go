@@ -1,6 +1,6 @@
 package daemon
 
-import "github.com/lerenn/cryptellation/internal/core/exchanges"
+import "github.com/lerenn/cryptellation/internal/components/exchanges"
 
 type components struct {
 	exchanges exchanges.Interface
