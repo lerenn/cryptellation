@@ -21,10 +21,7 @@ var CryptellationCmd = &cobra.Command{
 		"One can use cryptellation-candlesticks to manage migrations from the terminal and launch the service.",
 	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
 		// Set the default NATS configuration
-		globalNATSConfig = config.LoadDefaultNATSConfig()
-
-		// Try to override from env
-		globalNATSConfig.OverrideFromEnv()
+		globalNATSConfig = config.LoadNATS()
 
 		return nil
 	},

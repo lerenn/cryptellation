@@ -21,8 +21,7 @@ type ExchangesSuite struct {
 
 func (suite *ExchangesSuite) SetupSuite() {
 	// Get config
-	cfg := config.LoadDefaultNATSConfig()
-	cfg.OverrideFromEnv()
+	cfg := config.LoadNATS()
 	suite.Require().NoError(cfg.Validate())
 
 	// Init client

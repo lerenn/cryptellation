@@ -21,8 +21,7 @@ type TicksSuite struct {
 
 func (suite *TicksSuite) SetupSuite() {
 	// Get config
-	cfg := config.LoadDefaultNATSConfig()
-	cfg.OverrideFromEnv()
+	cfg := config.LoadNATS()
 	suite.Require().NoError(cfg.Validate())
 
 	// Init client

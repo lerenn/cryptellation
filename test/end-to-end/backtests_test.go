@@ -27,8 +27,7 @@ type BacktestsSuite struct {
 
 func (suite *BacktestsSuite) SetupSuite() {
 	// Get config
-	cfg := config.LoadDefaultNATSConfig()
-	cfg.OverrideFromEnv()
+	cfg := config.LoadNATS()
 	suite.Require().NoError(cfg.Validate())
 
 	// Init client

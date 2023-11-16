@@ -3,11 +3,10 @@ package config
 import (
 	"errors"
 	"fmt"
-	"os"
 )
 
 var (
-	ErrInvalidRedisConfig = errors.New("invalid redis config")
+	ErrInvalidConfig = errors.New("invalid redis config")
 )
 
 type Redis struct {
@@ -15,16 +14,24 @@ type Redis struct {
 	Password string
 }
 
-func LoadRedisConfigFromEnv() (r Redis) {
-	r.Address = os.Getenv("REDIS_URL")
-	r.Password = os.Getenv("REDIS_PASSWORD")
+func LoadRedis() (c Redis) {
+	c.setDefault()
+	c.overrideFromEnv()
+	return c
+}
 
-	return r
+func (c *Redis) setDefault() {
+	// Nothing to do
+}
+
+func (c *Redis) overrideFromEnv() {
+	overrideFromEnv(&c.Address, "REDIS_URL")
+	overrideFromEnv(&c.Password, "REDIS_PASSWORD")
 }
 
 func (c Redis) Validate() error {
 	if c.Address == "" {
-		return fmt.Errorf("reading address from env (%q): %w", c.Address, ErrInvalidRedisConfig)
+		return fmt.Errorf("reading address from env (%q): %w", c.Address, ErrInvalidConfig)
 	}
 
 	return nil

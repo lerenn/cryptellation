@@ -4,7 +4,7 @@ import (
 	"log"
 
 	"github.com/go-gormigrate/gormigrate/v2"
-	"github.com/lerenn/cryptellation/internal/adapters/indicators/db/sql/migrations"
+	"github.com/lerenn/cryptellation/internal/adapters/db/sql/indicators/migrations"
 	"github.com/lerenn/cryptellation/pkg/config"
 	"github.com/spf13/cobra"
 	"gorm.io/driver/postgres"
@@ -21,7 +21,7 @@ var migrationsCmd = &cobra.Command{
 	Short:   "Manage migrations",
 	PersistentPreRunE: func(cmd *cobra.Command, args []string) (err error) {
 		// Load config from environment
-		c := config.LoadSQLConfigFromEnv()
+		c := config.LoadSQL()
 		if err := c.Validate(); err != nil {
 			return err
 		}

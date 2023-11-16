@@ -3,8 +3,6 @@ package config
 import (
 	"errors"
 	"fmt"
-	"os"
-	"strconv"
 
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -28,13 +26,22 @@ type SQL struct {
 	Database string
 }
 
-func LoadSQLConfigFromEnv() (c SQL) {
-	c.Host = os.Getenv("SQLDB_HOST")
-	c.Port, _ = strconv.Atoi(os.Getenv("SQLDB_PORT"))
-	c.User = os.Getenv("SQLDB_USER")
-	c.Password = os.Getenv("SQLDB_PASSWORD")
-	c.Database = os.Getenv("SQLDB_DATABASE")
+func LoadSQL() (c SQL) {
+	c.setDefault()
+	c.overrideFromEnv()
 	return c
+}
+
+func (c *SQL) setDefault() {
+	// Nothing to do
+}
+
+func (c *SQL) overrideFromEnv() {
+	overrideFromEnv(&c.Host, "SQLDB_HOST")
+	overrideIntFromEnv(&c.Port, "SQLDB_PORT")
+	overrideFromEnv(&c.User, "SQLDB_USER")
+	overrideFromEnv(&c.Password, "SQLDB_PASSWORD")
+	overrideFromEnv(&c.Database, "SQLDB_DATABASE")
 }
 
 func (c SQL) URL() string {

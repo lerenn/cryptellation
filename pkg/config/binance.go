@@ -3,7 +3,6 @@ package config
 import (
 	"errors"
 	"fmt"
-	"os"
 )
 
 var (
@@ -15,19 +14,28 @@ type Binance struct {
 	SecretKey string
 }
 
-func LoadBinanceConfigFromEnv() (c Binance) {
-	c.ApiKey = os.Getenv("BINANCE_API_KEY")
-	c.SecretKey = os.Getenv("BINANCE_SECRET_KEY")
+func LoadBinance() (c Binance) {
+	c.setDefault()
+	c.overrideFromEnv()
 	return c
 }
 
-func (b Binance) Validate() error {
-	if b.ApiKey == "" {
-		return fmt.Errorf("reading api key from env (%q): %w", b.ApiKey, ErrInvalidBinance)
+func (c *Binance) setDefault() {
+	// Nothing to do
+}
+
+func (c *Binance) overrideFromEnv() {
+	overrideFromEnv(&c.ApiKey, "BINANCE_API_KEY")
+	overrideFromEnv(&c.SecretKey, "BINANCE_SECRET_KEY")
+}
+
+func (c Binance) Validate() error {
+	if c.ApiKey == "" {
+		return fmt.Errorf("reading api key from env (%q): %w", c.ApiKey, ErrInvalidBinance)
 	}
 
-	if b.SecretKey == "" {
-		return fmt.Errorf("reading secret key from env (%q): %w", b.SecretKey, ErrInvalidBinance)
+	if c.SecretKey == "" {
+		return fmt.Errorf("reading secret key from env (%q): %w", c.SecretKey, ErrInvalidBinance)
 	}
 
 	return nil

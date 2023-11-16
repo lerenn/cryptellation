@@ -10,7 +10,7 @@ type controllers struct {
 }
 
 func newControllers(components components) (controllers, error) {
-	nats, err := nats.NewExchangesController(config.LoadNATSConfigFromEnv(), components.exchanges)
+	nats, err := nats.NewExchangesController(config.LoadNATS(), components.exchanges)
 	if err != nil {
 		return controllers{}, err
 	}

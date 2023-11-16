@@ -10,7 +10,7 @@ type controllers struct {
 }
 
 func newControllers(components components) (controllers, error) {
-	nats, err := nats.NewBacktestsController(config.LoadNATSConfigFromEnv(), components.backtests)
+	nats, err := nats.NewBacktestsController(config.LoadNATS(), components.backtests)
 	if err != nil {
 		return controllers{}, err
 	}

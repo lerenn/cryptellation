@@ -3,15 +3,15 @@ package daemon
 import (
 	"context"
 
-	"github.com/lerenn/cryptellation/internal/adapters/ticks/db/sql"
-	natsAdapter "github.com/lerenn/cryptellation/internal/adapters/ticks/events/nats"
-	exchangesAdapter "github.com/lerenn/cryptellation/internal/adapters/ticks/exchanges"
+	sql "github.com/lerenn/cryptellation/internal/adapters/db/sql/ticks"
+	natsTicks "github.com/lerenn/cryptellation/internal/adapters/events/nats/ticks"
+	"github.com/lerenn/cryptellation/internal/adapters/exchanges"
+	"github.com/lerenn/cryptellation/internal/adapters/telemetry"
+	"github.com/lerenn/cryptellation/internal/adapters/telemetry/otel"
 	"github.com/lerenn/cryptellation/internal/components/ticks/ports/db"
 	"github.com/lerenn/cryptellation/internal/components/ticks/ports/events"
 	exchangesPort "github.com/lerenn/cryptellation/internal/components/ticks/ports/exchanges"
 	"github.com/lerenn/cryptellation/pkg/config"
-	"github.com/lerenn/cryptellation/pkg/telemetry"
-	"github.com/lerenn/cryptellation/pkg/telemetry/otel"
 )
 
 type adapters struct {
@@ -23,19 +23,19 @@ type adapters struct {
 
 func newAdapters(ctx context.Context) (adapters, error) {
 	// Init database client
-	db, err := sql.New(config.LoadSQLConfigFromEnv())
+	db, err := sql.New(config.LoadSQL())
 	if err != nil {
 		return adapters{}, err
 	}
 
 	// Init exchanges connections
-	exchanges, err := exchangesAdapter.New(config.LoadExchangesConfigFromEnv())
+	exchanges, err := exchanges.New()
 	if err != nil {
 		return adapters{}, err
 	}
 
 	// Init Events client
-	events, err := natsAdapter.New(config.LoadNATSConfigFromEnv())
+	events, err := natsTicks.New(config.LoadNATS())
 	if err != nil {
 		return adapters{}, err
 	}

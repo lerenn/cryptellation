@@ -3,8 +3,6 @@ package config
 import (
 	"errors"
 	"fmt"
-	"os"
-	"strconv"
 )
 
 var (
@@ -16,45 +14,34 @@ type NATS struct {
 	Port int
 }
 
-func LoadNATSConfigFromEnv() (n NATS) {
-	n.OverrideFromEnv()
-	return n
+func LoadNATS() (c NATS) {
+	c.setDefault()
+	c.overrideFromEnv()
+	return c
 }
 
-func LoadDefaultNATSConfig() (n NATS) {
-	n.LoadDefault()
-	return n
+func (c *NATS) setDefault() {
+	c.Host = "localhost"
+	c.Port = 4222
 }
 
-func (n NATS) URL() string {
-	return fmt.Sprintf("nats://%s:%d", n.Host, n.Port)
+func (c *NATS) overrideFromEnv() {
+	overrideFromEnv(&c.Host, "NATS_HOST")
+	overrideIntFromEnv(&c.Port, "NATS_PORT")
 }
 
-func (n *NATS) OverrideFromEnv() {
-	host := os.Getenv("NATS_HOST")
-	if host != "" {
-		n.Host = host
+func (c NATS) Validate() error {
+	if c.Host == "" {
+		return fmt.Errorf("reading host from env (%q): %w", c.Host, ErrInvalidNATS)
 	}
 
-	port, _ := strconv.Atoi(os.Getenv("NATS_PORT"))
-	if port != 0 {
-		n.Port = port
-	}
-}
-
-func (n *NATS) LoadDefault() {
-	n.Host = "localhost"
-	n.Port = 4222
-}
-
-func (n NATS) Validate() error {
-	if n.Host == "" {
-		return fmt.Errorf("reading host from env (%q): %w", n.Host, ErrInvalidNATS)
-	}
-
-	if n.Port == 0 {
-		return fmt.Errorf("reading port from env (%q): %w", n.Port, ErrInvalidNATS)
+	if c.Port == 0 {
+		return fmt.Errorf("reading port from env (%q): %w", c.Port, ErrInvalidNATS)
 	}
 
 	return nil
+}
+
+func (c NATS) URL() string {
+	return fmt.Sprintf("nats://%s:%d", c.Host, c.Port)
 }

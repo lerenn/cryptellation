@@ -16,11 +16,11 @@ type BinanceSuite struct {
 
 func (suite *BinanceSuite) TestLoadValidate() {
 	cases := []struct {
-		Binance Binance
-		Err     error
+		Config Binance
+		Err    error
 	}{
 		{
-			Binance: Binance{
+			Config: Binance{
 				ApiKey:    "api-key",
 				SecretKey: "secret-key",
 			},
@@ -28,7 +28,7 @@ func (suite *BinanceSuite) TestLoadValidate() {
 	}
 
 	for i, c := range cases {
-		err := c.Binance.Validate()
+		err := c.Config.Validate()
 		suite.Require().Equal(c.Err, err, i)
 	}
 }

@@ -7,15 +7,15 @@ import (
 	"github.com/stretchr/testify/suite"
 )
 
-func TestConfigSuite(t *testing.T) {
-	suite.Run(t, new(ConfigSuite))
+func TestRedisSuite(t *testing.T) {
+	suite.Run(t, new(RedisSuite))
 }
 
-type ConfigSuite struct {
+type RedisSuite struct {
 	suite.Suite
 }
 
-func (suite *ConfigSuite) TestLoadValidate() {
+func (suite *RedisSuite) TestLoadValidate() {
 	cases := []struct {
 		Address, Password string
 		Err               error
@@ -30,8 +30,8 @@ func (suite *ConfigSuite) TestLoadValidate() {
 		defer tmpEnvVar("REDIS_URL", c.Address)()
 		defer tmpEnvVar("REDIS_PASSWORD", c.Password)()
 
-		err := LoadRedisConfigFromEnv().Validate()
-		suite.Require().Equal(c.Err, err, i)
+		cfg := LoadRedis()
+		suite.Require().Equal(c.Err, cfg.Validate(), i)
 	}
 }
 

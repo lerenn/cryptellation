@@ -3,13 +3,13 @@ package daemon
 import (
 	"context"
 
-	"github.com/lerenn/cryptellation/internal/adapters/exchanges/db/sql"
-	exchangesAdapter "github.com/lerenn/cryptellation/internal/adapters/exchanges/exchanges"
+	sql "github.com/lerenn/cryptellation/internal/adapters/db/sql/exchanges"
+	exchangesAdapter "github.com/lerenn/cryptellation/internal/adapters/exchanges"
+	"github.com/lerenn/cryptellation/internal/adapters/telemetry"
+	"github.com/lerenn/cryptellation/internal/adapters/telemetry/otel"
 	"github.com/lerenn/cryptellation/internal/components/exchanges/ports/db"
 	exchangesPort "github.com/lerenn/cryptellation/internal/components/exchanges/ports/exchanges"
 	"github.com/lerenn/cryptellation/pkg/config"
-	"github.com/lerenn/cryptellation/pkg/telemetry"
-	"github.com/lerenn/cryptellation/pkg/telemetry/otel"
 )
 
 type adapters struct {
@@ -20,13 +20,13 @@ type adapters struct {
 
 func newAdapters(ctx context.Context) (adapters, error) {
 	// Init database client
-	db, err := sql.New(config.LoadSQLConfigFromEnv())
+	db, err := sql.New(config.LoadSQL())
 	if err != nil {
 		return adapters{}, err
 	}
 
 	// Init exchanges connections
-	exchanges, err := exchangesAdapter.New(config.LoadExchangesConfigFromEnv())
+	exchanges, err := exchangesAdapter.New()
 	if err != nil {
 		return adapters{}, err
 	}
