@@ -8,9 +8,7 @@ import (
 	"strconv"
 	"sync/atomic"
 
-	"github.com/agoda-com/otelzap"
-	"go.opentelemetry.io/otel"
-	"go.opentelemetry.io/otel/metric"
+	"github.com/lerenn/cryptellation/internal/adapters/telemetry"
 )
 
 const (
@@ -21,8 +19,8 @@ type Health struct {
 	isReady atomic.Value
 	port    int
 
-	livenessCounter  metric.Int64Counter
-	readinessCounter metric.Int64Counter
+	livenessCounter  telemetry.Counter
+	readinessCounter telemetry.Counter
 }
 
 func NewHealth() (*Health, error) {
@@ -39,9 +37,10 @@ func NewHealth() (*Health, error) {
 	h.isReady.Store(false)
 
 	// Initialize telemetry
-	desc := metric.WithDescription("how many times liveness function has been called.")
-	h.livenessCounter, _ = otel.Meter("health").Int64Counter("liveness_calls", desc)
-	h.readinessCounter, _ = otel.Meter("health").Int64Counter("readiness_calls", desc)
+
+	desc := "how many times liveness function has been called."
+	h.livenessCounter, _ = telemetry.CI("health", "liveness_calls", desc)
+	h.readinessCounter, _ = telemetry.CI("health", "readiness_calls", desc)
 
 	return &h, nil
 }
@@ -62,14 +61,14 @@ func (h *Health) HTTPServe() {
 func (h *Health) liveness() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// Add trace
-		ctx, span := otel.Tracer("health").Start(r.Context(), "liveness")
-		defer span.End()
+		ctx, tracer := telemetry.T(r.Context(), "health", "liveness")
+		defer tracer.End()
 
 		// Add call counter
 		defer h.livenessCounter.Add(ctx, 1)
 
 		// Add log
-		defer otelzap.Ctx(ctx).Debug("liveness called")
+		defer telemetry.L(ctx).Debug("liveness called")
 
 		// Write response
 		w.WriteHeader(http.StatusOK)
@@ -79,14 +78,14 @@ func (h *Health) liveness() http.HandlerFunc {
 func (h *Health) readiness() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// Add trace
-		ctx, span := otel.Tracer("health").Start(r.Context(), "readiness")
-		defer span.End()
+		ctx, tracer := telemetry.T(r.Context(), "health", "readiness")
+		defer tracer.End()
 
 		// Add call counter
 		defer h.readinessCounter.Add(ctx, 1)
 
 		// Add log
-		defer otelzap.Ctx(ctx).Debug("readiness called")
+		defer telemetry.L(ctx).Debug("readiness called")
 
 		// Write response
 		if !h.isReady.Load().(bool) {

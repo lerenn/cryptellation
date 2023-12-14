@@ -3,7 +3,6 @@ package otel
 import (
 	"context"
 
-	otellogs "github.com/agoda-com/opentelemetry-logs-go"
 	"github.com/agoda-com/opentelemetry-logs-go/exporters/otlp/otlplogs"
 	"github.com/agoda-com/opentelemetry-logs-go/exporters/otlp/otlplogs/otlplogsgrpc"
 	sdk "github.com/agoda-com/opentelemetry-logs-go/sdk/logs"
@@ -13,22 +12,19 @@ import (
 	"go.uber.org/zap"
 )
 
-type Logs struct {
+type logs struct {
 	clientCleanUp func(ctx context.Context) error
 	exporter      *otlplogs.Exporter
 	provider      *sdk.LoggerProvider
 	logger        *zap.Logger
-	undo          func()
 }
 
-func NewLogs(ctx context.Context, serviceName, url string) (Logs, error) {
-	context.Background()
-
+func newLogs(ctx context.Context, serviceName, url string) (logs, error) {
 	// Create exporter
 	client := otlplogsgrpc.NewClient(otlplogsgrpc.WithEndpoint(url), otlplogsgrpc.WithInsecure())
 	exporter, err := otlplogs.NewExporter(ctx, otlplogs.WithClient(client))
 	if err != nil {
-		return Logs{}, err
+		return logs{}, err
 	}
 
 	// Create resource
@@ -41,22 +37,21 @@ func NewLogs(ctx context.Context, serviceName, url string) (Logs, error) {
 	)
 
 	// Set opentelemetry logger provider globally
-	otellogs.SetLoggerProvider(provider)
+	// otellogs.SetLoggerProvider(provider)
 
 	// Create a new logger
 	logger := zap.New(otelzap.NewOtelCore(provider))
+	// undo := zap.ReplaceGlobals(logger),
 
-	return Logs{
+	return logs{
 		clientCleanUp: client.Stop,
 		exporter:      exporter,
 		provider:      provider,
 		logger:        logger,
-		undo:          zap.ReplaceGlobals(logger),
 	}, nil
 }
 
-func (l Logs) Close(ctx context.Context) {
-	l.undo()
+func (l logs) close(ctx context.Context) {
 	l.logger.Sync()
 	l.provider.Shutdown(ctx)
 	l.exporter.Shutdown(ctx)

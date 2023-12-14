@@ -5,17 +5,14 @@ import (
 
 	sql "github.com/lerenn/cryptellation/internal/adapters/db/sql/candlesticks"
 	"github.com/lerenn/cryptellation/internal/adapters/exchanges"
-	"github.com/lerenn/cryptellation/internal/adapters/telemetry"
-	"github.com/lerenn/cryptellation/internal/adapters/telemetry/otel"
 	"github.com/lerenn/cryptellation/internal/components/candlesticks/ports/db"
 	exchangesIface "github.com/lerenn/cryptellation/internal/components/candlesticks/ports/exchanges"
 	"github.com/lerenn/cryptellation/pkg/config"
 )
 
 type adapters struct {
-	db            db.Port
-	exchanges     exchangesIface.Port
-	otelExporters telemetry.Telemetry
+	db        db.Port
+	exchanges exchangesIface.Port
 }
 
 func newAdapters(ctx context.Context) (adapters, error) {
@@ -31,19 +28,11 @@ func newAdapters(ctx context.Context) (adapters, error) {
 		return adapters{}, err
 	}
 
-	// Init opentelemetry
-	otelExporters, err := otel.NewExporters(ctx, "cryptellation-candlesticks")
-	if err != nil {
-		return adapters{}, err
-	}
-
 	return adapters{
-		db:            db,
-		exchanges:     exchanges,
-		otelExporters: otelExporters,
+		db:        db,
+		exchanges: exchanges,
 	}, nil
 }
 
 func (a adapters) Close(ctx context.Context) {
-	a.otelExporters.Close(ctx)
 }

@@ -12,16 +12,16 @@ import (
 	semconv "go.opentelemetry.io/otel/semconv/v1.12.0"
 )
 
-type Traces struct {
+type traces struct {
 	exporter *otlptrace.Exporter
 	provider *trace.TracerProvider
 }
 
-func NewTraces(ctx context.Context, serviceName, url string) (Traces, error) {
+func newTraces(ctx context.Context, serviceName, url string) (traces, error) {
 	// Create exporter
 	exporter, err := otlptracegrpc.New(ctx, otlptracegrpc.WithEndpoint(url), otlptracegrpc.WithInsecure())
 	if err != nil {
-		return Traces{}, err
+		return traces{}, err
 	}
 
 	// Create resource
@@ -39,7 +39,7 @@ func NewTraces(ctx context.Context, serviceName, url string) (Traces, error) {
 	)
 
 	// Set opentelemetry traces provider globally
-	otel.SetTracerProvider(provider)
+	// otel.SetTracerProvider(provider)
 
 	otel.SetTextMapPropagator(
 		propagation.NewCompositeTextMapPropagator(
@@ -47,13 +47,13 @@ func NewTraces(ctx context.Context, serviceName, url string) (Traces, error) {
 		),
 	)
 
-	return Traces{
+	return traces{
 		exporter: exporter,
 		provider: provider,
 	}, nil
 }
 
-func (t Traces) Close(ctx context.Context) {
+func (t traces) close(ctx context.Context) {
 	t.provider.Shutdown(ctx)
 	t.exporter.Shutdown(ctx)
 }

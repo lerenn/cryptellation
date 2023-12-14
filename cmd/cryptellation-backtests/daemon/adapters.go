@@ -7,18 +7,15 @@ import (
 	natsClient "github.com/lerenn/cryptellation/clients/go/nats"
 	sql "github.com/lerenn/cryptellation/internal/adapters/db/sql/backtests"
 	natsBacktests "github.com/lerenn/cryptellation/internal/adapters/events/nats/backtests"
-	"github.com/lerenn/cryptellation/internal/adapters/telemetry"
-	"github.com/lerenn/cryptellation/internal/adapters/telemetry/otel"
 	"github.com/lerenn/cryptellation/internal/components/backtests/ports/db"
 	"github.com/lerenn/cryptellation/internal/components/backtests/ports/events"
 	"github.com/lerenn/cryptellation/pkg/config"
 )
 
 type adapters struct {
-	db            db.Port
-	events        events.Port
-	candlesticks  client.Candlesticks
-	otelExporters telemetry.Telemetry
+	db           db.Port
+	events       events.Port
+	candlesticks client.Candlesticks
 }
 
 func newAdapters(ctx context.Context) (adapters, error) {
@@ -40,22 +37,14 @@ func newAdapters(ctx context.Context) (adapters, error) {
 		return adapters{}, err
 	}
 
-	// Init opentelemetry
-	otelExporters, err := otel.NewExporters(ctx, "cryptellation-backtests")
-	if err != nil {
-		return adapters{}, err
-	}
-
 	return adapters{
-		db:            db,
-		events:        events,
-		candlesticks:  candlesticks,
-		otelExporters: otelExporters,
+		db:           db,
+		events:       events,
+		candlesticks: candlesticks,
 	}, nil
 }
 
 func (a adapters) Close(ctx context.Context) {
-	a.otelExporters.Close(ctx)
 	a.candlesticks.Close(ctx)
 	a.events.Close(ctx)
 }
