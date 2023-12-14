@@ -54,6 +54,6 @@ func newTraces(ctx context.Context, serviceName, url string) (traces, error) {
 }
 
 func (t traces) close(ctx context.Context) {
-	t.provider.Shutdown(ctx)
-	t.exporter.Shutdown(ctx)
+	_ = t.provider.Shutdown(ctx)
+	_ = t.exporter.Shutdown(ctx)
 }

@@ -44,6 +44,6 @@ func newMetrics(ctx context.Context, serviceName, url string) (metrics, error) {
 }
 
 func (m metrics) close(ctx context.Context) {
-	m.provider.Shutdown(ctx)
-	m.exporter.Shutdown(ctx)
+	_ = m.provider.Shutdown(ctx)
+	_ = m.exporter.Shutdown(ctx)
 }

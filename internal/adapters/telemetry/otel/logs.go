@@ -52,8 +52,8 @@ func newLogs(ctx context.Context, serviceName, url string) (logs, error) {
 }
 
 func (l logs) close(ctx context.Context) {
-	l.logger.Sync()
-	l.provider.Shutdown(ctx)
-	l.exporter.Shutdown(ctx)
+	_ = l.logger.Sync()
+	_ = l.provider.Shutdown(ctx)
+	_ = l.exporter.Shutdown(ctx)
 	_ = l.clientCleanUp(ctx)
 }
