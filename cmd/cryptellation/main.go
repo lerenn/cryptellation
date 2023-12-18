@@ -4,13 +4,14 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/lerenn/cryptellation/clients/go/nats"
 	"github.com/lerenn/cryptellation/pkg/config"
 	"github.com/lerenn/cryptellation/pkg/version"
 	"github.com/spf13/cobra"
 )
 
 var (
-	globalNATSConfig config.NATS
+	services nats.Services
 )
 
 var CryptellationCmd = &cobra.Command{
@@ -19,11 +20,10 @@ var CryptellationCmd = &cobra.Command{
 	Short:   "cryptellation - a simple CLI to manipulate cryptellation services",
 	Long: "cryptellation is a simple CLI to manipulate cryptellation services.\n\n" +
 		"One can use cryptellation-candlesticks to manage migrations from the terminal and launch the service.",
-	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
-		// Set the default NATS configuration
-		globalNATSConfig = config.LoadNATS()
-
-		return nil
+	PersistentPreRunE: func(cmd *cobra.Command, args []string) (err error) {
+		// Get clients
+		services, err = nats.NewServices(config.LoadNATS())
+		return err
 	},
 }
 
@@ -31,6 +31,7 @@ func init() {
 	initCandlesticks(CryptellationCmd)
 	initExchanges(CryptellationCmd)
 	initTicks(CryptellationCmd)
+	initInfo(CryptellationCmd)
 }
 
 func main() {

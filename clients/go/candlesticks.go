@@ -13,6 +13,8 @@ import (
 
 type Candlesticks interface {
 	Read(ctx context.Context, payload ReadCandlesticksPayload) (*candlestick.List, error)
+
+	ServiceInfo(ctx context.Context) (ServiceInfo, error)
 	Close(ctx context.Context)
 }
 

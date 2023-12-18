@@ -24,6 +24,7 @@ require (
 	go.uber.org/mock v0.2.0
 	go.uber.org/zap v1.26.0
 	golang.org/x/xerrors v0.0.0-20220907171357-04be3eba64a2
+	gopkg.in/yaml.v2 v2.4.0
 	gorm.io/driver/postgres v1.4.5
 	gorm.io/gorm v1.24.5
 )

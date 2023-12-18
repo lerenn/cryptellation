@@ -6,9 +6,8 @@ import (
 
 	"github.com/lerenn/asyncapi-codegen/pkg/extensions"
 	"github.com/lerenn/asyncapi-codegen/pkg/extensions/brokers/nats"
-	"github.com/lerenn/asyncapi-codegen/pkg/extensions/loggers"
+	asyncapi "github.com/lerenn/cryptellation/api/asyncapi/ticks"
 	client "github.com/lerenn/cryptellation/clients/go"
-	asyncapi "github.com/lerenn/cryptellation/pkg/asyncapi/ticks"
 	"github.com/lerenn/cryptellation/pkg/config"
 	"github.com/lerenn/cryptellation/pkg/models/tick"
 )
@@ -19,24 +18,41 @@ type Ticks struct {
 	logger extensions.Logger
 }
 
-func NewTicks(c config.NATS) (client.Ticks, error) {
-	// Create a NATS Controller
-	broker := nats.NewController(c.URL())
+type TicksOption func(t *Ticks)
 
-	// Create a logger
-	logger := loggers.NewECS()
+func NewTicks(c config.NATS, options ...TicksOption) (client.Ticks, error) {
+	var t Ticks
+
+	// Execute options
+	for _, option := range options {
+		option(&t)
+	}
+
+	// Create a NATS Controller
+	t.broker = nats.NewController(c.URL())
+
+	// Create a logger if asked
+	ctrlOpts := make([]asyncapi.ControllerOption, 0)
+	if t.logger != nil {
+		ctrlOpts = append(ctrlOpts, asyncapi.WithLogger(t.logger))
+	} else {
+		t.logger = extensions.DummyLogger{}
+	}
 
 	// Create a new user controller
-	ctrl, err := asyncapi.NewUserController(broker, asyncapi.WithLogger(logger))
+	ctrl, err := asyncapi.NewUserController(t.broker, ctrlOpts...)
 	if err != nil {
 		return nil, err
 	}
+	t.ctrl = ctrl
 
-	return Ticks{
-		broker: broker,
-		ctrl:   ctrl,
-		logger: logger,
-	}, nil
+	return t, nil
+}
+
+func WithTicksLogger(logger extensions.Logger) TicksOption {
+	return func(c *Ticks) {
+		c.logger = logger
+	}
 }
 
 func (t Ticks) Register(ctx context.Context, payload client.TicksFilterPayload) error {
@@ -45,8 +61,8 @@ func (t Ticks) Register(ctx context.Context, payload client.TicksFilterPayload) 
 	msg.Set(payload)
 
 	// Send message
-	resp, err := t.ctrl.WaitForCryptellationTicksRegisterResponse(ctx, &msg, func(ctx context.Context) error {
-		return t.ctrl.PublishCryptellationTicksRegisterRequest(ctx, msg)
+	resp, err := t.ctrl.WaitForRegisterToTicksResponse(ctx, &msg, func(ctx context.Context) error {
+		return t.ctrl.PublishRegisterToTicksRequest(ctx, msg)
 	})
 	if err != nil {
 		return err
@@ -64,7 +80,7 @@ func (t Ticks) Listen(ctx context.Context, payload client.TicksFilterPayload) (<
 	ch := make(chan tick.Tick, 256)
 
 	// Create params for channel path
-	params := asyncapi.CryptellationTicksListenExchangePairParameters{
+	params := asyncapi.CryptellationTicksLiveParameters{
 		Exchange: asyncapi.ExchangeNameSchema(payload.ExchangeName),
 		Pair:     asyncapi.PairSymbolSchema(payload.PairSymbol),
 	}
@@ -80,7 +96,7 @@ func (t Ticks) Listen(ctx context.Context, payload client.TicksFilterPayload) (<
 	}
 
 	// Listen to channel
-	return ch, t.ctrl.SubscribeCryptellationTicksListenExchangePair(ctx, params, callback)
+	return ch, t.ctrl.SubscribeWatchTicks(ctx, params, callback)
 }
 
 func (t Ticks) Unregister(ctx context.Context, payload client.TicksFilterPayload) error {
@@ -89,8 +105,8 @@ func (t Ticks) Unregister(ctx context.Context, payload client.TicksFilterPayload
 	msg.Set(payload)
 
 	// Send message
-	resp, err := t.ctrl.WaitForCryptellationTicksUnregisterResponse(ctx, &msg, func(ctx context.Context) error {
-		return t.ctrl.PublishCryptellationTicksUnregisterRequest(ctx, msg)
+	resp, err := t.ctrl.WaitForUnregisterToTicksResponse(ctx, &msg, func(ctx context.Context) error {
+		return t.ctrl.PublishUnregisterToTicksRequest(ctx, msg)
 	})
 	if err != nil {
 		return err
@@ -102,6 +118,21 @@ func (t Ticks) Unregister(ctx context.Context, payload client.TicksFilterPayload
 	}
 
 	return nil
+}
+
+func (t Ticks) ServiceInfo(ctx context.Context) (client.ServiceInfo, error) {
+	// Set message
+	reqMsg := asyncapi.NewServiceInfoRequestMessage()
+
+	// Send request
+	respMsg, err := t.ctrl.WaitForServiceInfoResponse(ctx, &reqMsg, func(ctx context.Context) error {
+		return t.ctrl.PublishServiceInfoRequest(ctx, reqMsg)
+	})
+	if err != nil {
+		return client.ServiceInfo{}, err
+	}
+
+	return respMsg.ToModel(), nil
 }
 
 func (t Ticks) Close(ctx context.Context) {

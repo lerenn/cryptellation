@@ -6,9 +6,8 @@ import (
 
 	"github.com/lerenn/asyncapi-codegen/pkg/extensions"
 	"github.com/lerenn/asyncapi-codegen/pkg/extensions/brokers/nats"
-	"github.com/lerenn/asyncapi-codegen/pkg/extensions/loggers"
+	asyncapi "github.com/lerenn/cryptellation/api/asyncapi/candlesticks"
 	client "github.com/lerenn/cryptellation/clients/go"
-	asyncapi "github.com/lerenn/cryptellation/pkg/asyncapi/candlesticks"
 	"github.com/lerenn/cryptellation/pkg/config"
 	"github.com/lerenn/cryptellation/pkg/models/candlestick"
 )
@@ -19,34 +18,51 @@ type Candlesticks struct {
 	logger extensions.Logger
 }
 
-func NewCandlesticks(c config.NATS) (client.Candlesticks, error) {
-	// Create a NATS Controller
-	broker := nats.NewController(c.URL())
+type CandlesticksOption func(c *Candlesticks)
 
-	// Create a logger
-	logger := loggers.NewECS()
+func NewCandlesticks(c config.NATS, options ...CandlesticksOption) (client.Candlesticks, error) {
+	var cds Candlesticks
+
+	// Execute options
+	for _, option := range options {
+		option(&cds)
+	}
+
+	// Create a NATS Controller
+	cds.broker = nats.NewController(c.URL())
+
+	// Create a logger if asked
+	ctrlOpts := make([]asyncapi.ControllerOption, 0)
+	if cds.logger != nil {
+		ctrlOpts = append(ctrlOpts, asyncapi.WithLogger(cds.logger))
+	} else {
+		cds.logger = extensions.DummyLogger{}
+	}
 
 	// Create a new user controller
-	ctrl, err := asyncapi.NewUserController(broker, asyncapi.WithLogger(logger))
+	ctrl, err := asyncapi.NewUserController(cds.broker, ctrlOpts...)
 	if err != nil {
 		return nil, err
 	}
+	cds.ctrl = ctrl
 
-	return Candlesticks{
-		broker: broker,
-		ctrl:   ctrl,
-		logger: logger,
-	}, nil
+	return cds, nil
+}
+
+func WithCandlesticksLogger(logger extensions.Logger) CandlesticksOption {
+	return func(c *Candlesticks) {
+		c.logger = logger
+	}
 }
 
 func (c Candlesticks) Read(ctx context.Context, payload client.ReadCandlesticksPayload) (*candlestick.List, error) {
 	// Set message
-	reqMsg := asyncapi.NewCandlesticksListRequestMessage()
+	reqMsg := asyncapi.NewListCandlesticksRequestMessage()
 	reqMsg.Set(payload)
 
 	// Send request
-	respMsg, err := c.ctrl.WaitForCryptellationCandlesticksListResponse(ctx, &reqMsg, func(ctx context.Context) error {
-		return c.ctrl.PublishCryptellationCandlesticksListRequest(ctx, reqMsg)
+	respMsg, err := c.ctrl.WaitForListCandlesticksResponse(ctx, &reqMsg, func(ctx context.Context) error {
+		return c.ctrl.PublishListCandlesticksRequest(ctx, reqMsg)
 	})
 	if err != nil {
 		return nil, err
@@ -59,6 +75,21 @@ func (c Candlesticks) Read(ctx context.Context, payload client.ReadCandlesticksP
 
 	// To candlestick list
 	return respMsg.ToModel(payload.ExchangeName, payload.PairSymbol, payload.Period)
+}
+
+func (c Candlesticks) ServiceInfo(ctx context.Context) (client.ServiceInfo, error) {
+	// Set message
+	reqMsg := asyncapi.NewServiceInfoRequestMessage()
+
+	// Send request
+	respMsg, err := c.ctrl.WaitForServiceInfoResponse(ctx, &reqMsg, func(ctx context.Context) error {
+		return c.ctrl.PublishServiceInfoRequest(ctx, reqMsg)
+	})
+	if err != nil {
+		return client.ServiceInfo{}, err
+	}
+
+	return respMsg.ToModel(), nil
 }
 
 func (c Candlesticks) Close(ctx context.Context) {

@@ -62,3 +62,18 @@ func (mr *MockCandlesticksMockRecorder) Read(ctx, payload interface{}) *gomock.C
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Read", reflect.TypeOf((*MockCandlesticks)(nil).Read), ctx, payload)
 }
+
+// ServiceInfo mocks base method.
+func (m *MockCandlesticks) ServiceInfo(ctx context.Context) (client.ServiceInfo, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ServiceInfo", ctx)
+	ret0, _ := ret[0].(client.ServiceInfo)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ServiceInfo indicates an expected call of ServiceInfo.
+func (mr *MockCandlesticksMockRecorder) ServiceInfo(ctx interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ServiceInfo", reflect.TypeOf((*MockCandlesticks)(nil).ServiceInfo), ctx)
+}

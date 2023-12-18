@@ -8,25 +8,43 @@ info:
 channels:
   cryptellation.exchanges.list.request:
     publish:
-      operationId: exchangesRequest
+      operationId: ListExchangesRequest
       description: Request an exchanges information
       tags:
         - name: exchanges
       message:
-        $ref: '#/components/messages/ExchangesRequest'
+        $ref: '#/components/messages/ListExchangesRequest'
 
   cryptellation.exchanges.list.response:
     subscribe:
-      operationId: exchangesResponse
-      description: Response to an exchange information request 
+      operationId: ListExchangesResponse
+      description: Response to an exchange information request
       tags:
         - name: exchanges
       message:
-        $ref: '#/components/messages/ExchangesResponse'
+        $ref: '#/components/messages/ListExchangesResponse'
+
+  cryptellation.exchanges.service.info.request:
+    publish:
+      operationId: ServiceInfoRequest
+      description: Request information about the service
+      tags:
+        - name: info request
+      message:
+        $ref: '#/components/messages/ServiceInfoRequest'
+  cryptellation.exchanges.service.info.response:
+    subscribe:
+      operationId: ServiceInfoResponse
+      description: Receive information about the service
+      tags:
+        - name: info response
+      message:
+        $ref: '#/components/messages/ServiceInfoResponse'
 
 components:
   messages:
-    ExchangesRequest:
+    # ListExchanges
+    ListExchangesRequest:
       headers:
         type: object
         properties:
@@ -40,7 +58,7 @@ components:
       correlationId:
         description: Default Correlation ID
         location: $message.header#/correlationId
-    ExchangesResponse:
+    ListExchangesResponse:
       headers:
         type: object
         properties:
@@ -55,9 +73,47 @@ components:
               type: array
               items:
                 $ref: '#/components/schemas/Exchange'
-        - properties: 
+        - properties:
             error:
               $ref: '#/components/schemas/Error'
+      correlationId:
+        description: Default Correlation ID
+        location: $message.header#/correlationId
+
+    # ServiceInfo
+    ServiceInfoRequest:
+      headers:
+        type: object
+        properties:
+          correlationId:
+            description: Correlation ID set by client
+            type: string
+      payload:
+        type: object
+      correlationId:
+        description: Default Correlation ID
+        location: $message.header#/correlationId
+    ServiceInfoResponse:
+      headers:
+        type: object
+        properties:
+          correlationId:
+            description: Correlation ID set by client
+            type: string
+      payload:
+        type: object
+        required:
+        - apiVersion
+        - binVersion
+        properties:
+          apiVersion:
+            description: Version of the API
+            type: string
+            example: 1.0.0
+          binVersion:
+            description: Version of the binary
+            type: string
+            example: 1.0.0
       correlationId:
         description: Default Correlation ID
         location: $message.header#/correlationId

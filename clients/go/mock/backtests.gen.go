@@ -122,6 +122,21 @@ func (mr *MockBacktestsMockRecorder) ListenEvents(ctx, backtestID interface{}) *
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListenEvents", reflect.TypeOf((*MockBacktests)(nil).ListenEvents), ctx, backtestID)
 }
 
+// ServiceInfo mocks base method.
+func (m *MockBacktests) ServiceInfo(ctx context.Context) (client.ServiceInfo, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ServiceInfo", ctx)
+	ret0, _ := ret[0].(client.ServiceInfo)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ServiceInfo indicates an expected call of ServiceInfo.
+func (mr *MockBacktestsMockRecorder) ServiceInfo(ctx interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ServiceInfo", reflect.TypeOf((*MockBacktests)(nil).ServiceInfo), ctx)
+}
+
 // Subscribe mocks base method.
 func (m *MockBacktests) Subscribe(ctx context.Context, backtestID uint, exchange, pair string) error {
 	m.ctrl.T.Helper()

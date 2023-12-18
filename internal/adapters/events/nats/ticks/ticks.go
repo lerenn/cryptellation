@@ -3,8 +3,8 @@ package ticks
 import (
 	"context"
 
+	asyncapi "github.com/lerenn/cryptellation/api/asyncapi/ticks"
 	client "github.com/lerenn/cryptellation/clients/go"
-	asyncapi "github.com/lerenn/cryptellation/pkg/asyncapi/ticks"
 	"github.com/lerenn/cryptellation/pkg/models/tick"
 )
 
@@ -17,8 +17,8 @@ func (a *Adapter) Publish(ctx context.Context, tick tick.Tick) error {
 	msg.Payload.Time = asyncapi.DateSchema(tick.Time)
 
 	// Send message
-	return a.app.PublishCryptellationTicksListenExchangePair(ctx,
-		asyncapi.CryptellationTicksListenExchangePairParameters{
+	return a.app.PublishWatchTicks(ctx,
+		asyncapi.CryptellationTicksLiveParameters{
 			Exchange: asyncapi.ExchangeNameSchema(tick.Exchange),
 			Pair:     asyncapi.PairSymbolSchema(tick.PairSymbol),
 		}, msg)

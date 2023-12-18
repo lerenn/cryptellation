@@ -6,9 +6,8 @@ import (
 
 	"github.com/lerenn/asyncapi-codegen/pkg/extensions"
 	"github.com/lerenn/asyncapi-codegen/pkg/extensions/brokers/nats"
-	"github.com/lerenn/asyncapi-codegen/pkg/extensions/loggers"
+	asyncapi "github.com/lerenn/cryptellation/api/asyncapi/exchanges"
 	client "github.com/lerenn/cryptellation/clients/go"
-	asyncapi "github.com/lerenn/cryptellation/pkg/asyncapi/exchanges"
 	"github.com/lerenn/cryptellation/pkg/config"
 	"github.com/lerenn/cryptellation/pkg/models/exchange"
 )
@@ -19,34 +18,51 @@ type Exchanges struct {
 	logger extensions.Logger
 }
 
-func NewExchanges(c config.NATS) (client.Exchanges, error) {
-	// Create a NATS Controller
-	broker := nats.NewController(c.URL())
+type ExchangesOption func(e *Exchanges)
 
-	// Create a logger
-	logger := loggers.NewECS()
+func NewExchanges(c config.NATS, options ...ExchangesOption) (client.Exchanges, error) {
+	var e Exchanges
+
+	// Execute options
+	for _, option := range options {
+		option(&e)
+	}
+
+	// Create a NATS Controller
+	e.broker = nats.NewController(c.URL())
+
+	// Create a logger if asked
+	ctrlOpts := make([]asyncapi.ControllerOption, 0)
+	if e.logger != nil {
+		ctrlOpts = append(ctrlOpts, asyncapi.WithLogger(e.logger))
+	} else {
+		e.logger = extensions.DummyLogger{}
+	}
 
 	// Create a new user controller
-	ctrl, err := asyncapi.NewUserController(broker, asyncapi.WithLogger(logger))
+	ctrl, err := asyncapi.NewUserController(e.broker, ctrlOpts...)
 	if err != nil {
 		return nil, err
 	}
+	e.ctrl = ctrl
 
-	return Exchanges{
-		broker: broker,
-		ctrl:   ctrl,
-		logger: logger,
-	}, nil
+	return e, nil
+}
+
+func WithExchangesLogger(logger extensions.Logger) ExchangesOption {
+	return func(c *Exchanges) {
+		c.logger = logger
+	}
 }
 
 func (ex Exchanges) Read(ctx context.Context, names ...string) ([]exchange.Exchange, error) {
 	// Set message
-	reqMsg := asyncapi.NewExchangesRequestMessage()
+	reqMsg := asyncapi.NewListExchangesRequestMessage()
 	reqMsg.Set(names...)
 
 	// Send request
-	respMsg, err := ex.ctrl.WaitForCryptellationExchangesListResponse(ctx, &reqMsg, func(ctx context.Context) error {
-		return ex.ctrl.PublishCryptellationExchangesListRequest(ctx, reqMsg)
+	respMsg, err := ex.ctrl.WaitForListExchangesResponse(ctx, &reqMsg, func(ctx context.Context) error {
+		return ex.ctrl.PublishListExchangesRequest(ctx, reqMsg)
 	})
 	if err != nil {
 		return nil, err
@@ -58,6 +74,21 @@ func (ex Exchanges) Read(ctx context.Context, names ...string) ([]exchange.Excha
 	}
 
 	// To exchange list
+	return respMsg.ToModel(), nil
+}
+
+func (ex Exchanges) ServiceInfo(ctx context.Context) (client.ServiceInfo, error) {
+	// Set message
+	reqMsg := asyncapi.NewServiceInfoRequestMessage()
+
+	// Send request
+	respMsg, err := ex.ctrl.WaitForServiceInfoResponse(ctx, &reqMsg, func(ctx context.Context) error {
+		return ex.ctrl.PublishServiceInfoRequest(ctx, reqMsg)
+	})
+	if err != nil {
+		return client.ServiceInfo{}, err
+	}
+
 	return respMsg.ToModel(), nil
 }
 

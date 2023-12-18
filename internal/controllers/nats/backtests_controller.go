@@ -6,8 +6,8 @@ import (
 	"github.com/lerenn/asyncapi-codegen/pkg/extensions"
 	"github.com/lerenn/asyncapi-codegen/pkg/extensions/brokers/nats"
 	"github.com/lerenn/asyncapi-codegen/pkg/extensions/loggers"
+	asyncapi "github.com/lerenn/cryptellation/api/asyncapi/backtests"
 	"github.com/lerenn/cryptellation/internal/components/backtests"
-	asyncapi "github.com/lerenn/cryptellation/pkg/asyncapi/backtests"
 	"github.com/lerenn/cryptellation/pkg/config"
 )
 

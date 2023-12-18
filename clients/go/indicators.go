@@ -14,6 +14,8 @@ import (
 
 type Indicators interface {
 	SMA(ctx context.Context, payload SMAPayload) (*timeserie.TimeSerie[float64], error)
+
+	ServiceInfo(ctx context.Context) (ServiceInfo, error)
 	Close(ctx context.Context)
 }
 

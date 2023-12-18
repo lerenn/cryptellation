@@ -1,10 +1,11 @@
 package backtests
 
 import (
+	"github.com/lerenn/asyncapi-codegen/pkg/extensions/loggers"
+	asyncapi "github.com/lerenn/cryptellation/api/asyncapi/backtests"
 	client "github.com/lerenn/cryptellation/clients/go"
 	natsClient "github.com/lerenn/cryptellation/clients/go/nats"
 	adapter "github.com/lerenn/cryptellation/internal/adapters/events/nats"
-	asyncapi "github.com/lerenn/cryptellation/pkg/asyncapi/backtests"
 	"github.com/lerenn/cryptellation/pkg/config"
 )
 
@@ -22,13 +23,14 @@ func New(c config.NATS) (*Adapter, error) {
 	}
 
 	// Create new app controller
-	app, err := asyncapi.NewAppController(events.Broker())
+	logger := loggers.NewECS()
+	app, err := asyncapi.NewAppController(events.Broker(), asyncapi.WithLogger(logger))
 	if err != nil {
 		return nil, err
 	}
 
 	// Create a new client
-	client, err := natsClient.NewBacktests(c)
+	client, err := natsClient.NewBacktests(c, natsClient.WithBacktestsLogger(logger))
 	if err != nil {
 		return nil, err
 	}

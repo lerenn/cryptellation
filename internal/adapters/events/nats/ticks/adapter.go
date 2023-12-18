@@ -1,10 +1,10 @@
 package ticks
 
 import (
+	asyncapi "github.com/lerenn/cryptellation/api/asyncapi/ticks"
 	client "github.com/lerenn/cryptellation/clients/go"
 	natsClient "github.com/lerenn/cryptellation/clients/go/nats"
 	adapter "github.com/lerenn/cryptellation/internal/adapters/events/nats"
-	asyncapi "github.com/lerenn/cryptellation/pkg/asyncapi/ticks"
 	"github.com/lerenn/cryptellation/pkg/config"
 )
 

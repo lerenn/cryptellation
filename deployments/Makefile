@@ -13,6 +13,9 @@ minikube/deploy: ## Deploy minikube cluster
 		--kubernetes-version=v${K8S_VERSION} \
 		--extra-config=kubelet.cluster-dns=10.96.0.10
 	@minikube -p $(CLUSTER_NAME) addons enable registry
+	@helm repo add otel-lgtm-dev https://lerenn.github.io/packages/helm/otel-lgtm-dev
+	@helm upgrade --install lgtm otel-lgtm-dev/otel-lgtm-dev \
+		-n telemetry --create-namespace
 
 .PHONY: minikube/status
 minikube/status: ## Checks the minikube status
@@ -26,21 +29,11 @@ minikube/stop: ## Stop the current minikube cluster
 minikube/delete: ## Delete the minikube cluster
 	@minikube delete --profile ${CLUSTER_NAME}
 
-.PHONY: minikube/deploy-lgtm
-minikube/deploy-lgtm: ## Deploy a Helm chart for telemetry
-	@helm repo add otel-lgtm-dev https://lerenn.github.io/packages/helm/otel-lgtm-dev
-	@helm upgrade --install lgtm otel-lgtm-dev/otel-lgtm-dev \
-		-n telemetry --create-namespace
-
-.PHONY: minikube/expose-grafana
-minikube/expose-grafana: ## Expose the Grafana port to 8080
-	@kubectl port-forward -n telemetry service/lgtm-grafana 8080:80
-
-.PHONY: minikube/delete-lgtm
-minikube/delete-lgtm: ## Delete telemetry resources
-	@helm delete -n telemetry lgtm || true
-	@kubectl delete all -n telemetry --all || true
-	@kubectl delete pvc -n telemetry --all || true
+.PHONY: minikube/expose
+minikube/expose: ## Expose the ports to 8080
+	@kubectl port-forward -n telemetry service/lgtm-grafana 8080:80 & \
+		kubectl port-forward service/cryptellation-nats 4222:4222 & \
+		wait
 
 .PHONY: clean
 clean: ## Clean everything

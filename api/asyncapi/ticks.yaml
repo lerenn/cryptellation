@@ -7,7 +7,7 @@ info:
 channels:
   cryptellation.ticks.register.request:
     publish:
-      operationId: ticksRegisterRequest
+      operationId: RegisterToTicksRequest
       description: Register to listen a specific symbol ticks
       tags:
         - name: register
@@ -15,13 +15,14 @@ channels:
         $ref: '#/components/messages/RegisteringRequest'
   cryptellation.ticks.register.response:
     subscribe:
-      operationId: ticksRegisterResponse
+      operationId: RegisterToTicksResponse
       description: Response to registering for listening to specific symbol ticks
       tags:
         - name: register
       message:
         $ref: '#/components/messages/RegisteringResponse'
-  cryptellation.ticks.listen.{exchange}.{pair}:
+
+  cryptellation.ticks.live.{exchange}.{pair}:
     parameters:
       exchange:
         description: Filter for ticks by exchange name
@@ -32,15 +33,16 @@ channels:
         schema:
           $ref: '#/components/schemas/PairSymbol'
     subscribe:
-      operationId: ticksListen
+      operationId: WatchTicks
       description: Listen to ticks based on their exchange and their symbol
       tags:
         - name: listen
       message:
         $ref: '#/components/messages/Tick'
+
   cryptellation.ticks.unregister.request:
     publish:
-      operationId: ticksUnregister
+      operationId: UnregisterToTicksRequest
       description: Unregister from listening to a specific symbol ticks
       tags:
         - name: unregister
@@ -48,15 +50,33 @@ channels:
         $ref: '#/components/messages/RegisteringRequest'
   cryptellation.ticks.unregister.response:
     subscribe:
-      operationId: ticksUnegisterResponse
+      operationId: UnregisterToTicksResponse
       description: Response to unregistering for listening to specific symbol ticks
       tags:
         - name: unregister
       message:
         $ref: '#/components/messages/RegisteringResponse'
 
+  cryptellation.ticks.service.info.request:
+    publish:
+      operationId: ServiceInfoRequest
+      description: Request information about the service
+      tags:
+        - name: info request
+      message:
+        $ref: '#/components/messages/ServiceInfoRequest'
+  cryptellation.ticks.service.info.response:
+    subscribe:
+      operationId: ServiceInfoResponse
+      description: Receive information about the service
+      tags:
+        - name: info response
+      message:
+        $ref: '#/components/messages/ServiceInfoResponse'
+
 components:
   messages:
+    # Registering
     RegisteringResponse:
       headers:
         type: object
@@ -95,6 +115,44 @@ components:
             $ref: '#/components/schemas/ExchangeName'
           pair:
             $ref: '#/components/schemas/PairSymbol'
+      correlationId:
+        description: Default Correlation ID
+        location: $message.header#/correlationId
+
+    # ServiceInfo
+    ServiceInfoRequest:
+      headers:
+        type: object
+        properties:
+          correlationId:
+            description: Correlation ID set by client
+            type: string
+      payload:
+        type: object
+      correlationId:
+        description: Default Correlation ID
+        location: $message.header#/correlationId
+    ServiceInfoResponse:
+      headers:
+        type: object
+        properties:
+          correlationId:
+            description: Correlation ID set by client
+            type: string
+      payload:
+        type: object
+        required:
+        - apiVersion
+        - binVersion
+        properties:
+          apiVersion:
+            description: Version of the API
+            type: string
+            example: 1.0.0
+          binVersion:
+            description: Version of the binary
+            type: string
+            example: 1.0.0
       correlationId:
         description: Default Correlation ID
         location: $message.header#/correlationId

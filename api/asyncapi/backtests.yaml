@@ -7,105 +7,105 @@ info:
 channels:
   cryptellation.backtests.create.request:
     publish:
-      operationId: backtestsCreateRequest
+      operationId: CreateBacktestRequest
       description: Request a new backtest
       tags:
         - name: backtest creation
       message:
-        $ref: '#/components/messages/BacktestsCreateRequest'
+        $ref: '#/components/messages/CreateBacktestRequest'
   cryptellation.backtests.create.response:
     subscribe:
-      operationId: backtestsCreateResponse
+      operationId: CreateBacktestResponse
       description: Response to a new backtest request
       tags:
         - name: backtest creation
       message:
-        $ref: '#/components/messages/BacktestsCreateResponse'
+        $ref: '#/components/messages/CreateBacktestResponse'
 
   cryptellation.backtests.subscribe.request:
     publish:
-      operationId: backtestsSubscribeRequest
+      operationId: SubscribeBacktestRequest
       description: Subscribe to a backtest events
       tags:
         - name: backtest subscribe
       message:
-        $ref: '#/components/messages/BacktestsSubscribeRequest'
+        $ref: '#/components/messages/SubscribeBacktestRequest'
   cryptellation.backtests.subscribe.response:
     subscribe:
-      operationId: backtestsSubscribeResponse
+      operationId: SubscribeBacktestResponse
       description: Response to a backtest events subscription
       tags:
         - name: backtest subscribe
       message:
-        $ref: '#/components/messages/BacktestsSubscribeResponse'
+        $ref: '#/components/messages/SubscribeBacktestResponse'
 
   cryptellation.backtests.advance.request:
     publish:
-      operationId: backtestsAdvanceRequest
+      operationId: AdvanceBacktestRequest
       description: Ask for new events on backtest
       tags:
         - name: backtest advance
       message:
-        $ref: '#/components/messages/BacktestsAdvanceRequest'
+        $ref: '#/components/messages/AdvanceBacktestRequest'
   cryptellation.backtests.advance.response:
     subscribe:
-      operationId: backtestsAdvanceResponse
+      operationId: AdvanceBacktestResponse
       description: Response to new events request
       tags:
         - name: backtest advance
       message:
-        $ref: '#/components/messages/BacktestsAdvanceResponse'
+        $ref: '#/components/messages/AdvanceBacktestResponse'
 
   cryptellation.backtests.orders.create.request:
     publish:
-      operationId: backtestsOrdersCreateRequest
+      operationId: CreateBacktestOrderRequest
       description: Create a new order for a backtest
       tags:
         - name: backtest order creation
       message:
-        $ref: '#/components/messages/BacktestsOrdersCreateRequest'
+        $ref: '#/components/messages/CreateBacktestOrderRequest'
   cryptellation.backtests.orders.create.response:
     subscribe:
-      operationId: backtestsOrdersCreateResponse
+      operationId: CreateBacktestOrderResponse
       description: Response to a new order creation
       tags:
         - name: backtest order creation
       message:
-        $ref: '#/components/messages/BacktestsOrdersCreateResponse'
+        $ref: '#/components/messages/CreateBacktestOrderResponse'
 
   cryptellation.backtests.orders.list.request:
     publish:
-      operationId: backtestsOrdersListRequest
+      operationId: ListBacktestOrdersRequest
       description: List orders from a backtest
       tags:
         - name: backtest orders list
       message:
-        $ref: '#/components/messages/BacktestsOrdersListRequest'
+        $ref: '#/components/messages/ListBacktestOrdersRequest'
   cryptellation.backtests.orders.list.response:
     subscribe:
-      operationId: backtestsOrdersListResponse
+      operationId: ListBacktestOrdersResponse
       description: Response to a orders list request
       tags:
         - name: backtest orders list
       message:
-        $ref: '#/components/messages/BacktestsOrdersListResponse'
+        $ref: '#/components/messages/ListBacktestOrdersResponse'
 
   cryptellation.backtests.accounts.list.request:
     publish:
-      operationId: backtestsAccountsListRequest
+      operationId: ListBacktestAccountsRequest
       description: List accounts from a backtest
       tags:
         - name: backtest accounts list
       message:
-        $ref: '#/components/messages/BacktestsAccountsListRequest'
+        $ref: '#/components/messages/ListBacktestAccountsRequest'
   cryptellation.backtests.accounts.list.response:
     subscribe:
-      operationId: backtestsAccountsListResponse
+      operationId: ListBacktestAccountsResponse
       description: Response to a accounts list request
       tags:
         - name: backtest accounts list
       message:
-        $ref: '#/components/messages/BacktestsAccountsListResponse'
+        $ref: '#/components/messages/ListBacktestAccountsResponse'
 
   cryptellation.backtests.events.{id}:
     parameters:
@@ -114,17 +114,35 @@ channels:
         schema:
           type: integer
     subscribe:
-      operationId: backtestsEvents
+      operationId: BacktestEvent
       description: Events happening after an advance message
       tags:
         - name: backtest events
       message:
         $ref: '#/components/messages/BacktestsEvent'
 
+  cryptellation.backtests.service.info.request:
+    publish:
+      operationId: ServiceInfoRequest
+      description: Request information about the service
+      tags:
+        - name: info request
+      message:
+        $ref: '#/components/messages/ServiceInfoRequest'
+  cryptellation.service.info.response:
+    subscribe:
+      operationId: ServiceInfoResponse
+      description: Receive information about the service
+      tags:
+        - name: info response
+      message:
+        $ref: '#/components/messages/ServiceInfoResponse'
+
+
 components:
   messages:
     # BacktestsCreate
-    BacktestsCreateRequest:
+    CreateBacktestRequest:
       headers:
         type: object
         properties:
@@ -150,7 +168,7 @@ components:
       correlationId:
         description: Default Correlation ID
         location: $message.header#/correlationId
-    BacktestsCreateResponse:
+    CreateBacktestResponse:
       headers:
         type: object
         properties:
@@ -174,7 +192,7 @@ components:
         location: $message.header#/correlationId
 
     # BacktestsSubscribe
-    BacktestsSubscribeRequest:
+    SubscribeBacktestRequest:
       headers:
         type: object
         properties:
@@ -197,7 +215,7 @@ components:
       correlationId:
         description: Default Correlation ID
         location: $message.header#/correlationId
-    BacktestsSubscribeResponse:
+    SubscribeBacktestResponse:
       headers:
         type: object
         properties:
@@ -214,7 +232,7 @@ components:
         location: $message.header#/correlationId
 
     # BacktestsAdvance
-    BacktestsAdvanceRequest:
+    AdvanceBacktestRequest:
       headers:
         type: object
         properties:
@@ -231,7 +249,7 @@ components:
       correlationId:
         description: Default Correlation ID
         location: $message.header#/correlationId
-    BacktestsAdvanceResponse:
+    AdvanceBacktestResponse:
       headers:
         type: object
         properties:
@@ -248,7 +266,7 @@ components:
         location: $message.header#/correlationId
 
     # BacktestsOrdersCreate
-    BacktestsOrdersCreateRequest:
+    CreateBacktestOrderRequest:
       headers:
         type: object
         properties:
@@ -268,7 +286,7 @@ components:
       correlationId:
         description: Default Correlation ID
         location: $message.header#/correlationId
-    BacktestsOrdersCreateResponse:
+    CreateBacktestOrderResponse:
       headers:
         type: object
         properties:
@@ -285,7 +303,7 @@ components:
         location: $message.header#/correlationId
 
     # BacktestsOrdersList
-    BacktestsOrdersListRequest:
+    ListBacktestOrdersRequest:
       headers:
         type: object
         properties:
@@ -302,7 +320,7 @@ components:
       correlationId:
         description: Default Correlation ID
         location: $message.header#/correlationId
-    BacktestsOrdersListResponse:
+    ListBacktestOrdersResponse:
       headers:
         type: object
         properties:
@@ -327,7 +345,7 @@ components:
         location: $message.header#/correlationId
 
     # BacktestsAccountsList
-    BacktestsAccountsListRequest:
+    ListBacktestAccountsRequest:
       headers:
         type: object
         properties:
@@ -344,7 +362,7 @@ components:
       correlationId:
         description: Default Correlation ID
         location: $message.header#/correlationId
-    BacktestsAccountsListResponse:
+    ListBacktestAccountsResponse:
       headers:
         type: object
         properties:
@@ -387,6 +405,43 @@ components:
               - $ref: '#/components/schemas/Tick'
               - $ref: '#/components/schemas/Status'
 
+    # ServiceInfo
+    ServiceInfoRequest:
+      headers:
+        type: object
+        properties:
+          correlationId:
+            description: Correlation ID set by client
+            type: string
+      payload:
+        type: object
+      correlationId:
+        description: Default Correlation ID
+        location: $message.header#/correlationId
+    ServiceInfoResponse:
+      headers:
+        type: object
+        properties:
+          correlationId:
+            description: Correlation ID set by client
+            type: string
+      payload:
+        type: object
+        required:
+        - apiVersion
+        - binVersion
+        properties:
+          apiVersion:
+            description: Version of the API
+            type: string
+            example: 1.0.0
+          binVersion:
+            description: Version of the binary
+            type: string
+            example: 1.0.0
+      correlationId:
+        description: Default Correlation ID
+        location: $message.header#/correlationId
   schemas:
     Account:
       type: object

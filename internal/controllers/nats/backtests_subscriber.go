@@ -4,8 +4,9 @@ import (
 	"context"
 	"net/http"
 
+	asyncapi "github.com/lerenn/cryptellation/api/asyncapi/backtests"
 	"github.com/lerenn/cryptellation/internal/components/backtests"
-	asyncapi "github.com/lerenn/cryptellation/pkg/asyncapi/backtests"
+	"github.com/lerenn/cryptellation/pkg/version"
 )
 
 type backtestsSubscriber struct {
@@ -20,14 +21,14 @@ func newBacktestsSubscriber(controller *asyncapi.AppController, app backtests.In
 	}
 }
 
-func (s backtestsSubscriber) CryptellationBacktestsAccountsListRequest(ctx context.Context, msg asyncapi.BacktestsAccountsListRequestMessage) {
+func (s backtestsSubscriber) ListBacktestAccountsRequest(ctx context.Context, msg asyncapi.ListBacktestAccountsRequestMessage) {
 	// Prepare response and set send at the end
-	resp := asyncapi.NewBacktestsAccountsListResponseMessage()
+	resp := asyncapi.NewListBacktestAccountsResponseMessage()
 	resp.SetAsResponseFrom(&msg)
-	defer func() { _ = s.controller.PublishCryptellationBacktestsAccountsListResponse(ctx, resp) }()
+	defer func() { _ = s.controller.PublishListBacktestAccountsResponse(ctx, resp) }()
 
 	// Get accounts
-	accounts, err := s.backtests.GetAccounts(context.Background(), uint(msg.Payload.ID))
+	accounts, err := s.backtests.GetAccounts(context.Background(), uint(msg.Payload.Id))
 	if err != nil {
 		resp.Payload.Error = &asyncapi.ErrorSchema{
 			Code:    http.StatusInternalServerError,
@@ -40,14 +41,14 @@ func (s backtestsSubscriber) CryptellationBacktestsAccountsListRequest(ctx conte
 	resp.Set(accounts)
 }
 
-func (s backtestsSubscriber) CryptellationBacktestsAdvanceRequest(ctx context.Context, msg asyncapi.BacktestsAdvanceRequestMessage) {
+func (s backtestsSubscriber) AdvanceBacktestRequest(ctx context.Context, msg asyncapi.AdvanceBacktestRequestMessage) {
 	// Prepare response and set send at the end
-	resp := asyncapi.NewBacktestsAdvanceResponseMessage()
+	resp := asyncapi.NewAdvanceBacktestResponseMessage()
 	resp.SetAsResponseFrom(&msg)
-	defer func() { _ = s.controller.PublishCryptellationBacktestsAdvanceResponse(ctx, resp) }()
+	defer func() { _ = s.controller.PublishAdvanceBacktestResponse(ctx, resp) }()
 
 	// Advance application
-	err := s.backtests.Advance(context.Background(), uint(msg.Payload.ID))
+	err := s.backtests.Advance(context.Background(), uint(msg.Payload.Id))
 	if err != nil {
 		resp.Payload.Error = &asyncapi.ErrorSchema{
 			Code:    http.StatusInternalServerError,
@@ -57,11 +58,11 @@ func (s backtestsSubscriber) CryptellationBacktestsAdvanceRequest(ctx context.Co
 	}
 }
 
-func (s backtestsSubscriber) CryptellationBacktestsCreateRequest(ctx context.Context, msg asyncapi.BacktestsCreateRequestMessage) {
+func (s backtestsSubscriber) CreateBacktestRequest(ctx context.Context, msg asyncapi.CreateBacktestRequestMessage) {
 	// Prepare response and set send at the end
-	resp := asyncapi.NewBacktestsCreateResponseMessage()
+	resp := asyncapi.NewCreateBacktestResponseMessage()
 	resp.SetAsResponseFrom(&msg)
-	defer func() { _ = s.controller.PublishCryptellationBacktestsCreateResponse(ctx, resp) }()
+	defer func() { _ = s.controller.PublishCreateBacktestResponse(ctx, resp) }()
 
 	// Get model request from message payload
 	req, err := msg.ToModel()
@@ -84,14 +85,14 @@ func (s backtestsSubscriber) CryptellationBacktestsCreateRequest(ctx context.Con
 	}
 
 	// Set response ID
-	resp.Payload.ID = int64(id)
+	resp.Payload.Id = int64(id)
 }
 
-func (s backtestsSubscriber) CryptellationBacktestsOrdersCreateRequest(ctx context.Context, msg asyncapi.BacktestsOrdersCreateRequestMessage) {
+func (s backtestsSubscriber) CreateBacktestOrderRequest(ctx context.Context, msg asyncapi.CreateBacktestOrderRequestMessage) {
 	// Prepare response and set send at the end
-	resp := asyncapi.NewBacktestsOrdersCreateResponseMessage()
+	resp := asyncapi.NewCreateBacktestOrderResponseMessage()
 	resp.SetAsResponseFrom(&msg)
-	defer func() { _ = s.controller.PublishCryptellationBacktestsOrdersCreateResponse(ctx, resp) }()
+	defer func() { _ = s.controller.PublishCreateBacktestOrderResponse(ctx, resp) }()
 
 	// Set order model from API
 	order, err := msg.ToModel()
@@ -104,7 +105,7 @@ func (s backtestsSubscriber) CryptellationBacktestsOrdersCreateRequest(ctx conte
 	}
 
 	// Create the order
-	err = s.backtests.CreateOrder(context.Background(), uint(msg.Payload.ID), order)
+	err = s.backtests.CreateOrder(context.Background(), uint(msg.Payload.Id), order)
 	if err != nil {
 		resp.Payload.Error = &asyncapi.ErrorSchema{
 			Code:    http.StatusInternalServerError,
@@ -114,14 +115,14 @@ func (s backtestsSubscriber) CryptellationBacktestsOrdersCreateRequest(ctx conte
 	}
 }
 
-func (s backtestsSubscriber) CryptellationBacktestsOrdersListRequest(ctx context.Context, msg asyncapi.BacktestsOrdersListRequestMessage) {
+func (s backtestsSubscriber) ListBacktestOrdersRequest(ctx context.Context, msg asyncapi.ListBacktestOrdersRequestMessage) {
 	// Prepare response and set send at the end
-	resp := asyncapi.NewBacktestsOrdersListResponseMessage()
+	resp := asyncapi.NewListBacktestOrdersResponseMessage()
 	resp.SetAsResponseFrom(&msg)
-	defer func() { _ = s.controller.PublishCryptellationBacktestsOrdersListResponse(ctx, resp) }()
+	defer func() { _ = s.controller.PublishListBacktestOrdersResponse(ctx, resp) }()
 
 	// Get list of orders
-	list, err := s.backtests.GetOrders(context.Background(), uint(msg.Payload.ID))
+	list, err := s.backtests.GetOrders(context.Background(), uint(msg.Payload.Id))
 	if err != nil {
 		resp.Payload.Error = &asyncapi.ErrorSchema{
 			Code:    http.StatusInternalServerError,
@@ -134,16 +135,16 @@ func (s backtestsSubscriber) CryptellationBacktestsOrdersListRequest(ctx context
 	resp.Set(list)
 }
 
-func (s backtestsSubscriber) CryptellationBacktestsSubscribeRequest(ctx context.Context, msg asyncapi.BacktestsSubscribeRequestMessage) {
+func (s backtestsSubscriber) SubscribeBacktestRequest(ctx context.Context, msg asyncapi.SubscribeBacktestRequestMessage) {
 	// Prepare response and set send at the end
-	resp := asyncapi.NewBacktestsSubscribeResponseMessage()
+	resp := asyncapi.NewSubscribeBacktestResponseMessage()
 	resp.SetAsResponseFrom(&msg)
-	defer func() { _ = s.controller.PublishCryptellationBacktestsSubscribeResponse(ctx, resp) }()
+	defer func() { _ = s.controller.PublishSubscribeBacktestResponse(ctx, resp) }()
 
 	// Set subscription
 	err := s.backtests.SubscribeToEvents(
 		context.Background(),
-		uint(msg.Payload.ID),
+		uint(msg.Payload.Id),
 		string(msg.Payload.ExchangeName),
 		string(msg.Payload.PairSymbol),
 	)
@@ -154,4 +155,15 @@ func (s backtestsSubscriber) CryptellationBacktestsSubscribeRequest(ctx context.
 		}
 		return
 	}
+}
+
+func (s backtestsSubscriber) ServiceInfoRequest(ctx context.Context, msg asyncapi.ServiceInfoRequestMessage) {
+	// Prepare response and set send at the end
+	resp := asyncapi.NewServiceInfoResponseMessage()
+	resp.SetAsResponseFrom(&msg)
+	defer func() { _ = s.controller.PublishServiceInfoResponse(ctx, resp) }()
+
+	// Set info
+	resp.Payload.ApiVersion = asyncapi.AsyncAPIVersion
+	resp.Payload.BinVersion = version.GetVersion()
 }

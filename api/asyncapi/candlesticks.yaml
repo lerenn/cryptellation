@@ -8,25 +8,43 @@ info:
 channels:
   cryptellation.candlesticks.list.request:
     publish:
-      operationId: candlesticksListRequest
+      operationId: ListCandlesticksRequest
       description: Request a candlestick list from historic data
       tags:
         - name: candlestick list
       message:
-        $ref: '#/components/messages/CandlesticksListRequest'
+        $ref: '#/components/messages/ListCandlesticksRequest'
 
   cryptellation.candlesticks.list.response:
     subscribe:
-      operationId: candlesticksListResponse
-      description: Response to a list request, with the corresponding candlestick list 
+      operationId: ListCandlesticksResponse
+      description: Response to a list request, with the corresponding candlestick list
       tags:
         - name: candlestick list
       message:
-        $ref: '#/components/messages/CandlesticksListResponse'
+        $ref: '#/components/messages/ListCandlesticksResponse'
+
+  cryptellation.candlesticks.service.info.request:
+    publish:
+      operationId: ServiceInfoRequest
+      description: Request information about the service
+      tags:
+        - name: info request
+      message:
+        $ref: '#/components/messages/ServiceInfoRequest'
+  cryptellation.service.info.response:
+    subscribe:
+      operationId: ServiceInfoResponse
+      description: Receive information about the service
+      tags:
+        - name: info response
+      message:
+        $ref: '#/components/messages/ServiceInfoResponse'
 
 components:
   messages:
-    CandlesticksListRequest:
+    # ListCandlesticks
+    ListCandlesticksRequest:
       headers:
         type: object
         properties:
@@ -65,7 +83,7 @@ components:
       correlationId:
         description: Default Correlation ID
         location: $message.header#/correlationId
-    CandlesticksListResponse:
+    ListCandlesticksResponse:
       headers:
         type: object
         properties:
@@ -81,6 +99,44 @@ components:
         - properties:
             error:
               $ref: '#/components/schemas/Error'
+      correlationId:
+        description: Default Correlation ID
+        location: $message.header#/correlationId
+
+    # ServiceInfo
+    ServiceInfoRequest:
+      headers:
+        type: object
+        properties:
+          correlationId:
+            description: Correlation ID set by client
+            type: string
+      payload:
+        type: object
+      correlationId:
+        description: Default Correlation ID
+        location: $message.header#/correlationId
+    ServiceInfoResponse:
+      headers:
+        type: object
+        properties:
+          correlationId:
+            description: Correlation ID set by client
+            type: string
+      payload:
+        type: object
+        required:
+        - apiVersion
+        - binVersion
+        properties:
+          apiVersion:
+            description: Version of the API
+            type: string
+            example: 1.0.0
+          binVersion:
+            description: Version of the binary
+            type: string
+            example: 1.0.0
       correlationId:
         description: Default Correlation ID
         location: $message.header#/correlationId

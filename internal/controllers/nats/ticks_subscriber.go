@@ -5,8 +5,9 @@ import (
 	"log"
 	"net/http"
 
+	asyncapi "github.com/lerenn/cryptellation/api/asyncapi/ticks"
 	"github.com/lerenn/cryptellation/internal/components/ticks"
-	asyncapi "github.com/lerenn/cryptellation/pkg/asyncapi/ticks"
+	"github.com/lerenn/cryptellation/pkg/version"
 )
 
 type ticksSubscriber struct {
@@ -21,13 +22,13 @@ func newTicksSubscriber(controller *asyncapi.AppController, app ticks.Interface)
 	}
 }
 
-func (s ticksSubscriber) CryptellationTicksRegisterRequest(ctx context.Context, msg asyncapi.RegisteringRequestMessage) {
+func (s ticksSubscriber) RegisterToTicksRequest(ctx context.Context, msg asyncapi.RegisteringRequestMessage) {
 	log.Printf("Received register request: %+v\n", msg)
 
 	// Set response
 	resp := asyncapi.NewRegisteringResponseMessage()
 	resp.SetAsResponseFrom(&msg)
-	defer func() { _ = s.controller.PublishCryptellationTicksRegisterResponse(ctx, resp) }()
+	defer func() { _ = s.controller.PublishRegisterToTicksResponse(ctx, resp) }()
 
 	// Register as requested
 	count, err := s.ticks.Register(
@@ -50,13 +51,13 @@ func (s ticksSubscriber) CryptellationTicksRegisterRequest(ctx context.Context, 
 	resp.Payload.Count = &count
 }
 
-func (s ticksSubscriber) CryptellationTicksUnregisterRequest(ctx context.Context, msg asyncapi.RegisteringRequestMessage) {
+func (s ticksSubscriber) UnregisterToTicksRequest(ctx context.Context, msg asyncapi.RegisteringRequestMessage) {
 	log.Printf("Received unregister request: %+v\n", msg)
 
 	// Set response
 	resp := asyncapi.NewRegisteringResponseMessage()
 	resp.SetAsResponseFrom(&msg)
-	defer func() { _ = s.controller.PublishCryptellationTicksUnregisterResponse(ctx, resp) }()
+	defer func() { _ = s.controller.PublishUnregisterToTicksResponse(ctx, resp) }()
 
 	// Register as requested
 	count, err := s.ticks.Unregister(
@@ -77,4 +78,15 @@ func (s ticksSubscriber) CryptellationTicksUnregisterRequest(ctx context.Context
 
 	// Otherwise, return count
 	resp.Payload.Count = &count
+}
+
+func (s ticksSubscriber) ServiceInfoRequest(ctx context.Context, msg asyncapi.ServiceInfoRequestMessage) {
+	// Prepare response and set send at the end
+	resp := asyncapi.NewServiceInfoResponseMessage()
+	resp.SetAsResponseFrom(&msg)
+	defer func() { _ = s.controller.PublishServiceInfoResponse(ctx, resp) }()
+
+	// Set info
+	resp.Payload.ApiVersion = asyncapi.AsyncAPIVersion
+	resp.Payload.BinVersion = version.GetVersion()
 }

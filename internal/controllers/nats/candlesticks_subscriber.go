@@ -4,8 +4,9 @@ import (
 	"context"
 	"net/http"
 
+	asyncapi "github.com/lerenn/cryptellation/api/asyncapi/candlesticks"
 	"github.com/lerenn/cryptellation/internal/components/candlesticks"
-	asyncapi "github.com/lerenn/cryptellation/pkg/asyncapi/candlesticks"
+	"github.com/lerenn/cryptellation/pkg/version"
 )
 
 type candlesticksSubscriber struct {
@@ -20,11 +21,11 @@ func newCandlesticksSubscriber(controller *asyncapi.AppController, app candlesti
 	}
 }
 
-func (s candlesticksSubscriber) CryptellationCandlesticksListRequest(ctx context.Context, msg asyncapi.CandlesticksListRequestMessage) {
+func (s candlesticksSubscriber) ListCandlesticksRequest(ctx context.Context, msg asyncapi.ListCandlesticksRequestMessage) {
 	// Prepare response and set send at the end
-	resp := asyncapi.NewCandlesticksListResponseMessage()
+	resp := asyncapi.NewListCandlesticksResponseMessage()
 	resp.SetAsResponseFrom(&msg)
-	defer func() { _ = s.controller.PublishCryptellationCandlesticksListResponse(ctx, resp) }()
+	defer func() { _ = s.controller.PublishListCandlesticksResponse(ctx, resp) }()
 
 	// Set list payload
 	payload, err := msg.ToModel()
@@ -54,4 +55,15 @@ func (s candlesticksSubscriber) CryptellationCandlesticksListRequest(ctx context
 		}
 		return
 	}
+}
+
+func (s candlesticksSubscriber) ServiceInfoRequest(ctx context.Context, msg asyncapi.ServiceInfoRequestMessage) {
+	// Prepare response and set send at the end
+	resp := asyncapi.NewServiceInfoResponseMessage()
+	resp.SetAsResponseFrom(&msg)
+	defer func() { _ = s.controller.PublishServiceInfoResponse(ctx, resp) }()
+
+	// Set info
+	resp.Payload.ApiVersion = asyncapi.AsyncAPIVersion
+	resp.Payload.BinVersion = version.GetVersion()
 }

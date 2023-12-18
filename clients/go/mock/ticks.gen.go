@@ -77,6 +77,21 @@ func (mr *MockTicksMockRecorder) Register(ctx, payload interface{}) *gomock.Call
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Register", reflect.TypeOf((*MockTicks)(nil).Register), ctx, payload)
 }
 
+// ServiceInfo mocks base method.
+func (m *MockTicks) ServiceInfo(ctx context.Context) (client.ServiceInfo, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ServiceInfo", ctx)
+	ret0, _ := ret[0].(client.ServiceInfo)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ServiceInfo indicates an expected call of ServiceInfo.
+func (mr *MockTicksMockRecorder) ServiceInfo(ctx interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ServiceInfo", reflect.TypeOf((*MockTicks)(nil).ServiceInfo), ctx)
+}
+
 // Unregister mocks base method.
 func (m *MockTicks) Unregister(ctx context.Context, payload client.TicksFilterPayload) error {
 	m.ctrl.T.Helper()

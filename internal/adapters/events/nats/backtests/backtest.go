@@ -3,7 +3,7 @@ package backtests
 import (
 	"context"
 
-	asyncapi "github.com/lerenn/cryptellation/pkg/asyncapi/backtests"
+	asyncapi "github.com/lerenn/cryptellation/api/asyncapi/backtests"
 	"github.com/lerenn/cryptellation/pkg/models/event"
 )
 
@@ -17,8 +17,8 @@ func (a *Adapter) Publish(ctx context.Context, backtestID uint, evt event.Event)
 	}
 
 	// Send message
-	return a.app.PublishCryptellationBacktestsEventsID(ctx, asyncapi.CryptellationBacktestsEventsIDParameters{
-		ID: int64(backtestID),
+	return a.app.PublishBacktestEvent(ctx, asyncapi.CryptellationBacktestsEventsParameters{
+		Id: int64(backtestID),
 	}, msg)
 }
 

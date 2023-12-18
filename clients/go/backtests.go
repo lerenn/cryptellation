@@ -19,6 +19,8 @@ type Backtests interface {
 	GetAccounts(ctx context.Context, backtestID uint) (map[string]account.Account, error)
 	Subscribe(ctx context.Context, backtestID uint, exchange, pair string) error
 	ListenEvents(ctx context.Context, backtestID uint) (<-chan event.Event, error)
+
+	ServiceInfo(ctx context.Context) (ServiceInfo, error)
 	Close(ctx context.Context)
 }
 

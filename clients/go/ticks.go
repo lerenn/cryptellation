@@ -13,6 +13,8 @@ type Ticks interface {
 	Register(ctx context.Context, payload TicksFilterPayload) error
 	Listen(ctx context.Context, payload TicksFilterPayload) (<-chan tick.Tick, error)
 	Unregister(ctx context.Context, payload TicksFilterPayload) error
+
+	ServiceInfo(ctx context.Context) (ServiceInfo, error)
 	Close(ctx context.Context)
 }
 

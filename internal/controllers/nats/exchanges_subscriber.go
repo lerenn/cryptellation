@@ -4,8 +4,9 @@ import (
 	"context"
 	"net/http"
 
+	asyncapi "github.com/lerenn/cryptellation/api/asyncapi/exchanges"
 	"github.com/lerenn/cryptellation/internal/components/exchanges"
-	asyncapi "github.com/lerenn/cryptellation/pkg/asyncapi/exchanges"
+	"github.com/lerenn/cryptellation/pkg/version"
 )
 
 type exchangesSubscriber struct {
@@ -20,11 +21,11 @@ func newExchangesSubscriber(controller *asyncapi.AppController, app exchanges.In
 	}
 }
 
-func (s exchangesSubscriber) CryptellationExchangesListRequest(ctx context.Context, msg asyncapi.ExchangesRequestMessage) {
+func (s exchangesSubscriber) ListExchangesRequest(ctx context.Context, msg asyncapi.ListExchangesRequestMessage) {
 	// Prepare response and set send at the end
-	resp := asyncapi.NewExchangesResponseMessage()
+	resp := asyncapi.NewListExchangesResponseMessage()
 	resp.SetAsResponseFrom(&msg)
-	defer func() { _ = s.controller.PublishCryptellationExchangesListResponse(ctx, resp) }()
+	defer func() { _ = s.controller.PublishListExchangesResponse(ctx, resp) }()
 
 	// Change from requests type to application types
 	exchangesNames := msg.ToModel()
@@ -41,4 +42,15 @@ func (s exchangesSubscriber) CryptellationExchangesListRequest(ctx context.Conte
 
 	// Add exchanges to response
 	resp.Set(exchanges)
+}
+
+func (s exchangesSubscriber) ServiceInfoRequest(ctx context.Context, msg asyncapi.ServiceInfoRequestMessage) {
+	// Prepare response and set send at the end
+	resp := asyncapi.NewServiceInfoResponseMessage()
+	resp.SetAsResponseFrom(&msg)
+	defer func() { _ = s.controller.PublishServiceInfoResponse(ctx, resp) }()
+
+	// Set info
+	resp.Payload.ApiVersion = asyncapi.AsyncAPIVersion
+	resp.Payload.BinVersion = version.GetVersion()
 }

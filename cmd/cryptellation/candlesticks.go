@@ -6,15 +6,10 @@ import (
 	"time"
 
 	client "github.com/lerenn/cryptellation/clients/go"
-	"github.com/lerenn/cryptellation/clients/go/nats"
 	"github.com/lerenn/cryptellation/pkg/models/candlestick"
 	"github.com/lerenn/cryptellation/pkg/models/period"
 	"github.com/lerenn/cryptellation/pkg/utils"
 	"github.com/spf13/cobra"
-)
-
-var (
-	candlesticks client.Candlesticks
 )
 
 var candlesticksCmd = &cobra.Command{
@@ -22,12 +17,7 @@ var candlesticksCmd = &cobra.Command{
 	Aliases: []string{"c"},
 	Short:   "Manipulate candlesticks service",
 	PersistentPreRunE: func(cmd *cobra.Command, args []string) (err error) {
-		if err := executeParentPersistentPreRuns(cmd, args); err != nil {
-			return err
-		}
-
-		candlesticks, err = nats.NewCandlesticks(globalNATSConfig)
-		return err
+		return executeParentPersistentPreRuns(cmd, args)
 	},
 }
 
@@ -36,7 +26,7 @@ var candlesticksReadCmd = &cobra.Command{
 	Aliases: []string{"r"},
 	Short:   "Read candlesticks from service",
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		list, err := candlesticks.Read(context.Background(), client.ReadCandlesticksPayload{
+		list, err := services.Candlesticks.Read(context.Background(), client.ReadCandlesticksPayload{
 			ExchangeName: "binance",
 			PairSymbol:   "ETH-USDT",
 			Period:       period.H1,

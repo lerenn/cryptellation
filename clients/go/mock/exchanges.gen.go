@@ -8,6 +8,7 @@ import (
 	context "context"
 	reflect "reflect"
 
+	client "github.com/lerenn/cryptellation/clients/go"
 	exchange "github.com/lerenn/cryptellation/pkg/models/exchange"
 	gomock "go.uber.org/mock/gomock"
 )
@@ -65,4 +66,19 @@ func (mr *MockExchangesMockRecorder) Read(ctx interface{}, names ...interface{})
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{ctx}, names...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Read", reflect.TypeOf((*MockExchanges)(nil).Read), varargs...)
+}
+
+// ServiceInfo mocks base method.
+func (m *MockExchanges) ServiceInfo(ctx context.Context) (client.ServiceInfo, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ServiceInfo", ctx)
+	ret0, _ := ret[0].(client.ServiceInfo)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ServiceInfo indicates an expected call of ServiceInfo.
+func (mr *MockExchangesMockRecorder) ServiceInfo(ctx interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ServiceInfo", reflect.TypeOf((*MockExchanges)(nil).ServiceInfo), ctx)
 }

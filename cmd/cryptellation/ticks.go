@@ -6,12 +6,7 @@ import (
 	"time"
 
 	client "github.com/lerenn/cryptellation/clients/go"
-	"github.com/lerenn/cryptellation/clients/go/nats"
 	"github.com/spf13/cobra"
-)
-
-var (
-	ticksClient client.Ticks
 )
 
 var ticksCmd = &cobra.Command{
@@ -19,12 +14,7 @@ var ticksCmd = &cobra.Command{
 	Aliases: []string{"c"},
 	Short:   "Manipulate ticks service",
 	PersistentPreRunE: func(cmd *cobra.Command, args []string) (err error) {
-		if err := executeParentPersistentPreRuns(cmd, args); err != nil {
-			return err
-		}
-
-		ticksClient, err = nats.NewTicks(globalNATSConfig)
-		return err
+		return executeParentPersistentPreRuns(cmd, args)
 	},
 }
 
@@ -33,7 +23,7 @@ var ticksRegisterCmd = &cobra.Command{
 	Aliases: []string{"r"},
 	Short:   "Register to ticks on service",
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		err = ticksClient.Register(context.Background(), client.TicksFilterPayload{
+		err = services.Ticks.Register(context.Background(), client.TicksFilterPayload{
 			ExchangeName: "binance",
 			PairSymbol:   "BTC-USDT",
 		})
@@ -42,12 +32,12 @@ var ticksRegisterCmd = &cobra.Command{
 	},
 }
 
-var ticksListenCmd = &cobra.Command{
+var WatchTicksCmd = &cobra.Command{
 	Use:     "listen",
 	Aliases: []string{"r"},
 	Short:   "Listen to ticks on service",
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		ch, err := ticksClient.Listen(context.Background(), client.TicksFilterPayload{
+		ch, err := services.Ticks.Listen(context.Background(), client.TicksFilterPayload{
 			ExchangeName: "binance",
 			PairSymbol:   "BTC-USDT",
 		})
@@ -66,12 +56,12 @@ var ticksListenCmd = &cobra.Command{
 	},
 }
 
-var ticksUnregisterCmd = &cobra.Command{
+var UnregisterToTicksRequestCmd = &cobra.Command{
 	Use:     "unregister",
 	Aliases: []string{"r"},
 	Short:   "Unregister to ticks on service",
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		err = ticksClient.Unregister(context.Background(), client.TicksFilterPayload{
+		err = services.Ticks.Unregister(context.Background(), client.TicksFilterPayload{
 			ExchangeName: "binance",
 			PairSymbol:   "BTC-USDT",
 		})
@@ -82,7 +72,7 @@ var ticksUnregisterCmd = &cobra.Command{
 
 func initTicks(rootCmd *cobra.Command) {
 	ticksCmd.AddCommand(ticksRegisterCmd)
-	ticksCmd.AddCommand(ticksListenCmd)
-	ticksCmd.AddCommand(ticksUnregisterCmd)
+	ticksCmd.AddCommand(WatchTicksCmd)
+	ticksCmd.AddCommand(UnregisterToTicksRequestCmd)
 	rootCmd.AddCommand(ticksCmd)
 }
