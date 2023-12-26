@@ -1,13 +1,12 @@
 package exchanges
 
 import (
-	"fmt"
-	"log"
+	"context"
 
+	"github.com/lerenn/cryptellation/internal/adapters/db/sql"
 	adapter "github.com/lerenn/cryptellation/internal/adapters/db/sql"
 	"github.com/lerenn/cryptellation/internal/adapters/db/sql/exchanges/entities"
 	"github.com/lerenn/cryptellation/pkg/config"
-	"gorm.io/gorm"
 )
 
 type Adapter struct {
@@ -24,20 +23,10 @@ func New(c config.SQL) (*Adapter, error) {
 	}, err
 }
 
-func (a *Adapter) Reset() error {
-	entities := []interface{}{
+func (a *Adapter) Reset(ctx context.Context) error {
+	return sql.Reset(ctx, a.db.Client, []interface{}{
 		&entities.Pair{},
 		&entities.Period{},
 		&entities.Exchange{},
-	}
-
-	sessionOpt := &gorm.Session{AllowGlobalUpdate: true}
-	for i, entity := range entities {
-		log.Println(i)
-		if err := a.db.Client.Session(sessionOpt).Delete(entity).Error; err != nil {
-			return fmt.Errorf("emptying %T table: %w", entity, err)
-		}
-	}
-
-	return nil
+	})
 }

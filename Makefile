@@ -1,26 +1,26 @@
-.PHONY: all
-.DEFAULT_GOAL := help
+.DEFAULT_GOAL  := help
 
-.PHONY: clean
-clean: ## Clean everything
-	$(MAKE) -C deployments clean
-	$(MAKE) -C test clean
-	$(MAKE) -C build/package clean
+DAGGER_COMMAND := _EXPERIMENTAL_DAGGER_INTERACTIVE_TUI=true dagger run go run ./build/ci/dagger.go
+
+.PHONY: build
+build: ## Run the build
+	@${DAGGER_COMMAND} build
+
+.PHONY: ci
+ci: ## Run the CI
+	@${DAGGER_COMMAND} all
 
 .PHONY: lint
 lint: ## Lint the code
-ifeq ($(shell which golangci-lint &> /dev/null; echo $$?),1)
-	@go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
-endif
-	@LOG_LEVEL=error golangci-lint run
+	@${DAGGER_COMMAND} linter
 
 .PHONY: generate
 generate: ## Generate specified code across the codebase
-	@go generate ./...
+	@${DAGGER_COMMAND} generator
 
 .PHONY: test
 test: ## Run tests
-	@make -C test unit integration
+	@${DAGGER_COMMAND} test
 
 .PHONY: help
 help: ## Display this help message

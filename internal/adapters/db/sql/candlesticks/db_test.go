@@ -1,6 +1,7 @@
 package candlesticks
 
 import (
+	"context"
 	"os"
 	"testing"
 
@@ -22,7 +23,7 @@ func (suite *SqlDatabaseSuite) SetupTest() {
 
 	db, err := New(config.LoadSQL())
 	suite.Require().NoError(err)
-	suite.Require().NoError(db.Reset())
+	suite.Require().NoError(db.Reset(context.TODO()))
 
 	suite.adapter = db
 }

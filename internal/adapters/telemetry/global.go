@@ -2,7 +2,9 @@ package telemetry
 
 import "context"
 
-var globalTelemeter Telemeter
+var (
+	globalTelemeter Telemeter = dummy{}
+)
 
 func Set(t Telemeter) {
 	globalTelemeter = t

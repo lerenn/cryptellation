@@ -31,11 +31,13 @@ func main() {
 	tlr, err := otel.NewTelemeter(context.Background(), "cryptellation-exchanges")
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "An error occured when setting telemetry: %s", err.Error())
-	}
-	defer tlr.Close(context.TODO())
+	} else {
+		// Close when exiting
+		defer tlr.Close(context.TODO())
 
-	// Set telemetry globally
-	telemetry.Set(tlr)
+		// Set telemetry globally
+		telemetry.Set(tlr)
+	}
 
 	// Execute command
 	if err := RootCmd.Execute(); err != nil {

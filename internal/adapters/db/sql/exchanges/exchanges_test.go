@@ -1,6 +1,7 @@
 package exchanges
 
 import (
+	"context"
 	"testing"
 
 	"github.com/lerenn/cryptellation/internal/components/exchanges/ports/db"
@@ -21,7 +22,7 @@ func (suite *ExchangesSuite) SetupTest() {
 
 	db, err := New(config.LoadSQL())
 	suite.Require().NoError(err)
-	suite.Require().NoError(db.Reset())
+	suite.Require().NoError(db.Reset(context.TODO()))
 
 	suite.DB = db
 }

@@ -15,7 +15,7 @@ func (b Backtests) Create(ctx context.Context, req backtest.NewPayload) (id uint
 
 	err = b.db.CreateBacktest(ctx, &bt)
 	if err != nil {
-		return 0, fmt.Errorf("adding backtest to vdb: %w", err)
+		return 0, fmt.Errorf("adding backtest to db: %w", err)
 	}
 
 	return bt.ID, nil

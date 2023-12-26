@@ -1,9 +1,11 @@
 package main
 
 import (
+	"context"
 	"log"
 
 	"github.com/go-gormigrate/gormigrate/v2"
+	"github.com/lerenn/cryptellation/internal/adapters/db/sql"
 	"github.com/lerenn/cryptellation/internal/adapters/db/sql/indicators/migrations"
 	"github.com/lerenn/cryptellation/pkg/config"
 	"github.com/spf13/cobra"
@@ -49,7 +51,7 @@ var migrateCmd = &cobra.Command{
 	Long:    "Execute all migrations that have not been applied.",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		log.Println("Launching migrations...")
-		return migrator.Migrate()
+		return sql.ExecuteUntilDBReady(context.TODO(), migrator.Migrate)
 	},
 }
 

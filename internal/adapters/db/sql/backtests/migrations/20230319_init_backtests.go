@@ -48,9 +48,9 @@ var migration20230319 = gormigrate.Migration{
 			CurrentPriceType    string
 			EndTime             time.Time
 			PeriodBetweenEvents string
-			Balances            []Balance
-			Orders              []Order
-			TickSubscriptions   []TickSubscription
+			Balances            []Balance          `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+			Orders              []Order            `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+			TickSubscriptions   []TickSubscription `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 		}
 
 		return tx.AutoMigrate(&Backtest{}, &Order{}, &Balance{}, &TickSubscription{})

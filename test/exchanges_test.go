@@ -1,4 +1,4 @@
-package endToEnd
+package test
 
 import (
 	"context"

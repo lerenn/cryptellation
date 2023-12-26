@@ -1,6 +1,7 @@
 package candlesticks
 
 import (
+	"context"
 	"testing"
 
 	"github.com/lerenn/cryptellation/internal/components/candlesticks/ports/db"
@@ -22,7 +23,7 @@ func (suite *CandlesticksSuite) SetupTest() {
 
 	db, err := New(config.LoadSQL())
 	suite.Require().NoError(err)
-	suite.Require().NoError(db.Reset())
+	suite.Require().NoError(db.Reset(context.TODO()))
 
 	suite.DB = db
 }

@@ -1,12 +1,12 @@
 package indicators
 
 import (
-	"fmt"
+	"context"
 
+	"github.com/lerenn/cryptellation/internal/adapters/db/sql"
 	adapter "github.com/lerenn/cryptellation/internal/adapters/db/sql"
 	"github.com/lerenn/cryptellation/internal/adapters/db/sql/indicators/entities"
 	"github.com/lerenn/cryptellation/pkg/config"
-	"gorm.io/gorm"
 )
 
 type Adapter struct {
@@ -23,16 +23,8 @@ func New(c config.SQL) (*Adapter, error) {
 	}, err
 }
 
-func (a *Adapter) Reset() error {
-	entities := []interface{}{
+func (a *Adapter) Reset(ctx context.Context) error {
+	return sql.Reset(ctx, a.db.Client, []interface{}{
 		&entities.SimpleMovingAverage{},
-	}
-
-	for _, entity := range entities {
-		if err := a.db.Client.Session(&gorm.Session{AllowGlobalUpdate: true}).Delete(entity).Error; err != nil {
-			return fmt.Errorf("emptying %T table: %w", entity, err)
-		}
-	}
-
-	return nil
+	})
 }

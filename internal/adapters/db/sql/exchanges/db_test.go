@@ -26,7 +26,7 @@ func (suite *SqlDatabaseSuite) SetupTest() {
 
 	db, err := New(config.LoadSQL())
 	suite.Require().NoError(err)
-	suite.Require().NoError(db.Reset())
+	suite.Require().NoError(db.Reset(context.TODO()))
 
 	suite.adapter = db
 }
@@ -54,7 +54,7 @@ func (suite *SqlDatabaseSuite) TestReset() {
 
 	// When we reset the DB
 	defer tmpEnvVar("SQLDB_DATABASE", "exchanges")()
-	as.NoError(suite.adapter.Reset())
+	as.NoError(suite.adapter.Reset(context.TODO()))
 
 	// Then there is no exchange left
 	exchanges := []entities.Exchange{}
