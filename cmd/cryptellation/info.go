@@ -6,7 +6,7 @@ import (
 
 	"gopkg.in/yaml.v2"
 
-	client "github.com/lerenn/cryptellation/clients/go"
+	client "github.com/lerenn/cryptellation/pkg/client"
 	"github.com/spf13/cobra"
 )
 

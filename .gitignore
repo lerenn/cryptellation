@@ -1,3 +1,11 @@
+# Credentials should not be checked
 .credentials.env
-cover.out
+
+# Temporary directory should not checked
 tmp/
+
+# go.work and go.work.sum files should not be checked into version control repos
+# containing modules so that the go.work[.sum] files in a module does not end up
+# overriding the configuration a user created themselves outside of the module.
+go.work
+go.work.sum

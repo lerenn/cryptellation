@@ -1,0 +1,12 @@
+go 1.21.3
+
+use (
+    ./clients/go
+    ./cmd
+    ./pkg
+    ./svc/backtests
+    ./svc/exchanges
+    ./svc/candlesticks
+    ./svc/indicators
+    ./svc/ticks
+)

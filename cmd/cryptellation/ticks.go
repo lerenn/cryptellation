@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	client "github.com/lerenn/cryptellation/clients/go"
+	client "github.com/lerenn/cryptellation/svc/ticks/clients/go"
 	"github.com/spf13/cobra"
 )
 
