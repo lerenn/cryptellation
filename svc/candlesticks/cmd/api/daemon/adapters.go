@@ -3,9 +3,9 @@ package daemon
 import (
 	"context"
 
-	"github.com/lerenn/cryptellation/pkg/adapters/exchanges"
 	"github.com/lerenn/cryptellation/pkg/config"
 	"github.com/lerenn/cryptellation/svc/candlesticks/internal/adapters/db/sql"
+	"github.com/lerenn/cryptellation/svc/candlesticks/internal/adapters/exchanges"
 	"github.com/lerenn/cryptellation/svc/candlesticks/internal/app/ports/db"
 	exchangesPort "github.com/lerenn/cryptellation/svc/candlesticks/internal/app/ports/exchanges"
 )

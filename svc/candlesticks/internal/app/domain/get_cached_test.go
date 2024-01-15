@@ -5,7 +5,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/lerenn/cryptellation/pkg/adapters/exchanges/port"
 	"github.com/lerenn/cryptellation/svc/candlesticks/internal/app"
 	db "github.com/lerenn/cryptellation/svc/candlesticks/internal/app/ports/db"
 	"github.com/lerenn/cryptellation/svc/candlesticks/internal/app/ports/exchanges"
@@ -65,7 +64,7 @@ func (suite *GetCachedSuite) setMocksForAllExistWithNoneInDB() context.Context {
 	// Set call for getting the candlesticks from the database
 	suite.exchange.EXPECT().GetCandlesticks(
 		ctx,
-		port.GetCandlesticksPayload{
+		exchanges.GetCandlesticksPayload{
 			Exchange:   "exchange",
 			PairSymbol: "ETH-USDC",
 			Period:     period.M1,
@@ -120,7 +119,7 @@ func (suite *GetCachedSuite) setMocksForNoneExistWithNoneInDB() context.Context 
 	// Set call for getting the candlesticks from the database
 	suite.exchange.EXPECT().GetCandlesticks(
 		ctx,
-		port.GetCandlesticksPayload{
+		exchanges.GetCandlesticksPayload{
 			Exchange:   "exchange",
 			PairSymbol: "ETH-USDC",
 			Period:     period.M1,
@@ -192,7 +191,7 @@ func (suite *GetCachedSuite) setMocksForFromDBAndService() context.Context {
 	// Set call for getting the candlesticks from the database
 	suite.exchange.EXPECT().GetCandlesticks(
 		ctx,
-		port.GetCandlesticksPayload{
+		exchanges.GetCandlesticksPayload{
 			Exchange:   "exchange",
 			PairSymbol: "ETH-USDC",
 			Period:     period.M1,
@@ -279,7 +278,7 @@ func (suite *GetCachedSuite) setMocksForFromDBAndServiceWithUncomplete() context
 	// Set call for getting the candlesticks from the database
 	suite.exchange.EXPECT().GetCandlesticks(
 		ctx,
-		port.GetCandlesticksPayload{
+		exchanges.GetCandlesticksPayload{
 			Exchange:   "exchange",
 			PairSymbol: "ETH-USDC",
 			Period:     period.M1,

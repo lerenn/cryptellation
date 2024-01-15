@@ -3,10 +3,10 @@ package daemon
 import (
 	"context"
 
-	"github.com/lerenn/cryptellation/pkg/adapters/exchanges"
 	"github.com/lerenn/cryptellation/pkg/config"
 	sql "github.com/lerenn/cryptellation/svc/ticks/internal/adapters/db/sql"
 	natsTicks "github.com/lerenn/cryptellation/svc/ticks/internal/adapters/events/nats"
+	"github.com/lerenn/cryptellation/svc/ticks/internal/adapters/exchanges"
 	"github.com/lerenn/cryptellation/svc/ticks/internal/app/ports/db"
 	"github.com/lerenn/cryptellation/svc/ticks/internal/app/ports/events"
 	exchangesPort "github.com/lerenn/cryptellation/svc/ticks/internal/app/ports/exchanges"

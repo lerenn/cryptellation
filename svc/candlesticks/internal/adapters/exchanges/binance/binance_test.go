@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/lerenn/cryptellation/pkg/adapters/exchanges/port"
+	"github.com/lerenn/cryptellation/svc/candlesticks/internal/app/ports/exchanges"
 	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/candlestick"
 	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/period"
 	"github.com/stretchr/testify/suite"
@@ -26,45 +26,6 @@ func (suite *BinanceSuite) SetupTest() {
 	suite.service = service
 }
 
-func (suite *BinanceSuite) TestExchangeInfos() {
-	as := suite.Require()
-
-	exch, err := suite.service.Infos(context.TODO())
-	suite.NoError(err)
-
-	as.True(checkPairExistance(exch.PairsSymbols, "ETH-USDC"))
-	as.True(checkPairExistance(exch.PairsSymbols, "FTM-USDC"))
-	as.True(checkPairExistance(exch.PairsSymbols, "BTC-USDC"))
-
-	as.Equal(0.1, exch.Fees)
-
-	as.WithinDuration(time.Now(), exch.LastSyncTime, time.Second)
-}
-
-func checkPairExistance(list []string, pairSymbol string) bool {
-	for _, lp := range list {
-		if pairSymbol == lp {
-			return true
-		}
-	}
-
-	return false
-}
-
-func (suite *BinanceSuite) TestTicks() {
-	tickChan, stopChan, err := suite.service.ListenSymbol("BTC-USDT")
-	suite.Require().NoError(err)
-
-	select {
-	case recvTick := <-tickChan:
-		suite.Require().Equal("BTC-USDT", recvTick.PairSymbol)
-	case <-time.After(1 * time.Second):
-		suite.Require().FailNow("Timeout")
-	}
-
-	stopChan <- struct{}{}
-}
-
 func (suite *BinanceSuite) TestGetCandlesticks() {
 	p := "BTC-USDC"
 
@@ -75,7 +36,7 @@ func (suite *BinanceSuite) TestGetCandlesticks() {
 	suite.Require().NoError(err)
 
 	cs, err := suite.service.GetCandlesticks(context.TODO(),
-		port.GetCandlesticksPayload{
+		exchanges.GetCandlesticksPayload{
 			PairSymbol: p,
 			Period:     period.M1,
 			Limit:      2,
@@ -110,7 +71,7 @@ func (suite *BinanceSuite) TestGetCandlesticksWithZeroLimit() {
 	suite.Require().NoError(err)
 
 	_, err = suite.service.GetCandlesticks(context.TODO(),
-		port.GetCandlesticksPayload{
+		exchanges.GetCandlesticksPayload{
 			PairSymbol: p,
 			Period:     period.M1,
 			Limit:      0,

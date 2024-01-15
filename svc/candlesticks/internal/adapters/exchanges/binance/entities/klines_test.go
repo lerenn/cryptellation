@@ -5,6 +5,7 @@ import (
 	"time"
 
 	binance "github.com/adshao/go-binance/v2"
+	adapter "github.com/lerenn/cryptellation/pkg/adapters/exchanges/binance"
 	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/candlestick"
 	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/period"
 )
@@ -82,7 +83,7 @@ func TestKLinesToCandlesticks(t *testing.T) {
 		t.Error("There should be no error:", err)
 	}
 
-	if cs.ExchangeName != Name {
+	if cs.ExchangeName != adapter.Infos.Name {
 		t.Fatal("Exchange should be binance, but is", cs.ExchangeName)
 	} else if cs.PairSymbol != p {
 		t.Fatal("Pair should be", p, "but is", cs.PairSymbol)

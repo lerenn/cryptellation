@@ -5,6 +5,7 @@ import (
 	"time"
 
 	binance "github.com/adshao/go-binance/v2"
+	adapter "github.com/lerenn/cryptellation/pkg/adapters/exchanges/binance"
 	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/candlestick"
 	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/period"
 )
@@ -77,7 +78,7 @@ func KLineToCandlestick(k binance.Kline, p period.Symbol, now time.Time) (time.T
 
 // KLinesToCandlesticks will transform a slice of binance format for Candlestick
 func KLinesToCandlesticks(pair string, period period.Symbol, kl []*binance.Kline, now time.Time) (*candlestick.List, error) {
-	cs := candlestick.NewEmptyList(Name, pair, period)
+	cs := candlestick.NewEmptyList(adapter.Infos.Name, pair, period)
 	for _, k := range kl {
 		t, c, err := KLineToCandlestick(*k, period, now)
 		if err != nil {

@@ -10,6 +10,7 @@ replace github.com/lerenn/cryptellation/svc/candlesticks => ../candlesticks
 
 require (
 	dagger.io/dagger v0.9.5
+	github.com/adshao/go-binance/v2 v2.4.5
 	github.com/go-gormigrate/gormigrate/v2 v2.1.1
 	github.com/google/uuid v1.5.0
 	github.com/lerenn/asyncapi-codegen v0.30.0
@@ -26,7 +27,6 @@ require (
 	github.com/99designs/gqlgen v0.17.41 // indirect
 	github.com/Khan/genqlient v0.6.0 // indirect
 	github.com/adrg/xdg v0.4.0 // indirect
-	github.com/adshao/go-binance/v2 v2.4.5 // indirect
 	github.com/agoda-com/opentelemetry-logs-go v0.4.3 // indirect
 	github.com/agoda-com/otelzap v0.1.1 // indirect
 	github.com/bitly/go-simplejson v0.5.0 // indirect

@@ -3,9 +3,9 @@ package daemon
 import (
 	"context"
 
-	exchangesAdapter "github.com/lerenn/cryptellation/pkg/adapters/exchanges"
 	"github.com/lerenn/cryptellation/pkg/config"
 	sql "github.com/lerenn/cryptellation/svc/exchanges/internal/adapters/db/sql"
+	"github.com/lerenn/cryptellation/svc/exchanges/internal/adapters/exchanges"
 	"github.com/lerenn/cryptellation/svc/exchanges/internal/app/ports/db"
 	exchangesPort "github.com/lerenn/cryptellation/svc/exchanges/internal/app/ports/exchanges"
 )
@@ -23,7 +23,7 @@ func newAdapters(ctx context.Context) (adapters, error) {
 	}
 
 	// Init exchanges connections
-	exchanges, err := exchangesAdapter.New()
+	exchanges, err := exchanges.New()
 	if err != nil {
 		return adapters{}, err
 	}

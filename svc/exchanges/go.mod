@@ -46,8 +46,6 @@ require (
 	github.com/joho/godotenv v1.5.1 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/klauspost/compress v1.17.0 // indirect
-	github.com/lerenn/cryptellation/svc/candlesticks v0.0.0-00010101000000-000000000000 // indirect
-	github.com/lerenn/cryptellation/svc/ticks v0.0.0-00010101000000-000000000000 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.19 // indirect
 	github.com/mitchellh/go-homedir v1.1.0 // indirect

@@ -5,8 +5,8 @@ import (
 	"log"
 	"time"
 
-	"github.com/lerenn/cryptellation/pkg/adapters/exchanges/port"
 	"github.com/lerenn/cryptellation/svc/candlesticks/internal/app"
+	"github.com/lerenn/cryptellation/svc/candlesticks/internal/app/ports/exchanges"
 	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/candlestick"
 )
 
@@ -63,7 +63,7 @@ func getDownloadStartEndTimes(cl *candlestick.List, end, start time.Time) (time.
 }
 
 func (app Candlesticks) download(ctx context.Context, cl *candlestick.List, start, end time.Time, limit uint) error {
-	payload := port.GetCandlesticksPayload{
+	payload := exchanges.GetCandlesticksPayload{
 		Exchange:   cl.ExchangeName,
 		PairSymbol: cl.PairSymbol,
 		Period:     cl.Period,

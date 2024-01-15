@@ -8,7 +8,6 @@ import (
 	context "context"
 	reflect "reflect"
 
-	port "github.com/lerenn/cryptellation/pkg/adapters/exchanges/port"
 	candlestick "github.com/lerenn/cryptellation/svc/candlesticks/pkg/candlestick"
 	gomock "go.uber.org/mock/gomock"
 )
@@ -37,7 +36,7 @@ func (m *MockPort) EXPECT() *MockPortMockRecorder {
 }
 
 // GetCandlesticks mocks base method.
-func (m *MockPort) GetCandlesticks(ctx context.Context, payload port.GetCandlesticksPayload) (*candlestick.List, error) {
+func (m *MockPort) GetCandlesticks(ctx context.Context, payload GetCandlesticksPayload) (*candlestick.List, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetCandlesticks", ctx, payload)
 	ret0, _ := ret[0].(*candlestick.List)
