@@ -1,5 +1,5 @@
 // Generate code for mock
-//go:generate go run go.uber.org/mock/mockgen@v0.2.0 -source=indicators.go -destination=mock/indicators.gen.go -package mock
+//go:generate go run go.uber.org/mock/mockgen@v0.2.0 -source=indicators.go -destination=mock.gen.go -package client
 
 package client
 
