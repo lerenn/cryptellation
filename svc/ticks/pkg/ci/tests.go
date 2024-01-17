@@ -9,11 +9,11 @@ import (
 func UnitTests(client *dagger.Client) *dagger.Container {
 	return client.Container().
 		// Add base image
-		From("golang:" + utils.GoVersion()).
+		From("golang:" + utils.GoVersion() + "-alpine3.19").
 		// Add source code as work directory
 		With(ci.SourceAsWorkdir(client, "/svc/"+ServiceName)).
 		// Test
-		WithExec([]string{"bash", "-c",
+		WithExec([]string{"sh", "-c",
 			"go test $(go list ./... | grep -v -e ./internal/adapters -e ./test)",
 		})
 }
@@ -21,7 +21,7 @@ func UnitTests(client *dagger.Client) *dagger.Container {
 func IntegrationTests(client *dagger.Client) *dagger.Container {
 	return client.Container().
 		// Add base image
-		From("golang:" + utils.GoVersion()).
+		From("golang:" + utils.GoVersion() + "-alpine3.19").
 		// Add source code as work directory
 		With(ci.SourceAsWorkdir(client, "/svc/"+ServiceName)).
 		// Dependencies
@@ -30,7 +30,7 @@ func IntegrationTests(client *dagger.Client) *dagger.Container {
 		With(ci.BinanceDependency(client)).
 		With(ci.NatsDependency(ci.Nats(client))).
 		// Run tests
-		WithExec([]string{"bash", "-c",
+		WithExec([]string{"sh", "-c",
 			"go run ./cmd/data migrations migrate && go test ./internal/adapters/...",
 		})
 }
@@ -41,7 +41,7 @@ func EndToEndTests(client *dagger.Client) *dagger.Container {
 
 	return client.Container().
 		// Add base image
-		From("golang:"+utils.GoVersion()).
+		From("golang:"+utils.GoVersion()+"-alpine3.19").
 		// Add source code as work directory
 		With(ci.SourceAsWorkdir(client, "/svc/"+ServiceName)).
 		// Dependencies

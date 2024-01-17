@@ -32,7 +32,7 @@ func linters() map[string]*dagger.Container {
 func runLinters(cmd *cobra.Command, args []string) {
 	ci.ExecuteContainersInParallel(
 		context.Background(),
-		filterContainerWithPath(linters()),
+		filterWithPath(linters()),
 	)
 }
 
@@ -41,4 +41,8 @@ var lintCmd = &cobra.Command{
 	Aliases: []string{"l"},
 	Short:   "Execute linter step of the CI",
 	Run:     runLinters,
+}
+
+func addLintCmdTo(cmd *cobra.Command) {
+	cmd.AddCommand(lintCmd)
 }

@@ -58,27 +58,33 @@ func Secret(client *dagger.Client, name string) func(r *dagger.Container) *dagge
 
 func ExecuteContainersInParallel(ctx context.Context, containers ...[]*dagger.Container) {
 	// Regroup arg
-	rContainers := make([]*dagger.Container, 0)
+	funcs := make([]func(context.Context) error, 0)
 	for _, l1 := range containers {
 		for _, l2 := range l1 {
 			if l2 == nil {
 				continue
 			}
 
-			rContainers = append(rContainers, l2)
+			funcs = append(funcs, func(ctx context.Context) error {
+				_, err := l2.Stderr(ctx)
+				return err
+			})
 		}
 	}
 
+	ExecuteInParallel(ctx, funcs...)
+}
+
+func ExecuteInParallel(ctx context.Context, funcs ...func(context.Context) error) {
 	// Excute containers
 	var wg sync.WaitGroup
-	for _, ec := range rContainers {
-		go func(e *dagger.Container) {
-			_, err := e.Stderr(ctx)
-			if err != nil {
+	for _, fn := range funcs {
+		go func(fn func(context.Context) error) {
+			if err := fn(ctx); err != nil {
 				panic(err)
 			}
 			wg.Done()
-		}(ec)
+		}(fn)
 
 		wg.Add(1)
 	}

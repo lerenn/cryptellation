@@ -10,7 +10,7 @@ import (
 func Generator(client *dagger.Client) *dagger.Container {
 	return client.Container().
 		// Add base image
-		From("golang:" + utils.GoVersion()).
+		From("golang:" + utils.GoVersion() + "-alpine3.19").
 		// Add source code as work directory
 		With(ci.SourceAsWorkdir(client, "/svc/"+ServiceName)).
 		// Add command to generate code

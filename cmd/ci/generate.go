@@ -26,7 +26,7 @@ func generators() map[string]*dagger.Container {
 func runGenerators(cmd *cobra.Command, args []string) {
 	ci.ExecuteContainersInParallel(
 		context.Background(),
-		filterContainerWithPath(generators()))
+		filterWithPath(generators()))
 }
 
 var generateCmd = &cobra.Command{
@@ -34,4 +34,8 @@ var generateCmd = &cobra.Command{
 	Aliases: []string{"g"},
 	Short:   "Execute generator step of the CI",
 	Run:     runGenerators,
+}
+
+func addGenerateCmdTo(cmd *cobra.Command) {
+	cmd.AddCommand(generateCmd)
 }

@@ -26,7 +26,7 @@ func main() {
 	// Init opentelemetry and set it globally
 	tlr, err := otel.NewTelemeter(context.Background(), "cryptellation-backtests")
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "An error occured when setting telemetry: %s", err.Error())
+		fmt.Fprintf(os.Stderr, "An error occured when setting telemetry: %s\n", err.Error())
 	} else {
 		// Close when exiting
 		defer tlr.Close(context.TODO())

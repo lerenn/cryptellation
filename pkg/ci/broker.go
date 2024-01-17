@@ -1,0 +1,35 @@
+package ci
+
+import (
+	"dagger.io/dagger"
+)
+
+func DefaultBrokerVariables() func(r *dagger.Container) *dagger.Container {
+	return func(r *dagger.Container) *dagger.Container {
+		return r.
+			WithEnvVariable("NATS_HOST", "").
+			WithEnvVariable("NATS_PORT", "")
+	}
+}
+
+func Nats(client *dagger.Client) *dagger.Service {
+	return client.Container().
+		// Add base image
+		From("nats:2.10").
+		// Add exposed ports
+		WithExposedPort(4222).
+		// Return container as a service
+		AsService()
+}
+
+// NatsDependency returns a function that add a NatsDependency service to container
+func NatsDependency(nats *dagger.Service) func(r *dagger.Container) *dagger.Container {
+	return func(r *dagger.Container) *dagger.Container {
+		return r.
+			// Add service
+			WithServiceBinding("nats", nats).
+			// Add environment variables linked to service
+			WithEnvVariable("NATS_HOST", "nats").
+			WithEnvVariable("NATS_PORT", "4222")
+	}
+}

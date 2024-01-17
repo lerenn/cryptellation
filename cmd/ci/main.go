@@ -12,8 +12,7 @@ import (
 var (
 	client *dagger.Client
 
-	testsTypeFlag string
-	pathFlag      string
+	pathFlag string
 )
 
 var rootCmd = &cobra.Command{
@@ -32,6 +31,7 @@ var rootCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		runGenerators(cmd, args)
 		runLinters(cmd, args)
+		runBuilders(cmd, args)
 
 		if err := runTests(cmd, args); err != nil {
 			return err
@@ -42,10 +42,11 @@ var rootCmd = &cobra.Command{
 }
 
 func main() {
-	rootCmd.AddCommand(generateCmd)
-	rootCmd.AddCommand(lintCmd)
-	rootCmd.AddCommand(testCmd)
-	testCmd.Flags().StringVarP(&testsTypeFlag, "type", "t", "all", "Type of the test (all, unit, integration, end-to-end)")
+	addBuildCmdTo(rootCmd)
+	addGenerateCmdTo(rootCmd)
+	addLintCmdTo(rootCmd)
+	addPublishCmdTo(rootCmd)
+	addTestCmdTo(rootCmd)
 
 	rootCmd.PersistentFlags().StringVarP(&pathFlag, "path", "p", "", "Specific part of the project to target")
 	if err := rootCmd.Execute(); err != nil {

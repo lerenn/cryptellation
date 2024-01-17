@@ -17,6 +17,10 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var (
+	testsTypeFlag string
+)
+
 func unitTests() map[string]*dagger.Container {
 	return map[string]*dagger.Container{
 		"clients":          clientsCi.UnitTests(client),
@@ -58,15 +62,15 @@ func runTests(cmd *cobra.Command, args []string) error {
 
 	switch testsTypeFlag {
 	case "unit":
-		ci.ExecuteContainersInParallel(context.Background(), filterContainerWithPath(ut))
+		ci.ExecuteContainersInParallel(context.Background(), filterWithPath(ut))
 	case "integration":
-		ci.ExecuteContainersInParallel(context.Background(), filterContainerWithPath(it))
+		ci.ExecuteContainersInParallel(context.Background(), filterWithPath(it))
 	case "end-to-end":
-		ci.ExecuteContainersInParallel(context.Background(), filterContainerWithPath(et))
+		ci.ExecuteContainersInParallel(context.Background(), filterWithPath(et))
 	case "all":
-		ci.ExecuteContainersInParallel(context.Background(), filterContainerWithPath(ut))
-		ci.ExecuteContainersInParallel(context.Background(), filterContainerWithPath(it))
-		ci.ExecuteContainersInParallel(context.Background(), filterContainerWithPath(et))
+		ci.ExecuteContainersInParallel(context.Background(), filterWithPath(ut))
+		ci.ExecuteContainersInParallel(context.Background(), filterWithPath(it))
+		ci.ExecuteContainersInParallel(context.Background(), filterWithPath(et))
 	default:
 		return fmt.Errorf("invalid type %q", testsTypeFlag)
 	}
@@ -79,4 +83,9 @@ var testCmd = &cobra.Command{
 	Aliases: []string{"t"},
 	Short:   "Execute tests step of the CI",
 	RunE:    runTests,
+}
+
+func addTestCmdTo(cmd *cobra.Command) {
+	testCmd.Flags().StringVarP(&testsTypeFlag, "type", "t", "all", "Type of the test (all, unit, integration, end-to-end)")
+	cmd.AddCommand(testCmd)
 }

@@ -1,30 +1,6 @@
 package ci
 
-import (
-	"dagger.io/dagger"
-)
-
-func Nats(client *dagger.Client) *dagger.Service {
-	return client.Container().
-		// Add base image
-		From("nats:2.10").
-		// Add exposed ports
-		WithExposedPort(4222).
-		// Return container as a service
-		AsService()
-}
-
-// NatsDependency returns a function that add a NatsDependency service to container
-func NatsDependency(nats *dagger.Service) func(r *dagger.Container) *dagger.Container {
-	return func(r *dagger.Container) *dagger.Container {
-		return r.
-			// Add service
-			WithServiceBinding("nats", nats).
-			// Add environment variables linked to service
-			WithEnvVariable("NATS_HOST", "nats").
-			WithEnvVariable("NATS_PORT", "4222")
-	}
-}
+import "dagger.io/dagger"
 
 func Redis(client *dagger.Client) *dagger.Service {
 	return client.Container().
@@ -79,11 +55,13 @@ func CockroachDependency(s *dagger.Service, db string) func(r *dagger.Container)
 	}
 }
 
-// BinanceDependency returns a function that set variables to use binance as a service
-func BinanceDependency(client *dagger.Client) func(r *dagger.Container) *dagger.Container {
+func DefaultSQLVariables() func(r *dagger.Container) *dagger.Container {
 	return func(r *dagger.Container) *dagger.Container {
 		return r.
-			With(Secret(client, "BINANCE_API_KEY")).
-			With(Secret(client, "BINANCE_SECRET_KEY"))
+			WithEnvVariable("SQLDB_HOST", "").
+			WithEnvVariable("SQLDB_PORT", "").
+			WithEnvVariable("SQLDB_USER", "").
+			WithEnvVariable("SQLDB_PASSWORD", "").
+			WithEnvVariable("SQLDB_DATABASE", "")
 	}
 }
