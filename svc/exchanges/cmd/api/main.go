@@ -13,7 +13,7 @@ import (
 
 var RootCmd = &cobra.Command{
 	Use:     "api",
-	Version: version.GetFullVersion(),
+	Version: version.FullVersion(),
 	Short:   "api - a simple CLI to manipulate exchanges service",
 }
 

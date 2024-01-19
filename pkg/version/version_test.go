@@ -21,8 +21,8 @@ func TestGetVersion(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			version = tc.version
-			assert.Equal(t, tc.expectedValue, GetVersion())
+			globalVersion = tc.version
+			assert.Equal(t, tc.expectedValue, Version())
 		})
 	}
 }
@@ -38,9 +38,9 @@ func TestSetVersion(t *testing.T) {
 	}
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			version = defaultTestVersion
+			globalVersion = defaultTestVersion
 			SetVersion(tc.version)
-			assert.Equal(t, tc.expectedValue, version)
+			assert.Equal(t, tc.expectedValue, globalVersion)
 		})
 	}
 }
@@ -56,9 +56,9 @@ func TestSetCommitHash(t *testing.T) {
 	}
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			commitHash = DefaultHash
+			globalCommitHash = DefaultHash
 			SetCommitHash(tc.commitHash)
-			assert.Equal(t, tc.expectedValue, commitHash)
+			assert.Equal(t, tc.expectedValue, globalCommitHash)
 		})
 	}
 }
@@ -75,9 +75,9 @@ func TestGetCommitHash(t *testing.T) {
 	}
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			commitHash = DefaultHash
+			globalCommitHash = DefaultHash
 			SetCommitHash(tc.commitHash)
-			assert.Equal(t, tc.expectedValue, GetCommitHash())
+			assert.Equal(t, tc.expectedValue, CommitHash())
 		})
 	}
 }
@@ -97,10 +97,10 @@ func TestGetFullVersion(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			version, commitHash = defaultTestVersion, "dev" // Setup default values before each run
+			globalVersion, globalCommitHash = defaultTestVersion, "dev" // Setup default values before each run
 			SetVersion(tc.version)
 			SetCommitHash(tc.commitHash)
-			assert.Equal(t, tc.expectedValue, GetFullVersion())
+			assert.Equal(t, tc.expectedValue, FullVersion())
 		})
 	}
 }

@@ -13,7 +13,7 @@ import (
 
 var RootCmd = &cobra.Command{
 	Use:     "data",
-	Version: version.GetFullVersion(),
+	Version: version.FullVersion(),
 	Short:   "data - a simple CLI to manipulate backtests service",
 }
 

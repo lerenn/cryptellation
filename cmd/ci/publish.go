@@ -14,11 +14,11 @@ import (
 
 func publishers() map[string]func(ctx context.Context) error {
 	return map[string]func(ctx context.Context) error{
-		"svc/backtests":    backtestsCi.PublishDockerImage(client),
-		"svc/candlesticks": candlesticksCi.PublishDockerImage(client),
-		"svc/exchanges":    exchangesCi.PublishDockerImage(client),
-		"svc/indicators":   indicatorsCi.PublishDockerImage(client),
-		"svc/ticks":        ticksCi.PublishDockerImage(client),
+		"svc/backtests":    ci.PublishDockerImage(backtestsCi.Runner(client), "backtests"),
+		"svc/candlesticks": ci.PublishDockerImage(candlesticksCi.Runner(client), "candlesticks"),
+		"svc/exchanges":    ci.PublishDockerImage(exchangesCi.Runner(client), "exchanges"),
+		"svc/indicators":   ci.PublishDockerImage(indicatorsCi.Runner(client), "indicators"),
+		"svc/ticks":        ci.PublishDockerImage(ticksCi.Runner(client), "ticks"),
 	}
 }
 

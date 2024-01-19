@@ -88,5 +88,5 @@ func (s subscriber) ServiceInfoRequest(ctx context.Context, msg asyncapi.Service
 
 	// Set info
 	resp.Payload.ApiVersion = asyncapi.AsyncAPIVersion
-	resp.Payload.BinVersion = version.GetVersion()
+	resp.Payload.BinVersion = version.Version()
 }

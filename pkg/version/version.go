@@ -5,48 +5,53 @@ import (
 )
 
 const (
-	DefaultHash = "dev" // Default commit hash in case no value was provided to override.
+	// DefaultHash is the default hash if there is no hash provided
+	DefaultHash = "dev"
+	// DefaultVersion is the default version if there is no hash provided
+	DefaultVersion = "0.0.0"
 )
 
 var (
 	// Version of the application
-	version = "0.8.2"
+	globalVersion = DefaultVersion
 
 	// Revision of the application
-	// "dev" is the default hash is nothing is provided,
-	// this ensure to show this was not built via a pipeline where the hash should be automatically passed
-	commitHash = DefaultHash
+	globalCommitHash = DefaultHash
 )
 
-// returns a string representing the current version
-func GetVersion() string {
-	return version
+// Version returns a string representing the current version
+func Version() string {
+	return globalVersion
 }
 
-// sets the version to tha value provided as ver unless ver is empty
+// SetVersion sets the version to tha value provided as ver unless ver is empty
 func SetVersion(ver string) {
 	if ver != "" {
-		version = ver
+		globalVersion = ver
 	}
 }
 
-// sets the commit hash of the application to the value provided as hash
+// SetCommitHash sets the commit hash of the application to the value provided as hash
 // empty values are accepted
 func SetCommitHash(hash string) {
-	commitHash = hash
+	globalCommitHash = hash
 }
 
-// returns a string representing the current commitHash
-func GetCommitHash() string {
-	return commitHash
+// CommitHash returns a string representing the current commitHash
+func CommitHash() string {
+	return globalCommitHash
 }
 
-// returns a string representing the version and commit hash concatenated separated by a -
+// FullVersion returns a string representing the version and commit hash concatenated separated by a -
 //
-//	returns only the version if the commit hash is not defined
-func GetFullVersion() string {
-	if commitHash == "" {
-		return GetVersion()
+// returns only the version if the commit hash is not defined
+func FullVersion() string {
+	if globalCommitHash == "" {
+		return Version()
 	}
+	return fullVersion(globalVersion, globalCommitHash)
+}
+
+func fullVersion(version, commitHash string) string {
 	return fmt.Sprintf("%s-%s", version, commitHash)
 }

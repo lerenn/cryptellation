@@ -13,7 +13,7 @@ import (
 
 var RootCmd = &cobra.Command{
 	Use:     "cryptellation-candlesticks",
-	Version: version.GetFullVersion(),
+	Version: version.FullVersion(),
 	Short:   "cryptellation-candlesticks - a simple CLI to manipulate candlesticks service data.",
 }
 

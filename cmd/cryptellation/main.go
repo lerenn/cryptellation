@@ -16,7 +16,7 @@ var (
 
 var CryptellationCmd = &cobra.Command{
 	Use:     "cryptellation",
-	Version: version.GetFullVersion(),
+	Version: version.FullVersion(),
 	Short:   "cryptellation - a simple CLI to manipulate cryptellation services",
 	Long: "cryptellation is a simple CLI to manipulate cryptellation services.\n\n" +
 		"One can use cryptellation-candlesticks to manage migrations from the terminal and launch the service.",
