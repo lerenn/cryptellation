@@ -33,8 +33,3 @@ credentials:
     grpc:
       endpoint: lgtm-opentelemetry-collector.telemetry:4317
 
-# Specific section for services
-services:
-  image:
-    repository: localhost:5000/lerenn/cryptellation
-    tag: latest

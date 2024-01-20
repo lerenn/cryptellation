@@ -45,31 +45,47 @@ credentials:
 
 # Specific section for services
 services:
-  image:
-    repository: lerenn/cryptellation
-    tag: 0.8.2
-    pullPolicy: Always
   backtests:
+    image:
+      repository: lerenn/cryptellation-backtests
+      tag: latest
+      pullPolicy: Always
     sqldb:
       database: backtests
     health:
       port: 9000
   candlesticks:
+    image:
+      repository: lerenn/cryptellation-candlesticks
+      tag: latest
+      pullPolicy: Always
     sqldb:
       database: candlesticks
     health:
       port: 9000
   exchanges:
+    image:
+      repository: lerenn/cryptellation-exchanges
+      tag: latest
+      pullPolicy: Always
     sqldb:
       database: exchanges
     health:
       port: 9000
   indicators:
+    image:
+      repository: lerenn/cryptellation-indicators
+      tag: latest
+      pullPolicy: Always
     sqldb:
       database: indicators
     health:
       port: 9000
   ticks:
+    image:
+      repository: lerenn/cryptellation-ticks
+      tag: latest
+      pullPolicy: Always
     sqldb:
       database: ticks
     health:

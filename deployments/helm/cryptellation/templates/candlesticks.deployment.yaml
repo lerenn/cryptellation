@@ -19,16 +19,10 @@ spec:
     spec:
       initContainers:
       {{- include "dependencies.cockroachdb.init-container" . | indent 6 }}
-      - name: init-sql-database
-        image: {{ (.Values.services).image.repository | default "lerenn/cryptellation" }}:{{ (.Values.services).image.tag | default "latest" }}
-        imagePullPolicy: {{ (.Values.services).image.pullPolicy | default "Always" }}
-        command: [ "cryptellation-candlesticks", "migrations", "migrate" ]
-        env:
-        {{- include "common.env" "candlesticks" | indent 8 }}
       containers:
       - name: candlesticks
-        image: {{ (.Values.services).image.repository | default "lerenn/cryptellation" }}:{{ (.Values.services).image.tag | default "latest" }}
-        imagePullPolicy: {{ (.Values.services).image.pullPolicy | default "Always" }}
+        image: {{ ((.Values.services).candlesticks).image.repository | default "lerenn/cryptellation-candlesticks" }}:{{ ((.Values.services).candlesticks).image.tag | default "latest" }}
+        imagePullPolicy: {{ ((.Values.services).candlesticks).image.pullPolicy | default "Always" }}
         livenessProbe:
           httpGet:
             path: /liveness
@@ -37,7 +31,6 @@ spec:
           httpGet:
             path: /readiness
             port: {{ (((.Values.services).candlesticks).health).port | default 9000 }}
-        command: [ "cryptellation-candlesticks", "serve" ]
         env:
         - name: "BINANCE_API_KEY"
           valueFrom:

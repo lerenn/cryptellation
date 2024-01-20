@@ -1,0 +1,27 @@
+DOCKER_IMAGE_PREFIX := lerenn/cryptellation
+
+.PHONY: clean
+clean: ## Clean everything
+	@rm *.tgz || true
+
+.PHONE: deploy/local
+deploy/local: ## Deploy cryptellation helm chart locally
+	@helm upgrade --install cryptellation ./cryptellation -f ./local.yml
+
+.PHONE: template/local
+template/local: ## Template cryptellation helm chart locally
+	@helm template cryptellation ./cryptellation -f ./local.yml --debug
+
+.PHONY: delete
+delete: ## Delete cryptellation helm chart deployment
+	@helm delete cryptellation || true
+
+.PHONY: package
+package: ## Package the helm chart
+	@helm package cryptellation
+
+.PHONY: help
+help: ## Display this help message
+	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_\/-]+:.*?## / {printf "\033[34m%-30s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST) | \
+		sort | \
+		grep -v '#'

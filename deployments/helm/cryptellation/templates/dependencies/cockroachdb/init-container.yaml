@@ -4,11 +4,11 @@
   image: cockroachdb/cockroach:v22.2.2
   imagePullPolicy: IfNotPresent
   volumeMounts:
-    - mountPath: /init
-      name: cockroachdb-init-scripts-volume
+  - mountPath: /init
+    name: cockroachdb-init-scripts-volume
   command:
-    - sh
-    - /init/entrypoint.sh
+  - sh
+  - /init/entrypoint.sh
 {{- end}}
 {{- end}}
 

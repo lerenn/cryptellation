@@ -19,16 +19,10 @@ spec:
     spec:
       initContainers:
       {{- include "dependencies.cockroachdb.init-container" . | indent 6 }}
-      - name: init-sql-database
-        image: {{ (.Values.services).image.repository | default "lerenn/cryptellation" }}:{{ (.Values.services).image.tag | default "latest" }}
-        imagePullPolicy: {{ (.Values.services).image.pullPolicy | default "Always" }}
-        command: [ "cryptellation-indicators", "migrations", "migrate" ]
-        env:
-        {{- include "common.env" "indicators" | indent 8 }}
       containers:
       - name: indicators
-        image: {{ (.Values.services).image.repository | default "lerenn/cryptellation" }}:{{ (.Values.services).image.tag | default "latest" }}
-        imagePullPolicy: {{ (.Values.services).image.pullPolicy | default "Always" }}
+        image: {{ ((.Values.services).indicators).image.repository | default "lerenn/cryptellation-indicators" }}:{{ ((.Values.services).indicators).image.tag | default "latest" }}
+        imagePullPolicy: {{ ((.Values.services).indicators).image.pullPolicy | default "Always" }}
         livenessProbe:
           httpGet:
             path: /liveness
@@ -37,7 +31,6 @@ spec:
           httpGet:
             path: /readiness
             port: {{ (((.Values.services).indicators).health).port | default 9000 }}
-        command: [ "cryptellation-indicators", "serve" ]
         env:
         {{- include "common.env" "indicators" | indent 8 }}
         resources: {}
