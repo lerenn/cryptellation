@@ -25,18 +25,23 @@ func (c *NATS) setDefault() {
 	c.Port = 4222
 }
 
+const (
+	NatsHostEnvName = "NATS_HOST"
+	NatsPortEnvName = "NATS_PORT"
+)
+
 func (c *NATS) overrideFromEnv() {
-	overrideFromEnv(&c.Host, "NATS_HOST")
-	overrideIntFromEnv(&c.Port, "NATS_PORT")
+	overrideFromEnv(&c.Host, NatsHostEnvName)
+	overrideIntFromEnv(&c.Port, NatsPortEnvName)
 }
 
 func (c NATS) Validate() error {
 	if c.Host == "" {
-		return fmt.Errorf("reading host from env (%q): %w", c.Host, ErrInvalidNATS)
+		return fmt.Errorf("reading host from env (%s is %q): %w", NatsHostEnvName, c.Host, ErrInvalidNATS)
 	}
 
 	if c.Port == 0 {
-		return fmt.Errorf("reading port from env (%q): %w", c.Port, ErrInvalidNATS)
+		return fmt.Errorf("reading port from env (%s is %q): %w", NatsPortEnvName, c.Port, ErrInvalidNATS)
 	}
 
 	return nil

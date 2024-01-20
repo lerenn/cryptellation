@@ -32,7 +32,7 @@ var ticksRegisterCmd = &cobra.Command{
 	},
 }
 
-var WatchTicksCmd = &cobra.Command{
+var ticksWatchCmd = &cobra.Command{
 	Use:     "listen",
 	Aliases: []string{"r"},
 	Short:   "Listen to ticks on service",
@@ -56,7 +56,7 @@ var WatchTicksCmd = &cobra.Command{
 	},
 }
 
-var UnregisterToTicksRequestCmd = &cobra.Command{
+var ticksUnregisterCmd = &cobra.Command{
 	Use:     "unregister",
 	Aliases: []string{"r"},
 	Short:   "Unregister to ticks on service",
@@ -70,9 +70,26 @@ var UnregisterToTicksRequestCmd = &cobra.Command{
 	},
 }
 
+var ticksInfoCmd = &cobra.Command{
+	Use:     "info",
+	Aliases: []string{"info"},
+	Short:   "Read info from ticks service",
+	RunE: func(cmd *cobra.Command, args []string) (err error) {
+		info, err := services.Ticks.ServiceInfo(context.TODO())
+		if err != nil {
+			return err
+		}
+
+		fmt.Printf("%+v\n", info)
+		return nil
+	},
+}
+
 func initTicks(rootCmd *cobra.Command) {
+	ticksCmd.AddCommand(ticksInfoCmd)
 	ticksCmd.AddCommand(ticksRegisterCmd)
-	ticksCmd.AddCommand(WatchTicksCmd)
-	ticksCmd.AddCommand(UnregisterToTicksRequestCmd)
+	ticksCmd.AddCommand(ticksUnregisterCmd)
+	ticksCmd.AddCommand(ticksWatchCmd)
+
 	rootCmd.AddCommand(ticksCmd)
 }

@@ -25,7 +25,7 @@ func IntegrationTests(client *dagger.Client) *dagger.Container {
 		// Add source code as work directory
 		With(ci.SourceAsWorkdir(client, "/svc/"+ServiceName)).
 		// Dependencies
-		With(ci.CockroachDependency(ci.CockroachDB(client, ServiceName), ServiceName)).
+		With(ci.CockroachDependency(ci.CockroachDBService(client, ServiceName), ServiceName)).
 		With(ci.BinanceDependency(client)).
 		// Run tests
 		WithExec([]string{"sh", "-c",
@@ -34,7 +34,7 @@ func IntegrationTests(client *dagger.Client) *dagger.Container {
 }
 
 func EndToEndTests(client *dagger.Client) *dagger.Container {
-	broker := ci.Nats(client)
+	broker := ci.NatsService(client)
 	service := Service(client, ci.NatsDependency(broker))
 
 	return client.Container().

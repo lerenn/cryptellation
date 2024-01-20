@@ -67,10 +67,14 @@ func ExecuteContainersInParallel(ctx context.Context, containers ...[]*dagger.Co
 				continue
 			}
 
-			funcs = append(funcs, func(ctx context.Context) error {
-				_, err := l2.Stderr(ctx)
+			// Note: create a new local variable to store value of actual l2
+			callback := l2
+
+			fn := func(ctx context.Context) error {
+				_, err := callback.Stderr(ctx)
 				return err
-			})
+			}
+			funcs = append(funcs, fn)
 		}
 	}
 
@@ -81,8 +85,8 @@ func ExecuteInParallel(ctx context.Context, funcs ...func(context.Context) error
 	// Excute containers
 	var wg sync.WaitGroup
 	for _, fn := range funcs {
-		go func(fn func(context.Context) error) {
-			if err := fn(ctx); err != nil {
+		go func(callback func(context.Context) error) {
+			if err := callback(ctx); err != nil {
 				panic(err)
 			}
 			wg.Done()

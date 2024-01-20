@@ -12,14 +12,16 @@ func DefaultBrokerVariables() func(r *dagger.Container) *dagger.Container {
 	}
 }
 
-func Nats(client *dagger.Client) *dagger.Service {
+func Nats(client *dagger.Client) *dagger.Container {
 	return client.Container().
 		// Add base image
 		From("nats:2.10").
 		// Add exposed ports
-		WithExposedPort(4222).
-		// Return container as a service
-		AsService()
+		WithExposedPort(4222)
+}
+
+func NatsService(client *dagger.Client) *dagger.Service {
+	return Nats(client).AsService()
 }
 
 // NatsDependency returns a function that add a NatsDependency service to container

@@ -2,6 +2,7 @@ package nats
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/lerenn/cryptellation/pkg/config"
 	backtests "github.com/lerenn/cryptellation/svc/backtests/clients/go/nats"
@@ -20,29 +21,34 @@ type Services struct {
 }
 
 func NewServices(c config.NATS) (Services, error) {
+	// Check the configuration before creating clients
+	if err := c.Validate(); err != nil {
+		return Services{}, err
+	}
+
 	backtests, err := backtests.NewClient(c)
 	if err != nil {
-		return Services{}, err
+		return Services{}, fmt.Errorf("error when creating new backtests client: %w", err)
 	}
 
 	candlesticks, err := candlesticks.NewClient(c)
 	if err != nil {
-		return Services{}, err
+		return Services{}, fmt.Errorf("error when creating new candlesticks client: %w", err)
 	}
 
 	exchanges, err := exchanges.NewClient(c)
 	if err != nil {
-		return Services{}, err
+		return Services{}, fmt.Errorf("error when creating new exchanges client: %w", err)
 	}
 
 	indicators, err := indicators.NewClient(c)
 	if err != nil {
-		return Services{}, err
+		return Services{}, fmt.Errorf("error when creating new indicators client: %w", err)
 	}
 
 	ticks, err := ticks.NewClient(c)
 	if err != nil {
-		return Services{}, err
+		return Services{}, fmt.Errorf("error when creating new ticks client: %w", err)
 	}
 
 	return Services{

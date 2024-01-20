@@ -25,7 +25,7 @@ func IntegrationTests(client *dagger.Client) *dagger.Container {
 		// Add source code as work directory
 		With(ci.SourceAsWorkdir(client, "/pkg")).
 		// Dependencies
-		With(ci.CockroachDependency(ci.CockroachDB(client, "pkg"), "pkg")).
+		With(ci.CockroachDependency(ci.CockroachDBService(client, "pkg"), "pkg")).
 		With(ci.BinanceDependency(client)).
 		// Run tests
 		WithExec([]string{"sh", "-c",

@@ -44,7 +44,23 @@ var candlesticksReadCmd = &cobra.Command{
 	},
 }
 
+var candlesticksInfoCmd = &cobra.Command{
+	Use:     "info",
+	Aliases: []string{"info"},
+	Short:   "Read info from candlesticks service",
+	RunE: func(cmd *cobra.Command, args []string) (err error) {
+		info, err := services.Candlesticks.ServiceInfo(context.TODO())
+		if err != nil {
+			return err
+		}
+
+		fmt.Printf("%+v\n", info)
+		return nil
+	},
+}
+
 func initCandlesticks(rootCmd *cobra.Command) {
 	candlesticksCmd.AddCommand(candlesticksReadCmd)
+	candlesticksCmd.AddCommand(candlesticksInfoCmd)
 	rootCmd.AddCommand(candlesticksCmd)
 }

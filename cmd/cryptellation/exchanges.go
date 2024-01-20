@@ -31,7 +31,23 @@ var exchangesReadCmd = &cobra.Command{
 	},
 }
 
+var exchangesInfoCmd = &cobra.Command{
+	Use:     "info",
+	Aliases: []string{"info"},
+	Short:   "Read info from exchanges service",
+	RunE: func(cmd *cobra.Command, args []string) (err error) {
+		info, err := services.Exchanges.ServiceInfo(context.TODO())
+		if err != nil {
+			return err
+		}
+
+		fmt.Printf("%+v\n", info)
+		return nil
+	},
+}
+
 func initExchanges(rootCmd *cobra.Command) {
 	exchangesCmd.AddCommand(exchangesReadCmd)
+	exchangesCmd.AddCommand(exchangesInfoCmd)
 	rootCmd.AddCommand(exchangesCmd)
 }

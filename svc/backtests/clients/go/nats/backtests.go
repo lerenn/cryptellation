@@ -37,7 +37,7 @@ func NewClient(c config.NATS, options ...BacktestsOption) (Client, error) {
 	// Create a NATS Controller
 	b.broker, err = nats.NewController(c.URL())
 	if err != nil {
-		return Client{}, &asyncapi.Error{}
+		return Client{}, err
 	}
 
 	// Create a logger if asked

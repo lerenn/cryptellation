@@ -2,14 +2,16 @@ package ci
 
 import "dagger.io/dagger"
 
-func Redis(client *dagger.Client) *dagger.Service {
+func Redis(client *dagger.Client) *dagger.Container {
 	return client.Container().
 		// Add base image
 		From("redis:6-alpine").
 		// Add exposed ports
-		WithExposedPort(6379).
-		// Return container as a service
-		AsService()
+		WithExposedPort(6379)
+}
+
+func RedisService(client *dagger.Client) *dagger.Service {
+	return Redis(client).AsService()
 }
 
 // RedisDependency returns a function that add a DependsOnRedis service to container
@@ -23,8 +25,8 @@ func RedisDependency(redis *dagger.Service) func(r *dagger.Container) *dagger.Co
 	}
 }
 
-func CockroachDB(client *dagger.Client, db string) *dagger.Service {
-	s := client.Container().
+func CockroachDB(client *dagger.Client, db string) *dagger.Container {
+	return client.Container().
 		// Add base image
 		From("cockroachdb/cockroach").
 		// Add exposed ports
@@ -33,11 +35,11 @@ func CockroachDB(client *dagger.Client, db string) *dagger.Service {
 		// With database
 		WithEnvVariable("COCKROACH_DATABASE", db).
 		// Add command
-		WithExec([]string{"start-single-node", "--insecure"}).
-		// Return container as a service
-		AsService()
+		WithExec([]string{"start-single-node", "--insecure"})
+}
 
-	return s
+func CockroachDBService(client *dagger.Client, db string) *dagger.Service {
+	return CockroachDB(client, db).AsService()
 }
 
 // CockroachDependency returns a function that add a CockroachDependency service to container
