@@ -3,6 +3,8 @@ package main
 import (
 	"context"
 	"fmt"
+	"os"
+	"strings"
 
 	"dagger.io/dagger"
 	"github.com/lerenn/cryptellation/pkg/ci"
@@ -15,9 +17,11 @@ import (
 )
 
 func runServers(cmd *cobra.Command, args []string) {
-	// Dependencies
+	// Set broker
 	broker := ci.Nats(client).AsService()
 	withBroker := ci.NatsDependency(broker)
+	stop := writeBrokerAccess(broker)
+	defer stop(context.Background())
 
 	// Cryptellation that will be run as dependencies
 	candlesticks := candlesticksCi.RunnerWithDependencies(client, withBroker)
@@ -28,20 +32,6 @@ func runServers(cmd *cobra.Command, args []string) {
 	indicators := indicatorsCi.RunnerWithDependencies(client, withBroker, candlesticks.AsService())
 	ticks := ticksCi.RunnerWithDependencies(client, withBroker)
 
-	// Set tunnel to NATS
-	tunnel, err := client.Host().Tunnel(broker).Start(context.Background())
-	if err != nil {
-		panic(err)
-	}
-	defer tunnel.Stop(context.Background())
-
-	// Get NATS service address
-	srvAddr, err := tunnel.Endpoint(context.Background())
-	if err != nil {
-		panic(err)
-	}
-	fmt.Println("NATS running on host at this address:", srvAddr)
-
 	// Run services
 	ci.ExecuteContainersInParallel(context.Background(), []*dagger.Container{
 		backtests,
@@ -49,6 +39,35 @@ func runServers(cmd *cobra.Command, args []string) {
 		indicators,
 		ticks,
 	})
+}
+
+func writeBrokerAccess(broker *dagger.Service) func(ctx context.Context) (*dagger.Service, error) {
+	// Set tunnel to NATS
+	tunnel, err := client.Host().Tunnel(broker).Start(context.Background())
+	if err != nil {
+		panic(err)
+	}
+
+	// Get NATS service address
+	srvAddr, err := tunnel.Endpoint(context.Background())
+	if err != nil {
+		panic(err)
+	}
+
+	// Write server address in a file
+	f, err := os.Create(".env")
+	if err != nil {
+		panic(err)
+	}
+
+	// Split address in host/port
+	srvAddrSplit := strings.Split(srvAddr, ":")
+
+	str := fmt.Sprintf("NATS_HOST=%s\n", srvAddrSplit[0])
+	str += fmt.Sprintf("NATS_PORT=%s\n", srvAddrSplit[1])
+	f.WriteString(str)
+
+	return tunnel.Stop
 }
 
 var serveCmd = &cobra.Command{

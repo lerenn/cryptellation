@@ -3,6 +3,8 @@ package config
 import (
 	"errors"
 	"fmt"
+
+	"github.com/joho/godotenv"
 )
 
 var (
@@ -25,6 +27,10 @@ func (c *Redis) setDefault() {
 }
 
 func (c *Redis) overrideFromEnv() {
+	// Attempting to load from .env
+	_ = godotenv.Load(".env")
+
+	// Overriding variables
 	overrideFromEnv(&c.Address, "REDIS_URL")
 	overrideFromEnv(&c.Password, "REDIS_PASSWORD")
 }

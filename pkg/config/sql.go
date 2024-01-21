@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/joho/godotenv"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 )
@@ -37,6 +38,10 @@ func (c *SQL) setDefault() {
 }
 
 func (c *SQL) overrideFromEnv() {
+	// Attempting to load from .env
+	_ = godotenv.Load(".env")
+
+	// Overriding variables
 	overrideFromEnv(&c.Host, "SQLDB_HOST")
 	overrideIntFromEnv(&c.Port, "SQLDB_PORT")
 	overrideFromEnv(&c.User, "SQLDB_USER")

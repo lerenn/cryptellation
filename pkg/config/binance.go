@@ -3,6 +3,8 @@ package config
 import (
 	"errors"
 	"fmt"
+
+	"github.com/joho/godotenv"
 )
 
 var (
@@ -25,6 +27,10 @@ func (c *Binance) setDefault() {
 }
 
 func (c *Binance) overrideFromEnv() {
+	// Attempting to load from .env
+	_ = godotenv.Load(".env")
+
+	// Overriding variables
 	overrideFromEnv(&c.ApiKey, "BINANCE_API_KEY")
 	overrideFromEnv(&c.SecretKey, "BINANCE_SECRET_KEY")
 }

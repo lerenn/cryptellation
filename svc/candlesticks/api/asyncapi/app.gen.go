@@ -361,10 +361,10 @@ func (c *AppController) PublishListCandlesticksResponse(ctx context.Context, msg
 	})
 }
 
-// PublishServiceInfoResponse will publish messages to 'cryptellation.service.info.response' channel
+// PublishServiceInfoResponse will publish messages to 'cryptellation.candlesticks.service.info.response' channel
 func (c *AppController) PublishServiceInfoResponse(ctx context.Context, msg ServiceInfoResponseMessage) error {
 	// Get channel path
-	path := "cryptellation.service.info.response"
+	path := "cryptellation.candlesticks.service.info.response"
 
 	// Set correlation ID if it does not exist
 	if id := msg.CorrelationID(); id == "" {

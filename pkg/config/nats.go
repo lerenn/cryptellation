@@ -3,6 +3,8 @@ package config
 import (
 	"errors"
 	"fmt"
+
+	"github.com/joho/godotenv"
 )
 
 var (
@@ -31,6 +33,10 @@ const (
 )
 
 func (c *NATS) overrideFromEnv() {
+	// Attempting to load from .env
+	_ = godotenv.Load(".env")
+
+	// Overriding variables
 	overrideFromEnv(&c.Host, NatsHostEnvName)
 	overrideIntFromEnv(&c.Port, NatsPortEnvName)
 }

@@ -32,7 +32,7 @@ channels:
         - name: info request
       message:
         $ref: '#/components/messages/ServiceInfoRequest'
-  cryptellation.service.info.response:
+  cryptellation.candlesticks.service.info.response:
     subscribe:
       operationId: ServiceInfoResponse
       description: Receive information about the service

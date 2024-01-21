@@ -1000,10 +1000,10 @@ func (c *AppController) PublishListBacktestOrdersResponse(ctx context.Context, m
 	})
 }
 
-// PublishSubscribeBacktestResponse will publish messages to 'cryptellation.backtests.subscribe.response' channel
-func (c *AppController) PublishSubscribeBacktestResponse(ctx context.Context, msg SubscribeBacktestResponseMessage) error {
+// PublishServiceInfoResponse will publish messages to 'cryptellation.backtests.service.info.response' channel
+func (c *AppController) PublishServiceInfoResponse(ctx context.Context, msg ServiceInfoResponseMessage) error {
 	// Get channel path
-	path := "cryptellation.backtests.subscribe.response"
+	path := "cryptellation.backtests.service.info.response"
 
 	// Set correlation ID if it does not exist
 	if id := msg.CorrelationID(); id == "" {
@@ -1030,10 +1030,10 @@ func (c *AppController) PublishSubscribeBacktestResponse(ctx context.Context, ms
 	})
 }
 
-// PublishServiceInfoResponse will publish messages to 'cryptellation.service.info.response' channel
-func (c *AppController) PublishServiceInfoResponse(ctx context.Context, msg ServiceInfoResponseMessage) error {
+// PublishSubscribeBacktestResponse will publish messages to 'cryptellation.backtests.subscribe.response' channel
+func (c *AppController) PublishSubscribeBacktestResponse(ctx context.Context, msg SubscribeBacktestResponseMessage) error {
 	// Get channel path
-	path := "cryptellation.service.info.response"
+	path := "cryptellation.backtests.subscribe.response"
 
 	// Set correlation ID if it does not exist
 	if id := msg.CorrelationID(); id == "" {

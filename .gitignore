@@ -1,5 +1,6 @@
 # Credentials should not be checked
-.credentials.env
+*.env
+!*.example.env
 
 # Temporary directory should not checked
 tmp/

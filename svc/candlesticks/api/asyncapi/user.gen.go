@@ -17,7 +17,7 @@ type UserSubscriber interface {
 	// ListCandlesticksResponse subscribes to messages placed on the 'cryptellation.candlesticks.list.response' channel
 	ListCandlesticksResponse(ctx context.Context, msg ListCandlesticksResponseMessage)
 
-	// ServiceInfoResponse subscribes to messages placed on the 'cryptellation.service.info.response' channel
+	// ServiceInfoResponse subscribes to messages placed on the 'cryptellation.candlesticks.service.info.response' channel
 	ServiceInfoResponse(ctx context.Context, msg ServiceInfoResponseMessage)
 }
 
@@ -237,11 +237,11 @@ func (c *UserController) UnsubscribeListCandlesticksResponse(ctx context.Context
 	delete(c.subscriptions, path)
 
 	c.logger.Info(ctx, "Unsubscribed from channel")
-} // SubscribeServiceInfoResponse will subscribe to new messages from 'cryptellation.service.info.response' channel.
+} // SubscribeServiceInfoResponse will subscribe to new messages from 'cryptellation.candlesticks.service.info.response' channel.
 // Callback function 'fn' will be called each time a new message is received.
 func (c *UserController) SubscribeServiceInfoResponse(ctx context.Context, fn func(ctx context.Context, msg ServiceInfoResponseMessage)) error {
 	// Get channel path
-	path := "cryptellation.service.info.response"
+	path := "cryptellation.candlesticks.service.info.response"
 
 	// Set context
 	ctx = addUserContextValues(ctx, path)
@@ -307,11 +307,11 @@ func (c *UserController) SubscribeServiceInfoResponse(ctx context.Context, fn fu
 	return nil
 }
 
-// UnsubscribeServiceInfoResponse will unsubscribe messages from 'cryptellation.service.info.response' channel.
+// UnsubscribeServiceInfoResponse will unsubscribe messages from 'cryptellation.candlesticks.service.info.response' channel.
 // A timeout can be set in context to avoid blocking operation, if needed.
 func (c *UserController) UnsubscribeServiceInfoResponse(ctx context.Context) {
 	// Get channel path
-	path := "cryptellation.service.info.response"
+	path := "cryptellation.candlesticks.service.info.response"
 
 	// Check if there subscribers for this channel
 	sub, exists := c.subscriptions[path]
@@ -477,7 +477,7 @@ func (c *UserController) WaitForListCandlesticksResponse(ctx context.Context, pu
 // A timeout can be set in context to avoid blocking operation, if needed.
 func (c *UserController) WaitForServiceInfoResponse(ctx context.Context, publishMsg MessageWithCorrelationID, pub func(ctx context.Context) error) (ServiceInfoResponseMessage, error) {
 	// Get channel path
-	path := "cryptellation.service.info.response"
+	path := "cryptellation.candlesticks.service.info.response"
 
 	// Set context
 	ctx = addUserContextValues(ctx, path)

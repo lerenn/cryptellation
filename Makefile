@@ -1,5 +1,17 @@
 .DEFAULT_GOAL := help
 
+.PHONY: ci
+ci: ## Execute all basic CI steps
+	@dagger run go run ./cmd/ci
+
+.PHONY: generate
+generate: ## Generate code files
+	@dagger run go run ./cmd/ci generate
+
+.PHONY: lint
+lint: ## Lint code
+	@dagger run go run ./cmd/ci lint
+
 .PHONY: serve 
 serve: ## Serve the Cryptellation stack for development
 	@dagger run go run ./cmd/ci serve

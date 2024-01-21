@@ -32,11 +32,11 @@ type UserSubscriber interface {
 	// ListBacktestOrdersResponse subscribes to messages placed on the 'cryptellation.backtests.orders.list.response' channel
 	ListBacktestOrdersResponse(ctx context.Context, msg ListBacktestOrdersResponseMessage)
 
+	// ServiceInfoResponse subscribes to messages placed on the 'cryptellation.backtests.service.info.response' channel
+	ServiceInfoResponse(ctx context.Context, msg ServiceInfoResponseMessage)
+
 	// SubscribeBacktestResponse subscribes to messages placed on the 'cryptellation.backtests.subscribe.response' channel
 	SubscribeBacktestResponse(ctx context.Context, msg SubscribeBacktestResponseMessage)
-
-	// ServiceInfoResponse subscribes to messages placed on the 'cryptellation.service.info.response' channel
-	ServiceInfoResponse(ctx context.Context, msg ServiceInfoResponseMessage)
 }
 
 // UserController is the structure that provides publishing capabilities to the
@@ -161,10 +161,10 @@ func (c *UserController) SubscribeAll(ctx context.Context, as UserSubscriber) er
 	if err := c.SubscribeListBacktestOrdersResponse(ctx, as.ListBacktestOrdersResponse); err != nil {
 		return err
 	}
-	if err := c.SubscribeSubscribeBacktestResponse(ctx, as.SubscribeBacktestResponse); err != nil {
+	if err := c.SubscribeServiceInfoResponse(ctx, as.ServiceInfoResponse); err != nil {
 		return err
 	}
-	if err := c.SubscribeServiceInfoResponse(ctx, as.ServiceInfoResponse); err != nil {
+	if err := c.SubscribeSubscribeBacktestResponse(ctx, as.SubscribeBacktestResponse); err != nil {
 		return err
 	}
 
@@ -178,8 +178,8 @@ func (c *UserController) UnsubscribeAll(ctx context.Context) {
 	c.UnsubscribeCreateBacktestResponse(ctx)
 	c.UnsubscribeCreateBacktestOrderResponse(ctx)
 	c.UnsubscribeListBacktestOrdersResponse(ctx)
-	c.UnsubscribeSubscribeBacktestResponse(ctx)
 	c.UnsubscribeServiceInfoResponse(ctx)
+	c.UnsubscribeSubscribeBacktestResponse(ctx)
 }
 
 // SubscribeListBacktestAccountsResponse will subscribe to new messages from 'cryptellation.backtests.accounts.list.response' channel.
@@ -730,6 +730,98 @@ func (c *UserController) UnsubscribeListBacktestOrdersResponse(ctx context.Conte
 	delete(c.subscriptions, path)
 
 	c.logger.Info(ctx, "Unsubscribed from channel")
+} // SubscribeServiceInfoResponse will subscribe to new messages from 'cryptellation.backtests.service.info.response' channel.
+// Callback function 'fn' will be called each time a new message is received.
+func (c *UserController) SubscribeServiceInfoResponse(ctx context.Context, fn func(ctx context.Context, msg ServiceInfoResponseMessage)) error {
+	// Get channel path
+	path := "cryptellation.backtests.service.info.response"
+
+	// Set context
+	ctx = addUserContextValues(ctx, path)
+	ctx = context.WithValue(ctx, extensions.ContextKeyIsDirection, "reception")
+
+	// Check if there is already a subscription
+	_, exists := c.subscriptions[path]
+	if exists {
+		err := fmt.Errorf("%w: %q channel is already subscribed", extensions.ErrAlreadySubscribedChannel, path)
+		c.logger.Error(ctx, err.Error())
+		return err
+	}
+
+	// Subscribe to broker channel
+	sub, err := c.broker.Subscribe(ctx, path)
+	if err != nil {
+		c.logger.Error(ctx, err.Error())
+		return err
+	}
+	c.logger.Info(ctx, "Subscribed to channel")
+
+	// Asynchronously listen to new messages and pass them to app subscriber
+	go func() {
+		for {
+			// Wait for next message
+			brokerMsg, open := <-sub.MessagesChannel()
+
+			// If subscription is closed and there is no more message
+			// (i.e. uninitialized message), then exit the function
+			if !open && brokerMsg.IsUninitialized() {
+				return
+			}
+
+			// Set broker message to context
+			ctx = context.WithValue(ctx, extensions.ContextKeyIsBrokerMessage, brokerMsg.String())
+
+			// Execute middlewares before handling the message
+			if err := c.executeMiddlewares(ctx, &brokerMsg, func(ctx context.Context) error {
+				// Process message
+				msg, err := newServiceInfoResponseMessageFromBrokerMessage(brokerMsg)
+				if err != nil {
+					return err
+				}
+
+				// Add correlation ID to context if it exists
+				if id := msg.CorrelationID(); id != "" {
+					ctx = context.WithValue(ctx, extensions.ContextKeyIsCorrelationID, id)
+				}
+
+				// Execute the subscription function
+				fn(ctx, msg)
+
+				return nil
+			}); err != nil {
+				c.logger.Error(ctx, err.Error())
+			}
+		}
+	}()
+
+	// Add the cancel channel to the inside map
+	c.subscriptions[path] = sub
+
+	return nil
+}
+
+// UnsubscribeServiceInfoResponse will unsubscribe messages from 'cryptellation.backtests.service.info.response' channel.
+// A timeout can be set in context to avoid blocking operation, if needed.
+func (c *UserController) UnsubscribeServiceInfoResponse(ctx context.Context) {
+	// Get channel path
+	path := "cryptellation.backtests.service.info.response"
+
+	// Check if there subscribers for this channel
+	sub, exists := c.subscriptions[path]
+	if !exists {
+		return
+	}
+
+	// Set context
+	ctx = addUserContextValues(ctx, path)
+
+	// Stop the subscription
+	sub.Cancel(ctx)
+
+	// Remove if from the subscribers
+	delete(c.subscriptions, path)
+
+	c.logger.Info(ctx, "Unsubscribed from channel")
 } // SubscribeSubscribeBacktestResponse will subscribe to new messages from 'cryptellation.backtests.subscribe.response' channel.
 // Callback function 'fn' will be called each time a new message is received.
 func (c *UserController) SubscribeSubscribeBacktestResponse(ctx context.Context, fn func(ctx context.Context, msg SubscribeBacktestResponseMessage)) error {
@@ -805,98 +897,6 @@ func (c *UserController) SubscribeSubscribeBacktestResponse(ctx context.Context,
 func (c *UserController) UnsubscribeSubscribeBacktestResponse(ctx context.Context) {
 	// Get channel path
 	path := "cryptellation.backtests.subscribe.response"
-
-	// Check if there subscribers for this channel
-	sub, exists := c.subscriptions[path]
-	if !exists {
-		return
-	}
-
-	// Set context
-	ctx = addUserContextValues(ctx, path)
-
-	// Stop the subscription
-	sub.Cancel(ctx)
-
-	// Remove if from the subscribers
-	delete(c.subscriptions, path)
-
-	c.logger.Info(ctx, "Unsubscribed from channel")
-} // SubscribeServiceInfoResponse will subscribe to new messages from 'cryptellation.service.info.response' channel.
-// Callback function 'fn' will be called each time a new message is received.
-func (c *UserController) SubscribeServiceInfoResponse(ctx context.Context, fn func(ctx context.Context, msg ServiceInfoResponseMessage)) error {
-	// Get channel path
-	path := "cryptellation.service.info.response"
-
-	// Set context
-	ctx = addUserContextValues(ctx, path)
-	ctx = context.WithValue(ctx, extensions.ContextKeyIsDirection, "reception")
-
-	// Check if there is already a subscription
-	_, exists := c.subscriptions[path]
-	if exists {
-		err := fmt.Errorf("%w: %q channel is already subscribed", extensions.ErrAlreadySubscribedChannel, path)
-		c.logger.Error(ctx, err.Error())
-		return err
-	}
-
-	// Subscribe to broker channel
-	sub, err := c.broker.Subscribe(ctx, path)
-	if err != nil {
-		c.logger.Error(ctx, err.Error())
-		return err
-	}
-	c.logger.Info(ctx, "Subscribed to channel")
-
-	// Asynchronously listen to new messages and pass them to app subscriber
-	go func() {
-		for {
-			// Wait for next message
-			brokerMsg, open := <-sub.MessagesChannel()
-
-			// If subscription is closed and there is no more message
-			// (i.e. uninitialized message), then exit the function
-			if !open && brokerMsg.IsUninitialized() {
-				return
-			}
-
-			// Set broker message to context
-			ctx = context.WithValue(ctx, extensions.ContextKeyIsBrokerMessage, brokerMsg.String())
-
-			// Execute middlewares before handling the message
-			if err := c.executeMiddlewares(ctx, &brokerMsg, func(ctx context.Context) error {
-				// Process message
-				msg, err := newServiceInfoResponseMessageFromBrokerMessage(brokerMsg)
-				if err != nil {
-					return err
-				}
-
-				// Add correlation ID to context if it exists
-				if id := msg.CorrelationID(); id != "" {
-					ctx = context.WithValue(ctx, extensions.ContextKeyIsCorrelationID, id)
-				}
-
-				// Execute the subscription function
-				fn(ctx, msg)
-
-				return nil
-			}); err != nil {
-				c.logger.Error(ctx, err.Error())
-			}
-		}
-	}()
-
-	// Add the cancel channel to the inside map
-	c.subscriptions[path] = sub
-
-	return nil
-}
-
-// UnsubscribeServiceInfoResponse will unsubscribe messages from 'cryptellation.service.info.response' channel.
-// A timeout can be set in context to avoid blocking operation, if needed.
-func (c *UserController) UnsubscribeServiceInfoResponse(ctx context.Context) {
-	// Get channel path
-	path := "cryptellation.service.info.response"
 
 	// Check if there subscribers for this channel
 	sub, exists := c.subscriptions[path]
@@ -1516,6 +1516,84 @@ func (c *UserController) WaitForListBacktestOrdersResponse(ctx context.Context, 
 	}
 }
 
+// WaitForServiceInfoResponse will wait for a specific message by its correlation ID.
+//
+// The pub function is the publication function that should be used to send the message.
+// It will be called after subscribing to the channel to avoid race condition, and potentially loose the message.
+//
+// A timeout can be set in context to avoid blocking operation, if needed.
+func (c *UserController) WaitForServiceInfoResponse(ctx context.Context, publishMsg MessageWithCorrelationID, pub func(ctx context.Context) error) (ServiceInfoResponseMessage, error) {
+	// Get channel path
+	path := "cryptellation.backtests.service.info.response"
+
+	// Set context
+	ctx = addUserContextValues(ctx, path)
+
+	// Subscribe to broker channel
+	sub, err := c.broker.Subscribe(ctx, path)
+	if err != nil {
+		c.logger.Error(ctx, err.Error())
+		return ServiceInfoResponseMessage{}, err
+	}
+	c.logger.Info(ctx, "Subscribed to channel")
+
+	// Close subscriber on leave
+	defer func() {
+		// Stop the subscription
+		sub.Cancel(ctx)
+
+		// Logging unsubscribing
+		c.logger.Info(ctx, "Unsubscribed from channel")
+	}()
+
+	// Execute callback for publication
+	if err = pub(ctx); err != nil {
+		return ServiceInfoResponseMessage{}, err
+	}
+
+	// Wait for corresponding response
+	for {
+		select {
+		case brokerMsg, open := <-sub.MessagesChannel():
+			// If subscription is closed and there is no more message
+			// (i.e. uninitialized message), then the subscription ended before
+			// receiving the expected message
+			if !open && brokerMsg.IsUninitialized() {
+				c.logger.Error(ctx, "Channel closed before getting message")
+				return ServiceInfoResponseMessage{}, extensions.ErrSubscriptionCanceled
+			}
+
+			// Get new message
+			msg, err := newServiceInfoResponseMessageFromBrokerMessage(brokerMsg)
+			if err != nil {
+				c.logger.Error(ctx, err.Error())
+			}
+
+			// If message doesn't have corresponding correlation ID, then continue
+			if publishMsg.CorrelationID() != msg.CorrelationID() {
+				continue
+			}
+
+			// Set context with received values as it is the expected message
+			msgCtx := context.WithValue(ctx, extensions.ContextKeyIsBrokerMessage, brokerMsg.String())
+			msgCtx = context.WithValue(msgCtx, extensions.ContextKeyIsDirection, "reception")
+			msgCtx = context.WithValue(msgCtx, extensions.ContextKeyIsCorrelationID, publishMsg.CorrelationID())
+
+			// Execute middlewares before returning
+			if err := c.executeMiddlewares(msgCtx, &brokerMsg, nil); err != nil {
+				return ServiceInfoResponseMessage{}, err
+			}
+
+			// Return the message to the caller from the broker that could have
+			// been modified by middlewares
+			return newServiceInfoResponseMessageFromBrokerMessage(brokerMsg)
+		case <-ctx.Done(): // Set corrsponding error if context is done
+			c.logger.Error(ctx, "Context done before getting message")
+			return ServiceInfoResponseMessage{}, extensions.ErrContextCanceled
+		}
+	}
+}
+
 // WaitForSubscribeBacktestResponse will wait for a specific message by its correlation ID.
 //
 // The pub function is the publication function that should be used to send the message.
@@ -1590,84 +1668,6 @@ func (c *UserController) WaitForSubscribeBacktestResponse(ctx context.Context, p
 		case <-ctx.Done(): // Set corrsponding error if context is done
 			c.logger.Error(ctx, "Context done before getting message")
 			return SubscribeBacktestResponseMessage{}, extensions.ErrContextCanceled
-		}
-	}
-}
-
-// WaitForServiceInfoResponse will wait for a specific message by its correlation ID.
-//
-// The pub function is the publication function that should be used to send the message.
-// It will be called after subscribing to the channel to avoid race condition, and potentially loose the message.
-//
-// A timeout can be set in context to avoid blocking operation, if needed.
-func (c *UserController) WaitForServiceInfoResponse(ctx context.Context, publishMsg MessageWithCorrelationID, pub func(ctx context.Context) error) (ServiceInfoResponseMessage, error) {
-	// Get channel path
-	path := "cryptellation.service.info.response"
-
-	// Set context
-	ctx = addUserContextValues(ctx, path)
-
-	// Subscribe to broker channel
-	sub, err := c.broker.Subscribe(ctx, path)
-	if err != nil {
-		c.logger.Error(ctx, err.Error())
-		return ServiceInfoResponseMessage{}, err
-	}
-	c.logger.Info(ctx, "Subscribed to channel")
-
-	// Close subscriber on leave
-	defer func() {
-		// Stop the subscription
-		sub.Cancel(ctx)
-
-		// Logging unsubscribing
-		c.logger.Info(ctx, "Unsubscribed from channel")
-	}()
-
-	// Execute callback for publication
-	if err = pub(ctx); err != nil {
-		return ServiceInfoResponseMessage{}, err
-	}
-
-	// Wait for corresponding response
-	for {
-		select {
-		case brokerMsg, open := <-sub.MessagesChannel():
-			// If subscription is closed and there is no more message
-			// (i.e. uninitialized message), then the subscription ended before
-			// receiving the expected message
-			if !open && brokerMsg.IsUninitialized() {
-				c.logger.Error(ctx, "Channel closed before getting message")
-				return ServiceInfoResponseMessage{}, extensions.ErrSubscriptionCanceled
-			}
-
-			// Get new message
-			msg, err := newServiceInfoResponseMessageFromBrokerMessage(brokerMsg)
-			if err != nil {
-				c.logger.Error(ctx, err.Error())
-			}
-
-			// If message doesn't have corresponding correlation ID, then continue
-			if publishMsg.CorrelationID() != msg.CorrelationID() {
-				continue
-			}
-
-			// Set context with received values as it is the expected message
-			msgCtx := context.WithValue(ctx, extensions.ContextKeyIsBrokerMessage, brokerMsg.String())
-			msgCtx = context.WithValue(msgCtx, extensions.ContextKeyIsDirection, "reception")
-			msgCtx = context.WithValue(msgCtx, extensions.ContextKeyIsCorrelationID, publishMsg.CorrelationID())
-
-			// Execute middlewares before returning
-			if err := c.executeMiddlewares(msgCtx, &brokerMsg, nil); err != nil {
-				return ServiceInfoResponseMessage{}, err
-			}
-
-			// Return the message to the caller from the broker that could have
-			// been modified by middlewares
-			return newServiceInfoResponseMessageFromBrokerMessage(brokerMsg)
-		case <-ctx.Done(): // Set corrsponding error if context is done
-			c.logger.Error(ctx, "Context done before getting message")
-			return ServiceInfoResponseMessage{}, extensions.ErrContextCanceled
 		}
 	}
 }
