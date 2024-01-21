@@ -21,7 +21,7 @@ func runServers(cmd *cobra.Command, args []string) {
 	broker := ci.Nats(client).AsService()
 	withBroker := ci.NatsDependency(broker)
 	stop := writeBrokerAccess(broker)
-	defer stop(context.Background())
+	defer stop(context.Background()) //nolint: errcheck, no need to check error here
 
 	// Cryptellation that will be run as dependencies
 	candlesticks := candlesticksCi.RunnerWithDependencies(client, withBroker)
@@ -65,7 +65,7 @@ func writeBrokerAccess(broker *dagger.Service) func(ctx context.Context) (*dagge
 
 	str := fmt.Sprintf("NATS_HOST=%s\n", srvAddrSplit[0])
 	str += fmt.Sprintf("NATS_PORT=%s\n", srvAddrSplit[1])
-	f.WriteString(str)
+	_, _ = f.WriteString(str)
 
 	return tunnel.Stop
 }
