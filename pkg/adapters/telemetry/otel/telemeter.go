@@ -4,12 +4,10 @@ import (
 	"context"
 	"os"
 
-	"github.com/agoda-com/otelzap"
 	"github.com/lerenn/cryptellation/pkg/adapters/telemetry"
-
-	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/metric"
 	"go.opentelemetry.io/otel/trace"
+	"go.uber.org/zap"
 )
 
 // Check implementation of telemetry.Telemetry interface.
@@ -69,7 +67,11 @@ func (tel Telemeter) CounterInt(meter, name, description string) (telemetry.Coun
 }
 
 type Logger struct {
-	logger *otelzap.Logger
+	logger *zap.Logger
+}
+
+func (l Logger) Info(content string) {
+	l.logger.Info(content)
 }
 
 func (l Logger) Debug(content string) {
@@ -82,7 +84,7 @@ func (l Logger) Error(content string) {
 
 func (tel Telemeter) Logger(ctx context.Context) telemetry.Logger {
 	return Logger{
-		logger: otelzap.Ctx(ctx),
+		logger: tel.Logs.logger,
 	}
 }
 
@@ -95,7 +97,7 @@ func (s Span) End() {
 }
 
 func (tel Telemeter) Trace(ctx context.Context, tracer, name string) (context.Context, telemetry.Tracer) {
-	ctx, span := otel.Tracer(tracer).Start(ctx, name)
+	ctx, span := tel.Traces.provider.Tracer(tracer).Start(ctx, name)
 	return ctx, Span{
 		span: span,
 	}
