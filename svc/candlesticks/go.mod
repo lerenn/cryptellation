@@ -15,7 +15,6 @@ require (
 	github.com/google/uuid v1.5.0
 	github.com/lerenn/asyncapi-codegen v0.30.2
 	github.com/lerenn/cryptellation/pkg v0.0.0-00010101000000-000000000000
-	github.com/nats-io/nats.go v1.31.0
 	github.com/spf13/cobra v1.8.0
 	github.com/stretchr/testify v1.8.4
 	go.uber.org/mock v0.4.0
@@ -66,6 +65,7 @@ require (
 	github.com/mitchellh/go-homedir v1.1.0 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180228061459-e0a39a4cb421 // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
+	github.com/nats-io/nats.go v1.31.0 // indirect
 	github.com/nats-io/nkeys v0.4.6 // indirect
 	github.com/nats-io/nuid v1.0.1 // indirect
 	github.com/pjbgf/sha1cd v0.3.0 // indirect

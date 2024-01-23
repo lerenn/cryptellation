@@ -2,23 +2,38 @@
 
 .PHONY: ci
 ci: ## Execute all basic CI steps
-	@dagger run go run ./cmd/ci
+	@dagger run go run ./tools/ci
 
 .PHONY: generate
 generate: ## Generate code files
-	@dagger run go run ./cmd/ci generate
+	@dagger run go run ./tools/ci generate
 
 .PHONY: lint
 lint: ## Lint code
-	@dagger run go run ./cmd/ci lint
+	@dagger run go run ./tools/ci lint
 
 .PHONY: serve 
 serve: ## Serve the Cryptellation stack for development
-	@dagger run go run ./cmd/ci serve
+	@dagger run go run ./tools/ci serve
+
+.PHONY: test
+test: test/unit test/integration test/end-to-end ## Launch tests 
+
+.PHONY: test/unit
+test/unit: ## Launch unit tests
+	@dagger run go run ./tools/ci test --type=unit
+
+.PHONY: test/integration
+test/integration: ## Launch integration tests
+	@dagger run go run ./tools/ci test --type=integration
+
+.PHONY: test/end-to-end
+test/end-to-end: ## Launch end-to-end tests
+	@dagger run go run ./tools/ci test --type=end-to-end
 
 .PHONY: update
 update: ## Update the dependencies
-	@dagger run go run ./cmd/ci update
+	@dagger run go run ./tools/ci update
 
 .PHONY: help
 help: ## Display this help message

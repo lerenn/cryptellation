@@ -4,9 +4,6 @@ import (
 	"context"
 
 	"dagger.io/dagger"
-	clientsCi "github.com/lerenn/cryptellation/cmd/ci/internal/clients"
-	cmdCi "github.com/lerenn/cryptellation/cmd/ci/internal/cmd"
-	pkgCi "github.com/lerenn/cryptellation/cmd/ci/internal/pkg"
 	"github.com/lerenn/cryptellation/pkg/ci"
 	backtestsCi "github.com/lerenn/cryptellation/svc/backtests/pkg/ci"
 	candlesticksCi "github.com/lerenn/cryptellation/svc/candlesticks/pkg/ci"
@@ -18,14 +15,14 @@ import (
 
 func linters() map[string]*dagger.Container {
 	return map[string]*dagger.Container{
-		"clients":          clientsCi.Linter(client),
-		"cmd":              cmdCi.Linter(client),
-		"pkg":              pkgCi.Linter(client),
-		"svc/backtests":    backtestsCi.Linter(client),
-		"svc/candlesticks": candlesticksCi.Linter(client),
-		"svc/exchanges":    exchangesCi.Linter(client),
-		"svc/indicators":   indicatorsCi.Linter(client),
-		"svc/ticks":        ticksCi.Linter(client),
+		"clients/go":        ci.Linter(client, "/clients/go"),
+		"cmd/cryptellation": ci.Linter(client, "/cmd/cryptellation"),
+		"pkg":               ci.Linter(client, "/pkg"),
+		"svc/backtests":     backtestsCi.Linter(client),
+		"svc/candlesticks":  candlesticksCi.Linter(client),
+		"svc/exchanges":     exchangesCi.Linter(client),
+		"svc/indicators":    indicatorsCi.Linter(client),
+		"svc/ticks":         ticksCi.Linter(client),
 	}
 }
 

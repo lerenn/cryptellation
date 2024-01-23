@@ -5,9 +5,6 @@ import (
 	"fmt"
 
 	"dagger.io/dagger"
-	clientsCi "github.com/lerenn/cryptellation/cmd/ci/internal/clients"
-	cmdCi "github.com/lerenn/cryptellation/cmd/ci/internal/cmd"
-	pkgCi "github.com/lerenn/cryptellation/cmd/ci/internal/pkg"
 	"github.com/lerenn/cryptellation/pkg/ci"
 	backtestsCi "github.com/lerenn/cryptellation/svc/backtests/pkg/ci"
 	candlesticksCi "github.com/lerenn/cryptellation/svc/candlesticks/pkg/ci"
@@ -23,20 +20,19 @@ var (
 
 func unitTests() map[string]*dagger.Container {
 	return map[string]*dagger.Container{
-		"clients":          clientsCi.UnitTests(client),
-		"cmd":              cmdCi.UnitTests(client),
-		"pkg":              pkgCi.UnitTests(client),
-		"svc/backtests":    backtestsCi.UnitTests(client),
-		"svc/candlesticks": candlesticksCi.UnitTests(client),
-		"svc/exchanges":    exchangesCi.UnitTests(client),
-		"svc/indicators":   indicatorsCi.UnitTests(client),
-		"svc/ticks":        ticksCi.UnitTests(client),
+		"clients/go":        ci.UnitTests(client, "/clients/go"),
+		"cmd/cryptellation": ci.UnitTests(client, "/cmd/cryptellation"),
+		"pkg":               ci.UnitTests(client, "/pkg"),
+		"svc/backtests":     backtestsCi.UnitTests(client),
+		"svc/candlesticks":  candlesticksCi.UnitTests(client),
+		"svc/exchanges":     exchangesCi.UnitTests(client),
+		"svc/indicators":    indicatorsCi.UnitTests(client),
+		"svc/ticks":         ticksCi.UnitTests(client),
 	}
 }
 
 func integrationTests() map[string]*dagger.Container {
 	return map[string]*dagger.Container{
-		"pkg":              pkgCi.IntegrationTests(client),
 		"svc/backtests":    backtestsCi.IntegrationTests(client),
 		"svc/candlesticks": candlesticksCi.IntegrationTests(client),
 		"svc/exchanges":    exchangesCi.IntegrationTests(client),
