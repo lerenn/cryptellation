@@ -110,7 +110,7 @@ func newModuleVersionBumpFromGit(scheme string) (moduleVersionBump, error) {
 		if !errors.Is(err, git.ErrNoVersion) {
 			return moduleVersionBump{}, err
 		}
-		ver = "0.0.0"
+		ver = "v0.0.0"
 	}
 	mv.OldVersion = ver
 
