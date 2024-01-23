@@ -37,10 +37,14 @@ var candlesticksReadCmd = &cobra.Command{
 			return err
 		}
 
-		return list.Loop(func(t time.Time, cs candlestick.Candlestick) (bool, error) {
+		if err := list.Loop(func(t time.Time, cs candlestick.Candlestick) (bool, error) {
 			fmt.Println("", t, "||", cs.String())
 			return false, nil
-		})
+		}); err != nil {
+			return err
+		}
+
+		return nil
 	},
 }
 

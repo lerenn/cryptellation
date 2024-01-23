@@ -12,7 +12,7 @@ require (
 	dagger.io/dagger v0.9.6
 	github.com/go-gormigrate/gormigrate/v2 v2.1.1
 	github.com/google/uuid v1.5.0
-	github.com/lerenn/asyncapi-codegen v0.30.0
+	github.com/lerenn/asyncapi-codegen v0.30.2
 	github.com/lerenn/cryptellation/pkg v0.0.0-00010101000000-000000000000
 	github.com/spf13/cobra v1.8.0
 	github.com/stretchr/testify v1.8.4

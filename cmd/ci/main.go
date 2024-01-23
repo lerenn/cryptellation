@@ -48,6 +48,7 @@ func main() {
 	addPublishCmdTo(rootCmd)
 	addServeCmdTo(rootCmd)
 	addTestCmdTo(rootCmd)
+	addUpdateCmdTo(rootCmd)
 
 	rootCmd.PersistentFlags().StringVarP(&pathFlag, "path", "p", "", "Specific part of the project to target")
 	if err := rootCmd.Execute(); err != nil {

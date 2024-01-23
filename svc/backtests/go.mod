@@ -14,7 +14,7 @@ require (
 	github.com/go-redis/redis/v8 v8.11.5
 	github.com/go-redsync/redsync/v4 v4.11.0
 	github.com/google/uuid v1.5.0
-	github.com/lerenn/asyncapi-codegen v0.30.0
+	github.com/lerenn/asyncapi-codegen v0.30.2
 	github.com/lerenn/cryptellation/pkg v0.0.0-00010101000000-000000000000
 	github.com/lerenn/cryptellation/svc/candlesticks v0.0.0-00010101000000-000000000000
 	github.com/lerenn/cryptellation/svc/ticks v0.0.0-00010101000000-000000000000
