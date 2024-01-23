@@ -2,8 +2,6 @@ module github.com/lerenn/cryptellation/tools/ci
 
 go 1.21.3
 
-replace github.com/lerenn/cryptellation/clients/go => ../../clients/go
-
 replace github.com/lerenn/cryptellation/cmd/cryptellation => ../../cmd/cryptellation
 
 replace github.com/lerenn/cryptellation/pkg => ../../pkg

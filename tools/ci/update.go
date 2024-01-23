@@ -9,7 +9,6 @@ import (
 
 func updators() map[string]func(context.Context) error {
 	return map[string]func(context.Context) error{
-		"clients/go":        ci.UpdateGoMod(client, "clients/go"),
 		"cmd/cryptellation": ci.UpdateGoMod(client, "cmd/cryptellation"),
 		"pkg":               ci.UpdateGoMod(client, "pkg"),
 		"svc/backtests":     ci.UpdateGoMod(client, "svc/backtests"),

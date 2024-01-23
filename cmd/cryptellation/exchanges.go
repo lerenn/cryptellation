@@ -4,7 +4,12 @@ import (
 	"context"
 	"fmt"
 
+	exchanges "github.com/lerenn/cryptellation/svc/exchanges/clients/go/nats"
 	"github.com/spf13/cobra"
+)
+
+var (
+	exchangesClient exchanges.Client
 )
 
 var exchangesCmd = &cobra.Command{
@@ -12,7 +17,16 @@ var exchangesCmd = &cobra.Command{
 	Aliases: []string{"c"},
 	Short:   "Manipulate exchanges service",
 	PersistentPreRunE: func(cmd *cobra.Command, args []string) (err error) {
-		return executeParentPersistentPreRuns(cmd, args)
+		if err := executeParentPersistentPreRuns(cmd, args); err != nil {
+			return err
+		}
+
+		exchangesClient, err = exchanges.NewClient(globalConfig)
+		if err != nil {
+			return fmt.Errorf("error when creating new candlesticks client: %w", err)
+		}
+
+		return nil
 	},
 }
 
@@ -21,7 +35,7 @@ var exchangesReadCmd = &cobra.Command{
 	Aliases: []string{"r"},
 	Short:   "Read exchanges from service",
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		list, err := services.Exchanges.Read(context.Background(), "binance")
+		list, err := exchangesClient.Read(context.Background(), "binance")
 		if err != nil {
 			return err
 		}
@@ -36,7 +50,7 @@ var exchangesInfoCmd = &cobra.Command{
 	Aliases: []string{"info"},
 	Short:   "Read info from exchanges service",
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		info, err := services.Exchanges.ServiceInfo(context.TODO())
+		info, err := exchangesClient.ServiceInfo(context.TODO())
 		if err != nil {
 			return err
 		}

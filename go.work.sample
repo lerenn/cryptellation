@@ -1,7 +1,6 @@
 go 1.21.3
 
 use (
-    ./clients/go
     ./cmd/cryptellation
     ./pkg
     ./svc/backtests

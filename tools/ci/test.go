@@ -20,7 +20,6 @@ var (
 
 func unitTests() map[string]*dagger.Container {
 	return map[string]*dagger.Container{
-		"clients/go":        ci.UnitTests(client, "/clients/go"),
 		"cmd/cryptellation": ci.UnitTests(client, "/cmd/cryptellation"),
 		"pkg":               ci.UnitTests(client, "/pkg"),
 		"svc/backtests":     backtestsCi.UnitTests(client),

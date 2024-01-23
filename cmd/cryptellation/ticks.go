@@ -6,7 +6,12 @@ import (
 	"time"
 
 	client "github.com/lerenn/cryptellation/svc/ticks/clients/go"
+	ticks "github.com/lerenn/cryptellation/svc/ticks/clients/go/nats"
 	"github.com/spf13/cobra"
+)
+
+var (
+	ticksClient ticks.Client
 )
 
 var ticksCmd = &cobra.Command{
@@ -14,7 +19,16 @@ var ticksCmd = &cobra.Command{
 	Aliases: []string{"c"},
 	Short:   "Manipulate ticks service",
 	PersistentPreRunE: func(cmd *cobra.Command, args []string) (err error) {
-		return executeParentPersistentPreRuns(cmd, args)
+		if err := executeParentPersistentPreRuns(cmd, args); err != nil {
+			return err
+		}
+
+		ticksClient, err = ticks.NewClient(globalConfig)
+		if err != nil {
+			return fmt.Errorf("error when creating new candlesticks client: %w", err)
+		}
+
+		return nil
 	},
 }
 
@@ -23,7 +37,7 @@ var ticksRegisterCmd = &cobra.Command{
 	Aliases: []string{"r"},
 	Short:   "Register to ticks on service",
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		err = services.Ticks.Register(context.Background(), client.TicksFilterPayload{
+		err = ticksClient.Register(context.Background(), client.TicksFilterPayload{
 			ExchangeName: "binance",
 			PairSymbol:   "BTC-USDT",
 		})
@@ -37,7 +51,7 @@ var ticksWatchCmd = &cobra.Command{
 	Aliases: []string{"r"},
 	Short:   "Listen to ticks on service",
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		ch, err := services.Ticks.Listen(context.Background(), client.TicksFilterPayload{
+		ch, err := ticksClient.Listen(context.Background(), client.TicksFilterPayload{
 			ExchangeName: "binance",
 			PairSymbol:   "BTC-USDT",
 		})
@@ -61,7 +75,7 @@ var ticksUnregisterCmd = &cobra.Command{
 	Aliases: []string{"r"},
 	Short:   "Unregister to ticks on service",
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		err = services.Ticks.Unregister(context.Background(), client.TicksFilterPayload{
+		err = ticksClient.Unregister(context.Background(), client.TicksFilterPayload{
 			ExchangeName: "binance",
 			PairSymbol:   "BTC-USDT",
 		})
@@ -75,7 +89,7 @@ var ticksInfoCmd = &cobra.Command{
 	Aliases: []string{"info"},
 	Short:   "Read info from ticks service",
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		info, err := services.Ticks.ServiceInfo(context.TODO())
+		info, err := ticksClient.ServiceInfo(context.TODO())
 		if err != nil {
 			return err
 		}

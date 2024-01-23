@@ -15,7 +15,6 @@ import (
 
 func linters() map[string]*dagger.Container {
 	return map[string]*dagger.Container{
-		"clients/go":        ci.Linter(client, "/clients/go"),
 		"cmd/cryptellation": ci.Linter(client, "/cmd/cryptellation"),
 		"pkg":               ci.Linter(client, "/pkg"),
 		"svc/backtests":     backtestsCi.Linter(client),
