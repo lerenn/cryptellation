@@ -13,7 +13,7 @@ different cryptographic markets, featuring **backtesting**, **forward testing** 
 | **Backtests**    | Go         | Execute backtests                       |
 | **Candlesticks** | Go         | Get cached informations on candlesticks |
 | **Exchanges**    | Go         | Get cached informations on exchanges    |
-| **Livetests**    | Go         | Execute livetests                       |
+| **Indicators**   | Go         | Calculate and cache indicators          |
 | **Ticks**        | Go         | Get ticks from exchanges                |
 
 More on each service [here](https://cryptellation.dev/docs/category/services).
