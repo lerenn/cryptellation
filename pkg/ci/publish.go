@@ -10,7 +10,7 @@ import (
 
 func PublishDockerImage(
 	container *dagger.Container,
-	serviceName string,
+	modulePath, imageName string,
 ) func(ctx context.Context) error {
 	return func(ctx context.Context) error {
 		// Publish with hash
@@ -18,7 +18,7 @@ func PublishDockerImage(
 		if err != nil {
 			return err
 		}
-		if _, err := container.Publish(ctx, "lerenn/cryptellation-"+serviceName+":"+hash); err != nil {
+		if _, err := container.Publish(ctx, imageName+":"+hash); err != nil {
 			return err
 		}
 
@@ -30,25 +30,25 @@ func PublishDockerImage(
 		}
 
 		// Publish with version from git
-		ver, err := version.VersionFromGit(".", serviceName)
+		ver, err := version.VersionFromGit(".", modulePath)
 		if err != nil {
 			return err
 		}
-		if _, err := container.Publish(ctx, "lerenn/cryptellation-"+serviceName+":"+ver); err != nil {
+		if _, err := container.Publish(ctx, imageName+":"+ver); err != nil {
 			return err
 		}
 
 		// Publish with full version
-		fullVersion, err := version.FullVersionFromGit(".", serviceName)
+		fullVersion, err := version.FullVersionFromGit(".", modulePath)
 		if err != nil {
 			return err
 		}
-		if _, err := container.Publish(ctx, "lerenn/cryptellation-"+serviceName+":"+fullVersion); err != nil {
+		if _, err := container.Publish(ctx, imageName+":"+fullVersion); err != nil {
 			return err
 		}
 
 		// Publish as latest
-		if _, err := container.Publish(ctx, "lerenn/cryptellation-"+serviceName+":latest"); err != nil {
+		if _, err := container.Publish(ctx, imageName+":latest"); err != nil {
 			return err
 		}
 

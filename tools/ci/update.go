@@ -18,6 +18,7 @@ func updators() map[string]func(context.Context) error {
 		"svc/indicators":    ci.UpdateGoMod(client, "svc/indicators"),
 		"svc/ticks":         ci.UpdateGoMod(client, "svc/ticks"),
 		"tools/ci":          ci.UpdateGoMod(client, "tools/ci"),
+		"tools/tag":         ci.UpdateGoMod(client, "tools/tag"),
 	}
 }
 

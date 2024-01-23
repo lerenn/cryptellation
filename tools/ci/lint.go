@@ -23,6 +23,8 @@ func linters() map[string]*dagger.Container {
 		"svc/exchanges":     exchangesCi.Linter(client),
 		"svc/indicators":    indicatorsCi.Linter(client),
 		"svc/ticks":         ticksCi.Linter(client),
+		"tools/ci":          ci.Linter(client, "/tools/ci"),
+		"tools/tag":         ci.Linter(client, "/tools/tag"),
 	}
 }
 

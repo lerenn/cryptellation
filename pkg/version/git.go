@@ -1,10 +1,6 @@
 package version
 
 import (
-	"fmt"
-
-	"golang.org/x/mod/semver"
-
 	git "github.com/lerenn/cryptellation/pkg/vcs/git"
 )
 
@@ -42,20 +38,7 @@ func SetVersionFromGit(path, appName string) error {
 }
 
 func VersionFromGit(path, appName string) (string, error) {
-	// Get version from branch
-	versions, err := git.GetServiceVersionsFromCurrentBranch(path, appName)
-	if err != nil {
-		return "", err
-	}
-
-	// Check there is still versions
-	if len(versions) == 0 {
-		return "", fmt.Errorf("no version in the tags")
-	}
-
-	// Only get the list of versions
-	semver.Sort(versions)
-	return versions[len(versions)-1], nil
+	return git.LastModuleVersionFromCurrentBranch(path, appName)
 }
 
 func FullVersionFromGit(path, appName string) (string, error) {

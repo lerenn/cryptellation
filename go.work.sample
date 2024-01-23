@@ -10,4 +10,5 @@ use (
     ./svc/indicators
     ./svc/ticks
     ./tools/ci
+    ./tools/tag
 )

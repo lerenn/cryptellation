@@ -1,14 +1,20 @@
 package git
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/go-git/go-git/v5/plumbing/object"
+	"golang.org/x/mod/semver"
 )
 
-func GetServiceVersions(path, appName string) ([]string, error) {
+var (
+	ErrNoVersion = fmt.Errorf("no version in the tags")
+)
+
+func ModuleVersions(path, appName string) ([]string, error) {
 	// Open git repository
 	repo, err := git.PlainOpen(path)
 	if err != nil {
@@ -36,7 +42,7 @@ func GetServiceVersions(path, appName string) ([]string, error) {
 	return versions, nil
 }
 
-func GetServiceVersionsWithHash(path, appName string) (map[string]string, error) {
+func ModuleVersionsWithHash(path, appName string) (map[string]string, error) {
 	// Open git repository
 	repo, err := git.PlainOpen(path)
 	if err != nil {
@@ -69,13 +75,13 @@ func getNameVersionFromGitTagRef(r *plumbing.Reference) (name string, version st
 	if len(parts) == 1 {
 		version = parts[0]
 	} else {
-		name, version = parts[len(parts)-2], parts[len(parts)-1]
+		name, version = strings.Join(parts[:len(parts)-1], "/"), parts[len(parts)-1]
 	}
 
 	return
 }
 
-func GetServiceVersionsFromCurrentBranch(path, appName string) ([]string, error) {
+func ModuleVersionsFromCurrentBranch(path, appName string) ([]string, error) {
 	// Open git repository
 	repo, err := git.PlainOpen(path)
 	if err != nil {
@@ -83,7 +89,7 @@ func GetServiceVersionsFromCurrentBranch(path, appName string) ([]string, error)
 	}
 
 	// Get all versions from repository
-	allVersions, err := GetServiceVersionsWithHash(path, appName)
+	allVersions, err := ModuleVersionsWithHash(path, appName)
 	if err != nil {
 		return nil, err
 	}
@@ -108,4 +114,21 @@ func GetServiceVersionsFromCurrentBranch(path, appName string) ([]string, error)
 	}
 
 	return versions, nil
+}
+
+func LastModuleVersionFromCurrentBranch(path, appName string) (string, error) {
+	// Get version from branch
+	versions, err := ModuleVersionsFromCurrentBranch(path, appName)
+	if err != nil {
+		return "", err
+	}
+
+	// Check there is still versions
+	if len(versions) == 0 {
+		return "", ErrNoVersion
+	}
+
+	// Only get the list of versions
+	semver.Sort(versions)
+	return versions[len(versions)-1], nil
 }
