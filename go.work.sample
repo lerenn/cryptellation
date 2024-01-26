@@ -2,12 +2,16 @@ go 1.21.3
 
 use (
     ./cmd/cryptellation
+    ./cmd/cryptellation-tui
+
     ./pkg
+
     ./svc/backtests
     ./svc/exchanges
     ./svc/candlesticks
     ./svc/indicators
     ./svc/ticks
+    
     ./tools/ci
     ./tools/tag
 )

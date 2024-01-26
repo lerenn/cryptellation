@@ -20,13 +20,14 @@ var (
 
 func unitTests() map[string]*dagger.Container {
 	return map[string]*dagger.Container{
-		"cmd/cryptellation": ci.UnitTests(client, "/cmd/cryptellation"),
-		"pkg":               ci.UnitTests(client, "/pkg"),
-		"svc/backtests":     backtestsCi.UnitTests(client),
-		"svc/candlesticks":  candlesticksCi.UnitTests(client),
-		"svc/exchanges":     exchangesCi.UnitTests(client),
-		"svc/indicators":    indicatorsCi.UnitTests(client),
-		"svc/ticks":         ticksCi.UnitTests(client),
+		"cmd/cryptellation":     ci.UnitTests(client, "/cmd/cryptellation"),
+		"cmd/cryptellation-tui": ci.UnitTests(client, "/cmd/cryptellation-tui"),
+		"pkg":                   ci.UnitTests(client, "/pkg"),
+		"svc/backtests":         backtestsCi.UnitTests(client),
+		"svc/candlesticks":      candlesticksCi.UnitTests(client),
+		"svc/exchanges":         exchangesCi.UnitTests(client),
+		"svc/indicators":        indicatorsCi.UnitTests(client),
+		"svc/ticks":             ticksCi.UnitTests(client),
 	}
 }
 

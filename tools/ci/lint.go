@@ -15,15 +15,16 @@ import (
 
 func linters() map[string]*dagger.Container {
 	return map[string]*dagger.Container{
-		"cmd/cryptellation": ci.Linter(client, "/cmd/cryptellation"),
-		"pkg":               ci.Linter(client, "/pkg"),
-		"svc/backtests":     backtestsCi.Linter(client),
-		"svc/candlesticks":  candlesticksCi.Linter(client),
-		"svc/exchanges":     exchangesCi.Linter(client),
-		"svc/indicators":    indicatorsCi.Linter(client),
-		"svc/ticks":         ticksCi.Linter(client),
-		"tools/ci":          ci.Linter(client, "/tools/ci"),
-		"tools/tag":         ci.Linter(client, "/tools/tag"),
+		"cmd/cryptellation":     ci.Linter(client, "/cmd/cryptellation"),
+		"cmd/cryptellation-tui": ci.Linter(client, "/cmd/cryptellation-tui"),
+		"pkg":                   ci.Linter(client, "/pkg"),
+		"svc/backtests":         backtestsCi.Linter(client),
+		"svc/candlesticks":      candlesticksCi.Linter(client),
+		"svc/exchanges":         exchangesCi.Linter(client),
+		"svc/indicators":        indicatorsCi.Linter(client),
+		"svc/ticks":             ticksCi.Linter(client),
+		"tools/ci":              ci.Linter(client, "/tools/ci"),
+		"tools/tag":             ci.Linter(client, "/tools/tag"),
 	}
 }
 

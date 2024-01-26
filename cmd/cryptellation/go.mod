@@ -16,13 +16,10 @@ replace github.com/lerenn/cryptellation/svc/ticks => ../../svc/ticks
 
 require (
 	github.com/lerenn/cryptellation/pkg v0.0.0-00010101000000-000000000000
-	github.com/lerenn/cryptellation/svc/backtests v0.0.0-00010101000000-000000000000
 	github.com/lerenn/cryptellation/svc/candlesticks v0.0.0-00010101000000-000000000000
 	github.com/lerenn/cryptellation/svc/exchanges v0.0.0-00010101000000-000000000000
-	github.com/lerenn/cryptellation/svc/indicators v0.0.0-00010101000000-000000000000
 	github.com/lerenn/cryptellation/svc/ticks v0.0.0-00010101000000-000000000000
 	github.com/spf13/cobra v1.8.0
-	gopkg.in/yaml.v2 v2.4.0
 )
 
 require (
