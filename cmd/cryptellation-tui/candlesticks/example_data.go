@@ -1,4 +1,4 @@
-package main
+package candlesticks
 
 import (
 	"time"
@@ -7,7 +7,7 @@ import (
 )
 
 var (
-	globalData = []candlestick{
+	ExampleData = []Candlestick{
 		{Time: utils.Must(time.Parse(time.RFC3339, "2024-01-17T00:00:00Z")), Open: 2593.560000, High: 2604.800000, Low: 2585.310000, Close: 2587.400000},
 		{Time: utils.Must(time.Parse(time.RFC3339, "2024-01-17T01:00:00Z")), Open: 2587.410000, High: 2592.060000, Low: 2580.020000, Close: 2589.090000},
 		{Time: utils.Must(time.Parse(time.RFC3339, "2024-01-17T02:00:00Z")), Open: 2589.090000, High: 2592.970000, Low: 2576.910000, Close: 2578.570000},

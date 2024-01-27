@@ -1,49 +1,30 @@
-package main
+package candlesticks
 
-import (
-	"math"
-	"time"
-
-	"github.com/fatih/color"
-)
+import "math"
 
 const (
-	UnicodeVoid           = " "
-	UnicodeBody           = "┃"
-	UnicodeHalfBodyTop    = "╻"
-	UnicodeHalfBodyBottom = "╹"
-	UnicodeWick           = "│"
-	UnicodeTop            = "╽"
-	UnicodeBottom         = "╿"
-	UnicodeUpperWick      = "╷"
-	UnicodeLowerWick      = "╵"
+	unicodeVoid           = " "
+	unicodeBody           = "┃"
+	unicodeHalfBodyTop    = "╻"
+	unicodeHalfBodyBottom = "╹"
+	unicodeWick           = "│"
+	unicodeTop            = "╽"
+	unicodeBottom         = "╿"
+	unicodeUpperWick      = "╷"
+	unicodeLowerWick      = "╵"
 
-	UnicodeFlat                      = "-"
-	UnicodeMinimalBodyFullWick       = "┿"
-	UnicodeMinimalBodyTopHalfWick    = "┷"
-	UnicodeMinimalBodyBottomHalfWick = "┯"
+	unicodeFlat                      = "-"
+	unicodeMinimalBodyFullWick       = "┿"
+	unicodeMinimalBodyTopHalfWick    = "┷"
+	unicodeMinimalBodyBottomHalfWick = "┯"
 )
-
-type candlestick struct {
-	Time  time.Time
-	Open  float64
-	High  float64
-	Low   float64
-	Close float64
-}
-
-func normalizePoint(point, min, max float64, height uint) float64 {
-	point = (point - min) / (max - min)
-	point = point * float64(height)
-	return point
-}
 
 type column struct {
 	symbols []string
 	isUp    bool
 }
 
-func newColumn(c candlestick, min, max float64, height uint) column {
+func newColumn(c Candlestick, min, max float64, height int) column {
 	bodyTop := c.Open
 	bodyBottom := c.Close
 	if c.Open <= c.Close {
@@ -74,114 +55,114 @@ func newColumn(c candlestick, min, max float64, height uint) column {
 
 		switch {
 		case rWickTop < i && rBodyTop < i && rBodyBottom < i && rWickBottom < i:
-			symbol = UnicodeVoid
+			symbol = unicodeVoid
 		case rWickTop > i && rBodyTop > i && rBodyBottom > i && rWickBottom > i:
-			symbol = UnicodeVoid
+			symbol = unicodeVoid
 
 		// BOTTOM
 
 		case rWickTop > i && rBodyTop > i && rBodyBottom > i && rWickBottom == i:
 			if qrWickBottom-i == 0 {
-				symbol = UnicodeWick
+				symbol = unicodeWick
 			} else {
-				symbol = UnicodeLowerWick
+				symbol = unicodeLowerWick
 			}
 
 		case rWickTop > i && rBodyTop > i && rBodyBottom > i && rWickBottom < i:
-			symbol = UnicodeWick
+			symbol = unicodeWick
 
 		case rWickTop > i && rBodyTop > i && rBodyBottom == i && rWickBottom == i:
 			if qrBodyBottom == 0 {
-				symbol = UnicodeBody
+				symbol = unicodeBody
 			} else if qrWickBottom == 0 {
-				symbol = UnicodeBottom
+				symbol = unicodeBottom
 			} else {
-				symbol = UnicodeHalfBodyBottom
+				symbol = unicodeHalfBodyBottom
 			}
 
 		// MIDDLE
 
 		case rWickTop > i && rBodyTop > i && rBodyBottom == i && rWickBottom < i:
 			if qrBodyBottom == 0 {
-				symbol = UnicodeBody
+				symbol = unicodeBody
 			} else {
-				symbol = UnicodeBottom
+				symbol = unicodeBottom
 			}
 
 		case rWickTop > i && rBodyTop > i && rBodyBottom < i && rWickBottom < i:
-			symbol = UnicodeBody
+			symbol = unicodeBody
 
 		case rWickTop > i && rBodyTop == i && rBodyBottom == i && rWickBottom < i:
 			if qrBodyTop == 0 {
-				symbol = UnicodeWick
+				symbol = unicodeWick
 			} else if qrBodyBottom == 0 {
-				symbol = UnicodeTop
+				symbol = unicodeTop
 			} else {
-				symbol = UnicodeMinimalBodyFullWick
+				symbol = unicodeMinimalBodyFullWick
 			}
 
 		case rWickTop == i && rBodyTop == i && rBodyBottom == i && rWickBottom == i:
 			if qrWickTop == 0 {
-				symbol = UnicodeFlat
+				symbol = unicodeFlat
 			} else if qrBodyTop == 0 {
-				symbol = UnicodeUpperWick
+				symbol = unicodeUpperWick
 			} else if qrBodyBottom == 0 {
-				symbol = UnicodeHalfBodyTop
+				symbol = unicodeHalfBodyTop
 			} else if qrWickBottom == 0 {
-				symbol = UnicodeMinimalBodyBottomHalfWick
+				symbol = unicodeMinimalBodyBottomHalfWick
 			} else {
-				symbol = UnicodeMinimalBodyFullWick
+				symbol = unicodeMinimalBodyFullWick
 			}
 
 		// TOP
 
 		case rWickTop > i && rBodyTop == i && rBodyBottom == i && rWickBottom == i:
 			if qrBodyTop == 0 {
-				symbol = UnicodeWick
+				symbol = unicodeWick
 			} else if qrBodyBottom == 0 {
-				symbol = UnicodeTop
+				symbol = unicodeTop
 			} else if qrWickBottom == 0 {
-				symbol = UnicodeMinimalBodyFullWick
+				symbol = unicodeMinimalBodyFullWick
 			} else {
-				symbol = UnicodeMinimalBodyTopHalfWick
+				symbol = unicodeMinimalBodyTopHalfWick
 			}
 
 		case rWickTop > i && rBodyTop == i && rBodyBottom < i && rWickBottom < i:
 			if qrBodyTop == 0 {
-				symbol = UnicodeWick
+				symbol = unicodeWick
 			} else {
-				symbol = UnicodeTop
+				symbol = unicodeTop
 			}
 
 		case rWickTop == i && rBodyTop == i && rBodyBottom < i && rWickBottom < i:
 			if qrWickTop == 0 {
-				symbol = UnicodeVoid
+				symbol = unicodeVoid
 			} else if qrBodyTop == 0 {
-				symbol = UnicodeUpperWick
+				symbol = unicodeUpperWick
 			} else {
-				symbol = UnicodeHalfBodyTop
+				symbol = unicodeHalfBodyTop
 			}
 
 		case rWickTop == i && rBodyTop == i && rBodyBottom == i && rWickBottom < i:
 			if qrWickTop == 0 {
-				symbol = UnicodeVoid
+				symbol = unicodeVoid
 			} else if qrBodyTop == 0 {
-				symbol = UnicodeUpperWick
+				symbol = unicodeUpperWick
 			} else if qrBodyBottom == 0 {
-				symbol = UnicodeHalfBodyTop
+				symbol = unicodeHalfBodyTop
 			} else {
-				symbol = UnicodeMinimalBodyBottomHalfWick
+				symbol = unicodeMinimalBodyBottomHalfWick
 			}
 
 		case rWickTop == i && rBodyTop < i && rBodyBottom < i && rWickBottom < i:
 			if qrWickTop == 0 {
-				symbol = UnicodeVoid
+				symbol = unicodeVoid
 			} else {
-				symbol = UnicodeUpperWick
+				symbol = unicodeUpperWick
 			}
 
 		case rWickTop > i && rBodyTop < i && rBodyBottom < i && rWickBottom < i:
-			symbol = UnicodeWick
+			symbol = unicodeWick
 
 		default:
 			symbol = "?"
@@ -194,50 +175,4 @@ func newColumn(c candlestick, min, max float64, height uint) column {
 		symbols: symbols,
 		isUp:    c.Open <= c.Close,
 	}
-}
-
-func toDiagram(data []candlestick, height, width uint) []column {
-	if len(data) < int(width) {
-		width = uint(len(data))
-	}
-
-	min, max := getMinMax(data[:width])
-
-	newData := make([]column, width)
-	for i, c := range data {
-		newData[i] = newColumn(c, min, max, height)
-		if i == int(width-1) {
-			break
-		}
-	}
-
-	return newData
-}
-
-func display(columns []column) string {
-	str := ""
-	for i := len(columns[0].symbols) - 1; i >= 0; i-- {
-		for _, c := range columns {
-			if c.isUp {
-				str += color.GreenString(c.symbols[i])
-			} else {
-				str += color.RedString(c.symbols[i])
-			}
-		}
-		str += "\n"
-	}
-	return str
-}
-
-func getMinMax(data []candlestick) (min float64, max float64) {
-	min, max = math.MaxFloat64, 0
-	for _, d := range data {
-		if d.Low < min {
-			min = d.Low
-		}
-		if d.High > max {
-			max = d.High
-		}
-	}
-	return
 }
