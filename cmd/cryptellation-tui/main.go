@@ -3,17 +3,20 @@ package main
 import (
 	"log"
 	"strings"
+	"time"
 
 	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/key"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/lerenn/cryptellation/cmd/cryptellation-tui/candlesticks"
+	"github.com/lerenn/cryptellation/cmd/cryptellation-tui/charts"
 )
 
 // A simple program that opens the alternate screen buffer then counts down
 // from 5 and then exits.
 
 type App struct {
+	canvas     charts.Canvas
 	csChart    candlesticks.Chart
 	cursor     int
 	windowSize tea.WindowSizeMsg
@@ -29,6 +32,7 @@ func main() {
 
 func (a *App) Init() tea.Cmd {
 	a.csChart = candlesticks.NewChart(candlesticks.ExampleData)
+	a.canvas = charts.NewCanvas(time.Now().Add(-20*time.Minute), time.Now())
 
 	return tea.ClearScreen
 }
@@ -64,8 +68,11 @@ func (a *App) View() string {
 	helpView := a.help.View(keys)
 	helpViewHeight := strings.Count(helpView, "\n") + 1
 
-	a.csChart.Height = a.windowSize.Height - helpViewHeight
-	a.csChart.Width = a.windowSize.Width
+	// a.csChart.Height = a.windowSize.Height - helpViewHeight
+	// a.csChart.Width = a.windowSize.Width
 
-	return a.csChart.View() + helpView
+	a.canvas.Height = a.windowSize.Height - helpViewHeight
+	a.canvas.Width = a.windowSize.Width
+
+	return a.canvas.View() + helpView
 }
