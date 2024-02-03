@@ -6,7 +6,7 @@ import (
 )
 
 type Chart struct {
-	Height, Width int
+	height, width int
 
 	data   []Candlestick
 	cursor int
@@ -30,11 +30,19 @@ func (chart *Chart) MoveGridRight() {
 	}
 }
 
+func (chart *Chart) SetHeight(height int) {
+	chart.height = height
+}
+
+func (chart *Chart) SetWidth(width int) {
+	chart.width = width
+}
+
 func (chart Chart) Grid() charts.Grid {
 	columns := chart.toColumns()
 
-	grid := charts.NewGrid(chart.Height, chart.Width)
-	for y := 0; y < chart.Height; y++ {
+	grid := charts.NewGrid(chart.height, chart.width)
+	for y := 0; y < chart.height; y++ {
 		for x, c := range columns {
 			// If the column is empty, doesn't display anything
 			if len(c.symbols) == 0 {
@@ -53,7 +61,7 @@ func (chart Chart) Grid() charts.Grid {
 
 func (chart Chart) toColumns() []column {
 	dataStart := chart.cursor
-	dataEnd := chart.cursor + chart.Width
+	dataEnd := chart.cursor + chart.width
 	if len(chart.data) < dataEnd {
 		dataEnd = len(chart.data)
 	}
@@ -62,7 +70,7 @@ func (chart Chart) toColumns() []column {
 
 	newData := make([]column, dataEnd)
 	for i, c := range chart.data[dataStart:dataEnd] {
-		newData[i] = newColumn(c, min, max, chart.Height)
+		newData[i] = newColumn(c, min, max, chart.height)
 		if i == int(dataEnd-1) {
 			break
 		}

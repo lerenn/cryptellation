@@ -169,8 +169,7 @@ func newColumn(c Candlestick, min, max float64, height int) column {
 			symbol = "?"
 		}
 
-		y := height - 1 - int(i) // Set y as horizontal axis, so reversed from i
-		symbols[y] = symbol
+		symbols[int(i)] = symbol
 	}
 
 	return column{

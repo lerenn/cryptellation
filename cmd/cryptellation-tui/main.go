@@ -18,7 +18,6 @@ import (
 type App struct {
 	canvas     charts.Canvas
 	csChart    candlesticks.Chart
-	cursor     int
 	windowSize tea.WindowSizeMsg
 	help       help.Model
 }
@@ -68,11 +67,9 @@ func (a *App) View() string {
 	helpView := a.help.View(keys)
 	helpViewHeight := strings.Count(helpView, "\n") + 1
 
-	a.csChart.Height = a.windowSize.Height - helpViewHeight
-	a.csChart.Width = a.windowSize.Width
+	a.canvas.SetHeight(a.windowSize.Height - helpViewHeight)
+	a.canvas.SetWidth(a.windowSize.Width)
+	a.canvas.AddChart(&a.csChart)
 
-	a.canvas.Height = a.windowSize.Height - helpViewHeight
-	a.canvas.Width = a.windowSize.Width
-
-	return a.csChart.View() + helpView
+	return a.canvas.View() + helpView
 }

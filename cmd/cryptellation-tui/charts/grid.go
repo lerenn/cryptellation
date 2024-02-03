@@ -26,9 +26,14 @@ func (g Grid) Slot(x, y int) *GridSlot {
 
 func (g Grid) View() string {
 	str := ""
-	for _, row := range g {
-		for _, slot := range row {
-			str += slot.Character
+	for y := g.Height() - 1; y >= 0; y-- {
+		for x := 0; x < g.Width(); x++ {
+			s := g.Slot(x, y)
+			if s != nil {
+				str += s.Character
+			} else {
+				str += ""
+			}
 		}
 		str += "\n"
 	}
@@ -62,5 +67,16 @@ func (grid *Grid) SetSlotCharacterIfExists(x, y int, character string) {
 	s := grid.Slot(x, y)
 	if s != nil {
 		s.Character = character
+	}
+}
+
+func (grid *Grid) ApplySubGrid(x, y int, g Grid) {
+	for i := 0; i < g.Width() && i < grid.Width(); i++ {
+		for j := 0; j < g.Height() && j < grid.Height(); j++ {
+			s := g.Slot(i, j)
+			if s != nil {
+				grid.InsertCharacter(x+i, y+j, s.Character)
+			}
+		}
 	}
 }
