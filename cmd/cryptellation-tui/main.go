@@ -8,8 +8,8 @@ import (
 	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/key"
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/lerenn/cryptellation/cmd/cryptellation-tui/candlesticks"
 	"github.com/lerenn/cryptellation/cmd/cryptellation-tui/charts"
+	"github.com/lerenn/cryptellation/cmd/cryptellation-tui/charts/candlesticks"
 )
 
 // A simple program that opens the alternate screen buffer then counts down
@@ -42,9 +42,9 @@ func (a *App) Update(message tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.KeyMsg:
 		switch {
 		case key.Matches(msg, keys.Left):
-			a.csChart.MoveViewLeft()
+			a.csChart.MoveGridLeft()
 		case key.Matches(msg, keys.Right):
-			a.csChart.MoveViewRight()
+			a.csChart.MoveGridRight()
 		case key.Matches(msg, keys.Help):
 			a.help.ShowAll = !a.help.ShowAll
 		case key.Matches(msg, keys.Quit):
@@ -68,11 +68,11 @@ func (a *App) View() string {
 	helpView := a.help.View(keys)
 	helpViewHeight := strings.Count(helpView, "\n") + 1
 
-	// a.csChart.Height = a.windowSize.Height - helpViewHeight
-	// a.csChart.Width = a.windowSize.Width
+	a.csChart.Height = a.windowSize.Height - helpViewHeight
+	a.csChart.Width = a.windowSize.Width
 
 	a.canvas.Height = a.windowSize.Height - helpViewHeight
 	a.canvas.Width = a.windowSize.Width
 
-	return a.canvas.View() + helpView
+	return a.csChart.View() + helpView
 }

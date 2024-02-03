@@ -50,6 +50,7 @@ func newColumn(c Candlestick, min, max float64, height int) column {
 	qrWickBottom := math.Round(nWickBottom*2) / 2
 
 	symbols := make([]string, height)
+	// i == 0 == top of the screen (i.e. reversed y axis)
 	for i := float64(0); i < float64(height); i++ {
 		var symbol string
 
@@ -168,7 +169,8 @@ func newColumn(c Candlestick, min, max float64, height int) column {
 			symbol = "?"
 		}
 
-		symbols[int(i)] = symbol
+		y := height - 1 - int(i) // Set y as horizontal axis, so reversed from i
+		symbols[y] = symbol
 	}
 
 	return column{

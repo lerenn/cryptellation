@@ -2,6 +2,7 @@ package candlesticks
 
 import (
 	"github.com/fatih/color"
+	"github.com/lerenn/cryptellation/cmd/cryptellation-tui/charts"
 )
 
 type Chart struct {
@@ -17,39 +18,37 @@ func NewChart(data []Candlestick) Chart {
 	}
 }
 
-func (chart *Chart) MoveViewLeft() {
+func (chart *Chart) MoveGridLeft() {
 	if chart.cursor > 0 {
 		chart.cursor--
 	}
 }
 
-func (chart *Chart) MoveViewRight() {
+func (chart *Chart) MoveGridRight() {
 	if chart.cursor < len(chart.data)-1 {
 		chart.cursor++
 	}
 }
 
-func (chart Chart) View() string {
+func (chart Chart) Grid() charts.Grid {
 	columns := chart.toColumns()
 
-	str := ""
-	for i := chart.Height - 1; i >= 0; i-- {
-		for _, c := range columns {
+	grid := charts.NewGrid(chart.Height, chart.Width)
+	for y := 0; y < chart.Height; y++ {
+		for x, c := range columns {
 			// If the column is empty, doesn't display anything
 			if len(c.symbols) == 0 {
-				str += unicodeVoid
 				continue
 			}
 
 			if c.isUp {
-				str += color.GreenString(c.symbols[i])
+				grid.InsertCharacter(x, y, color.GreenString(c.symbols[y]))
 			} else {
-				str += color.RedString(c.symbols[i])
+				grid.InsertCharacter(x, y, color.RedString(c.symbols[y]))
 			}
 		}
-		str += "\n"
 	}
-	return str
+	return grid
 }
 
 func (chart Chart) toColumns() []column {
@@ -70,4 +69,8 @@ func (chart Chart) toColumns() []column {
 	}
 
 	return newData
+}
+
+func (chart Chart) View() string {
+	return chart.Grid().View()
 }
