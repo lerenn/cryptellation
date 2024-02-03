@@ -24,10 +24,12 @@ const (
 	unicodeVerticalAxisPointExtension     = "╶"
 	unicodeVerticalHorizontalAxisJointure = "┼"
 	unicodeHorizontalAxis                 = "─"
+	unicodeHorizontalAxisLegend           = "┬"
 )
 
 const (
 	horizontalLegendSize = 1
+	horizontalLegendGap  = 20
 	horizontalAxisGap    = horizontalLegendSize
 
 	verticalLegendSize = 6
@@ -39,26 +41,36 @@ func (canvas Canvas) View() string {
 
 	// Vertical axis line
 	for i := 0; i < canvas.Height-horizontalAxisGap; i++ {
-		g.Slot(i, verticalAxisGap).Character = unicodeVerticalAxis
+		g.SetSlotCharacterIfExists(verticalAxisGap, i, unicodeVerticalAxis)
 	}
 
 	// Horizontal axis line
 	lastVerticalRowNb := canvas.Height - (1 + horizontalAxisGap)
 	for i := verticalAxisGap - 1; i < canvas.Width; i++ {
-		g.Slot(lastVerticalRowNb, i).Character = unicodeHorizontalAxis
+		g.SetSlotCharacterIfExists(i, lastVerticalRowNb, unicodeHorizontalAxis)
 	}
 
 	// Join between axis
-	g.InsertCharactersHorizontally(lastVerticalRowNb, verticalAxisGap-1,
+	g.InsertCharacter(verticalAxisGap-1, lastVerticalRowNb-horizontalAxisGap+1,
 		unicodeVerticalAxisPointExtension,
 		unicodeVerticalHorizontalAxisJointure)
 
 	// Vertical legend
-	g.InsertText(canvas.Height-2, 0, "000.00")
+	g.InsertText(0, canvas.Height-2, "000.00")
 
 	// Horizontal legend
-	g.InsertText(canvas.Height-1, verticalAxisGap,
-		fmt.Sprintf("%02d:%02d:%02d", canvas.start.Hour(), canvas.start.Minute(), canvas.start.Second()))
+	timeWidth := canvas.end.Sub(canvas.start)
+	total := canvas.Width / horizontalLegendGap
+	timeGap := timeWidth / time.Duration(total)
+	for i := 0; i < total; i++ {
+		h := canvas.start.Add(timeGap * time.Duration(i)).Hour()
+		m := canvas.start.Add(timeGap * time.Duration(i)).Minute()
+		s := canvas.start.Add(timeGap * time.Duration(i)).Second()
+		if i != 0 { // The first is already set as cross jointure
+			g.InsertCharacter(verticalAxisGap+i*horizontalLegendGap, canvas.Height-2, unicodeHorizontalAxisLegend)
+		}
+		g.InsertText(verticalAxisGap+i*horizontalLegendGap, canvas.Height-1, fmt.Sprintf("%02d:%02d:%02d", h, m, s))
+	}
 
 	return g.View()
 }
