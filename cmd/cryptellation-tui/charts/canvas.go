@@ -23,11 +23,14 @@ func NewCanvas(start time.Time, delta time.Duration) Canvas {
 }
 
 const (
-	unicodeVerticalAxis                   = "│"
-	unicodeVerticalAxisPointExtension     = "╶"
+	unicodeVerticalAxis               = "│"
+	unicodeVerticalAxisPointExtension = "╶"
+	unicodeVerticalAxisLegend         = "┤"
+
 	unicodeVerticalHorizontalAxisJointure = "┼"
-	unicodeHorizontalAxis                 = "─"
-	unicodeHorizontalAxisLegend           = "┬"
+
+	unicodeHorizontalAxis       = "─"
+	unicodeHorizontalAxisLegend = "┬"
 )
 
 const (
@@ -36,10 +39,17 @@ const (
 	horizontalAxisGap    = horizontalLegendSize
 
 	verticalLegendSize = 6
+	verticalLegendGap  = 4
 	verticalAxisGap    = verticalLegendSize + 1
 )
 
 func (canvas Canvas) View() string {
+	// Update subcharts and vertical min/max
+	min, max := canvas.updateSubCharts()
+	if min == math.MaxFloat64 { // If value is not really set
+		min, max = 0, 0
+	}
+
 	// Create a new grid
 	g := NewGrid(canvas.height, canvas.width)
 
@@ -59,11 +69,20 @@ func (canvas Canvas) View() string {
 		unicodeVerticalHorizontalAxisJointure)
 
 	// Vertical legend
-	g.InsertText(0, horizontalAxisGap, "000.00")
+	// total := int(max-min) / canvas.height
+	total := canvas.height / verticalLegendGap
+	valueGap := (max - min) / float64(total)
+	for i := 0; i < total; i++ {
+		if i != 0 { // The first is already set as cross jointure
+			g.InsertCharacter(verticalAxisGap-1, horizontalAxisGap+verticalLegendGap*i,
+				unicodeVerticalAxisPointExtension, unicodeVerticalAxisLegend)
+		}
+		g.InsertText(0, horizontalAxisGap+verticalLegendGap*i, fmt.Sprintf("%.1f", min+valueGap*float64(i)))
+	}
 
 	// Horizontal legend
 	timeWidth := canvas.delta * time.Duration(canvas.width)
-	total := canvas.width / horizontalLegendGap
+	total = canvas.width / horizontalLegendGap
 	timeGap := timeWidth / time.Duration(total)
 	for i := 0; i < total; i++ {
 		h := canvas.start.Add(timeGap * time.Duration(i)).Hour()
@@ -74,9 +93,6 @@ func (canvas Canvas) View() string {
 		}
 		g.InsertText(verticalAxisGap+i*horizontalLegendGap, 0, fmt.Sprintf("%02d:%02d:%02d", h, m, s))
 	}
-
-	// Update subcharts
-	canvas.updateSubCharts()
 
 	// Generate subcharts
 	for _, c := range canvas.charts {
@@ -91,14 +107,14 @@ func (canvas *Canvas) AddChart(chart Chart) {
 	canvas.updateSubChartSize(len(canvas.charts) - 1)
 }
 
-func (canvas *Canvas) updateSubCharts() {
+func (canvas *Canvas) updateSubCharts() (min, max float64) {
 	// Update start time
 	for _, c := range canvas.charts {
 		c.SetDisplayedTime(canvas.start)
 	}
 
 	// Get the minimal vertical data and the max vertical data
-	min, max := math.MaxFloat64, -math.MaxFloat64
+	min, max = math.MaxFloat64, -math.MaxFloat64
 	for _, c := range canvas.charts {
 		chartMin, chartMax := c.GetDisplayedDataMinMax()
 		if chartMin < min {
@@ -115,6 +131,8 @@ func (canvas *Canvas) updateSubCharts() {
 		canvas.updateSubChartSize(i)
 		c.SetVerticalBoundaries(min, max)
 	}
+
+	return
 }
 
 func (canvas *Canvas) updateSubChartSize(i int) {
