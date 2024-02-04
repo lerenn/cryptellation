@@ -2,6 +2,8 @@ module github.com/lerenn/cryptellation/cmd/cryptellation-tui
 
 go 1.21.3
 
+replace github.com/lerenn/cryptellation/svc/candlesticks => ../../svc/candlesticks
+
 require github.com/charmbracelet/bubbletea v0.25.0
 
 require (

@@ -10,6 +10,8 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/lerenn/cryptellation/cmd/cryptellation-tui/charts"
 	"github.com/lerenn/cryptellation/cmd/cryptellation-tui/charts/candlesticks"
+	"github.com/lerenn/cryptellation/pkg/utils"
+	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/period"
 )
 
 // A simple program that opens the alternate screen buffer then counts down
@@ -29,10 +31,10 @@ func main() {
 }
 
 func (a *App) Init() tea.Cmd {
-	canvas := charts.NewCanvas(candlesticks.ExampleData[10].Time, time.Hour)
+	canvas := charts.NewCanvas(utils.Must(time.Parse(time.RFC3339, "2024-01-17T09:00:00Z")), time.Hour)
 	a.canvas = &canvas
 
-	csChart := candlesticks.NewChart(candlesticks.ExampleData)
+	csChart := candlesticks.NewChart(exampleData(), period.H1)
 	canvas.AddChart(&csChart)
 
 	return tea.ClearScreen

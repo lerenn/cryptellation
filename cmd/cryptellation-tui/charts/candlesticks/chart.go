@@ -5,28 +5,41 @@ import (
 
 	"github.com/fatih/color"
 	"github.com/lerenn/cryptellation/cmd/cryptellation-tui/charts"
+	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/candlestick"
+	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/period"
 )
 
 type Chart struct {
 	height, width            int
 	verticalMin, verticalMax float64
 
-	data   []*Candlestick
-	cursor int
+	data   *candlestick.List
+	cursor time.Time
+	period period.Symbol
 }
 
-func NewChart(data []*Candlestick) Chart {
+func NewChart(data *candlestick.List, period period.Symbol) Chart {
 	return Chart{
-		data: data,
+		data:   data,
+		period: period,
 	}
 }
 
+func (chart *Chart) UpdateData(data *candlestick.List) {
+	if chart.data.Len() == 0 {
+		chart.data = data
+		return
+	}
+
+	chart.data.Merge(data, nil)
+}
+
 func (chart *Chart) MoveLeft() {
-	chart.cursor--
+	chart.cursor = chart.cursor.Add(-chart.period.Duration())
 }
 
 func (chart *Chart) MoveRight() {
-	chart.cursor++
+	chart.cursor = chart.cursor.Add(chart.period.Duration())
 }
 
 func (chart *Chart) SetHeight(height int) {
@@ -59,21 +72,36 @@ func (chart Chart) Grid() charts.Grid {
 }
 
 func (chart Chart) toColumns() []column {
-	data := chart.getDisplayedData()
-	newData := make([]column, len(chart.data))
-	for i, c := range data {
-		if c == nil {
-			continue
-		}
+	start, end := chart.displayedStartEnd()
+	newData := make([]column, chart.width)
 
-		newData[i] = newColumn(*c, chart.verticalMin, chart.verticalMax, chart.height)
+	for current, i := start, 0; current.Before(end); current, i = current.Add(chart.period.Duration()), i+1 {
+		c, exists := chart.data.Get(current)
+		if exists {
+			newData[i] = newColumn(c, chart.verticalMin, chart.verticalMax, chart.height)
+		}
 	}
 
 	return newData
 }
 
+func (chart Chart) displayedStartEnd() (start, end time.Time) {
+	start = chart.cursor
+	end = start.Add(chart.period.Duration() * time.Duration(chart.width))
+	return
+}
+
 func (chart Chart) GetDisplayedDataMinMax() (min, max float64) {
-	data := chart.getDisplayedData()
+	start, end := chart.displayedStartEnd()
+
+	data := candlestick.NewEmptyListFrom(chart.data)
+	for current := start; current.Before(end); current = current.Add(chart.period.Duration()) {
+		c, exists := chart.data.Get(current)
+		if exists {
+			data.Set(current, c)
+		}
+	}
+
 	return getMinMax(data)
 }
 
@@ -83,41 +111,7 @@ func (chart *Chart) SetVerticalBoundaries(min, max float64) {
 }
 
 func (chart *Chart) SetDisplayedTime(t time.Time) {
-	if len(chart.data) == 0 {
-		return
-	}
-
-	delta := chart.data[0].Time.Sub(t)
-	chart.cursor = -int(delta / time.Hour)
-}
-
-func (chart Chart) getDisplayedData() []*Candlestick {
-	// Set start
-	start := chart.cursor
-
-	// Check if there is empty data before
-	startGap := 0
-	if start < 0 {
-		startGap = -start
-		start = 0
-	}
-	emptyStart := make([]*Candlestick, startGap)
-
-	// Set end
-	end := start + chart.width
-
-	// Check if the end is after the end of the screen
-	if len(chart.data) < end {
-		end = len(chart.data)
-	}
-	end -= startGap // Remove the potential empty data gap before
-
-	// Return empty data if the end if before start
-	if end <= start {
-		return []*Candlestick{}
-	}
-
-	return append(emptyStart, chart.data[start:end]...)
+	chart.cursor = t
 }
 
 func (chart Chart) View() string {

@@ -1,6 +1,10 @@
 package candlesticks
 
-import "math"
+import (
+	"math"
+
+	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/candlestick"
+)
 
 const (
 	unicodeVoid           = " "
@@ -24,7 +28,7 @@ type column struct {
 	isUp    bool
 }
 
-func newColumn(c Candlestick, min, max float64, height int) column {
+func newColumn(c candlestick.Candlestick, min, max float64, height int) column {
 	bodyTop := c.Open
 	bodyBottom := c.Close
 	if c.Open <= c.Close {

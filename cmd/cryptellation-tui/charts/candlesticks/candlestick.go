@@ -3,29 +3,21 @@ package candlesticks
 import (
 	"math"
 	"time"
+
+	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/candlestick"
 )
 
-type Candlestick struct {
-	Time  time.Time
-	Open  float64
-	High  float64
-	Low   float64
-	Close float64
-}
-
-func getMinMax(data []*Candlestick) (min, max float64) {
+func getMinMax(data *candlestick.List) (min, max float64) {
 	min, max = math.MaxFloat64, 0
-	for _, d := range data {
-		if d == nil {
-			continue
+	_ = data.Loop(func(t time.Time, c candlestick.Candlestick) (bool, error) {
+		if c.Low < min {
+			min = c.Low
+		}
+		if c.High > max {
+			max = c.High
 		}
 
-		if d.Low < min {
-			min = d.Low
-		}
-		if d.High > max {
-			max = d.High
-		}
-	}
+		return false, nil
+	})
 	return
 }
