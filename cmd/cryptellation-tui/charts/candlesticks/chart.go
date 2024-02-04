@@ -19,15 +19,11 @@ func NewChart(data []Candlestick) Chart {
 }
 
 func (chart *Chart) MoveLeft() {
-	if chart.cursor > 0 {
-		chart.cursor--
-	}
+	chart.cursor--
 }
 
 func (chart *Chart) MoveRight() {
-	if chart.cursor < len(chart.data)-1 {
-		chart.cursor++
-	}
+	chart.cursor++
 }
 
 func (chart *Chart) SetHeight(height int) {
@@ -60,18 +56,27 @@ func (chart Chart) Grid() charts.Grid {
 }
 
 func (chart Chart) toColumns() []column {
-	dataStart := chart.cursor
-	dataEnd := chart.cursor + chart.width
-	if len(chart.data) < dataEnd {
-		dataEnd = len(chart.data)
+	start := chart.cursor
+	startGap := 0
+	if start < 0 {
+		startGap = -start
+		start = 0
 	}
 
-	min, max := getMinMax(chart.data[dataStart:dataEnd])
+	end := start + chart.width
+	if len(chart.data) < end {
+		end = len(chart.data)
+	}
 
-	newData := make([]column, dataEnd)
-	for i, c := range chart.data[dataStart:dataEnd] {
-		newData[i] = newColumn(c, min, max, chart.height)
-		if i == int(dataEnd-1) {
+	newData := make([]column, end)
+	if end <= start || startGap >= end {
+		return newData
+	}
+
+	min, max := getMinMax(chart.data[start : end-startGap])
+	for i, c := range chart.data[start : end-startGap] {
+		newData[i+startGap] = newColumn(c, min, max, chart.height)
+		if i == int(end-1) {
 			break
 		}
 	}
