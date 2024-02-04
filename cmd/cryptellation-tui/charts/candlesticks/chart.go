@@ -6,13 +6,14 @@ import (
 )
 
 type Chart struct {
-	height, width int
+	height, width            int
+	verticalMin, verticalMax float64
 
-	data   []Candlestick
+	data   []*Candlestick
 	cursor int
 }
 
-func NewChart(data []Candlestick) Chart {
+func NewChart(data []*Candlestick) Chart {
 	return Chart{
 		data: data,
 	}
@@ -56,32 +57,56 @@ func (chart Chart) Grid() charts.Grid {
 }
 
 func (chart Chart) toColumns() []column {
+	data := chart.getDisplayedData()
+	newData := make([]column, len(chart.data))
+	for i, c := range data {
+		if c == nil {
+			continue
+		}
+
+		newData[i] = newColumn(*c, chart.verticalMin, chart.verticalMax, chart.height)
+	}
+
+	return newData
+}
+
+func (chart Chart) GetDisplayedDataMinMax() (min, max float64) {
+	data := chart.getDisplayedData()
+	return getMinMax(data)
+}
+
+func (chart *Chart) SetVerticalBoundaries(min, max float64) {
+	chart.verticalMin = min
+	chart.verticalMax = max
+}
+
+func (chart Chart) getDisplayedData() []*Candlestick {
+	// Set start
 	start := chart.cursor
+
+	// Check if there is empty data before
 	startGap := 0
 	if start < 0 {
 		startGap = -start
 		start = 0
 	}
+	emptyStart := make([]*Candlestick, startGap)
 
+	// Set end
 	end := start + chart.width
+
+	// Check if the end is after the end of the screen
 	if len(chart.data) < end {
 		end = len(chart.data)
 	}
+	end -= startGap // Remove the potential empty data gap before
 
-	newData := make([]column, end)
-	if end <= start || startGap >= end {
-		return newData
+	// Return empty data if the end if before start
+	if end <= start {
+		return []*Candlestick{}
 	}
 
-	min, max := getMinMax(chart.data[start : end-startGap])
-	for i, c := range chart.data[start : end-startGap] {
-		newData[i+startGap] = newColumn(c, min, max, chart.height)
-		if i == int(end-1) {
-			break
-		}
-	}
-
-	return newData
+	return append(emptyStart, chart.data[start:end]...)
 }
 
 func (chart Chart) View() string {

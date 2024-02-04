@@ -13,9 +13,13 @@ type Candlestick struct {
 	Close float64
 }
 
-func getMinMax(data []Candlestick) (min float64, max float64) {
+func getMinMax(data []*Candlestick) (min, max float64) {
 	min, max = math.MaxFloat64, 0
 	for _, d := range data {
+		if d == nil {
+			continue
+		}
+
 		if d.Low < min {
 			min = d.Low
 		}

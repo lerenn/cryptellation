@@ -6,4 +6,6 @@ type Chart interface {
 	Grid() Grid
 	MoveRight()
 	MoveLeft()
+	SetVerticalBoundaries(min, max float64)
+	GetDisplayedDataMinMax() (min, max float64)
 }

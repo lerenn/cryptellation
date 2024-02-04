@@ -2,6 +2,7 @@ package charts
 
 import (
 	"fmt"
+	"math"
 	"time"
 )
 
@@ -39,11 +40,6 @@ const (
 )
 
 func (canvas Canvas) View() string {
-	// Update subcharts
-	for i := range canvas.charts {
-		canvas.updateSubChartSize(i)
-	}
-
 	// Create a new grid
 	g := NewGrid(canvas.height, canvas.width)
 
@@ -79,6 +75,10 @@ func (canvas Canvas) View() string {
 		g.InsertText(verticalAxisGap+i*horizontalLegendGap, 0, fmt.Sprintf("%02d:%02d:%02d", h, m, s))
 	}
 
+	// Update subcharts
+	canvas.updateSubCharts()
+
+	// Generate subcharts
 	for _, c := range canvas.charts {
 		g.ApplySubGrid(verticalAxisGap+1, horizontalLegendSize+1, c.Grid())
 	}
@@ -89,6 +89,27 @@ func (canvas Canvas) View() string {
 func (canvas *Canvas) AddChart(chart Chart) {
 	canvas.charts = append(canvas.charts, chart)
 	canvas.updateSubChartSize(len(canvas.charts) - 1)
+}
+
+func (canvas *Canvas) updateSubCharts() {
+	// Get the minimal vertical data and the max vertical data
+	min, max := math.MaxFloat64, -math.MaxFloat64
+	for _, c := range canvas.charts {
+		chartMin, chartMax := c.GetDisplayedDataMinMax()
+		if chartMin < min {
+			min = chartMin
+		}
+
+		if chartMax > max {
+			max = chartMax
+		}
+	}
+
+	// Update size and vertical boundaries
+	for i, c := range canvas.charts {
+		canvas.updateSubChartSize(i)
+		c.SetVerticalBoundaries(min, max)
+	}
 }
 
 func (canvas *Canvas) updateSubChartSize(i int) {
