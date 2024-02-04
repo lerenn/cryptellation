@@ -16,8 +16,7 @@ import (
 // from 5 and then exits.
 
 type App struct {
-	canvas     charts.Canvas
-	csChart    candlesticks.Chart
+	canvas     *charts.Canvas
 	windowSize tea.WindowSizeMsg
 	help       help.Model
 }
@@ -30,8 +29,11 @@ func main() {
 }
 
 func (a *App) Init() tea.Cmd {
-	a.csChart = candlesticks.NewChart(candlesticks.ExampleData)
-	a.canvas = charts.NewCanvas(time.Now().Add(-20*time.Minute), time.Now())
+	canvas := charts.NewCanvas(candlesticks.ExampleData[0].Time, time.Hour)
+	a.canvas = &canvas
+
+	csChart := candlesticks.NewChart(candlesticks.ExampleData)
+	canvas.AddChart(&csChart)
 
 	return tea.ClearScreen
 }
@@ -41,9 +43,9 @@ func (a *App) Update(message tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.KeyMsg:
 		switch {
 		case key.Matches(msg, keys.Left):
-			a.csChart.MoveGridLeft()
+			a.canvas.MoveLeft()
 		case key.Matches(msg, keys.Right):
-			a.csChart.MoveGridRight()
+			a.canvas.MoveRight()
 		case key.Matches(msg, keys.Help):
 			a.help.ShowAll = !a.help.ShowAll
 		case key.Matches(msg, keys.Quit):
@@ -59,7 +61,7 @@ func (a *App) Update(message tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (a *App) View() string {
-	if a.windowSize.Height == 0 {
+	if a.windowSize.Height == 0 || a.windowSize.Width == 0 {
 		return ""
 	}
 
@@ -69,7 +71,6 @@ func (a *App) View() string {
 
 	a.canvas.SetHeight(a.windowSize.Height - helpViewHeight)
 	a.canvas.SetWidth(a.windowSize.Width)
-	a.canvas.AddChart(&a.csChart)
 
 	return a.canvas.View() + helpView
 }

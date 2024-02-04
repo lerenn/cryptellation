@@ -18,13 +18,13 @@ func NewChart(data []Candlestick) Chart {
 	}
 }
 
-func (chart *Chart) MoveGridLeft() {
+func (chart *Chart) MoveLeft() {
 	if chart.cursor > 0 {
 		chart.cursor--
 	}
 }
 
-func (chart *Chart) MoveGridRight() {
+func (chart *Chart) MoveRight() {
 	if chart.cursor < len(chart.data)-1 {
 		chart.cursor++
 	}

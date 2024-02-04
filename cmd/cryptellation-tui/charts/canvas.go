@@ -9,15 +9,15 @@ type Canvas struct {
 	height, width int
 
 	start time.Time
-	end   time.Time
+	delta time.Duration
 
 	charts []Chart
 }
 
-func NewCanvas(start, end time.Time) Canvas {
+func NewCanvas(start time.Time, delta time.Duration) Canvas {
 	return Canvas{
 		start: start,
-		end:   end,
+		delta: delta,
 	}
 }
 
@@ -39,6 +39,12 @@ const (
 )
 
 func (canvas Canvas) View() string {
+	// Update subcharts
+	for i := range canvas.charts {
+		canvas.updateSubChartSize(i)
+	}
+
+	// Create a new grid
 	g := NewGrid(canvas.height, canvas.width)
 
 	// Vertical axis line
@@ -60,7 +66,7 @@ func (canvas Canvas) View() string {
 	g.InsertText(0, horizontalAxisGap, "000.00")
 
 	// Horizontal legend
-	timeWidth := canvas.end.Sub(canvas.start)
+	timeWidth := canvas.delta * time.Duration(canvas.width)
 	total := canvas.width / horizontalLegendGap
 	timeGap := timeWidth / time.Duration(total)
 	for i := 0; i < total; i++ {
@@ -86,20 +92,35 @@ func (canvas *Canvas) AddChart(chart Chart) {
 }
 
 func (canvas *Canvas) updateSubChartSize(i int) {
-	canvas.charts[i].SetHeight(canvas.height - (horizontalLegendSize + 1))
-	canvas.charts[i].SetWidth(canvas.width - (verticalAxisGap + 1))
+	height := canvas.height - (horizontalLegendSize + 1)
+	if height > 0 {
+		canvas.charts[i].SetHeight(height)
+	}
+
+	width := canvas.width - (verticalAxisGap + 1)
+	if width > 0 {
+		canvas.charts[i].SetWidth(width)
+	}
 }
 
 func (canvas *Canvas) SetHeight(height int) {
-	for i := range canvas.charts {
-		canvas.updateSubChartSize(i)
-	}
 	canvas.height = height
 }
 
 func (canvas *Canvas) SetWidth(width int) {
-	for i := range canvas.charts {
-		canvas.updateSubChartSize(i)
-	}
 	canvas.width = width
+}
+
+func (canvas *Canvas) MoveLeft() {
+	for _, c := range canvas.charts {
+		c.MoveLeft()
+	}
+	canvas.start = canvas.start.Add(-canvas.delta)
+}
+
+func (canvas *Canvas) MoveRight() {
+	for _, c := range canvas.charts {
+		c.MoveRight()
+	}
+	canvas.start = canvas.start.Add(canvas.delta)
 }
