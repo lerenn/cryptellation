@@ -92,6 +92,11 @@ func (canvas *Canvas) AddChart(chart Chart) {
 }
 
 func (canvas *Canvas) updateSubCharts() {
+	// Update start time
+	for _, c := range canvas.charts {
+		c.SetDisplayedTime(canvas.start)
+	}
+
 	// Get the minimal vertical data and the max vertical data
 	min, max := math.MaxFloat64, -math.MaxFloat64
 	for _, c := range canvas.charts {

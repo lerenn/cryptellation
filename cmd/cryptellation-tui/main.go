@@ -29,7 +29,7 @@ func main() {
 }
 
 func (a *App) Init() tea.Cmd {
-	canvas := charts.NewCanvas(candlesticks.ExampleData[0].Time, time.Hour)
+	canvas := charts.NewCanvas(candlesticks.ExampleData[10].Time, time.Hour)
 	a.canvas = &canvas
 
 	csChart := candlesticks.NewChart(candlesticks.ExampleData)

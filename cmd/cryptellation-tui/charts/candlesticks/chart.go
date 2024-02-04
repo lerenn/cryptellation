@@ -1,6 +1,8 @@
 package candlesticks
 
 import (
+	"time"
+
 	"github.com/fatih/color"
 	"github.com/lerenn/cryptellation/cmd/cryptellation-tui/charts"
 )
@@ -78,6 +80,15 @@ func (chart Chart) GetDisplayedDataMinMax() (min, max float64) {
 func (chart *Chart) SetVerticalBoundaries(min, max float64) {
 	chart.verticalMin = min
 	chart.verticalMax = max
+}
+
+func (chart *Chart) SetDisplayedTime(t time.Time) {
+	if len(chart.data) == 0 {
+		return
+	}
+
+	delta := chart.data[0].Time.Sub(t)
+	chart.cursor = -int(delta / time.Hour)
 }
 
 func (chart Chart) getDisplayedData() []*Candlestick {
