@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"math"
 	"time"
+
+	"github.com/dsnet/golib/unitconv"
 )
 
 type Canvas struct {
@@ -38,7 +40,7 @@ const (
 	horizontalLegendGap  = 20
 	horizontalAxisGap    = horizontalLegendSize
 
-	verticalLegendSize = 6
+	verticalLegendSize = 7
 	verticalLegendGap  = 4
 	verticalAxisGap    = verticalLegendSize + 1
 )
@@ -77,7 +79,16 @@ func (canvas Canvas) View() string {
 			g.InsertCharacter(verticalAxisGap-1, horizontalAxisGap+verticalLegendGap*i,
 				unicodeVerticalAxisPointExtension, unicodeVerticalAxisLegend)
 		}
-		g.InsertText(0, horizontalAxisGap+verticalLegendGap*i, fmt.Sprintf("%.1f", min+valueGap*float64(i)))
+
+		value := min + valueGap*float64(i)
+		text := unitconv.FormatPrefix(value, unitconv.SI, 2)
+
+		missingSpacesCount := verticalLegendSize - len(text)
+		for i := 0; i < missingSpacesCount; i++ {
+			text = " " + text
+		}
+
+		g.InsertText(0, horizontalAxisGap+verticalLegendGap*i, text)
 	}
 
 	// Horizontal legend
