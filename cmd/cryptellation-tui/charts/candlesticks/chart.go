@@ -13,25 +13,25 @@ type Chart struct {
 	height, width            int
 	verticalMin, verticalMax float64
 
-	data   *candlestick.List
+	Data   *candlestick.List
 	cursor time.Time
 	period period.Symbol
 }
 
-func NewChart(data *candlestick.List, period period.Symbol) Chart {
-	return Chart{
-		data:   data,
+func NewChart(data *candlestick.List, period period.Symbol) *Chart {
+	return &Chart{
+		Data:   data,
 		period: period,
 	}
 }
 
-func (chart *Chart) UpdateData(data *candlestick.List) {
-	if chart.data.Len() == 0 {
-		chart.data = data
-		return
+func (chart *Chart) UpsertData(data *candlestick.List) error {
+	if chart.Data.Len() == 0 {
+		chart.Data = data
+		return nil
 	}
 
-	chart.data.Merge(data, nil)
+	return chart.Data.Merge(data, nil)
 }
 
 func (chart *Chart) MoveLeft() {
@@ -76,7 +76,7 @@ func (chart Chart) toColumns() []column {
 	newData := make([]column, chart.width)
 
 	for current, i := start, 0; current.Before(end); current, i = current.Add(chart.period.Duration()), i+1 {
-		c, exists := chart.data.Get(current)
+		c, exists := chart.Data.Get(current)
 		if exists {
 			newData[i] = newColumn(c, chart.verticalMin, chart.verticalMax, chart.height)
 		}
@@ -91,12 +91,29 @@ func (chart Chart) displayedStartEnd() (start, end time.Time) {
 	return
 }
 
+func (chart Chart) MissingData() (first, last *time.Time) {
+	start, end := chart.displayedStartEnd()
+
+	for current := start; current.Before(end); current = current.Add(chart.period.Duration()) {
+		_, exists := chart.Data.Get(current)
+		if !exists {
+			copyCurrent := current
+			if first == nil {
+				first = &copyCurrent
+			}
+			last = &copyCurrent
+		}
+	}
+
+	return
+}
+
 func (chart Chart) GetDisplayedDataMinMax() (min, max float64) {
 	start, end := chart.displayedStartEnd()
 
-	data := candlestick.NewEmptyListFrom(chart.data)
+	data := candlestick.NewEmptyListFrom(chart.Data)
 	for current := start; current.Before(end); current = current.Add(chart.period.Duration()) {
-		c, exists := chart.data.Get(current)
+		c, exists := chart.Data.Get(current)
 		if exists {
 			data.Set(current, c)
 		}

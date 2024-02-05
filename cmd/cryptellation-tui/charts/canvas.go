@@ -17,8 +17,8 @@ type Canvas struct {
 	charts []Chart
 }
 
-func NewCanvas(start time.Time, delta time.Duration) Canvas {
-	return Canvas{
+func NewCanvas(start time.Time, delta time.Duration) *Canvas {
+	return &Canvas{
 		start: start,
 		delta: delta,
 	}
