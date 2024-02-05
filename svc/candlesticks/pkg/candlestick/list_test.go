@@ -221,3 +221,26 @@ func (suite *CandlestickListSuite) TestAreMissingWithOneMissingAndLimit() {
 	// Then there is no missing
 	suite.Require().False(res)
 }
+
+func (suite *CandlestickListSuite) TestFillMissing() {
+	// Create a list with one candlestick
+	csList := NewList("exchange", "BTC-USDC", period.M1)
+	cs0 := Candlestick{Open: 1, High: 2, Low: 0.5, Close: 1.5}
+	suite.Require().NoError(csList.Set(time.Unix(60, 0), cs0))
+
+	// Fill missing candlesticks
+	err := csList.FillMissing(time.Unix(0, 0), time.Unix(180, 0), Candlestick{Open: 10, High: 20, Low: 5, Close: 15})
+	suite.Require().NoError(err)
+
+	// Check that the existing one is not overwritten
+	cs, exists := csList.Get(time.Unix(60, 0))
+	suite.Require().True(exists)
+	suite.Require().Equal(Candlestick{Open: 1, High: 2, Low: 0.5, Close: 1.5}, cs)
+
+	// Check that missing candlesticks has been filled
+	for _, m := range []int64{0, 2, 3} {
+		cs, exists := csList.Get(time.Unix(m*60, 0))
+		suite.Require().True(exists)
+		suite.Require().Equal(Candlestick{Open: 10, High: 20, Low: 5, Close: 15}, cs)
+	}
+}

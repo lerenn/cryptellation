@@ -36,6 +36,26 @@ func NewListFrom(l *List) *List {
 	return NewList(l.Exchange, l.Pair, l.Period)
 }
 
+// FillMissing will add the 'filling' candlestick at each interval between
+// 'start' included and 'end' included when there is a missing candlestick at
+// the tested interval.
+func (l *List) FillMissing(start, end time.Time, filling Candlestick) error {
+	for current := start; current.Before(end.Add(l.Period.Duration())); current = current.Add(l.Period.Duration()) {
+		// Check if the candlestick exists
+		_, exists := l.Get(current)
+		if exists {
+			continue
+		}
+
+		// Set with filling
+		if err := l.Set(current, filling); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
 func (l *List) MustSet(t time.Time, c Candlestick) *List {
 	err := l.Set(t, c)
 	if err != nil {
