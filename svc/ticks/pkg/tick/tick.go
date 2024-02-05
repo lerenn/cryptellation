@@ -7,10 +7,10 @@ import (
 )
 
 type Tick struct {
-	Time       time.Time `json:"time"`
-	PairSymbol string    `json:"pair_symbol"`
-	Price      float64   `json:"price"`
-	Exchange   string    `json:"exchange"`
+	Time     time.Time `json:"time"`
+	Pair     string    `json:"pair"`
+	Price    float64   `json:"price"`
+	Exchange string    `json:"exchange"`
 }
 
 func (t Tick) MarshalBinary() ([]byte, error) {
@@ -26,7 +26,7 @@ func (t Tick) String() string {
 		"[%s|%s|%s] %f",
 		t.Time.Format(time.RFC3339),
 		t.Exchange,
-		t.PairSymbol,
+		t.Pair,
 		t.Price,
 	)
 }

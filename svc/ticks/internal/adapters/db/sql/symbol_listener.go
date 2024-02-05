@@ -9,10 +9,10 @@ import (
 	"gorm.io/gorm/clause"
 )
 
-func (a *Adapter) IncrementSymbolListenerSubscribers(ctx context.Context, exchange, pairSymbol string) (int64, error) {
+func (a *Adapter) IncrementSymbolListenerSubscribers(ctx context.Context, exchange, pair string) (int64, error) {
 	sl := entities.SymbolListener{
 		Exchange:    exchange,
-		PairSymbol:  pairSymbol,
+		Pair:        pair,
 		Subscribers: 1, // Default if created
 	}
 
@@ -28,10 +28,10 @@ func (a *Adapter) IncrementSymbolListenerSubscribers(ctx context.Context, exchan
 	}
 }
 
-func (a *Adapter) DecrementSymbolListenerSubscribers(ctx context.Context, exchange, pairSymbol string) (int64, error) {
+func (a *Adapter) DecrementSymbolListenerSubscribers(ctx context.Context, exchange, pair string) (int64, error) {
 	sl := entities.SymbolListener{
-		Exchange:   exchange,
-		PairSymbol: pairSymbol,
+		Exchange: exchange,
+		Pair:     pair,
 	}
 
 	err := a.db.Client.WithContext(ctx).Clauses(clause.Locking{Strength: "UPDATE"}).Find(&sl).Error
@@ -43,20 +43,20 @@ func (a *Adapter) DecrementSymbolListenerSubscribers(ctx context.Context, exchan
 	return sl.Subscribers, a.db.Client.WithContext(ctx).Save(&sl).Error
 }
 
-func (a *Adapter) GetSymbolListenerSubscribers(ctx context.Context, exchange, pairSymbol string) (int64, error) {
+func (a *Adapter) GetSymbolListenerSubscribers(ctx context.Context, exchange, pair string) (int64, error) {
 	sl := entities.SymbolListener{
-		Exchange:   exchange,
-		PairSymbol: pairSymbol,
+		Exchange: exchange,
+		Pair:     pair,
 	}
 
 	err := a.db.Client.WithContext(ctx).Find(&sl).Error
 	return sl.Subscribers, err
 }
 
-func (a *Adapter) ClearSymbolListenerSubscribers(ctx context.Context, exchange, pairSymbol string) error {
+func (a *Adapter) ClearSymbolListenerSubscribers(ctx context.Context, exchange, pair string) error {
 	sl := entities.SymbolListener{
-		Exchange:   exchange,
-		PairSymbol: pairSymbol,
+		Exchange: exchange,
+		Pair:     pair,
 	}
 
 	err := a.db.Client.WithContext(ctx).Clauses(clause.Locking{Strength: "UPDATE"}).Find(&sl).Error

@@ -52,8 +52,8 @@ func (suite *SubscribeSuite) TestHappyPath() {
 				ID: 1234,
 				TickSubscriptions: []event.TickSubscription{
 					{
-						ExchangeName: "exchange",
-						PairSymbol:   "ETH-USDT",
+						Exchange: "exchange",
+						Pair:     "ETH-USDT",
 					},
 				},
 			}, bt)

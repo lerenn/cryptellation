@@ -18,8 +18,8 @@ type internalListener struct {
 	Events    events.Port
 	Exchanges exchanges.Port
 
-	ExchangeName string
-	PairSymbol   string
+	Exchange string
+	Pair     string
 
 	ticksChan     chan tick.Tick
 	stopChan      chan struct{}
@@ -27,10 +27,10 @@ type internalListener struct {
 }
 
 func (l *internalListener) Run() (err error) {
-	log.Printf("Starting listener for %q on %q\n", l.PairSymbol, l.ExchangeName)
+	log.Printf("Starting listener for %q on %q\n", l.Pair, l.Exchange)
 
 	// Starting listening to symbol
-	l.ticksChan, l.stopChan, err = l.Exchanges.ListenSymbol(l.ExchangeName, l.PairSymbol)
+	l.ticksChan, l.stopChan, err = l.Exchanges.ListenSymbol(l.Exchange, l.Pair)
 	if err != nil {
 		return err
 	}
@@ -62,7 +62,7 @@ func (l *internalListener) internalLoop() {
 		}
 
 		if !open {
-			log.Printf("Closing %q listener on %q", l.PairSymbol, l.ExchangeName)
+			log.Printf("Closing %q listener on %q", l.Pair, l.Exchange)
 			break
 		}
 
@@ -79,13 +79,13 @@ func (l *internalListener) setNextCheckTimeIfNeeded() (finished bool, err error)
 	ctx := context.Background()
 
 	if l.nextCheckTime.Before(time.Now()) {
-		count, err := l.DB.GetSymbolListenerSubscribers(ctx, l.ExchangeName, l.PairSymbol)
+		count, err := l.DB.GetSymbolListenerSubscribers(ctx, l.Exchange, l.Pair)
 		if err != nil {
 			return false, err
 		}
 
 		if count <= 0 {
-			log.Println("Interrupting", l.ExchangeName, l.PairSymbol, "listener")
+			log.Println("Interrupting", l.Exchange, l.Pair, "listener")
 			l.stopChan <- struct{}{}
 			return true, nil
 		}

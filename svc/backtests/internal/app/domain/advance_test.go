@@ -53,8 +53,8 @@ func (suite *AdvanceSuite) TestWithoutAccount() {
 				PeriodBetweenEvents: period.M1,
 				TickSubscriptions: []event.TickSubscription{
 					{
-						ExchangeName: "exchange",
-						PairSymbol:   "ETH-USDT",
+						Exchange: "exchange",
+						Pair:     "ETH-USDT",
 					},
 				},
 			}
@@ -73,8 +73,8 @@ func (suite *AdvanceSuite) TestWithoutAccount() {
 				PeriodBetweenEvents: period.M1,
 				TickSubscriptions: []event.TickSubscription{
 					{
-						ExchangeName: "exchange",
-						PairSymbol:   "ETH-USDT",
+						Exchange: "exchange",
+						Pair:     "ETH-USDT",
 					},
 				},
 			}, bt)
@@ -84,13 +84,13 @@ func (suite *AdvanceSuite) TestWithoutAccount() {
 
 	// Set candlesticks client expected calls
 	suite.candlesticks.EXPECT().Read(ctx, candlesticks.ReadCandlesticksPayload{
-		ExchangeName: "exchange",
-		PairSymbol:   "ETH-USDT",
-		Period:       period.M1,
-		Start:        utils.ToReference(time.Unix(0, 0)),
-		End:          utils.ToReference(time.Unix(120, 0)),
-		Limit:        1,
-	}).Return(candlestick.NewEmptyList("exchange", "ETH-USDT", period.M1), nil)
+		Exchange: "exchange",
+		Pair:     "ETH-USDT",
+		Period:   period.M1,
+		Start:    utils.ToReference(time.Unix(0, 0)),
+		End:      utils.ToReference(time.Unix(120, 0)),
+		Limit:    1,
+	}).Return(candlestick.NewList("exchange", "ETH-USDT", period.M1), nil)
 
 	// Set Events expected calls
 	suite.events.EXPECT().Publish(context.Background(), uint(1234), event.NewStatusEvent(time.Unix(120, 0), event.Status{Finished: true}))

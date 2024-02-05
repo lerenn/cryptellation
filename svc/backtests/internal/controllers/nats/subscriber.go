@@ -145,8 +145,8 @@ func (s subscriber) SubscribeBacktestRequest(ctx context.Context, msg asyncapi.S
 	err := s.backtests.SubscribeToEvents(
 		context.Background(),
 		uint(msg.Payload.Id),
-		string(msg.Payload.ExchangeName),
-		string(msg.Payload.PairSymbol),
+		string(msg.Payload.Exchange),
+		string(msg.Payload.Pair),
 	)
 	if err != nil {
 		resp.Payload.Error = &asyncapi.ErrorSchema{

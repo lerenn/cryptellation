@@ -132,11 +132,11 @@ components:
         pairs:
           type: array
           items:
-            $ref: '#/components/schemas/PairSymbol'
+            $ref: '#/components/schemas/Pair'
         periods:
           type: array
           items:
-            $ref: '#/components/schemas/PeriodSymbol'
+            $ref: '#/components/schemas/Period'
         fees:
           type: number
         lastSyncTime:
@@ -151,12 +151,12 @@ components:
       description: Exchange name
       examples:
         - Binance
-    PairSymbol:
+    Pair:
       type: string
       description: Pair symbol
       examples:
         - ETH-USDC
-    PeriodSymbol:
+    Period:
       type: string
       description: Period symbol
       default: M1

@@ -8,9 +8,9 @@ import (
 )
 
 type SimpleMovingAverage struct {
-	ExchangeName string    `gorm:"primaryKey;autoIncrement:false;index:candlestick,unique"`
-	PairSymbol   string    `gorm:"primaryKey;autoIncrement:false;index:candlestick,unique"`
-	PeriodSymbol string    `gorm:"primaryKey;autoIncrement:false;index:candlestick,unique"`
+	Exchange     string    `gorm:"primaryKey;autoIncrement:false;index:candlestick,unique"`
+	Pair         string    `gorm:"primaryKey;autoIncrement:false;index:candlestick,unique"`
+	Period       string    `gorm:"primaryKey;autoIncrement:false;index:candlestick,unique"`
 	PeriodNumber int       `gorm:"primaryKey;autoIncrement:false;index:candlestick,unique"`
 	PriceType    string    `gorm:"primaryKey;autoIncrement:false;index:candlestick,unique"`
 	Time         time.Time `gorm:"primaryKey;autoIncrement:false;index:candlestick,unique"`
@@ -18,9 +18,9 @@ type SimpleMovingAverage struct {
 }
 
 func (s *SimpleMovingAverage) FromModel(exchange, pair, period string, periodNb int, priceType candlestick.PriceType, t time.Time, price float64) {
-	s.ExchangeName = exchange
-	s.PairSymbol = pair
-	s.PeriodSymbol = period
+	s.Exchange = exchange
+	s.Pair = pair
+	s.Period = period
 	s.PeriodNumber = periodNb
 	s.PriceType = priceType.String()
 	s.Time = t
@@ -28,9 +28,9 @@ func (s *SimpleMovingAverage) FromModel(exchange, pair, period string, periodNb 
 }
 
 func (s SimpleMovingAverage) ToModel() (exchange, pair, period string, periodNb int, priceType candlestick.PriceType, t time.Time, price float64) {
-	return s.ExchangeName,
-		s.PairSymbol,
-		s.PeriodSymbol,
+	return s.Exchange,
+		s.Pair,
+		s.Period,
 		s.PeriodNumber,
 		candlestick.PriceType(s.PriceType),
 		s.Time,

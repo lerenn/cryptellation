@@ -14,8 +14,8 @@ type Indicators interface {
 }
 
 type GetCachedSMAPayload struct {
-	ExchangeName string
-	PairSymbol   string
+	Exchange     string
+	Pair         string
 	Period       period.Symbol
 	Start        time.Time
 	End          time.Time

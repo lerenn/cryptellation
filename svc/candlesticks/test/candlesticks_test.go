@@ -13,12 +13,12 @@ import (
 func (suite *EndToEndSuite) TestReadCandlesticks() {
 	// WHEN requesting a candlesticks list
 	list, err := suite.client.Read(context.Background(), client.ReadCandlesticksPayload{
-		ExchangeName: "binance",
-		PairSymbol:   "ETH-USDT",
-		Period:       period.H1,
-		Start:        utils.ToReference(utils.Must(time.Parse(time.RFC3339, "2022-01-01T00:00:00Z"))),
-		End:          utils.ToReference(utils.Must(time.Parse(time.RFC3339, "2022-01-01T03:00:00Z"))),
-		Limit:        2,
+		Exchange: "binance",
+		Pair:     "ETH-USDT",
+		Period:   period.H1,
+		Start:    utils.ToReference(utils.Must(time.Parse(time.RFC3339, "2022-01-01T00:00:00Z"))),
+		End:      utils.ToReference(utils.Must(time.Parse(time.RFC3339, "2022-01-01T03:00:00Z"))),
+		Limit:    2,
 	})
 
 	// THEN the request is successful

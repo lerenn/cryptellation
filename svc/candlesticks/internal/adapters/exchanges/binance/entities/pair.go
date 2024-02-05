@@ -2,6 +2,6 @@ package entities
 
 import "strings"
 
-func BinanceSymbol(pairSymbol string) string {
-	return strings.ReplaceAll(pairSymbol, "-", "")
+func BinanceSymbol(pair string) string {
+	return strings.ReplaceAll(pair, "-", "")
 }

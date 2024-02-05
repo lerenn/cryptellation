@@ -86,8 +86,8 @@ func (t Client) Listen(ctx context.Context, payload client.TicksFilterPayload) (
 
 	// Create params for channel path
 	params := asyncapi.CryptellationTicksLiveParameters{
-		Exchange: asyncapi.ExchangeNameSchema(payload.ExchangeName),
-		Pair:     asyncapi.PairSymbolSchema(payload.PairSymbol),
+		Exchange: asyncapi.ExchangeSchema(payload.Exchange),
+		Pair:     asyncapi.PairSchema(payload.Pair),
 	}
 
 	// Create callback when a tick appears

@@ -34,7 +34,7 @@ func (suite *SMASuite) SetupTest() {
 }
 
 func (suite *SMASuite) TestAllExistWithNoneInDB() {
-	cs := candlestick.NewEmptyList("exchange", "ETC-USDT", period.M1)
+	cs := candlestick.NewList("exchange", "ETC-USDT", period.M1)
 	cs.MustSet(time.Unix(0, 0), candlestick.Candlestick{Close: 5})
 	cs.MustSet(time.Unix(60, 0), candlestick.Candlestick{Close: 7})
 	cs.MustSet(time.Unix(120, 0), candlestick.Candlestick{Close: 10})
@@ -45,8 +45,8 @@ func (suite *SMASuite) TestAllExistWithNoneInDB() {
 
 	// Set expected calls
 	suite.db.EXPECT().GetSMA(context.Background(), db.ReadSMAPayload{
-		ExchangeName: "exchange",
-		PairSymbol:   "ETC-USDT",
+		Exchange:     "exchange",
+		Pair:         "ETC-USDT",
 		Period:       period.M1,
 		Start:        time.Unix(180, 0),
 		End:          time.Unix(360, 0),
@@ -55,16 +55,16 @@ func (suite *SMASuite) TestAllExistWithNoneInDB() {
 	}).Return(timeserie.New[float64](), nil)
 
 	suite.candlesticks.EXPECT().Read(context.Background(), client.ReadCandlesticksPayload{
-		ExchangeName: "exchange",
-		PairSymbol:   "ETC-USDT",
-		Period:       period.M1,
-		Start:        utils.ToReference(time.Unix(0, 0)),
-		End:          utils.ToReference(time.Unix(360, 0)),
+		Exchange: "exchange",
+		Pair:     "ETC-USDT",
+		Period:   period.M1,
+		Start:    utils.ToReference(time.Unix(0, 0)),
+		End:      utils.ToReference(time.Unix(360, 0)),
 	}).Return(cs, nil)
 
 	suite.db.EXPECT().UpsertSMA(context.Background(), db.WriteSMAPayload{
-		ExchangeName: "exchange",
-		PairSymbol:   "ETC-USDT",
+		Exchange:     "exchange",
+		Pair:         "ETC-USDT",
 		Period:       period.M1,
 		PeriodNumber: 3,
 		PriceType:    candlestick.PriceTypeIsClose,
@@ -77,8 +77,8 @@ func (suite *SMASuite) TestAllExistWithNoneInDB() {
 
 	// Run operation
 	_, err := suite.app.GetCachedSMA(context.Background(), app.GetCachedSMAPayload{
-		ExchangeName: "exchange",
-		PairSymbol:   "ETC-USDT",
+		Exchange:     "exchange",
+		Pair:         "ETC-USDT",
 		Period:       period.M1,
 		Start:        time.Unix(180, 0),
 		End:          time.Unix(360, 0),

@@ -15,7 +15,7 @@ type CandlesticksSuite struct {
 }
 
 func (suite *CandlesticksSuite) TestCreate() {
-	list := candlestick.NewEmptyList("exchange", "ETH-USDC", period.M1)
+	list := candlestick.NewList("exchange", "ETH-USDC", period.M1)
 	t, err := time.Parse(time.RFC3339, "1993-11-15T11:29:00Z")
 	suite.Require().NoError(err)
 	suite.Require().NoError(list.Set(t, candlestick.Candlestick{
@@ -26,7 +26,7 @@ func (suite *CandlesticksSuite) TestCreate() {
 		Volume:     1000,
 		Uncomplete: true,
 	}))
-	recvList := candlestick.NewEmptyList("exchange", "ETH-USDC", period.M1)
+	recvList := candlestick.NewList("exchange", "ETH-USDC", period.M1)
 
 	suite.Require().NoError(suite.DB.CreateCandlesticks(context.Background(), list))
 	err = suite.DB.ReadCandlesticks(context.Background(), recvList, t.Add(-time.Hour), t.Add(time.Hour), 0)
@@ -40,7 +40,7 @@ func (suite *CandlesticksSuite) TestCreate() {
 }
 
 func (suite *CandlesticksSuite) TestCreateTwice() {
-	list := candlestick.NewEmptyList("exchange", "ETH-USDC", period.M1)
+	list := candlestick.NewList("exchange", "ETH-USDC", period.M1)
 	t, err := time.Parse(time.RFC3339, "1993-11-15T11:29:00Z")
 	suite.Require().NoError(err)
 	suite.Require().NoError(list.Set(t, candlestick.Candlestick{
@@ -57,7 +57,7 @@ func (suite *CandlesticksSuite) TestCreateTwice() {
 
 func (suite *CandlesticksSuite) TestRead() {
 	// Create targeted exchange, pair, period
-	list := candlestick.NewEmptyList("exchange", "ETH-USDC", period.M1)
+	list := candlestick.NewList("exchange", "ETH-USDC", period.M1)
 
 	t1, err := time.Parse(time.RFC3339, "1993-11-15T11:29:00Z")
 	suite.Require().NoError(err)
@@ -102,7 +102,7 @@ func (suite *CandlesticksSuite) TestRead() {
 	suite.Require().NoError(suite.DB.CreateCandlesticks(context.Background(), list))
 
 	// Create other exchange
-	otherExchangeList := candlestick.NewEmptyList("exchange2", "ETH-USDC", period.M1)
+	otherExchangeList := candlestick.NewList("exchange2", "ETH-USDC", period.M1)
 	suite.Require().NoError(err)
 	suite.Require().NoError(otherExchangeList.Set(t2, candlestick.Candlestick{
 		Open:   1,
@@ -114,7 +114,7 @@ func (suite *CandlesticksSuite) TestRead() {
 	suite.Require().NoError(suite.DB.CreateCandlesticks(context.Background(), otherExchangeList))
 
 	// Create other pair
-	otherPairList := candlestick.NewEmptyList("exchange", "BTC-USDC", period.M1)
+	otherPairList := candlestick.NewList("exchange", "BTC-USDC", period.M1)
 	suite.Require().NoError(err)
 	suite.Require().NoError(otherPairList.Set(t2, candlestick.Candlestick{
 		Open:   2,
@@ -126,7 +126,7 @@ func (suite *CandlesticksSuite) TestRead() {
 	suite.Require().NoError(suite.DB.CreateCandlesticks(context.Background(), otherPairList))
 
 	// Create other period
-	otherPeriodList := candlestick.NewEmptyList("exchange", "ETH-USDC", period.M15)
+	otherPeriodList := candlestick.NewList("exchange", "ETH-USDC", period.M15)
 	suite.Require().NoError(err)
 	suite.Require().NoError(otherPeriodList.Set(t2, candlestick.Candlestick{
 		Open:   3,
@@ -138,7 +138,7 @@ func (suite *CandlesticksSuite) TestRead() {
 	suite.Require().NoError(suite.DB.CreateCandlesticks(context.Background(), otherPeriodList))
 
 	// Read only the two centered candles
-	recvList := candlestick.NewEmptyList("exchange", "ETH-USDC", period.M1)
+	recvList := candlestick.NewList("exchange", "ETH-USDC", period.M1)
 	suite.Require().NoError(suite.DB.ReadCandlesticks(context.Background(), recvList, t2, t3, 0))
 	suite.Require().Equal(2, recvList.Len())
 	c, _ := list.Get(t2)
@@ -152,21 +152,21 @@ func (suite *CandlesticksSuite) TestRead() {
 	suite.Require().Equal(c, rc)
 
 	// Check others
-	recvList = candlestick.NewEmptyList("exchange2", "ETH-USDC", period.M1)
+	recvList = candlestick.NewList("exchange2", "ETH-USDC", period.M1)
 	suite.Require().NoError(suite.DB.ReadCandlesticks(context.Background(), recvList, t2, t3, 0))
 	c, _ = otherExchangeList.Get(t2)
 	rc, exists = recvList.Get(t2)
 	suite.True(exists)
 	suite.Require().Equal(c, rc)
 
-	recvList = candlestick.NewEmptyList("exchange", "BTC-USDC", period.M1)
+	recvList = candlestick.NewList("exchange", "BTC-USDC", period.M1)
 	suite.Require().NoError(suite.DB.ReadCandlesticks(context.Background(), recvList, t2, t3, 0))
 	c, _ = otherPairList.Get(t2)
 	rc, exists = recvList.Get(t2)
 	suite.True(exists)
 	suite.Require().Equal(c, rc)
 
-	recvList = candlestick.NewEmptyList("exchange", "ETH-USDC", period.M15)
+	recvList = candlestick.NewList("exchange", "ETH-USDC", period.M15)
 	suite.Require().NoError(suite.DB.ReadCandlesticks(context.Background(), recvList, t2, t3, 0))
 	c, _ = otherPeriodList.Get(t2)
 	rc, exists = recvList.Get(t2)
@@ -176,7 +176,7 @@ func (suite *CandlesticksSuite) TestRead() {
 
 func (suite *CandlesticksSuite) TestReadLimit() {
 	// Create targeted exchange, pair, period
-	list := candlestick.NewEmptyList("exchange", "ETH-USDC", period.M1)
+	list := candlestick.NewList("exchange", "ETH-USDC", period.M1)
 
 	t1, err := time.Parse(time.RFC3339, "1993-11-15T11:29:00Z")
 	suite.Require().NoError(err)
@@ -221,7 +221,7 @@ func (suite *CandlesticksSuite) TestReadLimit() {
 	suite.Require().NoError(suite.DB.CreateCandlesticks(context.Background(), list))
 
 	// Read only the 2 first
-	recvList := candlestick.NewEmptyList("exchange", "ETH-USDC", period.M1)
+	recvList := candlestick.NewList("exchange", "ETH-USDC", period.M1)
 	suite.Require().NoError(suite.DB.ReadCandlesticks(context.Background(), recvList, t1, t4, 2))
 	suite.Require().Equal(2, recvList.Len())
 	c, _ := list.Get(t1)
@@ -238,13 +238,13 @@ func (suite *CandlesticksSuite) TestReadLimit() {
 func (suite *CandlesticksSuite) TestReadEmpty() {
 	t, err := time.Parse(time.RFC3339, "1993-11-15T11:29:00Z")
 	suite.Require().NoError(err)
-	recvList := candlestick.NewEmptyList("exchange", "ETH-USDC", period.M1)
+	recvList := candlestick.NewList("exchange", "ETH-USDC", period.M1)
 	suite.Require().NoError(suite.DB.ReadCandlesticks(context.Background(), recvList, t.Add(-time.Hour), t.Add(time.Hour), 0))
 	suite.Require().Equal(0, recvList.Len())
 }
 
 func (suite *CandlesticksSuite) TestUpdate() {
-	list := candlestick.NewEmptyList("exchange", "ETH-USDC", period.M1)
+	list := candlestick.NewList("exchange", "ETH-USDC", period.M1)
 	t, err := time.Parse(time.RFC3339, "1993-11-15T11:29:00Z")
 	suite.Require().NoError(err)
 	suite.Require().NoError(list.Set(t, candlestick.Candlestick{
@@ -257,7 +257,7 @@ func (suite *CandlesticksSuite) TestUpdate() {
 	}))
 	suite.Require().NoError(suite.DB.CreateCandlesticks(context.Background(), list))
 
-	update := candlestick.NewEmptyList("exchange", "ETH-USDC", period.M1)
+	update := candlestick.NewList("exchange", "ETH-USDC", period.M1)
 	suite.Require().NoError(update.Set(t, candlestick.Candlestick{
 		Open:       2,
 		Low:        1,
@@ -267,7 +267,7 @@ func (suite *CandlesticksSuite) TestUpdate() {
 		Uncomplete: false,
 	}))
 	suite.Require().NoError(suite.DB.UpdateCandlesticks(context.Background(), update))
-	receivedList := candlestick.NewEmptyList("exchange", "ETH-USDC", period.M1)
+	receivedList := candlestick.NewList("exchange", "ETH-USDC", period.M1)
 	err = suite.DB.ReadCandlesticks(context.Background(), receivedList, t.Add(-time.Hour), t.Add(time.Hour), 0)
 	suite.Require().NoError(err)
 
@@ -279,7 +279,7 @@ func (suite *CandlesticksSuite) TestUpdate() {
 }
 
 func (suite *CandlesticksSuite) TestUpdateInexistantTwice() {
-	list := candlestick.NewEmptyList("exchange", "ETH-USDC", period.M1)
+	list := candlestick.NewList("exchange", "ETH-USDC", period.M1)
 	t, err := time.Parse(time.RFC3339, "1993-11-15T11:29:00Z")
 	suite.Require().NoError(err)
 	suite.Require().NoError(list.Set(t, candlestick.Candlestick{
@@ -295,7 +295,7 @@ func (suite *CandlesticksSuite) TestUpdateInexistantTwice() {
 }
 
 func (suite *CandlesticksSuite) TestDelete() {
-	list := candlestick.NewEmptyList("exchange", "ETH-USDC", period.M1)
+	list := candlestick.NewList("exchange", "ETH-USDC", period.M1)
 	for i := 0; i < 10; i++ {
 		suite.Require().NoError(list.Set(time.Unix(int64(i*int(period.M1.Duration().Seconds())), 0), candlestick.Candlestick{
 			Open:   1 + float64(i),
@@ -308,7 +308,7 @@ func (suite *CandlesticksSuite) TestDelete() {
 	suite.Require().NoError(suite.DB.CreateCandlesticks(context.Background(), list))
 
 	// Remove half the data
-	delete := candlestick.NewEmptyList("exchange", "ETH-USDC", period.M1)
+	delete := candlestick.NewList("exchange", "ETH-USDC", period.M1)
 	suite.Require().NoError(delete.Set(time.Unix(int64(0*period.M1.Duration().Seconds()), 0), candlestick.Candlestick{}))
 	suite.Require().NoError(delete.Set(time.Unix(int64(1*period.M1.Duration().Seconds()), 0), candlestick.Candlestick{}))
 	suite.Require().NoError(delete.Set(time.Unix(int64(2*period.M1.Duration().Seconds()), 0), candlestick.Candlestick{}))
@@ -319,7 +319,7 @@ func (suite *CandlesticksSuite) TestDelete() {
 	// Check staying data
 	tEnd := time.Unix(10*int64(period.M1.Duration().Seconds()), 0)
 	tStart := time.Unix(5*int64(period.M1.Duration().Seconds()), 0)
-	receivedList := candlestick.NewEmptyList("exchange", "ETH-USDC", period.M1)
+	receivedList := candlestick.NewList("exchange", "ETH-USDC", period.M1)
 	err := suite.DB.ReadCandlesticks(context.Background(), receivedList, tStart, tEnd, 0)
 	suite.Require().NoError(err)
 	suite.Require().Equal(list.Len()-5, receivedList.Len())

@@ -16,9 +16,9 @@ import (
 )
 
 func (msg *ListCandlesticksRequestMessage) Set(payload client.ReadCandlesticksPayload) {
-	msg.Payload.ExchangeName = ExchangeNameSchema(payload.ExchangeName)
-	msg.Payload.PairSymbol = PairSymbolSchema(payload.PairSymbol)
-	msg.Payload.PeriodSymbol = PeriodSymbolSchema(payload.Period.String())
+	msg.Payload.Exchange = ExchangeSchema(payload.Exchange)
+	msg.Payload.Pair = PairSchema(payload.Pair)
+	msg.Payload.Period = PeriodSchema(payload.Period.String())
 	if payload.Start != nil {
 		msg.Payload.Start = utils.ToReference(DateSchema(*payload.Start))
 	}
@@ -30,19 +30,19 @@ func (msg *ListCandlesticksRequestMessage) Set(payload client.ReadCandlesticksPa
 
 func (msg *ListCandlesticksRequestMessage) ToModel() (app.GetCachedPayload, error) {
 	// Process specific types
-	per, err := period.FromString(string(msg.Payload.PeriodSymbol))
+	per, err := period.FromString(string(msg.Payload.Period))
 	if err != nil {
 		return app.GetCachedPayload{}, err
 	}
 
 	// Request list
 	return app.GetCachedPayload{
-		ExchangeName: string(msg.Payload.ExchangeName),
-		PairSymbol:   string(msg.Payload.PairSymbol),
-		Period:       per,
-		Start:        (*time.Time)(msg.Payload.Start),
-		End:          (*time.Time)(msg.Payload.End),
-		Limit:        uint(msg.Payload.Limit),
+		Exchange: string(msg.Payload.Exchange),
+		Pair:     string(msg.Payload.Pair),
+		Period:   per,
+		Start:    (*time.Time)(msg.Payload.Start),
+		End:      (*time.Time)(msg.Payload.End),
+		Limit:    uint(msg.Payload.Limit),
 	}, nil
 }
 
@@ -68,7 +68,7 @@ func (msg *ListCandlesticksResponseMessage) Set(list *candlestick.List) error {
 
 func (msg *ListCandlesticksResponseMessage) ToModel(exchange, pair string, symbol period.Symbol) (*candlestick.List, error) {
 	// Create list
-	list := candlestick.NewEmptyList(exchange, pair, symbol)
+	list := candlestick.NewList(exchange, pair, symbol)
 
 	// Fill list
 	for _, c := range *msg.Payload.Candlesticks {

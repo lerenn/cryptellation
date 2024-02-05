@@ -12,9 +12,9 @@ import (
 )
 
 func (msg *GetSMARequestMessage) Set(payload client.SMAPayload) {
-	msg.Payload.ExchangeName = ExchangeNameSchema(payload.ExchangeName)
-	msg.Payload.PairSymbol = PairSymbolSchema(payload.PairSymbol)
-	msg.Payload.PeriodSymbol = PeriodSymbolSchema(payload.Period)
+	msg.Payload.Exchange = ExchangeSchema(payload.Exchange)
+	msg.Payload.Pair = PairSchema(payload.Pair)
+	msg.Payload.Period = PeriodSchema(payload.Period)
 	msg.Payload.Start = utils.ToReference(DateSchema(payload.Start))
 	msg.Payload.End = utils.ToReference(DateSchema(payload.End))
 	msg.Payload.PeriodNumber = NumberOfPeriodsSchema(payload.PeriodNumber)
@@ -22,7 +22,7 @@ func (msg *GetSMARequestMessage) Set(payload client.SMAPayload) {
 }
 
 func (msg *GetSMARequestMessage) ToModel() (app.GetCachedSMAPayload, error) {
-	per := period.Symbol(msg.Payload.PeriodSymbol)
+	per := period.Symbol(msg.Payload.Period)
 	if err := per.Validate(); err != nil {
 		return app.GetCachedSMAPayload{}, err
 	}
@@ -33,8 +33,8 @@ func (msg *GetSMARequestMessage) ToModel() (app.GetCachedSMAPayload, error) {
 	}
 
 	return app.GetCachedSMAPayload{
-		ExchangeName: string(msg.Payload.ExchangeName),
-		PairSymbol:   string(msg.Payload.PairSymbol),
+		Exchange:     string(msg.Payload.Exchange),
+		Pair:         string(msg.Payload.Pair),
 		Period:       per,
 		Start:        time.Time(*msg.Payload.Start),
 		End:          time.Time(*msg.Payload.End),

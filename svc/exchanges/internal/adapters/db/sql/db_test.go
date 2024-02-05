@@ -44,11 +44,11 @@ func (suite *SqlDatabaseSuite) TestReset() {
 
 	// Given a created exchange
 	p := exchange.Exchange{
-		Name:           "exchange",
-		PairsSymbols:   []string{"ABC-XYZ", "IJK-XYZ"},
-		PeriodsSymbols: []string{"M5", "D1"},
-		Fees:           0.2,
-		LastSyncTime:   time.Now().UTC(),
+		Name:         "exchange",
+		Pairs:        []string{"ABC-XYZ", "IJK-XYZ"},
+		Periods:      []string{"M5", "D1"},
+		Fees:         0.2,
+		LastSyncTime: time.Now().UTC(),
 	}
 	as.NoError(suite.adapter.CreateExchanges(context.Background(), p))
 

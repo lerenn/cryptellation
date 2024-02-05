@@ -268,13 +268,13 @@ type BacktestsEventMessage struct {
 	Payload struct {
 		Content struct {
 			// Description: Exchange name
-			Exchange ExchangeNameSchema `json:"exchange"`
+			Exchange ExchangeSchema `json:"exchange"`
 
 			// Description: Indicates if the backtest has reached the end date
 			Finished bool `json:"finished"`
 
 			// Description: Pair symbol
-			PairSymbol PairSymbolSchema `json:"pair_symbol"`
+			Pair PairSchema `json:"pair"`
 
 			// Description: Tick price
 			Price float64 `json:"price"`
@@ -544,7 +544,7 @@ type CreateBacktestRequestMessage struct {
 		EndTime *DateSchema `json:"end_time"`
 
 		// Description: Period symbol
-		Period *PeriodSymbolSchema `json:"period"`
+		Period *PeriodSchema `json:"period"`
 
 		// Description: Date-Time format according to RFC3339
 		StartTime DateSchema `json:"start_time"`
@@ -1329,13 +1329,13 @@ type SubscribeBacktestRequestMessage struct {
 	// Payload will be inserted in the message payload
 	Payload struct {
 		// Description: Exchange name
-		ExchangeName ExchangeNameSchema `json:"exchange_name"`
+		Exchange ExchangeSchema `json:"exchange"`
 
 		// Description: Targeted backtest ID
 		Id BacktestIDSchema `json:"id"`
 
 		// Description: Pair symbol
-		PairSymbol PairSymbolSchema `json:"pair_symbol"`
+		Pair PairSchema `json:"pair"`
 	}
 }
 
@@ -1568,15 +1568,15 @@ type ErrorSchema struct {
 	Message string `json:"message"`
 }
 
-// ExchangeNameSchema is a schema from the AsyncAPI specification required in messages
+// ExchangeSchema is a schema from the AsyncAPI specification required in messages
 // Description: Exchange name
-type ExchangeNameSchema string
+type ExchangeSchema string
 
 // OrderSchema is a schema from the AsyncAPI specification required in messages
 // Description: Order sent to the market
 type OrderSchema struct {
 	// Description: Exchange name
-	ExchangeName ExchangeNameSchema `json:"exchange_name"`
+	Exchange ExchangeSchema `json:"exchange"`
 
 	// Description: Effective time of order execution
 	ExecutionTime *DateSchema `json:"execution_time"`
@@ -1585,7 +1585,7 @@ type OrderSchema struct {
 	Id *int64 `json:"id"`
 
 	// Description: Pair symbol
-	PairSymbol PairSymbolSchema `json:"pair_symbol"`
+	Pair PairSchema `json:"pair"`
 
 	// Description: Price of the asset that where it should be traded
 	Price *float64 `json:"price"`
@@ -1608,13 +1608,13 @@ type OrderSideSchema string
 // Description: Type of an order
 type OrderTypeSchema string
 
-// PairSymbolSchema is a schema from the AsyncAPI specification required in messages
+// PairSchema is a schema from the AsyncAPI specification required in messages
 // Description: Pair symbol
-type PairSymbolSchema string
+type PairSchema string
 
-// PeriodSymbolSchema is a schema from the AsyncAPI specification required in messages
+// PeriodSchema is a schema from the AsyncAPI specification required in messages
 // Description: Period symbol
-type PeriodSymbolSchema string
+type PeriodSchema string
 
 // StatusSchema is a schema from the AsyncAPI specification required in messages
 // Description: Status event is happening when there is no more expected events.
@@ -1627,10 +1627,10 @@ type StatusSchema struct {
 // TickSchema is a schema from the AsyncAPI specification required in messages
 type TickSchema struct {
 	// Description: Exchange name
-	Exchange ExchangeNameSchema `json:"exchange"`
+	Exchange ExchangeSchema `json:"exchange"`
 
 	// Description: Pair symbol
-	PairSymbol PairSymbolSchema `json:"pair_symbol"`
+	Pair PairSchema `json:"pair"`
 
 	// Description: Tick price
 	Price float64 `json:"price"`

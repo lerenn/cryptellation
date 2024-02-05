@@ -54,20 +54,20 @@ components:
         type: object
         description: Candlestick SMA request with filters and time boundaries
         required:
-          - exchangeName
-          - pairSymbol
-          - periodSymbol
+          - exchange
+          - pair
+          - period
           - periodNumber
           - limit
         properties:
-          exchangeName:
-            $ref: '#/components/schemas/ExchangeName'
+          exchange:
+            $ref: '#/components/schemas/Exchange'
             description: Requested candlesticks exchange name
-          pairSymbol:
-            $ref: '#/components/schemas/PairSymbol'
+          pair:
+            $ref: '#/components/schemas/Pair'
             description: Requested candlesticks pair symbol
-          periodSymbol:
-            $ref: '#/components/schemas/PeriodSymbol'
+          period:
+            $ref: '#/components/schemas/Period'
             description: Requested candlesticks period symbol
           periodNumber:
             $ref: '#/components/schemas/NumberOfPeriods'
@@ -146,7 +146,7 @@ components:
         location: $message.header#/correlationId
 
   schemas:
-    ExchangeName:
+    Exchange:
       type: string
       description: Exchange name
       examples:
@@ -168,7 +168,7 @@ components:
             description: Numerical value
             examples:
               - 0.5
-    PairSymbol:
+    Pair:
       type: string
       description: Pair symbol
       examples:
@@ -182,7 +182,7 @@ components:
         - high
         - low
         - close
-    PeriodSymbol:
+    Period:
       type: string
       description: Period symbol
       default: M1

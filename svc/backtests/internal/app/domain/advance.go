@@ -47,12 +47,12 @@ func (b Backtests) readActualEvents(ctx context.Context, bt backtest.Backtest) (
 	evts := make([]event.Event, 0, len(bt.TickSubscriptions))
 	for _, sub := range bt.TickSubscriptions {
 		list, err := b.candlesticks.Read(ctx, candlesticks.ReadCandlesticksPayload{
-			ExchangeName: sub.ExchangeName,
-			PairSymbol:   sub.PairSymbol,
-			Period:       bt.PeriodBetweenEvents,
-			Start:        &bt.CurrentCsTick.Time,
-			End:          &bt.EndTime,
-			Limit:        1,
+			Exchange: sub.Exchange,
+			Pair:     sub.Pair,
+			Period:   bt.PeriodBetweenEvents,
+			Start:    &bt.CurrentCsTick.Time,
+			End:      &bt.EndTime,
+			Limit:    1,
 		})
 		if err != nil {
 			return nil, fmt.Errorf("could not get candlesticks from service: %w", err)
@@ -63,7 +63,7 @@ func (b Backtests) readActualEvents(ctx context.Context, bt backtest.Backtest) (
 			continue
 		}
 
-		evt, err := event.TickEventFromCandlestick(sub.ExchangeName, sub.PairSymbol, bt.CurrentCsTick.PriceType, t, cs)
+		evt, err := event.TickEventFromCandlestick(sub.Exchange, sub.Pair, bt.CurrentCsTick.PriceType, t, cs)
 		if err != nil {
 			return nil, fmt.Errorf("turning candlestick into event: %w", err)
 		}

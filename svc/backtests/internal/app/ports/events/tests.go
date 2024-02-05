@@ -23,9 +23,9 @@ func (suite *EventsClientSuite) TestOnePubOneSubObject() {
 	backtestID := uint(1)
 	ts := time.Unix(60, 0).UTC()
 	t := tick.Tick{
-		PairSymbol: "BTC-USDC",
-		Price:      float64(time.Now().UnixNano()),
-		Exchange:   "exchange",
+		Pair:     "BTC-USDC",
+		Price:    float64(time.Now().UnixNano()),
+		Exchange: "exchange",
 	}
 	st := event.Status{
 		Finished: true,

@@ -76,19 +76,19 @@ type GetSMARequestMessage struct {
 		End *DateSchema `json:"end"`
 
 		// Description: Requested candlesticks exchange name
-		ExchangeName ExchangeNameSchema `json:"exchange_name"`
+		Exchange ExchangeSchema `json:"exchange"`
 
 		// Description: The maximum candlesticks to retrieve (0 = unlimited)
 		Limit LimitSchema `json:"limit"`
 
 		// Description: Requested candlesticks pair symbol
-		PairSymbol PairSymbolSchema `json:"pair_symbol"`
+		Pair PairSchema `json:"pair"`
+
+		// Description: Requested candlesticks period symbol
+		Period PeriodSchema `json:"period"`
 
 		// Description: Number of periods used
 		PeriodNumber NumberOfPeriodsSchema `json:"period_number"`
-
-		// Description: Requested candlesticks period symbol
-		PeriodSymbol PeriodSymbolSchema `json:"period_symbol"`
 
 		// Description: Type of price from a candlestick
 		PriceType *PriceTypeSchema `json:"price_type"`
@@ -504,9 +504,9 @@ type ErrorSchema struct {
 	Message string `json:"message"`
 }
 
-// ExchangeNameSchema is a schema from the AsyncAPI specification required in messages
+// ExchangeSchema is a schema from the AsyncAPI specification required in messages
 // Description: Exchange name
-type ExchangeNameSchema string
+type ExchangeSchema string
 
 // LimitSchema is a schema from the AsyncAPI specification required in messages
 // Description: The maximum quantity to retrieve (0 = unlimited)
@@ -526,13 +526,13 @@ type NumericTimeSerieSchema []struct {
 	Value float64 `json:"value"`
 }
 
-// PairSymbolSchema is a schema from the AsyncAPI specification required in messages
+// PairSchema is a schema from the AsyncAPI specification required in messages
 // Description: Pair symbol
-type PairSymbolSchema string
+type PairSchema string
 
-// PeriodSymbolSchema is a schema from the AsyncAPI specification required in messages
+// PeriodSchema is a schema from the AsyncAPI specification required in messages
 // Description: Period symbol
-type PeriodSymbolSchema string
+type PeriodSchema string
 
 // PriceTypeSchema is a schema from the AsyncAPI specification required in messages
 // Description: Type of price from a candlestick

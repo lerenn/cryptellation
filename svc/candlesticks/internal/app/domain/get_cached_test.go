@@ -35,7 +35,7 @@ func (suite *GetCachedSuite) setMocksForAllExistWithNoneInDB() context.Context {
 	ctx := context.Background()
 
 	// Set list that will be pulled from exchange and created in DB
-	l := candlestick.NewEmptyList("exchange", "ETH-USDC", period.M1)
+	l := candlestick.NewList("exchange", "ETH-USDC", period.M1)
 	for i := int64(0); i < 100; i++ {
 		suite.Require().NoError(l.Set(time.Unix(i*60, 0), candlestick.Candlestick{Open: float64(60 * i)}))
 	}
@@ -43,7 +43,7 @@ func (suite *GetCachedSuite) setMocksForAllExistWithNoneInDB() context.Context {
 	// Set first call to know how much candlestick there is in the database
 	suite.db.EXPECT().ReadCandlesticks(
 		ctx,
-		candlestick.NewEmptyList("exchange", "ETH-USDC", period.M1),
+		candlestick.NewList("exchange", "ETH-USDC", period.M1),
 		time.Unix(0, 0),
 		time.Unix(540, 0),
 		uint(0),
@@ -52,7 +52,7 @@ func (suite *GetCachedSuite) setMocksForAllExistWithNoneInDB() context.Context {
 	// Set call to check which candlestick exists or not
 	suite.db.EXPECT().ReadCandlesticks(
 		ctx,
-		candlestick.NewEmptyList("exchange", "ETH-USDC", period.M1),
+		candlestick.NewList("exchange", "ETH-USDC", period.M1),
 		time.Unix(0, 0),
 		time.Unix(5940, 0),
 		uint(0),
@@ -65,12 +65,12 @@ func (suite *GetCachedSuite) setMocksForAllExistWithNoneInDB() context.Context {
 	suite.exchange.EXPECT().GetCandlesticks(
 		ctx,
 		exchanges.GetCandlesticksPayload{
-			Exchange:   "exchange",
-			PairSymbol: "ETH-USDC",
-			Period:     period.M1,
-			Start:      time.Unix(0, 0),
-			End:        time.Unix(5940, 0),
-			Limit:      0,
+			Exchange: "exchange",
+			Pair:     "ETH-USDC",
+			Period:   period.M1,
+			Start:    time.Unix(0, 0),
+			End:      time.Unix(5940, 0),
+			Limit:    0,
 		},
 	).Return(l, nil)
 
@@ -82,11 +82,11 @@ func (suite *GetCachedSuite) TestAllExistWithNoneInDB() {
 
 	// When a request is made
 	l, err := suite.component.GetCached(ctx, app.GetCachedPayload{
-		ExchangeName: "exchange",
-		PairSymbol:   "ETH-USDC",
-		Period:       period.M1,
-		Start:        TimeOpt(time.Unix(0, 0)),
-		End:          TimeOpt(time.Unix(540, 0)),
+		Exchange: "exchange",
+		Pair:     "ETH-USDC",
+		Period:   period.M1,
+		Start:    TimeOpt(time.Unix(0, 0)),
+		End:      TimeOpt(time.Unix(540, 0)),
 	})
 
 	// Then everything went well
@@ -105,12 +105,16 @@ func (suite *GetCachedSuite) TestAllExistWithNoneInDB() {
 func (suite *GetCachedSuite) setMocksForNoneExistWithNoneInDB() context.Context {
 	ctx := context.Background()
 
-	l := candlestick.NewEmptyList("exchange", "ETH-USDC", period.M1)
+	l := candlestick.NewList("exchange", "ETH-USDC", period.M1)
+	suite.Require().NoError(l.FillMissing(
+		time.Unix(0, 0),
+		time.Unix(5940, 0),
+		candlestick.Candlestick{}))
 
 	// Set list that will be pulled from exchange and created in DB
 	suite.db.EXPECT().ReadCandlesticks(
 		ctx,
-		candlestick.NewEmptyList("exchange", "ETH-USDC", period.M1),
+		candlestick.NewList("exchange", "ETH-USDC", period.M1),
 		time.Unix(0, 0),
 		time.Unix(540, 0),
 		uint(0),
@@ -120,14 +124,26 @@ func (suite *GetCachedSuite) setMocksForNoneExistWithNoneInDB() context.Context 
 	suite.exchange.EXPECT().GetCandlesticks(
 		ctx,
 		exchanges.GetCandlesticksPayload{
-			Exchange:   "exchange",
-			PairSymbol: "ETH-USDC",
-			Period:     period.M1,
-			Start:      time.Unix(0, 0),
-			End:        time.Unix(5940, 0),
-			Limit:      0,
+			Exchange: "exchange",
+			Pair:     "ETH-USDC",
+			Period:   period.M1,
+			Start:    time.Unix(0, 0),
+			End:      time.Unix(5940, 0),
+			Limit:    0,
 		},
 	).Return(l, nil)
+
+	// Set call to check which candlestick exists or not
+	suite.db.EXPECT().ReadCandlesticks(
+		ctx,
+		candlestick.NewList("exchange", "ETH-USDC", period.M1),
+		time.Unix(0, 0),
+		time.Unix(5940, 0),
+		uint(0),
+	).Return(nil)
+
+	// Set call for creating candlesticks in database
+	suite.db.EXPECT().CreateCandlesticks(ctx, l).Return(nil)
 
 	return ctx
 }
@@ -138,27 +154,33 @@ func (suite *GetCachedSuite) TestNoneExistWithNoneInDB() {
 
 	// When a request is made
 	l, err := suite.component.GetCached(ctx, app.GetCachedPayload{
-		ExchangeName: "exchange",
-		PairSymbol:   "ETH-USDC",
-		Period:       period.M1,
-		Start:        TimeOpt(time.Unix(0, 0)),
-		End:          TimeOpt(time.Unix(540, 0)),
+		Exchange: "exchange",
+		Pair:     "ETH-USDC",
+		Period:   period.M1,
+		Start:    TimeOpt(time.Unix(0, 0)),
+		End:      TimeOpt(time.Unix(540, 0)),
 	})
 
 	// Then everything went well
 	suite.Require().NoError(err)
-	suite.Require().Equal(0, l.Len())
+
+	// And that all candlesticks are empty
+	suite.Require().Equal(10, l.Len())
+	suite.Require().NoError(l.Loop(func(_ time.Time, c candlestick.Candlestick) (bool, error) {
+		suite.Require().Equal(c, candlestick.Candlestick{})
+		return false, nil
+	}))
 }
 
 func (suite *GetCachedSuite) setMocksForFromDBAndService() context.Context {
 	ctx := context.Background()
 
-	dbl := candlestick.NewEmptyList("exchange", "ETH-USDC", period.M1)
+	dbl := candlestick.NewList("exchange", "ETH-USDC", period.M1)
 	for i := int64(0); i < 10; i++ {
 		suite.Require().NoError(dbl.Set(time.Unix(i*60, 0), candlestick.Candlestick{Close: 4321}))
 	}
 
-	exchl := candlestick.NewEmptyList("exchange", "ETH-USDC", period.M1)
+	exchl := candlestick.NewList("exchange", "ETH-USDC", period.M1)
 	for i := int64(10); i < 110; i++ {
 		suite.Require().NoError(exchl.Set(time.Unix(i*60, 0), candlestick.Candlestick{Close: 1234}))
 	}
@@ -166,7 +188,7 @@ func (suite *GetCachedSuite) setMocksForFromDBAndService() context.Context {
 	// Set list that will be pulled from exchange and created in DB
 	suite.db.EXPECT().ReadCandlesticks(
 		ctx,
-		candlestick.NewEmptyList("exchange", "ETH-USDC", period.M1),
+		candlestick.NewList("exchange", "ETH-USDC", period.M1),
 		time.Unix(0, 0),
 		time.Unix(1140, 0),
 		uint(0),
@@ -177,7 +199,7 @@ func (suite *GetCachedSuite) setMocksForFromDBAndService() context.Context {
 	// Set first call to know how much candlestick there is in the database
 	suite.db.EXPECT().ReadCandlesticks(
 		ctx,
-		candlestick.NewEmptyList("exchange", "ETH-USDC", period.M1),
+		candlestick.NewList("exchange", "ETH-USDC", period.M1),
 		time.Unix(0, 0),
 		time.Unix(6540, 0),
 		uint(0),
@@ -192,12 +214,12 @@ func (suite *GetCachedSuite) setMocksForFromDBAndService() context.Context {
 	suite.exchange.EXPECT().GetCandlesticks(
 		ctx,
 		exchanges.GetCandlesticksPayload{
-			Exchange:   "exchange",
-			PairSymbol: "ETH-USDC",
-			Period:     period.M1,
-			Start:      time.Unix(600, 0),
-			End:        time.Unix(6540, 0),
-			Limit:      0,
+			Exchange: "exchange",
+			Pair:     "ETH-USDC",
+			Period:   period.M1,
+			Start:    time.Unix(600, 0),
+			End:      time.Unix(6540, 0),
+			Limit:    0,
 		},
 	).Return(exchl, nil)
 
@@ -209,11 +231,11 @@ func (suite *GetCachedSuite) TestFromDBAndService() {
 
 	// When a request is made
 	el, err := suite.component.GetCached(ctx, app.GetCachedPayload{
-		ExchangeName: "exchange",
-		PairSymbol:   "ETH-USDC",
-		Period:       period.M1,
-		Start:        TimeOpt(time.Unix(0, 0)),
-		End:          TimeOpt(time.Unix(1140, 0)),
+		Exchange: "exchange",
+		Pair:     "ETH-USDC",
+		Period:   period.M1,
+		Start:    TimeOpt(time.Unix(0, 0)),
+		End:      TimeOpt(time.Unix(1140, 0)),
 	})
 
 	// Then everything went well
@@ -235,13 +257,13 @@ func (suite *GetCachedSuite) TestFromDBAndService() {
 func (suite *GetCachedSuite) setMocksForFromDBAndServiceWithUncomplete() context.Context {
 	ctx := context.Background()
 
-	dbl := candlestick.NewEmptyList("exchange", "ETH-USDC", period.M1)
+	dbl := candlestick.NewList("exchange", "ETH-USDC", period.M1)
 	for i := int64(0); i < 10; i++ {
 		suite.Require().NoError(dbl.Set(time.Unix(i*60, 0), candlestick.Candlestick{Close: 4321}))
 	}
 	suite.Require().NoError(dbl.Set(time.Unix(540, 0), candlestick.Candlestick{Close: 4321, Uncomplete: true}))
 
-	exchl := candlestick.NewEmptyList("exchange", "ETH-USDC", period.M1)
+	exchl := candlestick.NewList("exchange", "ETH-USDC", period.M1)
 	for i := int64(0); i < 100; i++ {
 		suite.Require().NoError(exchl.Set(time.Unix(i*60, 0), candlestick.Candlestick{Close: 1234}))
 	}
@@ -249,7 +271,7 @@ func (suite *GetCachedSuite) setMocksForFromDBAndServiceWithUncomplete() context
 	// Set list that will be pulled from exchange and created in DB
 	suite.db.EXPECT().ReadCandlesticks(
 		ctx,
-		candlestick.NewEmptyList("exchange", "ETH-USDC", period.M1),
+		candlestick.NewList("exchange", "ETH-USDC", period.M1),
 		time.Unix(0, 0),
 		time.Unix(1140, 0),
 		uint(0),
@@ -260,7 +282,7 @@ func (suite *GetCachedSuite) setMocksForFromDBAndServiceWithUncomplete() context
 	// Set first call to know how much candlestick there is in the database
 	suite.db.EXPECT().ReadCandlesticks(
 		ctx,
-		candlestick.NewEmptyList("exchange", "ETH-USDC", period.M1),
+		candlestick.NewList("exchange", "ETH-USDC", period.M1),
 		time.Unix(0, 0),
 		time.Unix(5940, 0),
 		uint(0),
@@ -269,7 +291,7 @@ func (suite *GetCachedSuite) setMocksForFromDBAndServiceWithUncomplete() context
 	})
 
 	// Set call for creating candlesticks in database
-	createdl := candlestick.NewEmptyList("exchange", "ETH-USDC", period.M1)
+	createdl := candlestick.NewList("exchange", "ETH-USDC", period.M1)
 	for i := int64(10); i < 100; i++ {
 		suite.Require().NoError(createdl.Set(time.Unix(i*60, 0), candlestick.Candlestick{Close: 1234}))
 	}
@@ -279,12 +301,12 @@ func (suite *GetCachedSuite) setMocksForFromDBAndServiceWithUncomplete() context
 	suite.exchange.EXPECT().GetCandlesticks(
 		ctx,
 		exchanges.GetCandlesticksPayload{
-			Exchange:   "exchange",
-			PairSymbol: "ETH-USDC",
-			Period:     period.M1,
-			Start:      time.Unix(0, 0),
-			End:        time.Unix(5940, 0),
-			Limit:      0,
+			Exchange: "exchange",
+			Pair:     "ETH-USDC",
+			Period:   period.M1,
+			Start:    time.Unix(0, 0),
+			End:      time.Unix(5940, 0),
+			Limit:    0,
 		},
 	).Return(exchl, nil)
 
@@ -296,11 +318,11 @@ func (suite *GetCachedSuite) TestFromDBAndServiceWithUncomplete() {
 
 	// When a request is made
 	el, err := suite.component.GetCached(ctx, app.GetCachedPayload{
-		ExchangeName: "exchange",
-		PairSymbol:   "ETH-USDC",
-		Period:       period.M1,
-		Start:        TimeOpt(time.Unix(0, 0)),
-		End:          TimeOpt(time.Unix(1140, 0)),
+		Exchange: "exchange",
+		Pair:     "ETH-USDC",
+		Period:   period.M1,
+		Start:    TimeOpt(time.Unix(0, 0)),
+		End:      TimeOpt(time.Unix(1140, 0)),
 	})
 
 	// Then everything went well

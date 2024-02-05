@@ -16,9 +16,9 @@ var migration20230812 = gormigrate.Migration{
 		log.Println("Running migration:", migration20230812Title)
 
 		type SimpleMovingAverage struct {
-			ExchangeName string    `gorm:"primaryKey;autoIncrement:false;index:candlestick,unique"`
-			PairSymbol   string    `gorm:"primaryKey;autoIncrement:false;index:candlestick,unique"`
-			PeriodSymbol string    `gorm:"primaryKey;autoIncrement:false;index:candlestick,unique"`
+			Exchange     string    `gorm:"primaryKey;autoIncrement:false;index:candlestick,unique"`
+			Pair         string    `gorm:"primaryKey;autoIncrement:false;index:candlestick,unique"`
+			Period       string    `gorm:"primaryKey;autoIncrement:false;index:candlestick,unique"`
 			PeriodNumber int       `gorm:"primaryKey;autoIncrement:false;index:candlestick,unique"`
 			PriceType    string    `gorm:"primaryKey;autoIncrement:false;index:candlestick,unique"`
 			Time         time.Time `gorm:"primaryKey;autoIncrement:false;index:candlestick,unique"`

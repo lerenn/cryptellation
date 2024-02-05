@@ -13,15 +13,15 @@ import (
 )
 
 func (msg *RegisteringRequestMessage) Set(payload client.TicksFilterPayload) {
-	msg.Payload.Exchange = ExchangeNameSchema(payload.ExchangeName)
-	msg.Payload.Pair = PairSymbolSchema(payload.PairSymbol)
+	msg.Payload.Exchange = ExchangeSchema(payload.Exchange)
+	msg.Payload.Pair = PairSchema(payload.Pair)
 }
 
 func (msg *TickMessage) ToModel() tick.Tick {
 	return tick.Tick{
-		Time:       time.Time(msg.Payload.Time),
-		PairSymbol: string(msg.Payload.PairSymbol),
-		Price:      msg.Payload.Price,
-		Exchange:   string(msg.Payload.Exchange),
+		Time:     time.Time(msg.Payload.Time),
+		Pair:     string(msg.Payload.Pair),
+		Price:    msg.Payload.Price,
+		Exchange: string(msg.Payload.Exchange),
 	}
 }

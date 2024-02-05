@@ -1,7 +1,7 @@
 package event
 
 type TickSubscription struct {
-	ID           int
-	ExchangeName string
-	PairSymbol   string
+	ID       int
+	Exchange string
+	Pair     string
 }

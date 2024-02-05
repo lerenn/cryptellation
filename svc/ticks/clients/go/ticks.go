@@ -20,6 +20,6 @@ type Client interface {
 }
 
 type TicksFilterPayload struct {
-	ExchangeName string
-	PairSymbol   string
+	Exchange string
+	Pair     string
 }

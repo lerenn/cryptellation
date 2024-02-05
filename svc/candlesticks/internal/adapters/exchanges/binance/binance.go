@@ -27,7 +27,7 @@ func (s *Service) GetCandlesticks(ctx context.Context, payload exchanges.GetCand
 	service := s.Client.NewKlinesService()
 
 	// Set symbol
-	service.Symbol(entities.BinanceSymbol(payload.PairSymbol))
+	service.Symbol(entities.BinanceSymbol(payload.Pair))
 
 	// Set interval
 	binanceInterval, err := entities.PeriodToInterval(payload.Period)
@@ -52,5 +52,5 @@ func (s *Service) GetCandlesticks(ctx context.Context, payload exchanges.GetCand
 	}
 
 	// Change them to right format
-	return entities.KLinesToCandlesticks(payload.PairSymbol, payload.Period, kl, time.Now())
+	return entities.KLinesToCandlesticks(payload.Pair, payload.Period, kl, time.Now())
 }

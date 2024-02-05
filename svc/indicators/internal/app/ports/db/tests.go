@@ -16,8 +16,8 @@ type IndicatorsSuite struct {
 }
 
 func (suite *IndicatorsSuite) TestGet() {
-	exchangeName := "exchange"
-	pairSymbol := "ETC-USDT"
+	exchange := "exchange"
+	pair := "ETC-USDT"
 	per := period.M1
 	periodNumber := uint(3)
 	priceType := candlestick.PriceTypeIsClose
@@ -29,8 +29,8 @@ func (suite *IndicatorsSuite) TestGet() {
 
 	// Write data
 	writePayload := WriteSMAPayload{
-		ExchangeName: exchangeName,
-		PairSymbol:   pairSymbol,
+		Exchange:     exchange,
+		Pair:         pair,
 		Period:       per,
 		PeriodNumber: periodNumber,
 		PriceType:    priceType,
@@ -41,10 +41,10 @@ func (suite *IndicatorsSuite) TestGet() {
 
 	// Write multiple deviating data
 	p := writePayload
-	p.ExchangeName = "otherExchange"
+	p.Exchange = "otherExchange"
 	suite.Require().NoError(suite.DB.UpsertSMA(context.Background(), p))
 	p = writePayload
-	p.PairSymbol = "BTC-USDC"
+	p.Pair = "BTC-USDC"
 	suite.Require().NoError(suite.DB.UpsertSMA(context.Background(), p))
 	p = writePayload
 	p.Period = period.D1
@@ -58,8 +58,8 @@ func (suite *IndicatorsSuite) TestGet() {
 
 	// Read data
 	rts, err := suite.DB.GetSMA(context.Background(), ReadSMAPayload{
-		ExchangeName: exchangeName,
-		PairSymbol:   pairSymbol,
+		Exchange:     exchange,
+		Pair:         pair,
 		Period:       per,
 		PeriodNumber: periodNumber,
 		PriceType:    priceType,
@@ -82,8 +82,8 @@ func (suite *IndicatorsSuite) TestGet() {
 }
 
 func (suite *IndicatorsSuite) TestUpsert() {
-	exchangeName := "exchange"
-	pairSymbol := "ETC-USDT"
+	exchange := "exchange"
+	pair := "ETC-USDT"
 	per := period.M1
 	periodNumber := uint(3)
 	priceType := candlestick.PriceTypeIsClose
@@ -95,8 +95,8 @@ func (suite *IndicatorsSuite) TestUpsert() {
 
 	// Write data from ts1
 	writePayload := WriteSMAPayload{
-		ExchangeName: exchangeName,
-		PairSymbol:   pairSymbol,
+		Exchange:     exchange,
+		Pair:         pair,
 		Period:       per,
 		PeriodNumber: periodNumber,
 		PriceType:    priceType,
@@ -113,8 +113,8 @@ func (suite *IndicatorsSuite) TestUpsert() {
 
 	// Write update data from ts
 	writePayload = WriteSMAPayload{
-		ExchangeName: exchangeName,
-		PairSymbol:   pairSymbol,
+		Exchange:     exchange,
+		Pair:         pair,
 		Period:       per,
 		PeriodNumber: periodNumber,
 		PriceType:    priceType,
@@ -125,8 +125,8 @@ func (suite *IndicatorsSuite) TestUpsert() {
 
 	// Read data
 	rts, err := suite.DB.GetSMA(context.Background(), ReadSMAPayload{
-		ExchangeName: exchangeName,
-		PairSymbol:   pairSymbol,
+		Exchange:     exchange,
+		Pair:         pair,
 		Period:       per,
 		PeriodNumber: periodNumber,
 		PriceType:    priceType,

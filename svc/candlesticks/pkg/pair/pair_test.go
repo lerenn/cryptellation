@@ -18,45 +18,45 @@ func (suite *PairsSuite) TestFormatPair() {
 	cases := []struct {
 		BaseSymbol  string
 		QuoteSymbol string
-		PairSymbol  string
+		Pair        string
 	}{
 		{
 			BaseSymbol:  "ETH",
 			QuoteSymbol: "BTC",
-			PairSymbol:  "ETH-BTC",
+			Pair:        "ETH-BTC",
 		},
 	}
 
 	for i, c := range cases {
-		symbol := FormatPairSymbol(c.BaseSymbol, c.QuoteSymbol)
-		suite.Require().Equal(c.PairSymbol, symbol, i)
+		symbol := FormatPair(c.BaseSymbol, c.QuoteSymbol)
+		suite.Require().Equal(c.Pair, symbol, i)
 	}
 }
 
 func (suite *PairsSuite) TestParsePair() {
 	cases := []struct {
-		PairSymbol  string
+		Pair        string
 		BaseSymbol  string
 		QuoteSymbol string
 		Error       bool
 	}{
 		{
-			PairSymbol:  "ETH-BTC",
+			Pair:        "ETH-BTC",
 			BaseSymbol:  "ETH",
 			QuoteSymbol: "BTC",
 			Error:       false,
 		}, {
-			PairSymbol:  "",
+			Pair:        "",
 			BaseSymbol:  "",
 			QuoteSymbol: "",
 			Error:       true,
 		}, {
-			PairSymbol:  "-",
+			Pair:        "-",
 			BaseSymbol:  "",
 			QuoteSymbol: "",
 			Error:       false,
 		}, {
-			PairSymbol:  "--",
+			Pair:        "--",
 			BaseSymbol:  "",
 			QuoteSymbol: "",
 			Error:       true,
@@ -64,7 +64,7 @@ func (suite *PairsSuite) TestParsePair() {
 	}
 
 	for i, c := range cases {
-		baseSymbol, quoteSymbol, err := ParsePairSymbol(c.PairSymbol)
+		baseSymbol, quoteSymbol, err := ParsePair(c.Pair)
 		suite.Require().Equal(c.BaseSymbol, baseSymbol, i)
 		suite.Require().Equal(c.QuoteSymbol, quoteSymbol, i)
 		if c.Error {

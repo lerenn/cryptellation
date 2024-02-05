@@ -11,10 +11,10 @@ func InitSchema(tx *gorm.DB) error {
 	log.Println("No migration detected: running the init schema.")
 
 	type Balance struct {
-		AssetName    string `gorm:"primaryKey"`
-		ExchangeName string `gorm:"primaryKey"`
-		BacktestID   uint   `gorm:"primaryKey"`
-		Balance      float64
+		AssetName  string `gorm:"primaryKey"`
+		Exchange   string `gorm:"primaryKey"`
+		BacktestID uint   `gorm:"primaryKey"`
+		Balance    float64
 	}
 
 	type Order struct {
@@ -22,18 +22,18 @@ func InitSchema(tx *gorm.DB) error {
 		BacktestID    uint
 		ExecutionTime *time.Time
 		Type          string
-		ExchangeName  string
-		PairSymbol    string
+		Exchange      string
+		Pair          string
 		Side          string
 		Quantity      float64
 		Price         float64
 	}
 
 	type TickSubscription struct {
-		ID           uint `gorm:"primaryKey"`
-		BacktestID   uint
-		ExchangeName string
-		PairSymbol   string
+		ID         uint `gorm:"primaryKey"`
+		BacktestID uint
+		Exchange   string
+		Pair       string
 	}
 
 	type Backtest struct {

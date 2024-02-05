@@ -5,6 +5,7 @@ import (
 	"log"
 	"time"
 
+	"github.com/lerenn/cryptellation/pkg/utils"
 	"github.com/lerenn/cryptellation/svc/candlesticks/internal/app"
 	"github.com/lerenn/cryptellation/svc/candlesticks/internal/app/ports/exchanges"
 	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/candlestick"
@@ -19,8 +20,13 @@ const (
 func (app Candlesticks) GetCached(ctx context.Context, payload app.GetCachedPayload) (*candlestick.List, error) {
 	log.Printf("Get candlesticks for %+v", payload)
 
+	// Be sure that we do not try to get data in the future
+	if payload.End.After(time.Now()) {
+		payload.End = utils.ToReference(time.Now())
+	}
+
 	start, end := payload.Period.RoundInterval(payload.Start, payload.End)
-	cl := candlestick.NewEmptyList(payload.ExchangeName, payload.PairSymbol, payload.Period)
+	cl := candlestick.NewList(payload.Exchange, payload.Pair, payload.Period)
 
 	// Read candlesticks from database
 	if err := app.db.ReadCandlesticks(ctx, cl, start, end, payload.Limit); err != nil {
@@ -64,11 +70,11 @@ func getDownloadStartEndTimes(cl *candlestick.List, end, start time.Time) (time.
 
 func (app Candlesticks) download(ctx context.Context, cl *candlestick.List, start, end time.Time, limit uint) error {
 	payload := exchanges.GetCandlesticksPayload{
-		Exchange:   cl.ExchangeName,
-		PairSymbol: cl.PairSymbol,
-		Period:     cl.Period,
-		Start:      start,
-		End:        end,
+		Exchange: cl.Exchange,
+		Pair:     cl.Pair,
+		Period:   cl.Period,
+		Start:    start,
+		End:      end,
 	}
 
 	for {
@@ -91,7 +97,8 @@ func (app Candlesticks) download(ctx context.Context, cl *candlestick.List, star
 		payload.Start = t.Add(cl.Period.Duration())
 	}
 
-	return nil
+	// Fill missing candlesticks to let know that there is no more data on exchange
+	return cl.FillMissing(start, end, candlestick.Candlestick{})
 }
 
 func (app Candlesticks) upsert(ctx context.Context, cl *candlestick.List) error {
@@ -101,13 +108,13 @@ func (app Candlesticks) upsert(ctx context.Context, cl *candlestick.List) error 
 		return nil
 	}
 
-	rcl := candlestick.NewEmptyListFrom(cl)
+	rcl := candlestick.NewListFrom(cl)
 	if err := app.db.ReadCandlesticks(ctx, rcl, tStart, tEnd, 0); err != nil {
 		return err
 	}
 
-	csToInsert := candlestick.NewEmptyListFrom(cl)
-	csToUpdate := candlestick.NewEmptyListFrom(cl)
+	csToInsert := candlestick.NewListFrom(cl)
+	csToUpdate := candlestick.NewListFrom(cl)
 	if err := cl.Loop(func(ts time.Time, cs candlestick.Candlestick) (bool, error) {
 		_, exists := rcl.Get(ts)
 		if !exists {

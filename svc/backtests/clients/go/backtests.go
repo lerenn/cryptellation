@@ -32,10 +32,10 @@ type BacktestCreationPayload struct {
 }
 
 type OrderCreationPayload struct {
-	BacktestID   uint
-	Type         order.Type
-	ExchangeName string
-	PairSymbol   string
-	Side         order.Side
-	Quantity     float64
+	BacktestID uint
+	Type       order.Type
+	Exchange   string
+	Pair       string
+	Side       order.Side
+	Quantity   float64
 }

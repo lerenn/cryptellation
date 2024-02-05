@@ -38,8 +38,8 @@ var ticksRegisterCmd = &cobra.Command{
 	Short:   "Register to ticks on service",
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		err = ticksClient.Register(context.Background(), client.TicksFilterPayload{
-			ExchangeName: "binance",
-			PairSymbol:   "BTC-USDT",
+			Exchange: "binance",
+			Pair:     "BTC-USDT",
 		})
 
 		return err
@@ -52,8 +52,8 @@ var ticksWatchCmd = &cobra.Command{
 	Short:   "Listen to ticks on service",
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		ch, err := ticksClient.Listen(context.Background(), client.TicksFilterPayload{
-			ExchangeName: "binance",
-			PairSymbol:   "BTC-USDT",
+			Exchange: "binance",
+			Pair:     "BTC-USDT",
 		})
 		if err != nil {
 			return err
@@ -76,8 +76,8 @@ var ticksUnregisterCmd = &cobra.Command{
 	Short:   "Unregister to ticks on service",
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		err = ticksClient.Unregister(context.Background(), client.TicksFilterPayload{
-			ExchangeName: "binance",
-			PairSymbol:   "BTC-USDT",
+			Exchange: "binance",
+			Pair:     "BTC-USDT",
 		})
 
 		return err

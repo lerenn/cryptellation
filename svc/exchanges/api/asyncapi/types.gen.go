@@ -467,19 +467,19 @@ type ExchangeSchema struct {
 	LastSyncTime time.Time `json:"last_sync_time"`
 
 	// Description: Exchange name
-	Name    ExchangeNameSchema   `json:"name"`
-	Pairs   []PairSymbolSchema   `json:"pairs"`
-	Periods []PeriodSymbolSchema `json:"periods"`
+	Name    ExchangeNameSchema `json:"name"`
+	Pairs   []PairSchema       `json:"pairs"`
+	Periods []PeriodSchema     `json:"periods"`
 }
 
 // ExchangeNameSchema is a schema from the AsyncAPI specification required in messages
 // Description: Exchange name
 type ExchangeNameSchema string
 
-// PairSymbolSchema is a schema from the AsyncAPI specification required in messages
+// PairSchema is a schema from the AsyncAPI specification required in messages
 // Description: Pair symbol
-type PairSymbolSchema string
+type PairSchema string
 
-// PeriodSymbolSchema is a schema from the AsyncAPI specification required in messages
+// PeriodSchema is a schema from the AsyncAPI specification required in messages
 // Description: Period symbol
-type PeriodSymbolSchema string
+type PeriodSchema string
