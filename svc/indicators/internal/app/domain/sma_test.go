@@ -34,7 +34,7 @@ func (suite *SMASuite) SetupTest() {
 }
 
 func (suite *SMASuite) TestAllExistWithNoneInDB() {
-	cs := candlestick.NewEmptyList("exchange", "ETC-USDT", period.M1)
+	cs := candlestick.NewList("exchange", "ETC-USDT", period.M1)
 	cs.MustSet(time.Unix(0, 0), candlestick.Candlestick{Close: 5})
 	cs.MustSet(time.Unix(60, 0), candlestick.Candlestick{Close: 7})
 	cs.MustSet(time.Unix(120, 0), candlestick.Candlestick{Close: 10})

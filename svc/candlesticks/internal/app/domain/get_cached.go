@@ -20,7 +20,7 @@ func (app Candlesticks) GetCached(ctx context.Context, payload app.GetCachedPayl
 	log.Printf("Get candlesticks for %+v", payload)
 
 	start, end := payload.Period.RoundInterval(payload.Start, payload.End)
-	cl := candlestick.NewEmptyList(payload.Exchange, payload.Pair, payload.Period)
+	cl := candlestick.NewList(payload.Exchange, payload.Pair, payload.Period)
 
 	// Read candlesticks from database
 	if err := app.db.ReadCandlesticks(ctx, cl, start, end, payload.Limit); err != nil {
@@ -101,13 +101,13 @@ func (app Candlesticks) upsert(ctx context.Context, cl *candlestick.List) error 
 		return nil
 	}
 
-	rcl := candlestick.NewEmptyListFrom(cl)
+	rcl := candlestick.NewListFrom(cl)
 	if err := app.db.ReadCandlesticks(ctx, rcl, tStart, tEnd, 0); err != nil {
 		return err
 	}
 
-	csToInsert := candlestick.NewEmptyListFrom(cl)
-	csToUpdate := candlestick.NewEmptyListFrom(cl)
+	csToInsert := candlestick.NewListFrom(cl)
+	csToUpdate := candlestick.NewListFrom(cl)
 	if err := cl.Loop(func(ts time.Time, cs candlestick.Candlestick) (bool, error) {
 		_, exists := rcl.Get(ts)
 		if !exists {

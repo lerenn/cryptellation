@@ -68,7 +68,7 @@ func (msg *ListCandlesticksResponseMessage) Set(list *candlestick.List) error {
 
 func (msg *ListCandlesticksResponseMessage) ToModel(exchange, pair string, symbol period.Symbol) (*candlestick.List, error) {
 	// Create list
-	list := candlestick.NewEmptyList(exchange, pair, symbol)
+	list := candlestick.NewList(exchange, pair, symbol)
 
 	// Fill list
 	for _, c := range *msg.Payload.Candlesticks {

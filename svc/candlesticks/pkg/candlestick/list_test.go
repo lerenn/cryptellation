@@ -17,7 +17,7 @@ type CandlestickListSuite struct {
 }
 
 func (suite *CandlestickListSuite) TestNewEmpty() {
-	l := NewEmptyList("exchange", "ETH-USDC", period.M1)
+	l := NewList("exchange", "ETH-USDC", period.M1)
 	suite.Require().Equal("exchange", l.Exchange)
 	suite.Require().Equal("ETH-USDC", l.Pair)
 	suite.Require().Equal(period.M1, l.Period)
@@ -33,7 +33,7 @@ func (suite *CandlestickListSuite) TestNew() {
 	cs2 := Candlestick{
 		Open: 2.0,
 	}
-	l := NewEmptyList("exchange", "ETH-USDC", period.M1)
+	l := NewList("exchange", "ETH-USDC", period.M1)
 	suite.Require().NoError(l.Set(t1, cs1))
 	suite.Require().NoError(l.Set(t2, cs2))
 
@@ -59,7 +59,7 @@ func (suite *CandlestickListSuite) TestNewWithUnalignedCandlestick() {
 	cs := Candlestick{
 		Open: 1.0,
 	}
-	l := NewEmptyList("exchange", "ETH-USDC", period.M1)
+	l := NewList("exchange", "ETH-USDC", period.M1)
 	suite.Require().Error(l.Set(t, cs))
 }
 
@@ -69,7 +69,7 @@ func (suite *CandlestickListSuite) TestMustSet() {
 
 func (suite *CandlestickListSuite) TestSet() {
 	p := "BTC-USDC"
-	csList := NewEmptyList("exchange", p, period.M1)
+	csList := NewList("exchange", p, period.M1)
 
 	cs0 := Candlestick{Open: 1, High: 2, Low: 0.5, Close: 1.5}
 	suite.Require().NoError(csList.Set(time.Unix(0, 0), cs0))
@@ -83,7 +83,7 @@ func (suite *CandlestickListSuite) TestSet() {
 }
 
 func (suite *CandlestickListSuite) TestSetWithWrongPeriod() {
-	l := NewEmptyList("exchange", "ETH-USDC", period.M1)
+	l := NewList("exchange", "ETH-USDC", period.M1)
 	cs := Candlestick{
 		Open:  1,
 		High:  2,
@@ -94,8 +94,8 @@ func (suite *CandlestickListSuite) TestSetWithWrongPeriod() {
 }
 
 func (suite *CandlestickListSuite) TestMerge() {
-	l := NewEmptyList("exchange", "ETH-USDC", period.M1)
-	recvCSList := NewEmptyList("exchange", "ETH-USDC", period.M1)
+	l := NewList("exchange", "ETH-USDC", period.M1)
+	recvCSList := NewList("exchange", "ETH-USDC", period.M1)
 	cs := Candlestick{
 		Open:  1,
 		High:  2,
@@ -115,7 +115,7 @@ func (suite *CandlestickListSuite) TestMerge() {
 }
 
 func (suite *CandlestickListSuite) TestExtract() {
-	l := NewEmptyList("exchange", "ETH-USDC", period.M1)
+	l := NewList("exchange", "ETH-USDC", period.M1)
 	for i := int64(0); i < 4; i++ {
 		cs := Candlestick{
 			Open:  float64(i),
@@ -162,7 +162,7 @@ func (suite *CandlestickListSuite) TestMergeIntoOne() {
 
 func (suite *CandlestickListSuite) TestAreMissing() {
 	// Given all candlesticks
-	cl := NewEmptyList("exchange", "ETH-USDC", period.M1)
+	cl := NewList("exchange", "ETH-USDC", period.M1)
 
 	for i := int64(0); i < 10; i++ {
 		err := cl.Set(time.Unix(60*i, 0), Candlestick{
@@ -180,7 +180,7 @@ func (suite *CandlestickListSuite) TestAreMissing() {
 
 func (suite *CandlestickListSuite) TestAreMissingWithOneMissing() {
 	// Given all candlesticks
-	cl := NewEmptyList("exchange", "ETH-USDC", period.M1)
+	cl := NewList("exchange", "ETH-USDC", period.M1)
 
 	for i := int64(0); i < 10; i++ {
 		if i == 5 {
@@ -202,7 +202,7 @@ func (suite *CandlestickListSuite) TestAreMissingWithOneMissing() {
 
 func (suite *CandlestickListSuite) TestAreMissingWithOneMissingAndLimit() {
 	// Given all candlesticks
-	cl := NewEmptyList("exchange", "ETH-USDC", period.M1)
+	cl := NewList("exchange", "ETH-USDC", period.M1)
 
 	for i := int64(0); i < 10; i++ {
 		if i == 5 {

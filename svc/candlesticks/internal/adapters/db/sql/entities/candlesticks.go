@@ -74,7 +74,7 @@ func FromEntityListToModelList(entities []Candlestick) (*candlestick.List, error
 		return nil, fmt.Errorf("from candlestick entity to list: %w", err)
 	}
 
-	list := candlestick.NewEmptyList(entities[0].Exchange, entities[0].Pair, per)
+	list := candlestick.NewList(entities[0].Exchange, entities[0].Pair, per)
 
 	for _, e := range entities {
 		if e.Exchange != list.Exchange {

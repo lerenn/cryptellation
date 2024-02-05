@@ -23,7 +23,7 @@ type List struct {
 	timeserie.TimeSerie[Candlestick]
 }
 
-func NewEmptyList(exchange, pair string, period period.Symbol) *List {
+func NewList(exchange, pair string, period period.Symbol) *List {
 	return &List{
 		Exchange:  exchange,
 		Pair:      pair,
@@ -32,8 +32,8 @@ func NewEmptyList(exchange, pair string, period period.Symbol) *List {
 	}
 }
 
-func NewEmptyListFrom(l *List) *List {
-	return NewEmptyList(l.Exchange, l.Pair, l.Period)
+func NewListFrom(l *List) *List {
+	return NewList(l.Exchange, l.Pair, l.Period)
 }
 
 func (l *List) MustSet(t time.Time, c Candlestick) *List {
@@ -66,7 +66,7 @@ func (l *List) Merge(l2 *List, options *timeserie.MergeOptions) error {
 }
 
 func (l List) Extract(start, end time.Time, limit uint) *List {
-	el := NewEmptyList(l.Exchange, l.Pair, l.Period)
+	el := NewList(l.Exchange, l.Pair, l.Period)
 	el.TimeSerie = *l.TimeSerie.Extract(start, end, int(limit))
 	return el
 }

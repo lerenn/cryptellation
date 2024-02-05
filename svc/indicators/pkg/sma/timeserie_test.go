@@ -26,7 +26,7 @@ func (suite *TimeSerieSuite) TestTimeSerieSuite() {
 		// Normal calculation
 		{
 			Payload: TimeSeriePayload{
-				Candlesticks: candlestick.NewEmptyList("exchange", "ETH-USDC", period.M1).
+				Candlesticks: candlestick.NewList("exchange", "ETH-USDC", period.M1).
 					MustSet(time.Unix(0, 0), candlestick.Candlestick{Close: 1000}).
 					MustSet(time.Unix(60, 0), candlestick.Candlestick{Close: 1500}).
 					MustSet(time.Unix(120, 0), candlestick.Candlestick{Close: 1250}).
