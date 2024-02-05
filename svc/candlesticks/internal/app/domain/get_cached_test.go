@@ -106,6 +106,10 @@ func (suite *GetCachedSuite) setMocksForNoneExistWithNoneInDB() context.Context 
 	ctx := context.Background()
 
 	l := candlestick.NewList("exchange", "ETH-USDC", period.M1)
+	suite.Require().NoError(l.FillMissing(
+		time.Unix(0, 0),
+		time.Unix(5940, 0),
+		candlestick.Candlestick{}))
 
 	// Set list that will be pulled from exchange and created in DB
 	suite.db.EXPECT().ReadCandlesticks(
@@ -129,6 +133,18 @@ func (suite *GetCachedSuite) setMocksForNoneExistWithNoneInDB() context.Context 
 		},
 	).Return(l, nil)
 
+	// Set call to check which candlestick exists or not
+	suite.db.EXPECT().ReadCandlesticks(
+		ctx,
+		candlestick.NewList("exchange", "ETH-USDC", period.M1),
+		time.Unix(0, 0),
+		time.Unix(5940, 0),
+		uint(0),
+	).Return(nil)
+
+	// Set call for creating candlesticks in database
+	suite.db.EXPECT().CreateCandlesticks(ctx, l).Return(nil)
+
 	return ctx
 }
 
@@ -147,7 +163,13 @@ func (suite *GetCachedSuite) TestNoneExistWithNoneInDB() {
 
 	// Then everything went well
 	suite.Require().NoError(err)
-	suite.Require().Equal(0, l.Len())
+
+	// And that all candlesticks are empty
+	suite.Require().Equal(10, l.Len())
+	suite.Require().NoError(l.Loop(func(_ time.Time, c candlestick.Candlestick) (bool, error) {
+		suite.Require().Equal(c, candlestick.Candlestick{})
+		return false, nil
+	}))
 }
 
 func (suite *GetCachedSuite) setMocksForFromDBAndService() context.Context {

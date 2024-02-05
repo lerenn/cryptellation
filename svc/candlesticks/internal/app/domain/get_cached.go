@@ -5,6 +5,7 @@ import (
 	"log"
 	"time"
 
+	"github.com/lerenn/cryptellation/pkg/utils"
 	"github.com/lerenn/cryptellation/svc/candlesticks/internal/app"
 	"github.com/lerenn/cryptellation/svc/candlesticks/internal/app/ports/exchanges"
 	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/candlestick"
@@ -18,6 +19,11 @@ const (
 
 func (app Candlesticks) GetCached(ctx context.Context, payload app.GetCachedPayload) (*candlestick.List, error) {
 	log.Printf("Get candlesticks for %+v", payload)
+
+	// Be sure that we do not try to get data in the future
+	if payload.End.After(time.Now()) {
+		payload.End = utils.ToReference(time.Now())
+	}
 
 	start, end := payload.Period.RoundInterval(payload.Start, payload.End)
 	cl := candlestick.NewList(payload.Exchange, payload.Pair, payload.Period)
@@ -91,7 +97,8 @@ func (app Candlesticks) download(ctx context.Context, cl *candlestick.List, star
 		payload.Start = t.Add(cl.Period.Duration())
 	}
 
-	return nil
+	// Fill missing candlesticks to let know that there is no more data on exchange
+	return cl.FillMissing(start, end, candlestick.Candlestick{})
 }
 
 func (app Candlesticks) upsert(ctx context.Context, cl *candlestick.List) error {
