@@ -11,8 +11,8 @@ type Order struct {
 	BacktestID    uint
 	ExecutionTime *time.Time
 	Type          string
-	ExchangeName  string
-	PairSymbol    string
+	Exchange      string
+	Pair          string
 	Side          string
 	Quantity      float64
 	Price         float64
@@ -33,8 +33,8 @@ func (o Order) ToModel() (order.Order, error) {
 		ID:            uint64(o.ID),
 		ExecutionTime: o.ExecutionTime,
 		Type:          t,
-		ExchangeName:  o.ExchangeName,
-		PairSymbol:    o.PairSymbol,
+		Exchange:      o.Exchange,
+		Pair:          o.Pair,
 		Side:          s,
 		Quantity:      o.Quantity,
 		Price:         o.Price,
@@ -66,8 +66,8 @@ func FromOrderModel(backtestID uint, m order.Order) Order {
 		BacktestID:    backtestID,
 		ExecutionTime: m.ExecutionTime,
 		Type:          m.Type.String(),
-		ExchangeName:  m.ExchangeName,
-		PairSymbol:    m.PairSymbol,
+		Exchange:      m.Exchange,
+		Pair:          m.Pair,
 		Side:          m.Side.String(),
 		Quantity:      m.Quantity,
 		Price:         m.Price,

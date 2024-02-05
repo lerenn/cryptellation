@@ -12,18 +12,18 @@ const (
 	redisKeySymbolListener       = redisKeySymbolListenerPrefix + "-%s-%s"
 )
 
-func (db *Adapter) IncrementSymbolListenerSubscribers(ctx context.Context, exchange, pairSymbol string) (int64, error) {
-	key := fmt.Sprintf(redisKeySymbolListener, exchange, pairSymbol)
+func (db *Adapter) IncrementSymbolListenerSubscribers(ctx context.Context, exchange, pair string) (int64, error) {
+	key := fmt.Sprintf(redisKeySymbolListener, exchange, pair)
 	return db.redis.Client.Incr(ctx, key).Result()
 }
 
-func (db *Adapter) DecrementSymbolListenerSubscribers(ctx context.Context, exchange, pairSymbol string) (int64, error) {
-	key := fmt.Sprintf(redisKeySymbolListener, exchange, pairSymbol)
+func (db *Adapter) DecrementSymbolListenerSubscribers(ctx context.Context, exchange, pair string) (int64, error) {
+	key := fmt.Sprintf(redisKeySymbolListener, exchange, pair)
 	return db.redis.Client.Decr(ctx, key).Result()
 }
 
-func (db *Adapter) GetSymbolListenerSubscribers(ctx context.Context, exchange, pairSymbol string) (int64, error) {
-	key := fmt.Sprintf(redisKeySymbolListener, exchange, pairSymbol)
+func (db *Adapter) GetSymbolListenerSubscribers(ctx context.Context, exchange, pair string) (int64, error) {
+	key := fmt.Sprintf(redisKeySymbolListener, exchange, pair)
 	content, err := db.redis.Client.Get(ctx, key).Result()
 	if err != nil {
 		return 0, err
@@ -48,8 +48,8 @@ func (db *Adapter) ClearAllSymbolListenersCount(ctx context.Context) error {
 	return nil
 }
 
-func (db *Adapter) ClearSymbolListenerSubscribers(ctx context.Context, exchange, pairSymbol string) error {
-	key := fmt.Sprintf(redisKeySymbolListener, exchange, pairSymbol)
+func (db *Adapter) ClearSymbolListenerSubscribers(ctx context.Context, exchange, pair string) error {
+	key := fmt.Sprintf(redisKeySymbolListener, exchange, pair)
 	_, err := db.redis.Client.Set(ctx, key, 0, time.Second).Result()
 	return err
 }

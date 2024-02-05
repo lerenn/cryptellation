@@ -26,13 +26,13 @@ func (ps *Service) Infos(ctx context.Context) (exchange.Exchange, error) {
 		return exchange.Exchange{}, err
 	}
 
-	pairSymbols := make([]string, len(exchangeInfos.Symbols))
+	pairs := make([]string, len(exchangeInfos.Symbols))
 	for i, bs := range exchangeInfos.Symbols {
-		pairSymbols[i] = fmt.Sprintf("%s-%s", bs.BaseAsset, bs.QuoteAsset)
+		pairs[i] = fmt.Sprintf("%s-%s", bs.BaseAsset, bs.QuoteAsset)
 	}
 
 	exch := binance.Infos
-	exch.PairsSymbols = pairSymbols
+	exch.Pairs = pairs
 	exch.LastSyncTime = time.Now()
 
 	return exch, nil

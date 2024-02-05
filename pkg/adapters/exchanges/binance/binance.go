@@ -9,7 +9,7 @@ import (
 var (
 	Infos = exchange.Exchange{
 		Name: "binance",
-		PeriodsSymbols: []string{
+		Periods: []string{
 			"M1", "M3", "M5", "M15", "M30",
 			"H1", "H2", "H4", "H6", "H8", "H12",
 			"D1", "D3",

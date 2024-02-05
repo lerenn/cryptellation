@@ -55,19 +55,19 @@ components:
         type: object
         description: Candlestick list request with filters and time boundaries
         required:
-          - exchangeName
-          - pairSymbol
-          - periodSymbol
+          - exchange
+          - pair
+          - period
           - limit
         properties:
-          exchangeName:
-            $ref: '#/components/schemas/ExchangeName'
+          exchange:
+            $ref: '#/components/schemas/Exchange'
             description: Requested candlesticks exchange name
-          pairSymbol:
-            $ref: '#/components/schemas/PairSymbol'
+          pair:
+            $ref: '#/components/schemas/Pair'
             description: Requested candlesticks pair symbol
-          periodSymbol:
-            $ref: '#/components/schemas/PeriodSymbol'
+          period:
+            $ref: '#/components/schemas/Period'
             description: Requested candlesticks period symbol
           start:
             $ref: '#/components/schemas/Date'
@@ -190,17 +190,17 @@ components:
       description: Requested candlestick list
       items:
         $ref: '#/components/schemas/Candlestick'
-    ExchangeName:
+    Exchange:
       type: string
       description: Exchange name
       examples:
         - Binance
-    PairSymbol:
+    Pair:
       type: string
       description: Pair symbol
       examples:
         - ETH-USDC
-    PeriodSymbol:
+    Period:
       type: string
       description: Period symbol
       default: M1

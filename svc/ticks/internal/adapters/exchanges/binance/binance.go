@@ -44,10 +44,10 @@ func (s *Service) ListenSymbol(symbol string) (chan tick.Tick, chan struct{}, er
 		}
 
 		t := tick.Tick{
-			Time:       time.Now().UTC(),
-			Exchange:   "binance",
-			PairSymbol: symbol,
-			Price:      float64(ask+bid) / 2,
+			Time:     time.Now().UTC(),
+			Exchange: "binance",
+			Pair:     symbol,
+			Price:    float64(ask+bid) / 2,
 		}
 
 		// Send it to tick channel
@@ -65,6 +65,6 @@ func (s *Service) ListenSymbol(symbol string) (chan tick.Tick, chan struct{}, er
 }
 
 func toBinanceSymbol(symbol string) (string, error) {
-	base, quote, err := pair.ParsePairSymbol(symbol)
+	base, quote, err := pair.ParsePair(symbol)
 	return fmt.Sprintf("%s%s", base, quote), err
 }

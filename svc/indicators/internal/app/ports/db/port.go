@@ -18,8 +18,8 @@ type Port interface {
 }
 
 type ReadSMAPayload struct {
-	ExchangeName string
-	PairSymbol   string
+	Exchange     string
+	Pair         string
 	Period       period.Symbol
 	PeriodNumber uint
 	PriceType    candlestick.PriceType
@@ -28,8 +28,8 @@ type ReadSMAPayload struct {
 }
 
 type WriteSMAPayload struct {
-	ExchangeName string
-	PairSymbol   string
+	Exchange     string
+	Pair         string
 	Period       period.Symbol
 	PeriodNumber uint
 	PriceType    candlestick.PriceType

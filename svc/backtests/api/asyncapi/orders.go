@@ -20,8 +20,8 @@ func (msg *CreateBacktestOrderRequestMessage) Set(payload client.OrderCreationPa
 	msg.Payload.Id = BacktestIDSchema(payload.BacktestID)
 
 	// Order
-	msg.Payload.Order.ExchangeName = ExchangeNameSchema(payload.ExchangeName)
-	msg.Payload.Order.PairSymbol = PairSymbolSchema(payload.PairSymbol)
+	msg.Payload.Order.Exchange = ExchangeSchema(payload.Exchange)
+	msg.Payload.Order.Pair = PairSchema(payload.Pair)
 	msg.Payload.Order.Type = OrderTypeSchema(payload.Type)
 	msg.Payload.Order.Side = OrderSideSchema(payload.Side)
 	msg.Payload.Order.Quantity = payload.Quantity
@@ -49,8 +49,8 @@ func orderModelFromAPI(o OrderSchema) (order.Order, error) {
 		ID:            uint64(utils.FromReferenceOrDefault(o.Id)),
 		ExecutionTime: (*time.Time)(o.ExecutionTime),
 		Type:          t,
-		ExchangeName:  string(o.ExchangeName),
-		PairSymbol:    string(o.PairSymbol),
+		Exchange:      string(o.Exchange),
+		Pair:          string(o.Pair),
 		Side:          s,
 		Quantity:      o.Quantity,
 		Price:         utils.FromReferenceOrDefault(o.Price),
@@ -62,8 +62,8 @@ func orderModelToAPI(o order.Order) OrderSchema {
 		Id:            (*int64)(utils.ToReference((int64)(o.ID))),
 		ExecutionTime: (*DateSchema)(o.ExecutionTime),
 		Type:          OrderTypeSchema(o.Type.String()),
-		ExchangeName:  ExchangeNameSchema(o.ExchangeName),
-		PairSymbol:    PairSymbolSchema(o.PairSymbol),
+		Exchange:      ExchangeSchema(o.Exchange),
+		Pair:          PairSchema(o.Pair),
 		Side:          OrderSideSchema(o.Side.String()),
 		Quantity:      o.Quantity,
 		Price:         &o.Price,

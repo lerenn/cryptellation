@@ -47,8 +47,8 @@ func accountModelsToAPI(accounts map[string]account.Account) []AccountSchema {
 
 func (msg *SubscribeBacktestRequestMessage) Set(backtestID uint, exchange, pair string) {
 	msg.Payload.Id = BacktestIDSchema(backtestID)
-	msg.Payload.ExchangeName = ExchangeNameSchema(exchange)
-	msg.Payload.PairSymbol = PairSymbolSchema(pair)
+	msg.Payload.Exchange = ExchangeSchema(exchange)
+	msg.Payload.Pair = PairSchema(pair)
 }
 
 func (msg *AdvanceBacktestRequestMessage) Set(backtestID uint) {
@@ -102,8 +102,8 @@ func (msg *BacktestsEventMessage) Set(evt event.Event) error {
 			return event.ErrMismatchingType
 		}
 
-		msg.Payload.Content.Exchange = ExchangeNameSchema(t.Exchange)
-		msg.Payload.Content.PairSymbol = PairSymbolSchema(t.PairSymbol)
+		msg.Payload.Content.Exchange = ExchangeSchema(t.Exchange)
+		msg.Payload.Content.Pair = PairSchema(t.Pair)
 		msg.Payload.Content.Price = t.Price
 		msg.Payload.Content.Time = DateSchema(t.Time)
 	default:

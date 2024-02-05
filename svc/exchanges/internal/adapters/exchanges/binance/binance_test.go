@@ -29,18 +29,18 @@ func (suite *BinanceSuite) TestExchangeInfos() {
 	exch, err := suite.service.Infos(context.TODO())
 	suite.NoError(err)
 
-	as.True(checkPairExistance(exch.PairsSymbols, "ETH-USDC"))
-	as.True(checkPairExistance(exch.PairsSymbols, "FTM-USDC"))
-	as.True(checkPairExistance(exch.PairsSymbols, "BTC-USDC"))
+	as.True(checkPairExistance(exch.Pairs, "ETH-USDC"))
+	as.True(checkPairExistance(exch.Pairs, "FTM-USDC"))
+	as.True(checkPairExistance(exch.Pairs, "BTC-USDC"))
 
 	as.Equal(0.1, exch.Fees)
 
 	as.WithinDuration(time.Now(), exch.LastSyncTime, time.Second)
 }
 
-func checkPairExistance(list []string, pairSymbol string) bool {
+func checkPairExistance(list []string, pair string) bool {
 	for _, lp := range list {
-		if pairSymbol == lp {
+		if pair == lp {
 			return true
 		}
 	}

@@ -18,10 +18,10 @@ type TickSuite struct {
 
 func (suite *TickSuite) TestMarshalingJSON() {
 	tick := Tick{
-		Time:       time.Unix(60, 0).UTC(),
-		PairSymbol: "BTC-USDC",
-		Price:      1.01,
-		Exchange:   "exchange",
+		Time:     time.Unix(60, 0).UTC(),
+		Pair:     "BTC-USDC",
+		Price:    1.01,
+		Exchange: "exchange",
 	}
 
 	b, err := json.Marshal(tick)

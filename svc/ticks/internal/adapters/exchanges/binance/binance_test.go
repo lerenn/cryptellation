@@ -28,7 +28,7 @@ func (suite *BinanceSuite) TestTicks() {
 
 	select {
 	case recvTick := <-tickChan:
-		suite.Require().Equal("BTC-USDT", recvTick.PairSymbol)
+		suite.Require().Equal("BTC-USDT", recvTick.Pair)
 	case <-time.After(1 * time.Second):
 		suite.Require().FailNow("Timeout")
 	}

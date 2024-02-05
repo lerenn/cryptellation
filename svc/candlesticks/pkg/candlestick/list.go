@@ -17,23 +17,23 @@ var (
 )
 
 type List struct {
-	ExchangeName string
-	PairSymbol   string
-	Period       period.Symbol
+	Exchange string
+	Pair     string
+	Period   period.Symbol
 	timeserie.TimeSerie[Candlestick]
 }
 
-func NewEmptyList(exchangeName, pairSymbol string, period period.Symbol) *List {
+func NewEmptyList(exchange, pair string, period period.Symbol) *List {
 	return &List{
-		ExchangeName: exchangeName,
-		PairSymbol:   pairSymbol,
-		Period:       period,
-		TimeSerie:    *timeserie.New[Candlestick](),
+		Exchange:  exchange,
+		Pair:      pair,
+		Period:    period,
+		TimeSerie: *timeserie.New[Candlestick](),
 	}
 }
 
 func NewEmptyListFrom(l *List) *List {
-	return NewEmptyList(l.ExchangeName, l.PairSymbol, l.Period)
+	return NewEmptyList(l.Exchange, l.Pair, l.Period)
 }
 
 func (l *List) MustSet(t time.Time, c Candlestick) *List {
@@ -54,9 +54,9 @@ func (l *List) Set(t time.Time, c Candlestick) error {
 }
 
 func (l *List) Merge(l2 *List, options *timeserie.MergeOptions) error {
-	if l.ExchangeName != l2.ExchangeName {
+	if l.Exchange != l2.Exchange {
 		return ErrExchangeMismatch
-	} else if l.PairSymbol != l2.PairSymbol {
+	} else if l.Pair != l2.Pair {
 		return ErrPairMismatch
 	} else if l.Period != l2.Period {
 		return ErrPeriodMismatch
@@ -66,7 +66,7 @@ func (l *List) Merge(l2 *List, options *timeserie.MergeOptions) error {
 }
 
 func (l List) Extract(start, end time.Time, limit uint) *List {
-	el := NewEmptyList(l.ExchangeName, l.PairSymbol, l.Period)
+	el := NewEmptyList(l.Exchange, l.Pair, l.Period)
 	el.TimeSerie = *l.TimeSerie.Extract(start, end, int(limit))
 	return el
 }
@@ -130,7 +130,7 @@ func MergeListIntoOneCandlestick(csl *List, per period.Symbol) (time.Time, Candl
 }
 
 func (l List) String() string {
-	txt := fmt.Sprintf("# %s - %s - %s\n", l.ExchangeName, l.PairSymbol, l.Period.String())
+	txt := fmt.Sprintf("# %s - %s - %s\n", l.Exchange, l.Pair, l.Period.String())
 
 	_ = l.Loop(func(t time.Time, cs Candlestick) (bool, error) {
 		uncomplete := ""

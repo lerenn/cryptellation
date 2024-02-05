@@ -3,17 +3,17 @@ package entities
 import "github.com/lerenn/cryptellation/svc/backtests/pkg/event"
 
 type TickSubscription struct {
-	ID           uint `gorm:"primaryKey"`
-	BacktestID   uint
-	ExchangeName string
-	PairSymbol   string
+	ID         uint `gorm:"primaryKey"`
+	BacktestID uint
+	Exchange   string
+	Pair       string
 }
 
 func (ts TickSubscription) ToModel() event.TickSubscription {
 	return event.TickSubscription{
-		ID:           int(ts.ID),
-		ExchangeName: ts.ExchangeName,
-		PairSymbol:   ts.PairSymbol,
+		ID:       int(ts.ID),
+		Exchange: ts.Exchange,
+		Pair:     ts.Pair,
 	}
 }
 
@@ -35,9 +35,9 @@ func FromTickSubscriptionModels(backtestID uint, models []event.TickSubscription
 
 func FromTickSubscriptionModel(backtestID uint, m event.TickSubscription) TickSubscription {
 	return TickSubscription{
-		ID:           uint(m.ID),
-		BacktestID:   backtestID,
-		ExchangeName: m.ExchangeName,
-		PairSymbol:   m.PairSymbol,
+		ID:         uint(m.ID),
+		BacktestID: backtestID,
+		Exchange:   m.Exchange,
+		Pair:       m.Pair,
 	}
 }

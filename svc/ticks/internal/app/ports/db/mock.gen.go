@@ -49,60 +49,60 @@ func (mr *MockPortMockRecorder) ClearAllSymbolListenersCount(ctx interface{}) *g
 }
 
 // ClearSymbolListenerSubscribers mocks base method.
-func (m *MockPort) ClearSymbolListenerSubscribers(ctx context.Context, exchange, pairSymbol string) error {
+func (m *MockPort) ClearSymbolListenerSubscribers(ctx context.Context, exchange, pair string) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ClearSymbolListenerSubscribers", ctx, exchange, pairSymbol)
+	ret := m.ctrl.Call(m, "ClearSymbolListenerSubscribers", ctx, exchange, pair)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // ClearSymbolListenerSubscribers indicates an expected call of ClearSymbolListenerSubscribers.
-func (mr *MockPortMockRecorder) ClearSymbolListenerSubscribers(ctx, exchange, pairSymbol interface{}) *gomock.Call {
+func (mr *MockPortMockRecorder) ClearSymbolListenerSubscribers(ctx, exchange, pair interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ClearSymbolListenerSubscribers", reflect.TypeOf((*MockPort)(nil).ClearSymbolListenerSubscribers), ctx, exchange, pairSymbol)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ClearSymbolListenerSubscribers", reflect.TypeOf((*MockPort)(nil).ClearSymbolListenerSubscribers), ctx, exchange, pair)
 }
 
 // DecrementSymbolListenerSubscribers mocks base method.
-func (m *MockPort) DecrementSymbolListenerSubscribers(ctx context.Context, exchange, pairSymbol string) (int64, error) {
+func (m *MockPort) DecrementSymbolListenerSubscribers(ctx context.Context, exchange, pair string) (int64, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "DecrementSymbolListenerSubscribers", ctx, exchange, pairSymbol)
+	ret := m.ctrl.Call(m, "DecrementSymbolListenerSubscribers", ctx, exchange, pair)
 	ret0, _ := ret[0].(int64)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // DecrementSymbolListenerSubscribers indicates an expected call of DecrementSymbolListenerSubscribers.
-func (mr *MockPortMockRecorder) DecrementSymbolListenerSubscribers(ctx, exchange, pairSymbol interface{}) *gomock.Call {
+func (mr *MockPortMockRecorder) DecrementSymbolListenerSubscribers(ctx, exchange, pair interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DecrementSymbolListenerSubscribers", reflect.TypeOf((*MockPort)(nil).DecrementSymbolListenerSubscribers), ctx, exchange, pairSymbol)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DecrementSymbolListenerSubscribers", reflect.TypeOf((*MockPort)(nil).DecrementSymbolListenerSubscribers), ctx, exchange, pair)
 }
 
 // GetSymbolListenerSubscribers mocks base method.
-func (m *MockPort) GetSymbolListenerSubscribers(ctx context.Context, exchange, pairSymbol string) (int64, error) {
+func (m *MockPort) GetSymbolListenerSubscribers(ctx context.Context, exchange, pair string) (int64, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetSymbolListenerSubscribers", ctx, exchange, pairSymbol)
+	ret := m.ctrl.Call(m, "GetSymbolListenerSubscribers", ctx, exchange, pair)
 	ret0, _ := ret[0].(int64)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetSymbolListenerSubscribers indicates an expected call of GetSymbolListenerSubscribers.
-func (mr *MockPortMockRecorder) GetSymbolListenerSubscribers(ctx, exchange, pairSymbol interface{}) *gomock.Call {
+func (mr *MockPortMockRecorder) GetSymbolListenerSubscribers(ctx, exchange, pair interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetSymbolListenerSubscribers", reflect.TypeOf((*MockPort)(nil).GetSymbolListenerSubscribers), ctx, exchange, pairSymbol)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetSymbolListenerSubscribers", reflect.TypeOf((*MockPort)(nil).GetSymbolListenerSubscribers), ctx, exchange, pair)
 }
 
 // IncrementSymbolListenerSubscribers mocks base method.
-func (m *MockPort) IncrementSymbolListenerSubscribers(ctx context.Context, exchange, pairSymbol string) (int64, error) {
+func (m *MockPort) IncrementSymbolListenerSubscribers(ctx context.Context, exchange, pair string) (int64, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "IncrementSymbolListenerSubscribers", ctx, exchange, pairSymbol)
+	ret := m.ctrl.Call(m, "IncrementSymbolListenerSubscribers", ctx, exchange, pair)
 	ret0, _ := ret[0].(int64)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // IncrementSymbolListenerSubscribers indicates an expected call of IncrementSymbolListenerSubscribers.
-func (mr *MockPortMockRecorder) IncrementSymbolListenerSubscribers(ctx, exchange, pairSymbol interface{}) *gomock.Call {
+func (mr *MockPortMockRecorder) IncrementSymbolListenerSubscribers(ctx, exchange, pair interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IncrementSymbolListenerSubscribers", reflect.TypeOf((*MockPort)(nil).IncrementSymbolListenerSubscribers), ctx, exchange, pairSymbol)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IncrementSymbolListenerSubscribers", reflect.TypeOf((*MockPort)(nil).IncrementSymbolListenerSubscribers), ctx, exchange, pair)
 }

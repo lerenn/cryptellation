@@ -11,14 +11,14 @@ import (
 
 func (a Adapter) GetSMA(ctx context.Context, payload db.ReadSMAPayload) (*timeserie.TimeSerie[float64], error) {
 	tx := a.db.Client.Where(`
-		exchange_name = ? AND
-		pair_symbol = ? AND
-		period_symbol = ? AND
+		exchange = ? AND
+		pair = ? AND
+		period = ? AND
 		period_number = ? AND
 		price_type = ? AND
 		time BETWEEN ? AND ?`,
-		payload.ExchangeName,
-		payload.PairSymbol,
+		payload.Exchange,
+		payload.Pair,
 		payload.Period.String(),
 		payload.PeriodNumber,
 		payload.PriceType.String(),
@@ -34,8 +34,8 @@ func (a Adapter) GetSMA(ctx context.Context, payload db.ReadSMAPayload) (*timese
 
 func (a Adapter) UpsertSMA(ctx context.Context, payload db.WriteSMAPayload) error {
 	listCE := entities.FromModelListToEntityList(
-		payload.ExchangeName,
-		payload.PairSymbol,
+		payload.Exchange,
+		payload.Pair,
 		payload.Period.String(),
 		int(payload.PeriodNumber),
 		payload.PriceType,

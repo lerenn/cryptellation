@@ -20,14 +20,14 @@ func (suite *EventsClientSuite) TearDownTest() {
 func (suite *EventsClientSuite) TestOnePubOneSubObject() {
 	as := suite.Require()
 
-	pairSymbol := "symbol1"
+	pair := "symbol1"
 	t := tick.Tick{
-		Time:       time.Unix(0, 0).UTC(),
-		PairSymbol: pairSymbol,
-		Price:      float64(time.Now().UnixNano()),
-		Exchange:   "exchange",
+		Time:     time.Unix(0, 0).UTC(),
+		Pair:     pair,
+		Price:    float64(time.Now().UnixNano()),
+		Exchange: "exchange",
 	}
-	ch, err := suite.Client.Subscribe(context.Background(), pairSymbol)
+	ch, err := suite.Client.Subscribe(context.Background(), pair)
 	as.NoError(err)
 
 	as.NoError(suite.Client.Publish(context.Background(), t))

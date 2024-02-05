@@ -164,7 +164,7 @@ components:
           end_time:
             $ref: '#/components/schemas/Date'
           period:
-            $ref: '#/components/schemas/PeriodSymbol'
+            $ref: '#/components/schemas/Period'
       correlationId:
         description: Default Correlation ID
         location: $message.header#/correlationId
@@ -203,15 +203,15 @@ components:
         type: object
         required:
           - id
-          - exchange_name
-          - pair_symbol
+          - exchange
+          - pair
         properties:
           id:
             $ref: '#/components/schemas/BacktestID'
-          exchange_name:
-            $ref: '#/components/schemas/ExchangeName'
-          pair_symbol:
-            $ref: '#/components/schemas/PairSymbol'
+          exchange:
+            $ref: '#/components/schemas/Exchange'
+          pair:
+            $ref: '#/components/schemas/Pair'
       correlationId:
         description: Default Correlation ID
         location: $message.header#/correlationId
@@ -479,7 +479,7 @@ components:
       examples:
         - "1985-04-12T23:20:50.52Z"
         - "1937-01-01T12:00:27.87+00:20"
-    ExchangeName:
+    Exchange:
       type: string
       description: Exchange name
       examples:
@@ -504,8 +504,8 @@ components:
       description: Order sent to the market
       required:
         - type
-        - exchange_name
-        - pair_symbol
+        - exchange
+        - pair
         - side
         - quantity
       properties:
@@ -517,10 +517,10 @@ components:
           $ref: '#/components/schemas/Date'
         type:
           $ref: '#/components/schemas/OrderType'
-        exchange_name:
-          $ref: '#/components/schemas/ExchangeName'
-        pair_symbol:
-          $ref: '#/components/schemas/PairSymbol'
+        exchange:
+          $ref: '#/components/schemas/Exchange'
+        pair:
+          $ref: '#/components/schemas/Pair'
         side: 
           $ref: '#/components/schemas/OrderSide'
         quantity:
@@ -542,12 +542,12 @@ components:
       description: Type of an order
       enum:
         - market
-    PairSymbol:
+    Pair:
       type: string
       description: Pair symbol
       examples:
         - ETH-USDC
-    PeriodSymbol:
+    Period:
       type: string
       description: Period symbol
       default: M1
@@ -581,14 +581,14 @@ components:
       type: object
       required:
         - time
-        - pairSymbol
+        - pair
         - price
         - exchange
       properties:
         time:
           $ref: '#/components/schemas/Date'
-        pairSymbol:
-          $ref: '#/components/schemas/PairSymbol'
+        pair:
+          $ref: '#/components/schemas/Pair'
         price:
           type: number
           format: double
@@ -596,4 +596,4 @@ components:
           examples:
             - 1.5
         exchange:
-          $ref: '#/components/schemas/ExchangeName'
+          $ref: '#/components/schemas/Exchange'

@@ -41,8 +41,8 @@ var candlesticksReadCmd = &cobra.Command{
 	Short:   "Read candlesticks from service",
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		list, err := candlesticksClient.Read(context.Background(), client.ReadCandlesticksPayload{
-			ExchangeName: "binance",
-			PairSymbol:   "ETH-USDT",
+			Exchange: "binance",
+			Pair:         "ETH-USDT",
 			Period:       period.H1,
 			Start:        utils.ToReference(time.Now().AddDate(0, 0, -8)),
 			End:          utils.ToReference(time.Now().AddDate(0, 0, -1)),

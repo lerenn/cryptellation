@@ -15,6 +15,6 @@ func (suite *EndToEndSuite) TestReadExchanges() {
 
 	l := []string{"D1", "D3", "H1", "H12", "H2", "H4", "H6", "H8", "M1", "M15", "M3", "M30", "M5", "W1"}
 	for i, s := range l {
-		suite.Require().Contains(list[0].PeriodsSymbols, s, i)
+		suite.Require().Contains(list[0].Periods, s, i)
 	}
 }

@@ -16,9 +16,9 @@ const (
 
 type Port interface {
 	// Symbol Listener Count
-	IncrementSymbolListenerSubscribers(ctx context.Context, exchange, pairSymbol string) (int64, error)
-	DecrementSymbolListenerSubscribers(ctx context.Context, exchange, pairSymbol string) (int64, error)
-	GetSymbolListenerSubscribers(ctx context.Context, exchange, pairSymbol string) (int64, error)
-	ClearSymbolListenerSubscribers(ctx context.Context, exchange, pairSymbol string) error
+	IncrementSymbolListenerSubscribers(ctx context.Context, exchange, pair string) (int64, error)
+	DecrementSymbolListenerSubscribers(ctx context.Context, exchange, pair string) (int64, error)
+	GetSymbolListenerSubscribers(ctx context.Context, exchange, pair string) (int64, error)
+	ClearSymbolListenerSubscribers(ctx context.Context, exchange, pair string) error
 	ClearAllSymbolListenersCount(ctx context.Context) error
 }

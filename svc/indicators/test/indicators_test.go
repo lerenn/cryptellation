@@ -13,8 +13,8 @@ import (
 func (suite *EndToEndSuite) TestGetSMA() {
 	// WHEN requesting for SMA
 	ts, err := suite.client.SMA(context.Background(), client.SMAPayload{
-		ExchangeName: "binance",
-		PairSymbol:   "ETH-USDT",
+		Exchange:     "binance",
+		Pair:         "ETH-USDT",
 		Period:       period.M1,
 		Start:        utils.Must(time.Parse(time.RFC3339, "2023-02-26T12:00:00Z")),
 		End:          utils.Must(time.Parse(time.RFC3339, "2023-02-26T12:02:00Z")),

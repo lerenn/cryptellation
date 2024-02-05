@@ -65,12 +65,12 @@ func (suite *GetCachedSuite) setMocksForAllExistWithNoneInDB() context.Context {
 	suite.exchange.EXPECT().GetCandlesticks(
 		ctx,
 		exchanges.GetCandlesticksPayload{
-			Exchange:   "exchange",
-			PairSymbol: "ETH-USDC",
-			Period:     period.M1,
-			Start:      time.Unix(0, 0),
-			End:        time.Unix(5940, 0),
-			Limit:      0,
+			Exchange: "exchange",
+			Pair:     "ETH-USDC",
+			Period:   period.M1,
+			Start:    time.Unix(0, 0),
+			End:      time.Unix(5940, 0),
+			Limit:    0,
 		},
 	).Return(l, nil)
 
@@ -82,11 +82,11 @@ func (suite *GetCachedSuite) TestAllExistWithNoneInDB() {
 
 	// When a request is made
 	l, err := suite.component.GetCached(ctx, app.GetCachedPayload{
-		ExchangeName: "exchange",
-		PairSymbol:   "ETH-USDC",
-		Period:       period.M1,
-		Start:        TimeOpt(time.Unix(0, 0)),
-		End:          TimeOpt(time.Unix(540, 0)),
+		Exchange: "exchange",
+		Pair:     "ETH-USDC",
+		Period:   period.M1,
+		Start:    TimeOpt(time.Unix(0, 0)),
+		End:      TimeOpt(time.Unix(540, 0)),
 	})
 
 	// Then everything went well
@@ -120,12 +120,12 @@ func (suite *GetCachedSuite) setMocksForNoneExistWithNoneInDB() context.Context 
 	suite.exchange.EXPECT().GetCandlesticks(
 		ctx,
 		exchanges.GetCandlesticksPayload{
-			Exchange:   "exchange",
-			PairSymbol: "ETH-USDC",
-			Period:     period.M1,
-			Start:      time.Unix(0, 0),
-			End:        time.Unix(5940, 0),
-			Limit:      0,
+			Exchange: "exchange",
+			Pair:     "ETH-USDC",
+			Period:   period.M1,
+			Start:    time.Unix(0, 0),
+			End:      time.Unix(5940, 0),
+			Limit:    0,
 		},
 	).Return(l, nil)
 
@@ -138,11 +138,11 @@ func (suite *GetCachedSuite) TestNoneExistWithNoneInDB() {
 
 	// When a request is made
 	l, err := suite.component.GetCached(ctx, app.GetCachedPayload{
-		ExchangeName: "exchange",
-		PairSymbol:   "ETH-USDC",
-		Period:       period.M1,
-		Start:        TimeOpt(time.Unix(0, 0)),
-		End:          TimeOpt(time.Unix(540, 0)),
+		Exchange: "exchange",
+		Pair:     "ETH-USDC",
+		Period:   period.M1,
+		Start:    TimeOpt(time.Unix(0, 0)),
+		End:      TimeOpt(time.Unix(540, 0)),
 	})
 
 	// Then everything went well
@@ -192,12 +192,12 @@ func (suite *GetCachedSuite) setMocksForFromDBAndService() context.Context {
 	suite.exchange.EXPECT().GetCandlesticks(
 		ctx,
 		exchanges.GetCandlesticksPayload{
-			Exchange:   "exchange",
-			PairSymbol: "ETH-USDC",
-			Period:     period.M1,
-			Start:      time.Unix(600, 0),
-			End:        time.Unix(6540, 0),
-			Limit:      0,
+			Exchange: "exchange",
+			Pair:     "ETH-USDC",
+			Period:   period.M1,
+			Start:    time.Unix(600, 0),
+			End:      time.Unix(6540, 0),
+			Limit:    0,
 		},
 	).Return(exchl, nil)
 
@@ -209,11 +209,11 @@ func (suite *GetCachedSuite) TestFromDBAndService() {
 
 	// When a request is made
 	el, err := suite.component.GetCached(ctx, app.GetCachedPayload{
-		ExchangeName: "exchange",
-		PairSymbol:   "ETH-USDC",
-		Period:       period.M1,
-		Start:        TimeOpt(time.Unix(0, 0)),
-		End:          TimeOpt(time.Unix(1140, 0)),
+		Exchange: "exchange",
+		Pair:     "ETH-USDC",
+		Period:   period.M1,
+		Start:    TimeOpt(time.Unix(0, 0)),
+		End:      TimeOpt(time.Unix(1140, 0)),
 	})
 
 	// Then everything went well
@@ -279,12 +279,12 @@ func (suite *GetCachedSuite) setMocksForFromDBAndServiceWithUncomplete() context
 	suite.exchange.EXPECT().GetCandlesticks(
 		ctx,
 		exchanges.GetCandlesticksPayload{
-			Exchange:   "exchange",
-			PairSymbol: "ETH-USDC",
-			Period:     period.M1,
-			Start:      time.Unix(0, 0),
-			End:        time.Unix(5940, 0),
-			Limit:      0,
+			Exchange: "exchange",
+			Pair:     "ETH-USDC",
+			Period:   period.M1,
+			Start:    time.Unix(0, 0),
+			End:      time.Unix(5940, 0),
+			Limit:    0,
 		},
 	).Return(exchl, nil)
 
@@ -296,11 +296,11 @@ func (suite *GetCachedSuite) TestFromDBAndServiceWithUncomplete() {
 
 	// When a request is made
 	el, err := suite.component.GetCached(ctx, app.GetCachedPayload{
-		ExchangeName: "exchange",
-		PairSymbol:   "ETH-USDC",
-		Period:       period.M1,
-		Start:        TimeOpt(time.Unix(0, 0)),
-		End:          TimeOpt(time.Unix(1140, 0)),
+		Exchange: "exchange",
+		Pair:     "ETH-USDC",
+		Period:   period.M1,
+		Start:    TimeOpt(time.Unix(0, 0)),
+		End:      TimeOpt(time.Unix(1140, 0)),
 	})
 
 	// Then everything went well

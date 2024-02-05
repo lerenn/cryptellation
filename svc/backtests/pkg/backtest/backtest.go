@@ -65,9 +65,9 @@ func (payload NewPayload) Validate() error {
 		return ErrStartAfterEnd
 	}
 
-	for exchangeName, a := range payload.Accounts {
-		if exchangeName == "" {
-			return fmt.Errorf("error with exchange %q in new backtest payload: %w", exchangeName, ErrInvalidExchange)
+	for exchange, a := range payload.Accounts {
+		if exchange == "" {
+			return fmt.Errorf("error with exchange %q in new backtest payload: %w", exchange, ErrInvalidExchange)
 		}
 
 		if err := a.Validate(); err != nil {
@@ -149,17 +149,17 @@ func (bt *Backtest) SetCurrentTime(ts time.Time) {
 	bt.CurrentCsTick.PriceType = candlestick.PriceTypeIsOpen
 }
 
-func (bt *Backtest) CreateTickSubscription(exchangeName string, pairSymbol string) (event.TickSubscription, error) {
+func (bt *Backtest) CreateTickSubscription(exchange string, pair string) (event.TickSubscription, error) {
 	for _, ts := range bt.TickSubscriptions {
-		if ts.ExchangeName == exchangeName && ts.PairSymbol == pairSymbol {
+		if ts.Exchange == exchange && ts.Pair == pair {
 			return event.TickSubscription{}, ErrTickSubscriptionAlreadyExists
 		}
 	}
 
 	s := event.TickSubscription{
-		ID:           len(bt.TickSubscriptions),
-		ExchangeName: exchangeName,
-		PairSymbol:   pairSymbol,
+		ID:       len(bt.TickSubscriptions),
+		Exchange: exchange,
+		Pair:     pair,
 	}
 	bt.TickSubscriptions = append(bt.TickSubscriptions, s)
 
@@ -168,13 +168,13 @@ func (bt *Backtest) CreateTickSubscription(exchangeName string, pairSymbol strin
 
 func (bt *Backtest) AddOrder(ord order.Order, cs candlestick.Candlestick) error {
 	// Get exchange account
-	exchangeAccount, ok := bt.Accounts[ord.ExchangeName]
+	exchangeAccount, ok := bt.Accounts[ord.Exchange]
 	if !ok {
-		return fmt.Errorf("error with orders exchange %q: %w", ord.ExchangeName, ErrInvalidExchange)
+		return fmt.Errorf("error with orders exchange %q: %w", ord.Exchange, ErrInvalidExchange)
 	}
 
 	// Get base and quote based on symbol
-	baseSymbol, quoteSymbol, err := pair.ParsePairSymbol(ord.PairSymbol)
+	baseSymbol, quoteSymbol, err := pair.ParsePair(ord.Pair)
 	if err != nil {
 		return fmt.Errorf("error when parsing order pair symbol: %w", err)
 	}
@@ -184,29 +184,29 @@ func (bt *Backtest) AddOrder(ord order.Order, cs candlestick.Candlestick) error 
 	if ord.Side == order.SideIsBuy {
 		available, ok := exchangeAccount.Balances[quoteSymbol]
 		if !ok {
-			return fmt.Errorf("%w: no %s on %s", ErrNotEnoughAsset, quoteSymbol, ord.PairSymbol)
+			return fmt.Errorf("%w: no %s on %s", ErrNotEnoughAsset, quoteSymbol, ord.Pair)
 		} else if quoteEquivalentQty > available {
 			return fmt.Errorf(
 				"%w: not enough %s on %s (min=%f, got=%f)",
-				ErrNotEnoughAsset, quoteSymbol, ord.PairSymbol,
+				ErrNotEnoughAsset, quoteSymbol, ord.Pair,
 				quoteEquivalentQty, available)
 		}
 
-		bt.Accounts[ord.ExchangeName].Balances[quoteSymbol] -= quoteEquivalentQty
-		bt.Accounts[ord.ExchangeName].Balances[baseSymbol] += ord.Quantity
+		bt.Accounts[ord.Exchange].Balances[quoteSymbol] -= quoteEquivalentQty
+		bt.Accounts[ord.Exchange].Balances[baseSymbol] += ord.Quantity
 	} else {
 		available, ok := exchangeAccount.Balances[baseSymbol]
 		if !ok {
-			return fmt.Errorf("%w: no %s on %s", ErrNotEnoughAsset, baseSymbol, ord.PairSymbol)
+			return fmt.Errorf("%w: no %s on %s", ErrNotEnoughAsset, baseSymbol, ord.Pair)
 		} else if ord.Quantity > available {
 			return fmt.Errorf(
 				"%w: not enough %s on %s (min=%f, got=%f)",
-				ErrNotEnoughAsset, baseSymbol, ord.PairSymbol,
+				ErrNotEnoughAsset, baseSymbol, ord.Pair,
 				ord.Quantity, available)
 		}
 
-		bt.Accounts[ord.ExchangeName].Balances[quoteSymbol] += quoteEquivalentQty
-		bt.Accounts[ord.ExchangeName].Balances[baseSymbol] -= ord.Quantity
+		bt.Accounts[ord.Exchange].Balances[quoteSymbol] += quoteEquivalentQty
+		bt.Accounts[ord.Exchange].Balances[baseSymbol] -= ord.Quantity
 	}
 
 	ord.ID = uint64(len(bt.Orders))

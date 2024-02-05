@@ -41,10 +41,10 @@ func (suite *EndToEndSuite) TestBacktestAdvance() {
 
 	// Getting tick event
 	suite.checkTickEvent(t, tick.Tick{
-		Time:       t,
-		PairSymbol: "BTC-USDT",
-		Price:      23255.54,
-		Exchange:   "binance",
+		Time:     t,
+		Pair:     "BTC-USDT",
+		Price:    23255.54,
+		Exchange: "binance",
 	}, <-ch)
 
 	// Getting status event
@@ -56,10 +56,10 @@ func (suite *EndToEndSuite) TestBacktestAdvance() {
 
 	// Getting tick event
 	suite.checkTickEvent(t, tick.Tick{
-		Time:       t,
-		PairSymbol: "BTC-USDT",
-		Price:      23248.96,
-		Exchange:   "binance",
+		Time:     t,
+		Pair:     "BTC-USDT",
+		Price:    23248.96,
+		Exchange: "binance",
 	}, <-ch)
 
 	// Getting status event
@@ -71,10 +71,10 @@ func (suite *EndToEndSuite) TestBacktestAdvance() {
 
 	// Getting tick event
 	suite.checkTickEvent(t, tick.Tick{
-		Time:       t,
-		PairSymbol: "BTC-USDT",
-		Price:      23253.8,
-		Exchange:   "binance",
+		Time:     t,
+		Pair:     "BTC-USDT",
+		Price:    23253.8,
+		Exchange: "binance",
 	}, <-ch)
 
 	// Getting status event
@@ -87,10 +87,10 @@ func (suite *EndToEndSuite) TestBacktestAdvance() {
 
 	// Getting tick event
 	suite.checkTickEvent(t, tick.Tick{
-		Time:       t,
-		PairSymbol: "BTC-USDT",
-		Price:      23254.26,
-		Exchange:   "binance",
+		Time:     t,
+		Pair:     "BTC-USDT",
+		Price:    23254.26,
+		Exchange: "binance",
 	}, <-ch)
 
 	// Getting status event
@@ -102,10 +102,10 @@ func (suite *EndToEndSuite) TestBacktestAdvance() {
 
 	// Getting tick event
 	suite.checkTickEvent(t, tick.Tick{
-		Time:       t,
-		PairSymbol: "BTC-USDT",
-		Price:      23272.86,
-		Exchange:   "binance",
+		Time:     t,
+		Pair:     "BTC-USDT",
+		Price:    23272.86,
+		Exchange: "binance",
 	}, <-ch)
 
 	// Getting status event
@@ -117,10 +117,10 @@ func (suite *EndToEndSuite) TestBacktestAdvance() {
 
 	// Getting tick event
 	suite.checkTickEvent(t, tick.Tick{
-		Time:       t,
-		PairSymbol: "BTC-USDT",
-		Price:      23250.65,
-		Exchange:   "binance",
+		Time:     t,
+		Pair:     "BTC-USDT",
+		Price:    23250.65,
+		Exchange: "binance",
 	}, <-ch)
 
 	// Getting status event
@@ -132,10 +132,10 @@ func (suite *EndToEndSuite) TestBacktestAdvance() {
 
 	// Getting tick event
 	suite.checkTickEvent(t, tick.Tick{
-		Time:       t,
-		PairSymbol: "BTC-USDT",
-		Price:      23272.77,
-		Exchange:   "binance",
+		Time:     t,
+		Pair:     "BTC-USDT",
+		Price:    23272.77,
+		Exchange: "binance",
 	}, <-ch)
 
 	// Getting status event
@@ -201,12 +201,12 @@ func (suite *EndToEndSuite) TestBacktestOrder() {
 
 	// Send order
 	err = suite.client.CreateOrder(context.Background(), client.OrderCreationPayload{
-		BacktestID:   id,
-		Type:         order.TypeIsMarket,
-		ExchangeName: "binance",
-		PairSymbol:   "BTC-USDT",
-		Side:         order.SideIsSell,
-		Quantity:     1,
+		BacktestID: id,
+		Type:       order.TypeIsMarket,
+		Exchange:   "binance",
+		Pair:       "BTC-USDT",
+		Side:       order.SideIsSell,
+		Quantity:   1,
 	})
 	suite.Require().NoError(err)
 
@@ -229,12 +229,12 @@ func (suite *EndToEndSuite) TestBacktestOrder() {
 
 	// Send order
 	err = suite.client.CreateOrder(context.Background(), client.OrderCreationPayload{
-		BacktestID:   id,
-		Type:         order.TypeIsMarket,
-		ExchangeName: "binance",
-		PairSymbol:   "BTC-USDT",
-		Side:         order.SideIsBuy,
-		Quantity:     23253.40 / 23269.07, // BTC to buy => USDT Qty / Price
+		BacktestID: id,
+		Type:       order.TypeIsMarket,
+		Exchange:   "binance",
+		Pair:       "BTC-USDT",
+		Side:       order.SideIsBuy,
+		Quantity:   23253.40 / 23269.07, // BTC to buy => USDT Qty / Price
 	})
 	suite.Require().NoError(err)
 

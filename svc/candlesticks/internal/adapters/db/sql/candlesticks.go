@@ -17,12 +17,12 @@ func (a *Adapter) CreateCandlesticks(ctx context.Context, cs *candlestick.List) 
 
 func (a *Adapter) ReadCandlesticks(ctx context.Context, cs *candlestick.List, start, end time.Time, limit uint) error {
 	tx := a.db.Client.Where(`
-		exchange_name = ? AND
-		pair_symbol = ? AND
-		period_symbol = ? AND
+		exchange = ? AND
+		pair = ? AND
+		period = ? AND
 		time BETWEEN ? AND ?`,
-		cs.ExchangeName,
-		cs.PairSymbol,
+		cs.Exchange,
+		cs.Pair,
 		cs.Period.String(),
 		start, end)
 
@@ -51,9 +51,9 @@ func (a *Adapter) UpdateCandlesticks(ctx context.Context, cs *candlestick.List) 
 		tx := a.db.Client.WithContext(ctx).
 			Select("*").
 			Model(&entities.Candlestick{}).
-			Where("exchange_name = ?", ce.ExchangeName).
-			Where("pair_symbol = ?", ce.PairSymbol).
-			Where("period_symbol = ?", ce.PeriodSymbol).
+			Where("exchange = ?", ce.Exchange).
+			Where("pair = ?", ce.Pair).
+			Where("period = ?", ce.Period).
 			Where("time = ?", ce.Time).
 			Updates(ce)
 

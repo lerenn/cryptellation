@@ -83,10 +83,10 @@ func (b Client) ListenEvents(ctx context.Context, backtestID uint) (<-chan event
 			}
 		case event.TypeIsTick:
 			e.Content = tick.Tick{
-				Time:       time.Time(msg.Payload.Content.Time),
-				Exchange:   string(msg.Payload.Content.Exchange),
-				PairSymbol: string(msg.Payload.Content.PairSymbol),
-				Price:      msg.Payload.Content.Price,
+				Time:     time.Time(msg.Payload.Content.Time),
+				Exchange: string(msg.Payload.Content.Exchange),
+				Pair:     string(msg.Payload.Content.Pair),
+				Price:    msg.Payload.Content.Price,
 			}
 		default:
 			b.logger.Error(ctx, fmt.Sprintf("received unknown event type: %s", msg.Payload.Type))

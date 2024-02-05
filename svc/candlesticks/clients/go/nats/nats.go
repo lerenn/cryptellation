@@ -79,7 +79,7 @@ func (c Client) Read(ctx context.Context, payload client.ReadCandlesticksPayload
 	}
 
 	// To candlestick list
-	return respMsg.ToModel(payload.ExchangeName, payload.PairSymbol, payload.Period)
+	return respMsg.ToModel(payload.Exchange, payload.Pair, payload.Period)
 }
 
 func (c Client) ServiceInfo(ctx context.Context) (clientPkg.ServiceInfo, error) {

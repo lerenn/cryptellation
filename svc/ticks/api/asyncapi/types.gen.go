@@ -65,9 +65,9 @@ func (e *Error) Error() string {
 // CryptellationTicksLiveParameters represents CryptellationTicksLiveExchangePair channel parameters
 type CryptellationTicksLiveParameters struct {
 	// Description: Filter for ticks by exchange name
-	Exchange ExchangeNameSchema
+	Exchange ExchangeSchema
 	// Description: Filter for ticks by pair symbol
-	Pair PairSymbolSchema
+	Pair PairSchema
 }
 
 // RegisteringRequestMessage is the message expected for 'RegisteringRequest' channel
@@ -81,10 +81,10 @@ type RegisteringRequestMessage struct {
 	// Payload will be inserted in the message payload
 	Payload struct {
 		// Description: Exchange name
-		Exchange ExchangeNameSchema `json:"exchange"`
+		Exchange ExchangeSchema `json:"exchange"`
 
 		// Description: Pair symbol
-		Pair PairSymbolSchema `json:"pair"`
+		Pair PairSchema `json:"pair"`
 	}
 }
 
@@ -540,21 +540,21 @@ type ErrorSchema struct {
 	Message string `json:"message"`
 }
 
-// ExchangeNameSchema is a schema from the AsyncAPI specification required in messages
+// ExchangeSchema is a schema from the AsyncAPI specification required in messages
 // Description: Exchange name
-type ExchangeNameSchema string
+type ExchangeSchema string
 
-// PairSymbolSchema is a schema from the AsyncAPI specification required in messages
+// PairSchema is a schema from the AsyncAPI specification required in messages
 // Description: Pair symbol
-type PairSymbolSchema string
+type PairSchema string
 
 // TickSchema is a schema from the AsyncAPI specification required in messages
 type TickSchema struct {
 	// Description: Exchange name
-	Exchange ExchangeNameSchema `json:"exchange"`
+	Exchange ExchangeSchema `json:"exchange"`
 
 	// Description: Pair symbol
-	PairSymbol PairSymbolSchema `json:"pair_symbol"`
+	Pair PairSchema `json:"pair"`
 
 	// Description: Tick price
 	Price float64 `json:"price"`

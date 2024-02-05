@@ -37,14 +37,14 @@ func (suite *BinanceSuite) TestGetCandlesticks() {
 
 	cs, err := suite.service.GetCandlesticks(context.TODO(),
 		exchanges.GetCandlesticksPayload{
-			PairSymbol: p,
-			Period:     period.M1,
-			Limit:      2,
-			Start:      ts,
-			End:        te,
+			Pair:   p,
+			Period: period.M1,
+			Limit:  2,
+			Start:  ts,
+			End:    te,
 		})
 	suite.Require().NoError(err)
-	suite.Require().Equal(p, cs.PairSymbol)
+	suite.Require().Equal(p, cs.Pair)
 	suite.Require().Equal(period.M1, cs.Period)
 
 	expected := candlestick.Candlestick{
@@ -72,11 +72,11 @@ func (suite *BinanceSuite) TestGetCandlesticksWithZeroLimit() {
 
 	_, err = suite.service.GetCandlesticks(context.TODO(),
 		exchanges.GetCandlesticksPayload{
-			PairSymbol: p,
-			Period:     period.M1,
-			Limit:      0,
-			Start:      ts,
-			End:        te,
+			Pair:   p,
+			Period: period.M1,
+			Limit:  0,
+			Start:  ts,
+			End:    te,
 		})
 	suite.Require().NoError(err)
 }

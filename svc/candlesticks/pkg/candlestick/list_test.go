@@ -18,8 +18,8 @@ type CandlestickListSuite struct {
 
 func (suite *CandlestickListSuite) TestNewEmpty() {
 	l := NewEmptyList("exchange", "ETH-USDC", period.M1)
-	suite.Require().Equal("exchange", l.ExchangeName)
-	suite.Require().Equal("ETH-USDC", l.PairSymbol)
+	suite.Require().Equal("exchange", l.Exchange)
+	suite.Require().Equal("ETH-USDC", l.Pair)
 	suite.Require().Equal(period.M1, l.Period)
 	suite.Require().Equal(0, l.Len())
 }
@@ -38,8 +38,8 @@ func (suite *CandlestickListSuite) TestNew() {
 	suite.Require().NoError(l.Set(t2, cs2))
 
 	// Check list
-	suite.Require().Equal("exchange", l.ExchangeName)
-	suite.Require().Equal("ETH-USDC", l.PairSymbol)
+	suite.Require().Equal("exchange", l.Exchange)
+	suite.Require().Equal("ETH-USDC", l.Pair)
 	suite.Require().Equal(period.M1, l.Period)
 
 	// Check candlesticks

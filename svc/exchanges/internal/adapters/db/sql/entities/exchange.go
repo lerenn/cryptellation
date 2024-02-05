@@ -17,15 +17,15 @@ type Exchange struct {
 func (e *Exchange) FromModel(model exchange.Exchange) {
 	e.Name = model.Name
 
-	e.Pairs = make([]Pair, len(model.PairsSymbols))
-	for i, p := range model.PairsSymbols {
+	e.Pairs = make([]Pair, len(model.Pairs))
+	for i, p := range model.Pairs {
 		e.Pairs[i] = Pair{
 			Symbol: p,
 		}
 	}
 
-	e.Periods = make([]Period, len(model.PeriodsSymbols))
-	for i, p := range model.PeriodsSymbols {
+	e.Periods = make([]Period, len(model.Periods))
+	for i, p := range model.Periods {
 		e.Periods[i] = Period{
 			Symbol: p,
 		}
@@ -37,19 +37,19 @@ func (e *Exchange) FromModel(model exchange.Exchange) {
 
 func (e Exchange) ToModel() exchange.Exchange {
 	m := exchange.Exchange{
-		Name:           e.Name,
-		PairsSymbols:   make([]string, len(e.Pairs)),
-		PeriodsSymbols: make([]string, len(e.Periods)),
-		Fees:           e.Fees,
-		LastSyncTime:   e.LastSyncTime,
+		Name:         e.Name,
+		Pairs:        make([]string, len(e.Pairs)),
+		Periods:      make([]string, len(e.Periods)),
+		Fees:         e.Fees,
+		LastSyncTime: e.LastSyncTime,
 	}
 
 	for i, p := range e.Pairs {
-		m.PairsSymbols[i] = p.Symbol
+		m.Pairs[i] = p.Symbol
 	}
 
 	for i, p := range e.Periods {
-		m.PeriodsSymbols[i] = p.Symbol
+		m.Periods[i] = p.Symbol
 	}
 
 	return m

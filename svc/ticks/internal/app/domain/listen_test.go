@@ -54,10 +54,10 @@ func (suite *ListenSuite) TestHappyPass() {
 
 	// Send a tick from mock perspective
 	t := tick.Tick{
-		Time:       time.Unix(60, 0),
-		PairSymbol: "SYMBOL",
-		Price:      2.0,
-		Exchange:   "EXCHANGE",
+		Time:     time.Unix(60, 0),
+		Pair:     "SYMBOL",
+		Price:    2.0,
+		Exchange: "EXCHANGE",
 	}
 	ch <- t
 

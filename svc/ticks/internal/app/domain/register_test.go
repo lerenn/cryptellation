@@ -51,10 +51,10 @@ func (suite *RegisterSuite) setMocksForFirstRegister(ctx context.Context) (chan 
 	// Set call to Events when receving a tick for the exchange
 	wg := sync.WaitGroup{}
 	suite.ps.EXPECT().Publish(context.TODO(), tick.Tick{
-		Time:       time.Unix(60, 0),
-		PairSymbol: "SYMBOL",
-		Price:      2.0,
-		Exchange:   "EXCHANGE",
+		Time:     time.Unix(60, 0),
+		Pair:     "SYMBOL",
+		Price:    2.0,
+		Exchange: "EXCHANGE",
 	}).DoAndReturn(func(ctx context.Context, tick tick.Tick) error {
 		wg.Done()
 		return nil
@@ -88,10 +88,10 @@ func (suite *RegisterSuite) TestFirstRegister() {
 
 	// Simulate sending a tick from the exchange
 	t := tick.Tick{
-		Time:       time.Unix(60, 0),
-		PairSymbol: "SYMBOL",
-		Price:      2.0,
-		Exchange:   "EXCHANGE",
+		Time:     time.Unix(60, 0),
+		Pair:     "SYMBOL",
+		Price:    2.0,
+		Exchange: "EXCHANGE",
 	}
 	fromExchangeChan <- t
 

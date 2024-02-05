@@ -27,11 +27,11 @@ channels:
       exchange:
         description: Filter for ticks by exchange name
         schema:
-          $ref: '#/components/schemas/ExchangeName'
+          $ref: '#/components/schemas/Exchange'
       pair:
         description: Filter for ticks by pair symbol
         schema:
-          $ref: '#/components/schemas/PairSymbol'
+          $ref: '#/components/schemas/Pair'
     subscribe:
       operationId: WatchTicks
       description: Listen to ticks based on their exchange and their symbol
@@ -112,9 +112,9 @@ components:
           - pair
         properties:
           exchange:
-            $ref: '#/components/schemas/ExchangeName'
+            $ref: '#/components/schemas/Exchange'
           pair:
-            $ref: '#/components/schemas/PairSymbol'
+            $ref: '#/components/schemas/Pair'
       correlationId:
         description: Default Correlation ID
         location: $message.header#/correlationId
@@ -162,14 +162,14 @@ components:
       type: object
       required:
         - time
-        - pairSymbol
+        - pair
         - price
         - exchange
       properties:
         time:
           $ref: '#/components/schemas/Date'
-        pairSymbol:
-          $ref: '#/components/schemas/PairSymbol'
+        pair:
+          $ref: '#/components/schemas/Pair'
         price:
           type: number
           format: double
@@ -177,13 +177,13 @@ components:
           examples:
             - 1.5
         exchange:
-          $ref: '#/components/schemas/ExchangeName'
-    ExchangeName:
+          $ref: '#/components/schemas/Exchange'
+    Exchange:
       type: string
       description: Exchange name
       examples:
         - Binance
-    PairSymbol:
+    Pair:
       type: string
       description: Pair symbol
       examples:

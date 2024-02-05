@@ -20,7 +20,7 @@ func (app Candlesticks) GetCached(ctx context.Context, payload app.GetCachedPayl
 	log.Printf("Get candlesticks for %+v", payload)
 
 	start, end := payload.Period.RoundInterval(payload.Start, payload.End)
-	cl := candlestick.NewEmptyList(payload.ExchangeName, payload.PairSymbol, payload.Period)
+	cl := candlestick.NewEmptyList(payload.Exchange, payload.Pair, payload.Period)
 
 	// Read candlesticks from database
 	if err := app.db.ReadCandlesticks(ctx, cl, start, end, payload.Limit); err != nil {
@@ -64,11 +64,11 @@ func getDownloadStartEndTimes(cl *candlestick.List, end, start time.Time) (time.
 
 func (app Candlesticks) download(ctx context.Context, cl *candlestick.List, start, end time.Time, limit uint) error {
 	payload := exchanges.GetCandlesticksPayload{
-		Exchange:   cl.ExchangeName,
-		PairSymbol: cl.PairSymbol,
-		Period:     cl.Period,
-		Start:      start,
-		End:        end,
+		Exchange: cl.Exchange,
+		Pair:     cl.Pair,
+		Period:   cl.Period,
+		Start:    start,
+		End:      end,
 	}
 
 	for {

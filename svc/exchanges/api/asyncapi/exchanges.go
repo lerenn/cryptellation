@@ -26,15 +26,15 @@ func (msg *ListExchangesResponseMessage) Set(exchanges []exchange.Exchange) {
 	msg.Payload.Exchanges = make([]ExchangeSchema, len(exchanges))
 	for i, exch := range exchanges {
 		// Periods
-		periods := make([]PeriodSymbolSchema, len(exch.PeriodsSymbols))
-		for j, p := range exch.PeriodsSymbols {
-			periods[j] = PeriodSymbolSchema(p)
+		periods := make([]PeriodSchema, len(exch.Periods))
+		for j, p := range exch.Periods {
+			periods[j] = PeriodSchema(p)
 		}
 
 		// Pairs
-		pairs := make([]PairSymbolSchema, len(exch.PairsSymbols))
-		for j, p := range exch.PairsSymbols {
-			pairs[j] = PairSymbolSchema(p)
+		pairs := make([]PairSchema, len(exch.Pairs))
+		for j, p := range exch.Pairs {
+			pairs[j] = PairSchema(p)
 		}
 
 		// Exchange
@@ -64,11 +64,11 @@ func (msg *ListExchangesResponseMessage) ToModel() []exchange.Exchange {
 		}
 
 		exchanges[i] = exchange.Exchange{
-			Name:           string(exch.Name),
-			Fees:           exch.Fees,
-			PairsSymbols:   pairs,
-			PeriodsSymbols: periods,
-			LastSyncTime:   exch.LastSyncTime,
+			Name:         string(exch.Name),
+			Fees:         exch.Fees,
+			Pairs:        pairs,
+			Periods:      periods,
+			LastSyncTime: exch.LastSyncTime,
 		}
 	}
 

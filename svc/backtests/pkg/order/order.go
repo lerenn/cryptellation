@@ -13,8 +13,8 @@ type Order struct {
 	ID            uint64
 	ExecutionTime *time.Time
 	Type          Type
-	ExchangeName  string
-	PairSymbol    string
+	Exchange      string
+	Pair          string
 	Side          Side
 	Quantity      float64
 	Price         float64

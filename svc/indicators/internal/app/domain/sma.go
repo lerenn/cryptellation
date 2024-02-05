@@ -15,8 +15,8 @@ import (
 func (ind indicators) GetCachedSMA(ctx context.Context, payload app.GetCachedSMAPayload) (*timeserie.TimeSerie[float64], error) {
 	// Get cached SMA from DB
 	ts, err := ind.db.GetSMA(ctx, db.ReadSMAPayload{
-		ExchangeName: payload.ExchangeName,
-		PairSymbol:   payload.PairSymbol,
+		Exchange:     payload.Exchange,
+		Pair:         payload.Pair,
 		Period:       payload.Period,
 		PeriodNumber: payload.PeriodNumber,
 		PriceType:    payload.PriceType,
@@ -49,8 +49,8 @@ func (ind indicators) GetCachedSMA(ctx context.Context, payload app.GetCachedSMA
 
 	// Save SMA points to DB and return the result
 	return ts, ind.db.UpsertSMA(ctx, db.WriteSMAPayload{
-		ExchangeName: payload.ExchangeName,
-		PairSymbol:   payload.PairSymbol,
+		Exchange:     payload.Exchange,
+		Pair:         payload.Pair,
 		Period:       payload.Period,
 		PeriodNumber: payload.PeriodNumber,
 		PriceType:    payload.PriceType,
@@ -64,11 +64,11 @@ func (ind indicators) generateSMA(
 ) (*timeserie.TimeSerie[float64], error) {
 	// Get necessary candlesticks
 	cs, err := ind.candlesticks.Read(ctx, client.ReadCandlesticksPayload{
-		ExchangeName: payload.ExchangeName,
-		PairSymbol:   payload.PairSymbol,
-		Period:       payload.Period,
-		Start:        utils.ToReference(payload.Start.Add(-payload.Period.Duration() * time.Duration(payload.PeriodNumber))),
-		End:          utils.ToReference(payload.End),
+		Exchange: payload.Exchange,
+		Pair:     payload.Pair,
+		Period:   payload.Period,
+		Start:    utils.ToReference(payload.Start.Add(-payload.Period.Duration() * time.Duration(payload.PeriodNumber))),
+		End:      utils.ToReference(payload.End),
 	})
 	if err != nil {
 		return &timeserie.TimeSerie[float64]{}, err

@@ -20,10 +20,10 @@ type Client interface {
 }
 
 type ReadCandlesticksPayload struct {
-	ExchangeName string
-	PairSymbol   string
-	Period       period.Symbol
-	Start        *time.Time
-	End          *time.Time
-	Limit        uint
+	Exchange string
+	Pair     string
+	Period   period.Symbol
+	Start    *time.Time
+	End      *time.Time
+	Limit    uint
 }

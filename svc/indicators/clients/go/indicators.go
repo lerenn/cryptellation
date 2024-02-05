@@ -21,8 +21,8 @@ type Client interface {
 }
 
 type SMAPayload struct {
-	ExchangeName string
-	PairSymbol   string
+	Exchange     string
+	Pair         string
 	Period       period.Symbol
 	Start        time.Time
 	End          time.Time

@@ -31,7 +31,7 @@ func TestRoundTime(t *testing.T) {
 	}
 }
 
-func TestPeriodSymbols(t *testing.T) {
+func TestPeriods(t *testing.T) {
 	symbols := Symbols()
 
 	if len(symbols) != 14 {
