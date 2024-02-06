@@ -8,6 +8,5 @@ use (
     ./svc/candlesticks
     ./svc/indicators
     ./svc/ticks
-    ./tools/ci
-    ./tools/tag
+    ./tools
 )

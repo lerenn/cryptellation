@@ -3,7 +3,7 @@ package main
 import (
 	"context"
 
-	"github.com/lerenn/cryptellation/pkg/ci"
+	"github.com/lerenn/cryptellation/tools/pkg/ci"
 	"github.com/spf13/cobra"
 )
 

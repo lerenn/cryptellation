@@ -7,12 +7,12 @@ import (
 	"strings"
 
 	"dagger.io/dagger"
-	"github.com/lerenn/cryptellation/pkg/ci"
 	backtestsCi "github.com/lerenn/cryptellation/svc/backtests/pkg/ci"
 	candlesticksCi "github.com/lerenn/cryptellation/svc/candlesticks/pkg/ci"
 	exchangesCi "github.com/lerenn/cryptellation/svc/exchanges/pkg/ci"
 	indicatorsCi "github.com/lerenn/cryptellation/svc/indicators/pkg/ci"
 	ticksCi "github.com/lerenn/cryptellation/svc/ticks/pkg/ci"
+	"github.com/lerenn/cryptellation/tools/pkg/ci"
 	"github.com/spf13/cobra"
 )
 
@@ -41,7 +41,18 @@ func runServers(cmd *cobra.Command, args []string) {
 	})
 }
 
-func writeBrokerAccess(broker *dagger.Service) func(ctx context.Context) (*dagger.Service, error) {
+func runTest(cmd *cobra.Command, args []string) {
+	broker := ci.Nats(client).AsService()
+	withBroker := ci.NatsDependency(broker)
+	candlesticks := candlesticksCi.RunnerWithDependencies(client, withBroker).
+		WithServiceBinding("otelco", ci.Uptrace(client))
+
+	ci.ExecuteContainersInParallel(context.Background(), []*dagger.Container{
+		candlesticks,
+	})
+}
+
+func writeBrokerAccess(broker *dagger.Service) func(ctx context.Context, opts ...dagger.ServiceStopOpts) (*dagger.Service, error) {
 	// Set tunnel to NATS
 	tunnel, err := client.Host().Tunnel(broker).Start(context.Background())
 	if err != nil {
@@ -74,7 +85,7 @@ var serveCmd = &cobra.Command{
 	Use:     "serve",
 	Aliases: []string{"s"},
 	Short:   "Execute serve step of the CI",
-	Run:     runServers,
+	Run:     runTest,
 }
 
 func addServeCmdTo(cmd *cobra.Command) {

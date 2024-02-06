@@ -4,8 +4,8 @@ import (
 	"context"
 
 	"dagger.io/dagger"
-	"github.com/lerenn/cryptellation/pkg/ci"
 	"github.com/lerenn/cryptellation/pkg/utils"
+	"github.com/lerenn/cryptellation/tools/pkg/ci"
 )
 
 // Generator returns a container that generates code.

@@ -4,12 +4,12 @@ import (
 	"context"
 
 	"dagger.io/dagger"
-	"github.com/lerenn/cryptellation/pkg/ci"
 	backtestsCi "github.com/lerenn/cryptellation/svc/backtests/pkg/ci"
 	candlesticksCi "github.com/lerenn/cryptellation/svc/candlesticks/pkg/ci"
 	exchangesCi "github.com/lerenn/cryptellation/svc/exchanges/pkg/ci"
 	indicatorsCi "github.com/lerenn/cryptellation/svc/indicators/pkg/ci"
 	ticksCi "github.com/lerenn/cryptellation/svc/ticks/pkg/ci"
+	"github.com/lerenn/cryptellation/tools/pkg/ci"
 	"github.com/spf13/cobra"
 )
 

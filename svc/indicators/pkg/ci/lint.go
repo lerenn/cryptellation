@@ -2,7 +2,7 @@ package ci
 
 import (
 	"dagger.io/dagger"
-	"github.com/lerenn/cryptellation/pkg/ci"
+	"github.com/lerenn/cryptellation/tools/pkg/ci"
 )
 
 // Linter returns a container that runs the linter.

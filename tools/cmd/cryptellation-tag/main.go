@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/lerenn/cryptellation/pkg/vcs/git"
+	"github.com/lerenn/cryptellation/pkg/version/git"
 	"github.com/spf13/cobra"
 )
 
@@ -21,7 +21,7 @@ var (
 )
 
 var rootCmd = &cobra.Command{
-	Use:   "go run ./tools/tag ",
+	Use:   "cryptellation-tag",
 	Short: "A simple CLI to tag the Cryptellation system",
 	Args:  cobra.RangeArgs(1, 100000),
 	RunE: func(cmd *cobra.Command, args []string) error {
