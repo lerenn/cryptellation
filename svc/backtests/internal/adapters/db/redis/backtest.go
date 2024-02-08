@@ -5,10 +5,10 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"log"
 
 	"github.com/go-redis/redis/v8"
 	"github.com/go-redsync/redsync/v4"
+	"github.com/lerenn/cryptellation/pkg/adapters/telemetry"
 	port "github.com/lerenn/cryptellation/svc/backtests/internal/app/ports/db"
 	"github.com/lerenn/cryptellation/svc/backtests/pkg/backtest"
 )
@@ -71,7 +71,7 @@ func (db *Adapter) LockedBacktest(ctx context.Context, id uint, fn port.LockedBa
 	var err error
 	defer func() {
 		if r := recover(); r != nil {
-			log.Println("Recovered in f", r)
+			telemetry.L(ctx).Info(fmt.Sprint("Recovered in f", r))
 		}
 
 		ok, localErr := mutex.Unlock()

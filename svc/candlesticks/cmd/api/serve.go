@@ -1,8 +1,6 @@
 package main
 
 import (
-	"context"
-
 	"github.com/lerenn/cryptellation/svc/candlesticks/cmd/api/daemon"
 	"github.com/spf13/cobra"
 )
@@ -13,13 +11,13 @@ var serveCmd = &cobra.Command{
 	Short:   "Launch the service",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		// Create a new daemon
-		d, err := daemon.New(context.Background())
+		d, err := daemon.New(cmd.Context())
 		if err != nil {
 			return err
 		}
-		defer d.Close(context.Background())
+		defer d.Close(cmd.Context())
 
 		// Serve the daemon
-		return d.Serve()
+		return d.Serve(cmd.Context())
 	},
 }

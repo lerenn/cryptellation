@@ -45,7 +45,7 @@ func (suite *RegisterSuite) setMocksForFirstRegister(ctx context.Context) (chan 
 
 	// Set call to exchange to listen to symbol
 	suite.exchange.EXPECT().
-		ListenSymbol("exchange", "PAIR_SYMBOL").
+		ListenSymbol(context.TODO(), "exchange", "PAIR_SYMBOL").
 		Return(ch, make(chan struct{}, 10), nil)
 
 	// Set call to Events when receving a tick for the exchange

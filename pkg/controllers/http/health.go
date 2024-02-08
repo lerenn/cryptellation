@@ -1,8 +1,8 @@
 package http
 
 import (
+	"context"
 	"fmt"
-	"log"
 	"net/http"
 	"os"
 	"strconv"
@@ -49,13 +49,13 @@ func (h *Health) Ready(isReady bool) {
 	h.isReady.Store(isReady)
 }
 
-func (h *Health) HTTPServe() {
+func (h *Health) HTTPServe(ctx context.Context) {
 	http.HandleFunc("/liveness", h.liveness())
 	http.HandleFunc("/readiness", h.readiness())
 
 	url := fmt.Sprintf(":%d", h.port)
-	log.Println("Starting: HTTP Health Listener")
-	log.Fatal(http.ListenAndServe(url, nil))
+	telemetry.L(ctx).Info("Starting: HTTP Health Listener")
+	telemetry.L(ctx).Error(http.ListenAndServe(url, nil).Error())
 }
 
 func (h *Health) liveness() http.HandlerFunc {

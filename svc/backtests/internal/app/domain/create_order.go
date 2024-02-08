@@ -3,8 +3,8 @@ package domain
 import (
 	"context"
 	"fmt"
-	"log"
 
+	"github.com/lerenn/cryptellation/pkg/adapters/telemetry"
 	"github.com/lerenn/cryptellation/svc/backtests/pkg/backtest"
 	"github.com/lerenn/cryptellation/svc/backtests/pkg/order"
 	candlesticks "github.com/lerenn/cryptellation/svc/candlesticks/clients/go"
@@ -29,7 +29,7 @@ func (b Backtests) CreateOrder(ctx context.Context, backtestId uint, order order
 			return backtest.ErrNoDataForOrderValidation
 		}
 
-		log.Printf("Adding %+v order to %d backtest", order, backtestId)
+		telemetry.L(ctx).Info(fmt.Sprintf("Adding %+v order to %d backtest", order, backtestId))
 		if err := bt.AddOrder(order, cs); err != nil {
 			return err
 		}

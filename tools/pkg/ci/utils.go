@@ -97,3 +97,19 @@ func ExecuteInParallel(ctx context.Context, funcs ...func(context.Context) error
 
 	wg.Wait()
 }
+
+func ExposeOnLocalPort(
+	client *dagger.Client,
+	service *dagger.Service,
+	ports ...dagger.PortForward,
+) func(ctx context.Context, opts ...dagger.ServiceStopOpts) (*dagger.Service, error) {
+	// Set tunnel to service
+	tunnel, err := client.Host().Tunnel(service, dagger.HostTunnelOpts{
+		Ports: ports,
+	}).Start(context.Background())
+	if err != nil {
+		panic(err)
+	}
+
+	return tunnel.Stop
+}

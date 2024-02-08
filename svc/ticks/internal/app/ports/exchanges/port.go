@@ -3,8 +3,12 @@
 
 package exchanges
 
-import "github.com/lerenn/cryptellation/svc/ticks/pkg/tick"
+import (
+	"context"
+
+	"github.com/lerenn/cryptellation/svc/ticks/pkg/tick"
+)
 
 type Port interface {
-	ListenSymbol(exchange, symbol string) (chan tick.Tick, chan struct{}, error)
+	ListenSymbol(ctx context.Context, exchange, symbol string) (chan tick.Tick, chan struct{}, error)
 }

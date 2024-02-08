@@ -2,9 +2,10 @@ package domain
 
 import (
 	"context"
-	"log"
+	"fmt"
 	"time"
 
+	"github.com/lerenn/cryptellation/pkg/adapters/telemetry"
 	"github.com/lerenn/cryptellation/pkg/utils"
 	"github.com/lerenn/cryptellation/svc/candlesticks/internal/app"
 	"github.com/lerenn/cryptellation/svc/candlesticks/internal/app/ports/exchanges"
@@ -18,7 +19,7 @@ const (
 )
 
 func (app Candlesticks) GetCached(ctx context.Context, payload app.GetCachedPayload) (*candlestick.List, error) {
-	log.Printf("Get candlesticks for %+v", payload)
+	telemetry.L(ctx).Info(fmt.Sprintf("Get candlesticks for %+v", payload))
 
 	// Be sure that we do not try to get data in the future
 	if payload.End.After(time.Now()) {
@@ -32,10 +33,10 @@ func (app Candlesticks) GetCached(ctx context.Context, payload app.GetCachedPayl
 	if err := app.db.ReadCandlesticks(ctx, cl, start, end, payload.Limit); err != nil {
 		return nil, err
 	}
-	log.Printf("Read %d candlesticks from %s to %s (limit: %d)", cl.Len(), start, end, payload.Limit)
+	telemetry.L(ctx).Info(fmt.Sprintf("Read %d candlesticks from %s to %s (limit: %d)", cl.Len(), start, end, payload.Limit))
 
 	if !cl.AreMissing(start, end, payload.Limit) {
-		log.Printf("No candlestick missing, returning the list with %d candlesticks.", cl.Len())
+		telemetry.L(ctx).Info(fmt.Sprintf("No candlestick missing, returning the list with %d candlesticks.", cl.Len()))
 		return cl, nil
 	}
 

@@ -2,7 +2,9 @@ package domain
 
 import (
 	"context"
-	"log"
+	"fmt"
+
+	"github.com/lerenn/cryptellation/pkg/adapters/telemetry"
 )
 
 func (t Ticks) Unregister(ctx context.Context, exchange, pair string) (int64, error) {
@@ -11,6 +13,8 @@ func (t Ticks) Unregister(ctx context.Context, exchange, pair string) (int64, er
 		return count, err
 	}
 
-	log.Printf("Unregister listener for %q on %q (count=%d)\n", exchange, pair, count)
+	log := fmt.Sprintf("Unregister listener for %q on %q (count=%d)\n", exchange, pair, count)
+	telemetry.L(ctx).Info(log)
+
 	return count, nil
 }

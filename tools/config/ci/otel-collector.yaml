@@ -11,11 +11,11 @@ processors:
 
 exporters:
   otlp/uptrace:
-    endpoint: http://uptrace:14317
+    endpoint: http://uptrace:4317
     tls:
       insecure: true
     headers:
-      uptrace-dsn: 'http://cryptellation_secret_token@localhost:14318?grpc=14317'
+      uptrace-dsn: 'http://cryptellation_secret_token@localhost:4318?grpc=4317'
 
 service:
   telemetry:

@@ -38,3 +38,25 @@ projects:
     group_by_env: false
     group_funcs_by_service: false
     prom_compat: false
+
+auth:
+  users:
+    - name: John Doe
+      email: uptrace@localhost
+      password: uptrace
+      notify_by_email: true
+
+listen:
+  # OTLP/gRPC API.
+  grpc:
+    addr: ':4317'
+    # tls:
+    #   cert_file: config/tls/uptrace.crt
+    #   key_file: config/tls/uptrace.key
+
+  # OTLP/HTTP API and Uptrace API with Vue UI.
+  http:
+    addr: ':4318'
+    # tls:
+    #   cert_file: config/tls/uptrace.crt
+    #   key_file: config/tls/uptrace.key

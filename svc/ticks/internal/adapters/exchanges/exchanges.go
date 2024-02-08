@@ -1,6 +1,7 @@
 package exchanges
 
 import (
+	"context"
 	"fmt"
 
 	binancePkg "github.com/lerenn/cryptellation/pkg/adapters/exchanges/binance"
@@ -24,10 +25,10 @@ func New() (Exchanges, error) {
 	}, nil
 }
 
-func (e Exchanges) ListenSymbol(exchange, symbol string) (chan tick.Tick, chan struct{}, error) {
+func (e Exchanges) ListenSymbol(ctx context.Context, exchange, symbol string) (chan tick.Tick, chan struct{}, error) {
 	switch exchange {
 	case binancePkg.Infos.Name:
-		return e.binance.ListenSymbol(symbol)
+		return e.binance.ListenSymbol(ctx, symbol)
 	default:
 		return nil, nil, fmt.Errorf("%w: %q", exchanges.ErrInexistantExchange, exchange)
 	}

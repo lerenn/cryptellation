@@ -13,21 +13,23 @@ func otelCollector(client *dagger.Client) *dagger.Container {
 		WithExposedPort(4318)
 }
 
-func Uptrace(client *dagger.Client) *dagger.Service {
+func Uptrace(client *dagger.Client) (uptrace, otelcollector *dagger.Service) {
 	config := client.Host().File("./tools/config/ci/uptrace.yaml")
 
-	uptrace := client.Container().
+	uptrace = client.Container().
 		From("uptrace/uptrace:1.6.2").
 		WithFile("/etc/uptrace/uptrace.yml", config).
 		WithServiceBinding("postgres", uptracePostgres(client)).
 		WithServiceBinding("clickhouse", uptraceClickHouse(client)).
-		WithExposedPort(14317).
-		WithExposedPort(14318).
+		WithExposedPort(4317).
+		WithExposedPort(4318).
 		AsService()
 
-	return otelCollector(client).
+	otelcollector = otelCollector(client).
 		WithServiceBinding("uptrace", uptrace).
 		AsService()
+
+	return
 }
 
 func uptracePostgres(client *dagger.Client) *dagger.Service {

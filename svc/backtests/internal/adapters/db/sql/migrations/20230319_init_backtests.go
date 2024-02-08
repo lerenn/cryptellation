@@ -1,10 +1,10 @@
 package migrations
 
 import (
-	"log"
 	"time"
 
 	"github.com/go-gormigrate/gormigrate/v2"
+	"github.com/lerenn/cryptellation/pkg/adapters/telemetry"
 	"gorm.io/gorm"
 )
 
@@ -13,7 +13,7 @@ const migration20230319Title = "20230219-init-backtests"
 var migration20230319 = gormigrate.Migration{
 	ID: migration20230319Title,
 	Migrate: func(tx *gorm.DB) error {
-		log.Println("Running migration:", migration20230319Title)
+		telemetry.L(tx.Statement.Context).Info("Running migration" + migration20230319Title)
 
 		type Balance struct {
 			AssetName  string `gorm:"primaryKey"`
@@ -56,7 +56,7 @@ var migration20230319 = gormigrate.Migration{
 		return tx.AutoMigrate(&Backtest{}, &Order{}, &Balance{}, &TickSubscription{})
 	},
 	Rollback: func(tx *gorm.DB) error {
-		log.Println("Running rollback:", migration20230319Title)
+		telemetry.L(tx.Statement.Context).Info("Running rollback: " + migration20230319Title)
 		return tx.Migrator().DropTable("tick_subscriptions", "balances", "orders", "backtests")
 	},
 }

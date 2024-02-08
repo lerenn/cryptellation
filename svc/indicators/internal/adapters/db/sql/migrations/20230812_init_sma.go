@@ -1,10 +1,10 @@
 package migrations
 
 import (
-	"log"
 	"time"
 
 	"github.com/go-gormigrate/gormigrate/v2"
+	"github.com/lerenn/cryptellation/pkg/adapters/telemetry"
 	"gorm.io/gorm"
 )
 
@@ -13,7 +13,7 @@ const migration20230812Title = "20230812-init-sma"
 var migration20230812 = gormigrate.Migration{
 	ID: migration20230812Title,
 	Migrate: func(tx *gorm.DB) error {
-		log.Println("Running migration:", migration20230812Title)
+		telemetry.L(tx.Statement.Context).Info("Running migration: " + migration20230812Title)
 
 		type SimpleMovingAverage struct {
 			Exchange     string    `gorm:"primaryKey;autoIncrement:false;index:candlestick,unique"`
@@ -28,7 +28,7 @@ var migration20230812 = gormigrate.Migration{
 		return tx.AutoMigrate(&SimpleMovingAverage{})
 	},
 	Rollback: func(tx *gorm.DB) error {
-		log.Println("Running rollback:", migration20230812Title)
+		telemetry.L(tx.Statement.Context).Info("Running rollback: " + migration20230812Title)
 		return tx.Migrator().DropTable("simple_moving_averages")
 	},
 }
