@@ -28,7 +28,7 @@ func (b Backtests) Advance(ctx context.Context, backtestId uint) error {
 				bt.SetCurrentTime(bt.EndTime)
 				finished = true
 			} else if !evts[0].Time.Equal(bt.CurrentCsTick.Time) {
-				telemetry.L(ctx).Info(fmt.Sprintf("WARNING: no event between", bt.CurrentCsTick.Time, "and", evts[0].Time))
+				telemetry.L(ctx).Info(fmt.Sprint("WARNING: no event between", bt.CurrentCsTick.Time, "and", evts[0].Time))
 				bt.SetCurrentTime(evts[0].Time)
 			}
 		}
@@ -82,7 +82,7 @@ func (b Backtests) broadcastEvents(ctx context.Context, backtestId uint, evts []
 	for _, evt := range evts {
 		telemetry.L(ctx).Info(fmt.Sprintf("Broadcasting event %+v for backtest %d", evt, backtestId))
 		if err := b.events.Publish(ctx, backtestId, evt); err != nil {
-			telemetry.L(ctx).Info(fmt.Sprintf("WARNING: error when publishing event", evt))
+			telemetry.L(ctx).Info(fmt.Sprint("WARNING: error when publishing event", evt))
 			continue
 		}
 
