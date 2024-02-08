@@ -1,6 +1,6 @@
 .DEFAULT_GOAL := help
 
-DAGGER_CMD    := _EXPERIMENTAL_DAGGER_INTERACTIVE_TUI=1 dagger run go run ./tools/cmd/cryptellation-ci
+DAGGER_CMD    := dagger run go run ./tools/cmd/cryptellation-ci
 
 .PHONY: ci
 ci: ## Execute all basic CI steps
