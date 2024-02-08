@@ -38,11 +38,16 @@ func Runner(client *dagger.Client) *dagger.Container {
 		With(ci.DefaultBrokerVariables())
 }
 
-func RunnerWithDependencies(client *dagger.Client, broker dagger.WithContainerFunc) *dagger.Container {
-	return Runner(client).
+func RunnerWithDependencies(client *dagger.Client, dependencies ...dagger.WithContainerFunc) *dagger.Container {
+	r := Runner(client).
 		With(ci.CockroachDependency(ci.CockroachDBService(client, ServiceName), ServiceName)).
-		With(ci.BinanceDependency(client)).
-		With(broker)
+		With(ci.BinanceDependency(client))
+
+	for _, d := range dependencies {
+		r = r.With(d)
+	}
+
+	return r
 }
 
 func Service(client *dagger.Client, broker dagger.WithContainerFunc) *dagger.Service {

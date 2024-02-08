@@ -43,7 +43,7 @@ func EndToEndTests(client *dagger.Client) *dagger.Container {
 		// Add source code as work directory
 		With(ci.SourceAsWorkdir(client, "/svc/"+ServiceName)).
 		// Dependencies
-		WithServiceBinding("cryptellation", service).
+		WithServiceBinding("cryptellation-exchanges", service).
 		With(ci.NatsDependency(broker)).
 		// Run tests
 		WithExec([]string{

@@ -13,6 +13,14 @@ func otelCollector(client *dagger.Client) *dagger.Container {
 		WithExposedPort(4318)
 }
 
+func OtelCollectorDependency(otelcollector *dagger.Service) func(r *dagger.Container) *dagger.Container {
+	return func(r *dagger.Container) *dagger.Container {
+		return r.
+			WithServiceBinding("otelco", otelcollector).
+			WithEnvVariable("OPENTELEMETRY_GRPC_ENDPOINT", "otelco:4317")
+	}
+}
+
 func Uptrace(client *dagger.Client) (uptrace, otelcollector *dagger.Service) {
 	config := client.Host().File("./tools/config/ci/uptrace.yaml")
 

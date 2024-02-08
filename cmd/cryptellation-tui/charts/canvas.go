@@ -92,17 +92,15 @@ func (canvas Canvas) View() string {
 	}
 
 	// Horizontal legend
-	timeWidth := canvas.delta * time.Duration(canvas.width)
 	total = canvas.width / horizontalLegendGap
-	timeGap := timeWidth / time.Duration(total)
 	for i := 0; i < total; i++ {
-		h := canvas.start.Add(timeGap * time.Duration(i)).Hour()
-		m := canvas.start.Add(timeGap * time.Duration(i)).Minute()
-		s := canvas.start.Add(timeGap * time.Duration(i)).Second()
 		if i != 0 { // The first is already set as cross jointure
 			g.InsertCharacter(verticalAxisGap+i*horizontalLegendGap, horizontalAxisGap, unicodeHorizontalAxisLegend)
 		}
-		g.InsertText(verticalAxisGap+i*horizontalLegendGap, 0, fmt.Sprintf("%02d:%02d:%02d", h, m, s))
+
+		t := canvas.start.Add(canvas.delta * time.Duration(i))
+		month, day, hour, minute, second := t.Month(), t.Day(), t.Hour(), t.Minute(), t.Second()
+		g.InsertText(verticalAxisGap+i*horizontalLegendGap, 0, fmt.Sprintf("%02d:%02d:%02d [%d/%d]", hour, minute, second, day, int(month)))
 	}
 
 	// Generate subcharts

@@ -13,25 +13,25 @@ type Chart struct {
 	height, width            int
 	verticalMin, verticalMax float64
 
-	Data   *candlestick.List
+	data   *candlestick.List
 	cursor time.Time
 	period period.Symbol
 }
 
 func NewChart(data *candlestick.List, period period.Symbol) *Chart {
 	return &Chart{
-		Data:   data,
+		data:   data,
 		period: period,
 	}
 }
 
 func (chart *Chart) UpsertData(data *candlestick.List) error {
-	if chart.Data.Len() == 0 {
-		chart.Data = data
+	if chart.data.Len() == 0 {
+		chart.data = data
 		return nil
 	}
 
-	return chart.Data.Merge(data, nil)
+	return chart.data.Merge(data, nil)
 }
 
 func (chart *Chart) MoveLeft() {
@@ -76,8 +76,8 @@ func (chart Chart) toColumns() []column {
 	newData := make([]column, chart.width)
 
 	for current, i := start, 0; current.Before(end); current, i = current.Add(chart.period.Duration()), i+1 {
-		c, exists := chart.Data.Get(current)
-		if exists {
+		c, exists := chart.data.Get(current)
+		if exists && c.High != 0 {
 			newData[i] = newColumn(c, chart.verticalMin, chart.verticalMax, chart.height)
 		}
 	}
@@ -91,11 +91,15 @@ func (chart Chart) displayedStartEnd() (start, end time.Time) {
 	return
 }
 
-func (chart Chart) MissingData() (first, last *time.Time) {
+func (chart Chart) MissingData(margin int) (first, last *time.Time) {
 	start, end := chart.displayedStartEnd()
 
+	marginDuration := chart.period.Duration() * time.Duration(margin)
+	start = start.Add(-marginDuration)
+	end = end.Add(marginDuration)
+
 	for current := start; current.Before(end); current = current.Add(chart.period.Duration()) {
-		_, exists := chart.Data.Get(current)
+		_, exists := chart.data.Get(current)
 		if !exists {
 			copyCurrent := current
 			if first == nil {
@@ -111,9 +115,9 @@ func (chart Chart) MissingData() (first, last *time.Time) {
 func (chart Chart) GetDisplayedDataMinMax() (min, max float64) {
 	start, end := chart.displayedStartEnd()
 
-	data := candlestick.NewEmptyListFrom(chart.Data)
+	data := candlestick.NewListFrom(chart.data)
 	for current := start; current.Before(end); current = current.Add(chart.period.Duration()) {
-		c, exists := chart.Data.Get(current)
+		c, exists := chart.data.Get(current)
 		if exists {
 			data.Set(current, c)
 		}

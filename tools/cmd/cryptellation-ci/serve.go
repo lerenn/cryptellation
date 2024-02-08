@@ -17,23 +17,30 @@ func runServers(cmd *cobra.Command, args []string) {
 	// Set broker
 	broker := ci.Nats(client).AsService()
 	withBroker := ci.NatsDependency(broker)
-	stop := ci.ExposeOnLocalPort(client, broker, dagger.PortForward{
+	stopBrokerTunnel := ci.ExposeOnLocalPort(client, broker, dagger.PortForward{
 		Frontend: 4222,
 		Backend:  4222,
 	})
-	defer stop(context.Background()) //nolint: errcheck, no need to check error here
+	defer stopBrokerTunnel(context.Background()) //nolint: errcheck, no need to check error here
 
-	// Cryptellation that will be run as dependencies
-	candlesticks := candlesticksCi.RunnerWithDependencies(client, withBroker)
+	uptrace, otelcollector := ci.Uptrace(client)
+	withOtelCollector := ci.OtelCollectorDependency(otelcollector)
+	stopUptraceTunnel := ci.ExposeOnLocalPort(client, uptrace, dagger.PortForward{
+		Frontend: 4318,
+		Backend:  4318,
+	})
+	defer stopUptraceTunnel(context.TODO())
 
 	// Cryptellation
-	backtests := backtestsCi.RunnerWithDependencies(client, withBroker, candlesticks.AsService())
-	exchanges := exchangesCi.RunnerWithDependencies(client, withBroker)
-	indicators := indicatorsCi.RunnerWithDependencies(client, withBroker, candlesticks.AsService())
-	ticks := ticksCi.RunnerWithDependencies(client, withBroker)
+	candlesticks := candlesticksCi.RunnerWithDependencies(client, withBroker, withOtelCollector)
+	backtests := backtestsCi.RunnerWithDependencies(client, withBroker, withOtelCollector)
+	exchanges := exchangesCi.RunnerWithDependencies(client, withBroker, withOtelCollector)
+	indicators := indicatorsCi.RunnerWithDependencies(client, withBroker, withOtelCollector)
+	ticks := ticksCi.RunnerWithDependencies(client, withBroker, withOtelCollector)
 
 	// Run services
 	ci.ExecuteContainersInParallel(context.Background(), []*dagger.Container{
+		candlesticks,
 		backtests,
 		exchanges,
 		indicators,
@@ -41,31 +48,11 @@ func runServers(cmd *cobra.Command, args []string) {
 	})
 }
 
-func runTest(cmd *cobra.Command, args []string) {
-	broker := ci.Nats(client).AsService()
-	withBroker := ci.NatsDependency(broker)
-
-	uptrace, otelcollector := ci.Uptrace(client)
-	stop := ci.ExposeOnLocalPort(client, uptrace, dagger.PortForward{
-		Frontend: 4318,
-		Backend:  4318,
-	})
-	defer stop(context.TODO())
-
-	candlesticks := candlesticksCi.RunnerWithDependencies(client, withBroker).
-		WithServiceBinding("otelco", otelcollector).
-		WithEnvVariable("OPENTELEMETRY_GRPC_ENDPOINT", "otelco:4317")
-
-	ci.ExecuteContainersInParallel(context.Background(), []*dagger.Container{
-		candlesticks,
-	})
-}
-
 var serveCmd = &cobra.Command{
 	Use:     "serve",
 	Aliases: []string{"s"},
 	Short:   "Execute serve step of the CI",
-	Run:     runTest,
+	Run:     runServers,
 }
 
 func addServeCmdTo(cmd *cobra.Command) {

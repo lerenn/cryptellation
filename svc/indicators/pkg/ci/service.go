@@ -37,13 +37,17 @@ func Runner(client *dagger.Client) *dagger.Container {
 		With(ci.DefaultBrokerVariables())
 }
 
-func RunnerWithDependencies(client *dagger.Client, broker dagger.WithContainerFunc, candlesticks *dagger.Service) *dagger.Container {
-	return Runner(client).
-		With(ci.CockroachDependency(ci.CockroachDBService(client, ServiceName), ServiceName)).
-		WithServiceBinding("cryptellation-candlesticks", candlesticks).
-		With(broker)
+func RunnerWithDependencies(client *dagger.Client, dependencies ...dagger.WithContainerFunc) *dagger.Container {
+	r := Runner(client).
+		With(ci.CockroachDependency(ci.CockroachDBService(client, ServiceName), ServiceName))
+
+	for _, d := range dependencies {
+		r = r.With(d)
+	}
+
+	return r
 }
 
-func Service(client *dagger.Client, broker dagger.WithContainerFunc, candlesticks *dagger.Service) *dagger.Service {
-	return RunnerWithDependencies(client, broker, candlesticks).AsService()
+func Service(client *dagger.Client, broker dagger.WithContainerFunc) *dagger.Service {
+	return RunnerWithDependencies(client, broker).AsService()
 }

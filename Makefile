@@ -1,39 +1,41 @@
 .DEFAULT_GOAL := help
 
+DAGGER_CMD    := _EXPERIMENTAL_DAGGER_INTERACTIVE_TUI=1 dagger run go run ./tools/cmd/cryptellation-ci
+
 .PHONY: ci
 ci: ## Execute all basic CI steps
-	@dagger run go run ./tools/cmd/cryptellation-ci
+	@$(DAGGER_CMD)
 
 .PHONY: generate
 generate: ## Generate code files
-	@dagger run go run ./tools/cmd/cryptellation-ci generate
+	@$(DAGGER_CMD) generate
 
 .PHONY: lint
 lint: ## Lint code
-	@dagger run go run ./tools/cmd/cryptellation-ci lint
+	@$(DAGGER_CMD) lint
 
 .PHONY: serve 
 serve: ## Serve the Cryptellation stack for development
-	@dagger run go run ./tools/cmd/cryptellation-ci serve
+	@$(DAGGER_CMD) serve
 
 .PHONY: test
 test: test/unit test/integration test/end-to-end ## Launch tests 
 
 .PHONY: test/unit
 test/unit: ## Launch unit tests
-	@dagger run go run ./tools/cmd/cryptellation-ci test --type=unit
+	@$(DAGGER_CMD) test --type=unit
 
 .PHONY: test/integration
 test/integration: ## Launch integration tests
-	@dagger run go run ./tools/cmd/cryptellation-ci test --type=integration
+	@$(DAGGER_CMD) test --type=integration
 
 .PHONY: test/end-to-end
 test/end-to-end: ## Launch end-to-end tests
-	@dagger run go run ./tools/cmd/cryptellation-ci test --type=end-to-end
+	@$(DAGGER_CMD) test --type=end-to-end
 
 .PHONY: update
 update: ## Update the dependencies
-	@dagger run go run ./tools/cmd/cryptellation-ci update
+	@$(DAGGER_CMD) update
 
 .PHONY: help
 help: ## Display this help message

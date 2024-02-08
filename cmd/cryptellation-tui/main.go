@@ -54,7 +54,7 @@ func main() {
 }
 
 func (a *App) Init() tea.Cmd {
-	a.canvas = charts.NewCanvas(utils.Must(time.Parse(time.RFC3339, "2022-12-20T01:00:00Z")), time.Hour)
+	a.canvas = charts.NewCanvas(utils.Must(time.Parse(time.RFC3339, "2022-12-01T01:00:00Z")), time.Hour)
 
 	a.candlesticks = candlesticks.NewChart(&candlestick.List{}, period.H1)
 	a.canvas.AddChart(a.candlesticks)
@@ -88,7 +88,7 @@ func (a *App) Update(message tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (a *App) updateMissingCandlesticks() {
-	first, last := a.candlesticks.MissingData()
+	first, last := a.candlesticks.MissingData(a.windowSize.Width)
 	if first != nil && last != nil {
 		go func() {
 			if a.candlesticksUpdateInProgress {
@@ -102,11 +102,11 @@ func (a *App) updateMissingCandlesticks() {
 			last = utils.ToReference(last.Add(time.Hour * delta))
 
 			list, err := a.CandlesticksClient.Read(context.TODO(), client.ReadCandlesticksPayload{
-				ExchangeName: "binance",
-				PairSymbol:   "ETH-USDT",
-				Period:       period.H1,
-				Start:        first,
-				End:          last,
+				Exchange: "binance",
+				Pair:     "ETH-USDT",
+				Period:   period.H1,
+				Start:    first,
+				End:      last,
 			})
 			if err != nil {
 				return

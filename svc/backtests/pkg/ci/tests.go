@@ -38,7 +38,7 @@ func IntegrationTests(client *dagger.Client) *dagger.Container {
 func EndToEndTests(client *dagger.Client) *dagger.Container {
 	broker := ci.NatsService(client)
 	candlesticks := candlesticksCi.Service(client, ci.NatsDependency(broker))
-	service := Service(client, ci.NatsDependency(broker), candlesticks)
+	service := Service(client, ci.NatsDependency(broker))
 
 	return client.Container().
 		// Add base image
@@ -46,8 +46,9 @@ func EndToEndTests(client *dagger.Client) *dagger.Container {
 		// Add source code as work directory
 		With(ci.SourceAsWorkdir(client, "/svc/"+ServiceName)).
 		// Dependencies
-		WithServiceBinding("cryptellation", service).
+		WithServiceBinding("cryptellation-backtests", service).
 		With(ci.NatsDependency(broker)).
+		WithServiceBinding("cryptellation-candlesticks", candlesticks).
 		// Run tests
 		WithExec([]string{
 			"go", "test", "./test/...",
