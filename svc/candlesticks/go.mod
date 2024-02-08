@@ -8,6 +8,8 @@ replace github.com/lerenn/cryptellation/svc/exchanges => ../exchanges
 
 replace github.com/lerenn/cryptellation/svc/ticks => ../ticks
 
+replace github.com/lerenn/cryptellation/tools => ../../tools
+
 require (
 	dagger.io/dagger v0.9.6
 	github.com/adshao/go-binance/v2 v2.4.5

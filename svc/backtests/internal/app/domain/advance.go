@@ -3,8 +3,8 @@ package domain
 import (
 	"context"
 	"fmt"
-	"log"
 
+	"github.com/lerenn/cryptellation/pkg/adapters/telemetry"
 	"github.com/lerenn/cryptellation/svc/backtests/pkg/backtest"
 	"github.com/lerenn/cryptellation/svc/backtests/pkg/event"
 	candlesticks "github.com/lerenn/cryptellation/svc/candlesticks/clients/go"
@@ -14,7 +14,7 @@ func (b Backtests) Advance(ctx context.Context, backtestId uint) error {
 	return b.db.LockedBacktest(ctx, backtestId, func(bt *backtest.Backtest) (err error) {
 		// Advance backtest
 		finished := bt.Advance()
-		log.Printf("Advancing backtest %d: %s", backtestId, bt.CurrentTime())
+		telemetry.L(ctx).Info(fmt.Sprintf("Advancing backtest %d: %s", backtestId, bt.CurrentTime()))
 
 		// Get actual events
 		evts := make([]event.Event, 0, 1)
@@ -24,11 +24,11 @@ func (b Backtests) Advance(ctx context.Context, backtestId uint) error {
 				return fmt.Errorf("cannot read actual events: %w", err)
 			}
 			if len(evts) == 0 {
-				log.Println("WARNING: no event detected for", bt.CurrentCsTick.Time)
+				telemetry.L(ctx).Info(fmt.Sprint("WARNING: no event detected for", bt.CurrentCsTick.Time))
 				bt.SetCurrentTime(bt.EndTime)
 				finished = true
 			} else if !evts[0].Time.Equal(bt.CurrentCsTick.Time) {
-				log.Println("WARNING: no event between", bt.CurrentCsTick.Time, "and", evts[0].Time)
+				telemetry.L(ctx).Info(fmt.Sprint("WARNING: no event between", bt.CurrentCsTick.Time, "and", evts[0].Time))
 				bt.SetCurrentTime(evts[0].Time)
 			}
 		}
@@ -71,18 +71,18 @@ func (b Backtests) readActualEvents(ctx context.Context, bt backtest.Backtest) (
 	}
 
 	_, evts = event.OnlyKeepEarliestSameTimeEvents(evts, bt.EndTime)
-	log.Printf("%d events for ticks on backtest %d", len(evts), bt.ID)
+	telemetry.L(ctx).Info(fmt.Sprintf("%d events for ticks on backtest %d", len(evts), bt.ID))
 	return evts, nil
 }
 
 func (b Backtests) broadcastEvents(ctx context.Context, backtestId uint, evts []event.Event) {
-	log.Printf("Broadcasting %d events on backtest %d", len(evts), backtestId)
+	telemetry.L(ctx).Info(fmt.Sprintf("Broadcasting %d events on backtest %d", len(evts), backtestId))
 
 	var count uint
 	for _, evt := range evts {
-		log.Printf("Broadcasting event %+v for backtest %d", evt, backtestId)
+		telemetry.L(ctx).Info(fmt.Sprintf("Broadcasting event %+v for backtest %d", evt, backtestId))
 		if err := b.events.Publish(ctx, backtestId, evt); err != nil {
-			log.Println("WARNING: error when publishing event", evt)
+			telemetry.L(ctx).Info(fmt.Sprint("WARNING: error when publishing event", evt))
 			continue
 		}
 
@@ -90,6 +90,6 @@ func (b Backtests) broadcastEvents(ctx context.Context, backtestId uint, evts []
 	}
 
 	if count == 0 {
-		log.Println("WARNING: no available events")
+		telemetry.L(ctx).Info("WARNING: no available events")
 	}
 }

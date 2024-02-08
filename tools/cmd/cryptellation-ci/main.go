@@ -16,7 +16,7 @@ var (
 )
 
 var rootCmd = &cobra.Command{
-	Use:   "dagger run go run ./tools/ci",
+	Use:   "dagger run go run ./tools/ci/cmd/cryptellation-ci",
 	Short: "A simple CLI to execute cryptellation project CI/CD with dagger",
 	PersistentPreRunE: func(cmd *cobra.Command, args []string) (err error) {
 		// Initialize Dagger client

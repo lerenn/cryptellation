@@ -2,7 +2,9 @@ package domain
 
 import (
 	"context"
-	"log"
+	"fmt"
+
+	"github.com/lerenn/cryptellation/pkg/adapters/telemetry"
 )
 
 func (t Ticks) Register(ctx context.Context, exchange, pair string) (int64, error) {
@@ -12,17 +14,17 @@ func (t Ticks) Register(ctx context.Context, exchange, pair string) (int64, erro
 	}
 
 	if count == 1 {
-		err := t.launchListener(exchange, pair)
+		err := t.launchListener(ctx, exchange, pair)
 		if err != nil {
 			return count, err
 		}
 	}
 
-	log.Printf("Register listener for %q on %q (count=%d)\n", exchange, pair, count)
+	telemetry.L(ctx).Info(fmt.Sprintf("Register listener for %q on %q (count=%d)\n", exchange, pair, count))
 	return count, nil
 }
 
-func (t Ticks) launchListener(exchange, pair string) error {
+func (t Ticks) launchListener(ctx context.Context, exchange, pair string) error {
 
 	el := internalListener{
 		DB:        t.db,
@@ -33,5 +35,5 @@ func (t Ticks) launchListener(exchange, pair string) error {
 		Pair:     pair,
 	}
 
-	return el.Run()
+	return el.Run(ctx)
 }

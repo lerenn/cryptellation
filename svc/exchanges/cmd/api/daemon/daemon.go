@@ -2,11 +2,11 @@ package daemon
 
 import (
 	"context"
-	"log"
 	"os"
 	"os/signal"
 	"syscall"
 
+	"github.com/lerenn/cryptellation/pkg/adapters/telemetry"
 	"github.com/lerenn/cryptellation/pkg/controllers/http"
 )
 
@@ -27,7 +27,7 @@ func New(ctx context.Context) (Daemon, error) {
 	if err != nil {
 		return Daemon{}, err
 	}
-	go h.HTTPServe()
+	go h.HTTPServe(ctx)
 
 	// Init adapters
 	adapters, err := newAdapters(ctx)
@@ -55,7 +55,7 @@ func New(ctx context.Context) (Daemon, error) {
 	}, nil
 }
 
-func (d Daemon) Serve() error {
+func (d Daemon) Serve(ctx context.Context) error {
 	if err := d.controllers.AsyncListen(); err != nil {
 		return err
 	}
@@ -65,19 +65,19 @@ func (d Daemon) Serve() error {
 	signal.Notify(interrupt, os.Interrupt, syscall.SIGTERM)
 
 	// Service marked as ready
-	log.Println("Service is ready")
+	telemetry.L(ctx).Info("Service is ready")
 	d.health.Ready(true)
 
 	// Wait for interrupt
 	killSignal := <-interrupt
 	switch killSignal {
 	case os.Interrupt:
-		log.Print("Got SIGINT...")
+		telemetry.L(ctx).Info("Got SIGINT...")
 	case syscall.SIGTERM:
-		log.Print("Got SIGTERM...")
+		telemetry.L(ctx).Info("Got SIGTERM...")
 	}
 
-	log.Print("The service is shutting down...")
+	telemetry.L(ctx).Info("The service is shutting down...")
 	return nil
 }
 

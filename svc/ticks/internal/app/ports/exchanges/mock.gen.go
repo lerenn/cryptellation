@@ -5,6 +5,7 @@
 package exchanges
 
 import (
+	context "context"
 	reflect "reflect"
 
 	tick "github.com/lerenn/cryptellation/svc/ticks/pkg/tick"
@@ -35,9 +36,9 @@ func (m *MockPort) EXPECT() *MockPortMockRecorder {
 }
 
 // ListenSymbol mocks base method.
-func (m *MockPort) ListenSymbol(exchange, symbol string) (chan tick.Tick, chan struct{}, error) {
+func (m *MockPort) ListenSymbol(ctx context.Context, exchange, symbol string) (chan tick.Tick, chan struct{}, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ListenSymbol", exchange, symbol)
+	ret := m.ctrl.Call(m, "ListenSymbol", ctx, exchange, symbol)
 	ret0, _ := ret[0].(chan tick.Tick)
 	ret1, _ := ret[1].(chan struct{})
 	ret2, _ := ret[2].(error)
@@ -45,7 +46,7 @@ func (m *MockPort) ListenSymbol(exchange, symbol string) (chan tick.Tick, chan s
 }
 
 // ListenSymbol indicates an expected call of ListenSymbol.
-func (mr *MockPortMockRecorder) ListenSymbol(exchange, symbol interface{}) *gomock.Call {
+func (mr *MockPortMockRecorder) ListenSymbol(ctx, exchange, symbol interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListenSymbol", reflect.TypeOf((*MockPort)(nil).ListenSymbol), exchange, symbol)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListenSymbol", reflect.TypeOf((*MockPort)(nil).ListenSymbol), ctx, exchange, symbol)
 }

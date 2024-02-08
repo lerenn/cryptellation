@@ -2,17 +2,14 @@ package main
 
 import (
 	"context"
-	"fmt"
-	"os"
-	"strings"
 
 	"dagger.io/dagger"
-	"github.com/lerenn/cryptellation/pkg/ci"
 	backtestsCi "github.com/lerenn/cryptellation/svc/backtests/pkg/ci"
 	candlesticksCi "github.com/lerenn/cryptellation/svc/candlesticks/pkg/ci"
 	exchangesCi "github.com/lerenn/cryptellation/svc/exchanges/pkg/ci"
 	indicatorsCi "github.com/lerenn/cryptellation/svc/indicators/pkg/ci"
 	ticksCi "github.com/lerenn/cryptellation/svc/ticks/pkg/ci"
+	"github.com/lerenn/cryptellation/tools/pkg/ci"
 	"github.com/spf13/cobra"
 )
 
@@ -20,7 +17,10 @@ func runServers(cmd *cobra.Command, args []string) {
 	// Set broker
 	broker := ci.Nats(client).AsService()
 	withBroker := ci.NatsDependency(broker)
-	stop := writeBrokerAccess(broker)
+	stop := ci.ExposeOnLocalPort(client, broker, dagger.PortForward{
+		Frontend: 4222,
+		Backend:  4222,
+	})
 	defer stop(context.Background()) //nolint: errcheck, no need to check error here
 
 	// Cryptellation that will be run as dependencies
@@ -41,40 +41,31 @@ func runServers(cmd *cobra.Command, args []string) {
 	})
 }
 
-func writeBrokerAccess(broker *dagger.Service) func(ctx context.Context) (*dagger.Service, error) {
-	// Set tunnel to NATS
-	tunnel, err := client.Host().Tunnel(broker).Start(context.Background())
-	if err != nil {
-		panic(err)
-	}
+func runTest(cmd *cobra.Command, args []string) {
+	broker := ci.Nats(client).AsService()
+	withBroker := ci.NatsDependency(broker)
 
-	// Get NATS service address
-	srvAddr, err := tunnel.Endpoint(context.Background())
-	if err != nil {
-		panic(err)
-	}
+	uptrace, otelcollector := ci.Uptrace(client)
+	stop := ci.ExposeOnLocalPort(client, uptrace, dagger.PortForward{
+		Frontend: 4318,
+		Backend:  4318,
+	})
+	defer stop(context.TODO())
 
-	// Write server address in a file
-	f, err := os.Create(".env")
-	if err != nil {
-		panic(err)
-	}
+	candlesticks := candlesticksCi.RunnerWithDependencies(client, withBroker).
+		WithServiceBinding("otelco", otelcollector).
+		WithEnvVariable("OPENTELEMETRY_GRPC_ENDPOINT", "otelco:4317")
 
-	// Split address in host/port
-	srvAddrSplit := strings.Split(srvAddr, ":")
-
-	str := fmt.Sprintf("NATS_HOST=%s\n", srvAddrSplit[0])
-	str += fmt.Sprintf("NATS_PORT=%s\n", srvAddrSplit[1])
-	_, _ = f.WriteString(str)
-
-	return tunnel.Stop
+	ci.ExecuteContainersInParallel(context.Background(), []*dagger.Container{
+		candlesticks,
+	})
 }
 
 var serveCmd = &cobra.Command{
 	Use:     "serve",
 	Aliases: []string{"s"},
 	Short:   "Execute serve step of the CI",
-	Run:     runServers,
+	Run:     runTest,
 }
 
 func addServeCmdTo(cmd *cobra.Command) {

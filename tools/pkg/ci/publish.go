@@ -4,8 +4,8 @@ import (
 	"context"
 
 	"dagger.io/dagger"
-	"github.com/lerenn/cryptellation/pkg/vcs/git"
 	"github.com/lerenn/cryptellation/pkg/version"
+	"github.com/lerenn/cryptellation/pkg/version/git"
 )
 
 func PublishDockerImage(

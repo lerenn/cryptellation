@@ -1,13 +1,14 @@
 package binance
 
 import (
+	"context"
 	"fmt"
-	"log"
 	"strconv"
 	"time"
 
 	client "github.com/adshao/go-binance/v2"
 	"github.com/lerenn/cryptellation/pkg/adapters/exchanges/binance"
+	"github.com/lerenn/cryptellation/pkg/adapters/telemetry"
 	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/pair"
 	"github.com/lerenn/cryptellation/svc/ticks/pkg/tick"
 )
@@ -23,7 +24,7 @@ func New() (*Service, error) {
 	}, err
 }
 
-func (s *Service) ListenSymbol(symbol string) (chan tick.Tick, chan struct{}, error) {
+func (s *Service) ListenSymbol(ctx context.Context, symbol string) (chan tick.Tick, chan struct{}, error) {
 	binanceSymbol, err := toBinanceSymbol(symbol)
 	if err != nil {
 		return nil, nil, err
@@ -33,13 +34,13 @@ func (s *Service) ListenSymbol(symbol string) (chan tick.Tick, chan struct{}, er
 	_, stop, err := client.WsBookTickerServe(binanceSymbol, func(event *client.WsBookTickerEvent) {
 		ask, err := strconv.ParseFloat(event.BestAskPrice, 64)
 		if err != nil {
-			log.Println(err)
+			telemetry.L(ctx).Error(err.Error())
 			return
 		}
 
 		bid, err := strconv.ParseFloat(event.BestBidPrice, 64)
 		if err != nil {
-			log.Println(err)
+			telemetry.L(ctx).Info(err.Error())
 			return
 		}
 
@@ -54,7 +55,7 @@ func (s *Service) ListenSymbol(symbol string) (chan tick.Tick, chan struct{}, er
 		select {
 		case tickChan <- t:
 		default:
-			log.Printf("Dropped %q tick from binance adapter\n", symbol)
+			telemetry.L(ctx).Info(fmt.Sprintf("Dropped %q tick from binance adapter\n", symbol))
 		}
 
 	}, nil)

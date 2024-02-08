@@ -1,10 +1,10 @@
 package migrations
 
 import (
-	"log"
 	"time"
 
 	"github.com/go-gormigrate/gormigrate/v2"
+	"github.com/lerenn/cryptellation/pkg/adapters/telemetry"
 	"gorm.io/gorm"
 )
 
@@ -13,7 +13,7 @@ const migration20230227Title = "20230219-init-exchanges"
 var migration20230227 = gormigrate.Migration{
 	ID: migration20230227Title,
 	Migrate: func(tx *gorm.DB) error {
-		log.Println("Running migration:", migration20230227Title)
+		telemetry.L(tx.Statement.Context).Info("Running migration: " + migration20230227Title)
 
 		type Period struct {
 			Symbol string `gorm:"primaryKey;autoIncrement:false"`
@@ -34,7 +34,7 @@ var migration20230227 = gormigrate.Migration{
 		return tx.AutoMigrate(&Period{}, &Pair{}, &Exchange{})
 	},
 	Rollback: func(tx *gorm.DB) error {
-		log.Println("Running rollback:", migration20230227Title)
+		telemetry.L(tx.Statement.Context).Info("Running rollback: " + migration20230227Title)
 		return tx.Migrator().DropTable("exchanges", "pairs", "periods")
 	},
 }

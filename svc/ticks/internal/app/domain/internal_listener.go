@@ -2,9 +2,10 @@ package domain
 
 import (
 	"context"
-	"log"
+	"fmt"
 	"time"
 
+	"github.com/lerenn/cryptellation/pkg/adapters/telemetry"
 	"github.com/lerenn/cryptellation/svc/ticks/internal/app/ports/db"
 	"github.com/lerenn/cryptellation/svc/ticks/internal/app/ports/events"
 	"github.com/lerenn/cryptellation/svc/ticks/internal/app/ports/exchanges"
@@ -26,11 +27,11 @@ type internalListener struct {
 	nextCheckTime time.Time
 }
 
-func (l *internalListener) Run() (err error) {
-	log.Printf("Starting listener for %q on %q\n", l.Pair, l.Exchange)
+func (l *internalListener) Run(ctx context.Context) (err error) {
+	telemetry.L(ctx).Info(fmt.Sprintf("Starting listener for %q on %q\n", l.Pair, l.Exchange))
 
 	// Starting listening to symbol
-	l.ticksChan, l.stopChan, err = l.Exchanges.ListenSymbol(l.Exchange, l.Pair)
+	l.ticksChan, l.stopChan, err = l.Exchanges.ListenSymbol(ctx, l.Exchange, l.Pair)
 	if err != nil {
 		return err
 	}
@@ -55,19 +56,19 @@ func (l *internalListener) internalLoop() {
 		if t.Price != 0 && t.Price != lastPrice {
 			err := l.Events.Publish(context.TODO(), t)
 			if err != nil {
-				log.Println("Publish error:", err)
+				telemetry.L(context.TODO()).Error("Publish error: " + err.Error())
 				continue
 			}
 			lastPrice = t.Price
 		}
 
 		if !open {
-			log.Printf("Closing %q listener on %q", l.Pair, l.Exchange)
+			telemetry.L(context.TODO()).Info(fmt.Sprintf("Closing %q listener on %q", l.Pair, l.Exchange))
 			break
 		}
 
 		if finished, err := l.setNextCheckTimeIfNeeded(); err != nil {
-			log.Println(err)
+			telemetry.L(context.TODO()).Error(err.Error())
 			continue
 		} else if finished {
 			break
@@ -85,7 +86,7 @@ func (l *internalListener) setNextCheckTimeIfNeeded() (finished bool, err error)
 		}
 
 		if count <= 0 {
-			log.Println("Interrupting", l.Exchange, l.Pair, "listener")
+			telemetry.L(ctx).Info("Interrupting " + l.Exchange + " " + l.Pair + " listener")
 			l.stopChan <- struct{}{}
 			return true, nil
 		}

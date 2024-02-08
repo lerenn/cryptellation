@@ -2,10 +2,12 @@ package main
 
 import (
 	"bufio"
+	"context"
 	"fmt"
-	"log"
 	"os"
 	"strings"
+
+	"github.com/lerenn/cryptellation/pkg/adapters/telemetry"
 )
 
 func askForConfirmation(s string) bool {
@@ -16,7 +18,8 @@ func askForConfirmation(s string) bool {
 
 		response, err := reader.ReadString('\n')
 		if err != nil {
-			log.Fatal(err)
+			telemetry.L(context.TODO()).Error(err.Error())
+			panic(err)
 		}
 
 		response = strings.ToLower(strings.TrimSpace(response))

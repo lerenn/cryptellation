@@ -1,14 +1,14 @@
 package migrations
 
 import (
-	"log"
 	"time"
 
+	"github.com/lerenn/cryptellation/pkg/adapters/telemetry"
 	"gorm.io/gorm"
 )
 
 func InitSchema(tx *gorm.DB) error {
-	log.Println("No migration detected: running the init schema.")
+	telemetry.L(tx.Statement.Context).Info("No migration detected: running the init schema.")
 
 	type Candlestick struct {
 		Exchange   string    `gorm:"primaryKey;autoIncrement:false;index:candlestick,unique"`

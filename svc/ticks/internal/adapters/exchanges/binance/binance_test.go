@@ -1,6 +1,7 @@
 package binance
 
 import (
+	"context"
 	"testing"
 	"time"
 
@@ -23,7 +24,7 @@ func (suite *BinanceSuite) SetupTest() {
 }
 
 func (suite *BinanceSuite) TestTicks() {
-	tickChan, stopChan, err := suite.service.ListenSymbol("BTC-USDT")
+	tickChan, stopChan, err := suite.service.ListenSymbol(context.TODO(), "BTC-USDT")
 	suite.Require().NoError(err)
 
 	select {
