@@ -4,14 +4,6 @@ import (
 	"dagger.io/dagger"
 )
 
-func DefaultBrokerVariables() func(r *dagger.Container) *dagger.Container {
-	return func(r *dagger.Container) *dagger.Container {
-		return r.
-			WithEnvVariable("NATS_HOST", "").
-			WithEnvVariable("NATS_PORT", "")
-	}
-}
-
 func Nats(client *dagger.Client) *dagger.Container {
 	return client.Container().
 		// Add base image

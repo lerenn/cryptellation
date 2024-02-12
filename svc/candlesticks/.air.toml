@@ -1,0 +1,6 @@
+root = "."
+
+[build]
+  cmd = "go install -buildvcs=false ./svc/candlesticks/cmd/*"
+  full_bin = "data migrations migrate && api serve"
+  include_dir = ["pkg", "svc/candlesticks"]

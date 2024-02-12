@@ -2,6 +2,9 @@
 *.env
 !*.example.env
 
+# Binaries should not be saved
+bin/
+
 # Temporary directory should not checked
 tmp/
 

@@ -56,14 +56,3 @@ func CockroachDependency(s *dagger.Service, db string) func(r *dagger.Container)
 			WithEnvVariable("SQLDB_DATABASE", db)
 	}
 }
-
-func DefaultSQLVariables() func(r *dagger.Container) *dagger.Container {
-	return func(r *dagger.Container) *dagger.Container {
-		return r.
-			WithEnvVariable("SQLDB_HOST", "").
-			WithEnvVariable("SQLDB_PORT", "").
-			WithEnvVariable("SQLDB_USER", "").
-			WithEnvVariable("SQLDB_PASSWORD", "").
-			WithEnvVariable("SQLDB_DATABASE", "")
-	}
-}
