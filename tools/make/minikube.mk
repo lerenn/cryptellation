@@ -1,10 +1,10 @@
 K8S_VERSION         := 1.26.1
 MINIKUBE_NODES      := 3
 NODE_MEMORY         := 2g
-CLUSTER_NAME        := cryptellation-devel
+CLUSTER_NAME        := cryptellation-local
 
-.PHONY: minikube/deploy
-minikube/deploy: ## Deploy minikube cluster
+.PHONY: minikube/up
+minikube/up: ## Deploy minikube cluster
 	@minikube start \
 		--cpus=2 \
 		--memory=${NODE_MEMORY} \
@@ -25,22 +25,13 @@ minikube/status: ## Checks the minikube status
 minikube/stop: ## Stop the current minikube cluster
 	@minikube stop -p ${CLUSTER_NAME}
 
-.PHONY: minikube/delete
-minikube/delete: ## Delete the minikube cluster
+.PHONY: minikube/destroy
+minikube/destroy: ## Destroy the minikube cluster
 	@minikube delete --profile ${CLUSTER_NAME}
 
 .PHONY: minikube/expose
 minikube/expose: ## Expose the ports to 8080
 	@kubectl port-forward -n telemetry service/lgtm-grafana 8080:80 & \
 		kubectl port-forward service/cryptellation-nats 4222:4222 & \
+		kubectl port-forward --namespace kube-system service/registry 5000:80 & \
 		wait
-
-.PHONY: clean
-clean: ## Clean everything
-	@$(MAKE) minikube/delete
-
-.PHONY: help
-help: ## Display this help message
-	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_\/-]+:.*?## / {printf "\033[34m%-30s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST) | \
-		sort | \
-		grep -v '#'

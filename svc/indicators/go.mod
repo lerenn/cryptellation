@@ -6,8 +6,6 @@ replace github.com/lerenn/cryptellation/pkg => ../../pkg
 
 replace github.com/lerenn/cryptellation/svc/candlesticks => ../candlesticks
 
-replace github.com/lerenn/cryptellation/tools => ../../tools
-
 require (
 	dagger.io/dagger v0.9.6
 	github.com/go-gormigrate/gormigrate/v2 v2.1.1

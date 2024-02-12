@@ -119,7 +119,7 @@ func (chart Chart) GetDisplayedDataMinMax() (min, max float64) {
 	for current := start; current.Before(end); current = current.Add(chart.period.Duration()) {
 		c, exists := chart.data.Get(current)
 		if exists {
-			data.Set(current, c)
+			_ = data.Set(current, c)
 		}
 	}
 

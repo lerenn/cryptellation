@@ -31,22 +31,14 @@ var rootCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		runGenerators(cmd, args)
 		runLinters(cmd, args)
-		runBuilders(cmd, args)
-
-		if err := runTests(cmd, args); err != nil {
-			return err
-		}
-
-		return nil
+		return runTests(cmd, args)
 	},
 }
 
 func main() {
-	addBuildCmdTo(rootCmd)
 	addGenerateCmdTo(rootCmd)
 	addLintCmdTo(rootCmd)
 	addPublishCmdTo(rootCmd)
-	addServeCmdTo(rootCmd)
 	addTestCmdTo(rootCmd)
 	addUpdateCmdTo(rootCmd)
 

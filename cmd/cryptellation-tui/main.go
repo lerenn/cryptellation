@@ -111,7 +111,7 @@ func (a *App) updateMissingCandlesticks() {
 			if err != nil {
 				return
 			}
-			a.candlesticks.UpsertData(list)
+			_ = a.candlesticks.UpsertData(list)
 			a.Program.Send(dataUpdate{})
 		}()
 	}
