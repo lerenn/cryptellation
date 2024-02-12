@@ -16,6 +16,7 @@ services:
     depends_on:
       - indicators-sql
       - nats
+      - uptrace-otelcollector
     networks:
       - cryptellation
     working_dir: /go/src/github.com/lerenn/cryptellation
@@ -23,6 +24,7 @@ services:
       HEALTH_PORT: 9000
       NATS_HOST: nats
       NATS_PORT: 4222
+      OPENTELEMETRY_GRPC_ENDPOINT: uptrace-otelcollector:4317
       SQLDB_HOST: indicators-sql
       SQLDB_PORT: 5432
       SQLDB_USER: postgres

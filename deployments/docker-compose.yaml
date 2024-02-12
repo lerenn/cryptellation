@@ -1,13 +1,16 @@
 version: "3.5"
 
 include:
-  - ../svc/backtests/deployments/docker-compose.yaml
-  - ../svc/candlesticks/deployments/docker-compose.yaml
-  - ../svc/exchanges/deployments/docker-compose.yaml
-  - ../svc/indicators/deployments/docker-compose.yaml
-  - ../svc/ticks/deployments/docker-compose.yaml
+    # Services
+    - ../svc/backtests/deployments/docker-compose.yaml
+    - ../svc/candlesticks/deployments/docker-compose.yaml
+    - ../svc/exchanges/deployments/docker-compose.yaml
+    - ../svc/indicators/deployments/docker-compose.yaml
+    - ../svc/ticks/deployments/docker-compose.yaml
+    # Tools
+    - ../tools/uptrace/docker-compose.yaml
 
-services: 
+services:
     nats:
         image: nats
         ports:
@@ -18,6 +21,7 @@ services:
 volumes:
     gocache:
     gobuild:
+
 
 networks:
     cryptellation:
