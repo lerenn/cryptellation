@@ -5,7 +5,7 @@ import (
 
 	"github.com/lerenn/asyncapi-codegen/pkg/extensions"
 	"github.com/lerenn/asyncapi-codegen/pkg/extensions/brokers/nats"
-	"github.com/lerenn/asyncapi-codegen/pkg/extensions/loggers"
+	asyncapipkg "github.com/lerenn/cryptellation/pkg/asyncapi"
 	"github.com/lerenn/cryptellation/pkg/config"
 	asyncapi "github.com/lerenn/cryptellation/svc/backtests/api/asyncapi"
 	"github.com/lerenn/cryptellation/svc/backtests/internal/app"
@@ -30,10 +30,8 @@ func NewController(c config.NATS, backtests app.Backtests) (*Controller, error) 
 		return nil, err
 	}
 
-	// Create a logger
-	logger := loggers.NewECS()
-
 	// Create an App controller
+	logger := asyncapipkg.LoggerWrapper{}
 	controller, err := asyncapi.NewAppController(broker, asyncapi.WithLogger(logger))
 	if err != nil {
 		return nil, err

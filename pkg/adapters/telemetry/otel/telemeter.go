@@ -70,12 +70,16 @@ type Logger struct {
 	logger *zap.Logger
 }
 
+func (l Logger) Debug(content string) {
+	l.logger.Debug(content)
+}
+
 func (l Logger) Info(content string) {
 	l.logger.Info(content)
 }
 
-func (l Logger) Debug(content string) {
-	l.logger.Debug(content)
+func (l Logger) Warning(content string) {
+	l.logger.Warn(content)
 }
 
 func (l Logger) Error(content string) {

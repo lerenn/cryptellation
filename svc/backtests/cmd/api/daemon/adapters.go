@@ -3,7 +3,7 @@ package daemon
 import (
 	"context"
 
-	"github.com/lerenn/asyncapi-codegen/pkg/extensions/loggers"
+	asyncapipkg "github.com/lerenn/cryptellation/pkg/asyncapi"
 	"github.com/lerenn/cryptellation/pkg/config"
 	sql "github.com/lerenn/cryptellation/svc/backtests/internal/adapters/db/sql"
 	natsBacktests "github.com/lerenn/cryptellation/svc/backtests/internal/adapters/events/nats"
@@ -34,7 +34,7 @@ func newAdapters(ctx context.Context) (adapters, error) {
 
 	// Init candlesticks client
 	candlesticks, err := candlesticksNats.NewClient(
-		config.LoadNATS(), candlesticksNats.WithLogger(loggers.NewECS()))
+		config.LoadNATS(), candlesticksNats.WithLogger(asyncapipkg.LoggerWrapper{}))
 	if err != nil {
 		return adapters{}, err
 	}

@@ -16,8 +16,9 @@ type Telemeter interface {
 }
 
 type Logger interface {
-	Info(text string)
 	Debug(text string)
+	Info(text string)
+	Warning(text string)
 	Error(text string)
 }
 
