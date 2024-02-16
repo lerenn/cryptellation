@@ -2,14 +2,15 @@ package domain
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"github.com/lerenn/cryptellation/pkg/adapters/telemetry"
+	"github.com/lerenn/cryptellation/pkg/timeserie"
 	"github.com/lerenn/cryptellation/pkg/utils"
 	"github.com/lerenn/cryptellation/svc/candlesticks/internal/app"
 	"github.com/lerenn/cryptellation/svc/candlesticks/internal/app/ports/exchanges"
 	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/candlestick"
+	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/period"
 )
 
 const (
@@ -19,7 +20,7 @@ const (
 )
 
 func (app Candlesticks) GetCached(ctx context.Context, payload app.GetCachedPayload) (*candlestick.List, error) {
-	telemetry.L(ctx).Info(fmt.Sprintf("Requests candlesticks from %s to %s (limit: %d)", payload.Start, payload.End, payload.Limit))
+	telemetry.L(ctx).Infof("Requests candlesticks from %s to %s (limit: %d)", payload.Start, payload.End, payload.Limit)
 
 	// Be sure that we do not try to get data in the future
 	if payload.End.After(time.Now()) {
@@ -33,41 +34,49 @@ func (app Candlesticks) GetCached(ctx context.Context, payload app.GetCachedPayl
 	if err := app.db.ReadCandlesticks(ctx, cl, start, end, payload.Limit); err != nil {
 		return nil, err
 	}
-	telemetry.L(ctx).Info(fmt.Sprintf("Read DB for %d candlesticks from %s to %s (limit: %d)", cl.Len(), start, end, payload.Limit))
+	telemetry.L(ctx).Debugf("Read DB for %d candlesticks from %s to %s (limit: %d)", cl.Len(), start, end, payload.Limit)
 
-	if !cl.AreMissing(start, end, payload.Limit) {
-		telemetry.L(ctx).Info(fmt.Sprintf("No candlestick missing, returning the list with %d candlesticks.", cl.Len()))
+	missingRanges := cl.GetMissingRange(start, end, payload.Limit)
+	uncompleteRanges := cl.GetUncompleteRange()
+	ranges, err := timeserie.MergeTimeRanges(missingRanges, uncompleteRanges)
+	if err != nil {
+		return cl, err
+	}
+
+	if len(ranges) == 0 {
+		telemetry.L(ctx).Infof("No candlestick missing, returning the list with %d candlesticks.", cl.Len())
 		return cl, nil
 	}
-	telemetry.L(ctx).Info("Candlesticks are missing from DB")
+	telemetry.L(ctx).Debugf("Candlesticks are missing from DB: %+v", timeserie.TimeRangesToString(ranges))
 
-	downloadStart, downloadEnd := getDownloadStartEndTimes(cl, start, end)
+	downloadStart, downloadEnd := getDownloadStartEndTimes(ranges, payload.Period)
 	if err := app.download(ctx, cl, downloadStart, downloadEnd, payload.Limit); err != nil {
 		return nil, err
 	}
 
+	// Upsert candlesticks to DB
 	if err := app.upsert(ctx, cl); err != nil {
 		return nil, err
 	}
 
-	return cl.Extract(start, end, payload.Limit), nil
+	rl := cl.Extract(start, end, payload.Limit)
+
+	return rl, nil
 }
 
 // getDownloadStartEndTimes gives start and end time for download
 // Time order: start < end
-func getDownloadStartEndTimes(cl *candlestick.List, end, start time.Time) (time.Time, time.Time) {
-	t, _, exists := cl.TimeSerie.Last()
-	if exists && !cl.HasUncomplete() {
-		end = t.Add(cl.Period.Duration())
+func getDownloadStartEndTimes(ranges []timeserie.TimeRange, p period.Symbol) (time.Time, time.Time) {
+	start, end := ranges[0].Start, ranges[len(ranges)-1].End
+	count := end.Sub(start) / p.Duration()
+
+	if count < MinimalRetrievedMissingCandlesticks {
+		difference := MinimalRetrievedMissingCandlesticks - count
+		start = start.Add(-p.Duration() * difference / 2)
+		end = end.Add(p.Duration() * difference / 2)
 	}
 
-	qty := int(cl.Period.CountBetweenTimes(end, start)) + 1
-	if qty < MinimalRetrievedMissingCandlesticks {
-		d := cl.Period.Duration() * time.Duration(MinimalRetrievedMissingCandlesticks-qty)
-		start = start.Add(d)
-	}
-
-	return end, start
+	return start, end
 }
 
 func (app Candlesticks) download(ctx context.Context, cl *candlestick.List, start, end time.Time, limit uint) error {
@@ -85,10 +94,10 @@ func (app Candlesticks) download(ctx context.Context, cl *candlestick.List, star
 			return err
 		}
 
-		msg := fmt.Sprintf(
+		telemetry.L(ctx).Debugf(
 			"Read exchange for %d candlesticks from %s to %s (limit: %d)",
-			ncl.Len(), payload.Start, payload.End, payload.Limit)
-		telemetry.L(ctx).Info(msg)
+			ncl.Len(), payload.Start, payload.End, payload.Limit,
+		)
 
 		if err := cl.Merge(ncl, nil); err != nil {
 			return err

@@ -103,20 +103,6 @@ func (l *List) ReplaceUncomplete(l2 *List) {
 	})
 }
 
-func (l *List) HasUncomplete() bool {
-	hasUncomplete := false
-
-	_ = l.Loop(func(t time.Time, cs Candlestick) (bool, error) {
-		if cs.Uncomplete {
-			hasUncomplete = true
-			return true, nil
-		}
-		return false, nil
-	})
-
-	return hasUncomplete
-}
-
 func MergeListIntoOneCandlestick(csl *List, per period.Symbol) (time.Time, Candlestick) {
 	if csl.Len() == 0 {
 		return time.Unix(0, 0), Candlestick{}
@@ -173,16 +159,49 @@ func (l List) String() string {
 	return txt
 }
 
-// AreMissing checks if there is missing candlesticks between two times
-// Time order: start < end
-func (cl List) AreMissing(end, start time.Time, limit uint) bool {
-	if missing := cl.TimeSerie.AreMissing(end, start, cl.Period.Duration(), limit); missing {
-		return true
+// GetUncompleteTimes returns an array of time from candlesticks that are marked
+// as uncomplete (i.e. data pulled when candlestick covering time was not complete)
+func (cl List) GetUncompleteTimes() []time.Time {
+	uncomplete := make([]time.Time, 0)
+	_ = cl.Loop(func(t time.Time, cs Candlestick) (bool, error) {
+		if cs.Uncomplete {
+			uncomplete = append(uncomplete, t)
+		}
+		return false, nil
+	})
+	return uncomplete
+}
+
+func (cl List) GetUncompleteRange() []timeserie.TimeRange {
+	// Change to ranges
+	ut := cl.GetUncompleteTimes()
+	tr := make([]timeserie.TimeRange, len(ut))
+	for i, t := range ut {
+		tr[i].Start, tr[i].End = t, t
 	}
 
-	if cl.HasUncomplete() {
-		return true
+	// Merge everything
+	tr, _ = timeserie.MergeTimeRanges(tr, tr)
+	return tr
+}
+
+// GetMissingTimes returns an array of missing time in the candlestick list
+func (cl List) GetMissingTimes(start, end time.Time, limit uint) []time.Time {
+	// Quick check that there is missing
+	if !cl.TimeSerie.AreMissing(start, end, cl.Period.Duration(), limit) {
+		return []time.Time{}
 	}
 
-	return false
+	// Get missing times from timeserie
+	return cl.TimeSerie.GetMissingTimes(start, end, cl.Period.Duration(), limit)
+}
+
+func (cl List) GetMissingRange(start, end time.Time, limit uint) []timeserie.TimeRange {
+	// Quick check that there is missing
+	if !cl.TimeSerie.AreMissing(start, end, cl.Period.Duration(), limit) {
+		return []timeserie.TimeRange{}
+	}
+
+	// Get missing range from timeserie
+	return cl.TimeSerie.GetMissingRanges(start, end, cl.Period.Duration(), limit)
 }

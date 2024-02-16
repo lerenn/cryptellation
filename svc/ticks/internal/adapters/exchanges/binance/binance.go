@@ -55,7 +55,7 @@ func (s *Service) ListenSymbol(ctx context.Context, symbol string) (chan tick.Ti
 		select {
 		case tickChan <- t:
 		default:
-			telemetry.L(ctx).Info(fmt.Sprintf("Dropped %q tick from binance adapter\n", symbol))
+			telemetry.L(ctx).Infof("Dropped %q tick from binance adapter\n", symbol)
 		}
 
 	}, nil)

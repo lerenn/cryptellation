@@ -2,6 +2,7 @@ package otel
 
 import (
 	"context"
+	"fmt"
 	"os"
 
 	"github.com/lerenn/cryptellation/pkg/adapters/telemetry"
@@ -74,16 +75,32 @@ func (l Logger) Debug(content string) {
 	l.logger.Debug(content)
 }
 
+func (l Logger) Debugf(format string, a ...any) {
+	l.logger.Debug(fmt.Sprintf(format, a...))
+}
+
 func (l Logger) Info(content string) {
 	l.logger.Info(content)
+}
+
+func (l Logger) Infof(format string, a ...any) {
+	l.logger.Info(fmt.Sprintf(format, a...))
 }
 
 func (l Logger) Warning(content string) {
 	l.logger.Warn(content)
 }
 
+func (l Logger) Warningf(format string, a ...any) {
+	l.logger.Warn(fmt.Sprintf(format, a...))
+}
+
 func (l Logger) Error(content string) {
 	l.logger.Error(content)
+}
+
+func (l Logger) Errorf(format string, a ...any) {
+	l.logger.Error(fmt.Sprintf(format, a...))
 }
 
 func (tel Telemeter) Logger(ctx context.Context) telemetry.Logger {

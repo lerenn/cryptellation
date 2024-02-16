@@ -160,68 +160,6 @@ func (suite *CandlestickListSuite) TestMergeIntoOne() {
 	// TODO
 }
 
-func (suite *CandlestickListSuite) TestAreMissing() {
-	// Given all candlesticks
-	cl := NewList("exchange", "ETH-USDC", period.M1)
-
-	for i := int64(0); i < 10; i++ {
-		err := cl.Set(time.Unix(60*i, 0), Candlestick{
-			Open: float64(i),
-		})
-		suite.Require().NoError(err)
-	}
-
-	// When asking if there is missing candlesticks
-	res := cl.AreMissing(time.Unix(0, 0), time.Unix(540, 0), 0)
-
-	// Then there is no missing
-	suite.Require().False(res)
-}
-
-func (suite *CandlestickListSuite) TestAreMissingWithOneMissing() {
-	// Given all candlesticks
-	cl := NewList("exchange", "ETH-USDC", period.M1)
-
-	for i := int64(0); i < 10; i++ {
-		if i == 5 {
-			continue
-		}
-
-		err := cl.Set(time.Unix(60*i, 0), Candlestick{
-			Open: float64(i),
-		})
-		suite.Require().NoError(err)
-	}
-
-	// When asking if there is missing candlesticks
-	res := cl.AreMissing(time.Unix(0, 0), time.Unix(540, 0), 0)
-
-	// Then there is no missing
-	suite.Require().True(res)
-}
-
-func (suite *CandlestickListSuite) TestAreMissingWithOneMissingAndLimit() {
-	// Given all candlesticks
-	cl := NewList("exchange", "ETH-USDC", period.M1)
-
-	for i := int64(0); i < 10; i++ {
-		if i == 5 {
-			continue
-		}
-
-		err := cl.Set(time.Unix(60*i, 0), Candlestick{
-			Open: float64(i),
-		})
-		suite.Require().NoError(err)
-	}
-
-	// When asking if there is missing candlesticks
-	res := cl.AreMissing(time.Unix(0, 0), time.Unix(540, 0), 2)
-
-	// Then there is no missing
-	suite.Require().False(res)
-}
-
 func (suite *CandlestickListSuite) TestFillMissing() {
 	// Create a list with one candlestick
 	csList := NewList("exchange", "BTC-USDC", period.M1)
@@ -243,4 +181,12 @@ func (suite *CandlestickListSuite) TestFillMissing() {
 		suite.Require().True(exists)
 		suite.Require().Equal(Candlestick{Open: 10, High: 20, Low: 5, Close: 15}, cs)
 	}
+}
+
+func (suite *CandlestickListSuite) TestGetUncompleteTimes() {
+	// TODO
+}
+
+func (suite *CandlestickListSuite) TestGetMissingTimes() {
+
 }

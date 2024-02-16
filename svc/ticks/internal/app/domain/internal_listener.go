@@ -2,7 +2,6 @@ package domain
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"github.com/lerenn/cryptellation/pkg/adapters/telemetry"
@@ -28,7 +27,7 @@ type internalListener struct {
 }
 
 func (l *internalListener) Run(ctx context.Context) (err error) {
-	telemetry.L(ctx).Info(fmt.Sprintf("Starting listener for %q on %q\n", l.Pair, l.Exchange))
+	telemetry.L(ctx).Infof("Starting listener for %q on %q\n", l.Pair, l.Exchange)
 
 	// Starting listening to symbol
 	l.ticksChan, l.stopChan, err = l.Exchanges.ListenSymbol(ctx, l.Exchange, l.Pair)
@@ -63,7 +62,7 @@ func (l *internalListener) internalLoop() {
 		}
 
 		if !open {
-			telemetry.L(context.TODO()).Info(fmt.Sprintf("Closing %q listener on %q", l.Pair, l.Exchange))
+			telemetry.L(context.TODO()).Infof("Closing %q listener on %q", l.Pair, l.Exchange)
 			break
 		}
 

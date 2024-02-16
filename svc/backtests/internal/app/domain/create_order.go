@@ -29,7 +29,7 @@ func (b Backtests) CreateOrder(ctx context.Context, backtestId uint, order order
 			return backtest.ErrNoDataForOrderValidation
 		}
 
-		telemetry.L(ctx).Info(fmt.Sprintf("Adding %+v order to %d backtest", order, backtestId))
+		telemetry.L(ctx).Infof("Adding %+v order to %d backtest", order, backtestId)
 		if err := bt.AddOrder(order, cs); err != nil {
 			return err
 		}

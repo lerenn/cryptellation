@@ -21,6 +21,7 @@ services:
       - cryptellation
     working_dir: /go/src/github.com/lerenn/cryptellation
     environment:
+      DEV_MODE: true
       HEALTH_PORT: 9000
       NATS_HOST: nats
       NATS_PORT: 4222

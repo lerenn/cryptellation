@@ -2,7 +2,6 @@ package nats
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 
 	"github.com/lerenn/cryptellation/pkg/adapters/telemetry"
@@ -24,7 +23,7 @@ func newSubscriber(controller *asyncapi.AppController, app ticks.Ticks) subscrib
 }
 
 func (s subscriber) RegisterToTicksRequest(ctx context.Context, msg asyncapi.RegisteringRequestMessage) {
-	telemetry.L(ctx).Info(fmt.Sprintf("Received register request: %+v\n", msg))
+	telemetry.L(ctx).Infof("Received register request: %+v\n", msg)
 
 	// Set response
 	resp := asyncapi.NewRegisteringResponseMessage()
@@ -53,7 +52,7 @@ func (s subscriber) RegisterToTicksRequest(ctx context.Context, msg asyncapi.Reg
 }
 
 func (s subscriber) UnregisterToTicksRequest(ctx context.Context, msg asyncapi.RegisteringRequestMessage) {
-	telemetry.L(ctx).Info(fmt.Sprintf("Received unregister request: %+v\n", msg))
+	telemetry.L(ctx).Infof("Received unregister request: %+v\n", msg)
 
 	// Set response
 	resp := asyncapi.NewRegisteringResponseMessage()

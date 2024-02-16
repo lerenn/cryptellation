@@ -368,3 +368,23 @@ func (suite *TimeSerieSuite) TestFirstN() {
 	suite.Require().True(exists)
 	suite.Require().Equal(int64(1), obj)
 }
+
+func (suite *TimeSerieSuite) TestGetMissingTimes() {
+	ts := New[int64]()
+	for i := int64(1); i < 5; i++ {
+		ts.Set(time.Unix(60*i, 0), i)
+	}
+	ts.Delete(time.Unix(180, 0))
+
+	// Test without limit
+	missing := ts.GetMissingTimes(time.Unix(0, 0), time.Unix(300, 0), time.Minute, 0)
+	suite.Require().Len(missing, 3)
+	suite.Require().WithinDuration(time.Unix(0, 0), missing[0], time.Microsecond)
+	suite.Require().WithinDuration(time.Unix(180, 0), missing[1], time.Microsecond)
+	suite.Require().WithinDuration(time.Unix(300, 0), missing[2], time.Microsecond)
+
+	// Test with limit
+	missing = ts.GetMissingTimes(time.Unix(0, 0), time.Unix(300, 0), time.Minute, 3)
+	suite.Require().Len(missing, 1)
+	suite.Require().WithinDuration(time.Unix(0, 0), missing[0], time.Microsecond)
+}

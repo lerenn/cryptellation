@@ -186,8 +186,8 @@ func (ts TimeSerie[T]) FirstN(limit uint) *TimeSerie[T] {
 }
 
 // AreMissing checks if there is missing candlesticks between two times
-func (ts TimeSerie[T]) AreMissing(t1, t2 time.Time, interval time.Duration, limit uint) bool {
-	expectedCount := int(utils.CountBetweenTimes(t1, t2, interval)) + 1
+func (ts TimeSerie[T]) AreMissing(start, end time.Time, interval time.Duration, limit uint) bool {
+	expectedCount := int(utils.CountBetweenTimes(start, end, interval)) + 1
 	qty := ts.Len()
 
 	if qty < expectedCount && (limit == 0 || uint(qty) < limit) {
@@ -195,4 +195,46 @@ func (ts TimeSerie[T]) AreMissing(t1, t2 time.Time, interval time.Duration, limi
 	}
 
 	return false
+}
+
+// GetMissingTimes returns an array of missing time in the timeserie
+func (ts TimeSerie[T]) GetMissingTimes(start, end time.Time, interval time.Duration, limit uint) []time.Time {
+	expectedCount := int(utils.CountBetweenTimes(start, end, interval)) + 1
+	list := make([]time.Time, 0, expectedCount)
+	for current, count := start, uint(0); !current.After(end); current, count = current.Add(interval), count+1 {
+		_, exists := ts.Get(current)
+		if !exists {
+			list = append(list, current)
+		}
+
+		if limit > 0 && count >= limit-1 {
+			break
+		}
+	}
+	return list
+}
+
+func (ts TimeSerie[T]) GetMissingRanges(start, end time.Time, interval time.Duration, limit uint) []TimeRange {
+	missing := ts.GetMissingTimes(start, end, interval, limit)
+	if len(missing) == 0 {
+		return []TimeRange{}
+	}
+
+	tr := make([]TimeRange, 0, len(missing))
+	current := TimeRange{
+		Start: missing[0],
+		End:   missing[0],
+	}
+
+	for _, t := range missing[1:] {
+		if current.End.Add(interval).Equal(t) {
+			current.End = t
+			continue
+		}
+
+		tr = append(tr, current)
+		current.Start, current.End = t, t
+	}
+
+	return append(tr, current)
 }

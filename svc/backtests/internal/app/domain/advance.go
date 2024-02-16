@@ -14,7 +14,7 @@ func (b Backtests) Advance(ctx context.Context, backtestId uint) error {
 	return b.db.LockedBacktest(ctx, backtestId, func(bt *backtest.Backtest) (err error) {
 		// Advance backtest
 		finished := bt.Advance()
-		telemetry.L(ctx).Info(fmt.Sprintf("Advancing backtest %d: %s", backtestId, bt.CurrentTime()))
+		telemetry.L(ctx).Infof("Advancing backtest %d: %s", backtestId, bt.CurrentTime())
 
 		// Get actual events
 		evts := make([]event.Event, 0, 1)
@@ -71,16 +71,16 @@ func (b Backtests) readActualEvents(ctx context.Context, bt backtest.Backtest) (
 	}
 
 	_, evts = event.OnlyKeepEarliestSameTimeEvents(evts, bt.EndTime)
-	telemetry.L(ctx).Info(fmt.Sprintf("%d events for ticks on backtest %d", len(evts), bt.ID))
+	telemetry.L(ctx).Infof("%d events for ticks on backtest %d", len(evts), bt.ID)
 	return evts, nil
 }
 
 func (b Backtests) broadcastEvents(ctx context.Context, backtestId uint, evts []event.Event) {
-	telemetry.L(ctx).Info(fmt.Sprintf("Broadcasting %d events on backtest %d", len(evts), backtestId))
+	telemetry.L(ctx).Infof("Broadcasting %d events on backtest %d", len(evts), backtestId)
 
 	var count uint
 	for _, evt := range evts {
-		telemetry.L(ctx).Info(fmt.Sprintf("Broadcasting event %+v for backtest %d", evt, backtestId))
+		telemetry.L(ctx).Infof("Broadcasting event %+v for backtest %d", evt, backtestId)
 		if err := b.events.Publish(ctx, backtestId, evt); err != nil {
 			telemetry.L(ctx).Info(fmt.Sprint("WARNING: error when publishing event", evt))
 			continue

@@ -2,6 +2,7 @@ package otel
 
 import (
 	"context"
+	"os"
 
 	"github.com/agoda-com/opentelemetry-logs-go/exporters/otlp/otlplogs"
 	"github.com/agoda-com/opentelemetry-logs-go/exporters/otlp/otlplogs/otlplogsgrpc"
@@ -10,6 +11,7 @@ import (
 	"go.opentelemetry.io/otel/sdk/resource"
 	semconv "go.opentelemetry.io/otel/semconv/v1.12.0"
 	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
 )
 
 type logs struct {
@@ -39,8 +41,33 @@ func newLogs(ctx context.Context, serviceName, url string) (logs, error) {
 	// Set opentelemetry logger provider globally
 	// otellogs.SetLoggerProvider(provider)
 
+	// Create cores
+	cores := []zapcore.Core{
+		otelzap.NewOtelCore(provider),
+	}
+
+	// Set console loggers
+	if os.Getenv("DEV_MODE") != "" {
+		consoleEncoder := zapcore.NewConsoleEncoder(zap.NewDevelopmentEncoderConfig())
+		consoleDebugging := zapcore.Lock(os.Stdout)
+		consoleErrors := zapcore.Lock(os.Stderr)
+
+		// Set priorities
+		highPriority := zap.LevelEnablerFunc(func(lvl zapcore.Level) bool {
+			return lvl >= zapcore.ErrorLevel
+		})
+		lowPriority := zap.LevelEnablerFunc(func(lvl zapcore.Level) bool {
+			return lvl < zapcore.ErrorLevel
+		})
+
+		cores = append(cores,
+			zapcore.NewCore(consoleEncoder, consoleErrors, highPriority),
+			zapcore.NewCore(consoleEncoder, consoleDebugging, lowPriority),
+		)
+	}
+
 	// Create a new logger
-	logger := zap.New(otelzap.NewOtelCore(provider))
+	logger := zap.New(zapcore.NewTee(cores...))
 	// undo := zap.ReplaceGlobals(logger),
 
 	return logs{

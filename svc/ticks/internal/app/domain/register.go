@@ -2,7 +2,6 @@ package domain
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/lerenn/cryptellation/pkg/adapters/telemetry"
 )
@@ -20,7 +19,7 @@ func (t Ticks) Register(ctx context.Context, exchange, pair string) (int64, erro
 		}
 	}
 
-	telemetry.L(ctx).Info(fmt.Sprintf("Register listener for %q on %q (count=%d)\n", exchange, pair, count))
+	telemetry.L(ctx).Infof("Register listener for %q on %q (count=%d)\n", exchange, pair, count)
 	return count, nil
 }
 
