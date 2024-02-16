@@ -13,14 +13,22 @@ type Chart struct {
 	height, width            int
 	verticalMin, verticalMax float64
 
-	data   *candlestick.List
+	data  *candlestick.List
+	cache map[minMax]map[int64]column
+
 	cursor time.Time
 	period period.Symbol
+}
+
+type minMax struct {
+	Min float64
+	Max float64
 }
 
 func NewChart(data *candlestick.List, period period.Symbol) *Chart {
 	return &Chart{
 		data:   data,
+		cache:  make(map[minMax]map[int64]column),
 		period: period,
 	}
 }
@@ -50,7 +58,7 @@ func (chart *Chart) SetWidth(width int) {
 	chart.width = width
 }
 
-func (chart Chart) Grid() charts.Grid {
+func (chart *Chart) Grid() charts.Grid {
 	columns := chart.toColumns()
 
 	grid := charts.NewGrid(chart.height, chart.width)
@@ -71,14 +79,26 @@ func (chart Chart) Grid() charts.Grid {
 	return grid
 }
 
-func (chart Chart) toColumns() []column {
+func (chart *Chart) toColumns() []column {
 	start, end := chart.displayedStartEnd()
+	min, max := chart.GetDisplayedDataMinMax()
+	minMax := minMax{Min: min, Max: max}
 	newData := make([]column, chart.width)
 
+	if _, exists := chart.cache[minMax]; !exists {
+		chart.cache[minMax] = make(map[int64]column, chart.width)
+	}
+
 	for current, i := start, 0; current.Before(end); current, i = current.Add(chart.period.Duration()), i+1 {
+		if col, exists := chart.cache[minMax][current.Unix()]; exists {
+			newData[i] = col
+			continue
+		}
+
 		c, exists := chart.data.Get(current)
 		if exists && c.High != 0 {
-			newData[i] = newColumn(c, chart.verticalMin, chart.verticalMax, chart.height)
+			col := newColumn(c, chart.verticalMin, chart.verticalMax, chart.height)
+			newData[i], chart.cache[minMax][current.Unix()] = col, col
 		}
 	}
 
