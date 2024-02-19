@@ -1,51 +1,28 @@
 package main
 
 import (
-	"context"
 	"log"
 	"strings"
-	"time"
 
 	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/key"
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/lerenn/cryptellation/cmd/cryptellation-tui/charts"
-	"github.com/lerenn/cryptellation/cmd/cryptellation-tui/charts/candlesticks"
-	"github.com/lerenn/cryptellation/pkg/config"
-	"github.com/lerenn/cryptellation/pkg/utils"
-	client "github.com/lerenn/cryptellation/svc/candlesticks/clients/go"
-	candlesticksclient "github.com/lerenn/cryptellation/svc/candlesticks/clients/go/nats"
-	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/candlestick"
-	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/period"
 )
 
 // A simple program that opens the alternate screen buffer then counts down
 // from 5 and then exits.
 
 type App struct {
-	CandlesticksClient           candlesticksclient.Client
-	candlesticksUpdateInProgress bool
-
-	canvas       *charts.Canvas
-	candlesticks *candlesticks.Chart
-
+	subview    View
+	Program    *tea.Program
 	windowSize tea.WindowSizeMsg
 	help       help.Model
-
-	Program *tea.Program
 }
 
 type dataUpdate struct{}
 
 func main() {
-	candlesticksClient, err := candlesticksclient.NewClient(config.LoadNATS())
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	app := &App{
-		CandlesticksClient: candlesticksClient,
-	}
+	app := &App{}
 	p := tea.NewProgram(app, tea.WithAltScreen())
 	app.Program = p
 	if _, err := p.Run(); err != nil {
@@ -54,75 +31,31 @@ func main() {
 }
 
 func (a *App) Init() tea.Cmd {
-	a.canvas = charts.NewCanvas(utils.Must(time.Parse(time.RFC3339, "2022-12-01T01:00:00Z")), time.Hour)
-
-	a.candlesticks = candlesticks.NewChart(&candlestick.List{}, period.H1)
-	a.canvas.AddChart(a.candlesticks)
-	defer a.updateMissingCandlesticks()
-
+	a.subview = NewCandlesticksView(a.Program)
+	// a.subview = &empty{}
 	return tea.ClearScreen
-}
-
-func (a App) moveCount() int {
-	return a.windowSize.Width * 2 / 3
 }
 
 func (a *App) Update(message tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := message.(type) {
 	case tea.KeyMsg:
 		switch {
-		case key.Matches(msg, keys.Left):
-			for i := 0; i < a.moveCount(); i++ {
-				a.canvas.MoveLeft()
-			}
-		case key.Matches(msg, keys.Right):
-			for i := 0; i < a.moveCount(); i++ {
-				a.canvas.MoveRight()
-			}
-		case key.Matches(msg, keys.Help):
+		case key.Matches(msg, helpKey):
 			a.help.ShowAll = !a.help.ShowAll
-		case key.Matches(msg, keys.Quit):
+		case key.Matches(msg, quitKey):
 			return a, tea.Quit
 		}
 
 	case tea.WindowSizeMsg:
-		a.windowSize = msg
 		a.help.Width = msg.Width
+		a.windowSize = msg
 	}
 
-	a.updateMissingCandlesticks()
+	if a.subview != nil {
+		a.subview.Update(message)
+	}
 
 	return a, nil
-}
-
-func (a *App) updateMissingCandlesticks() {
-	first, last := a.candlesticks.MissingData(a.windowSize.Width)
-	if first != nil && last != nil {
-		go func() {
-			if a.candlesticksUpdateInProgress {
-				return
-			}
-			a.candlesticksUpdateInProgress = true
-			defer func() { a.candlesticksUpdateInProgress = false }()
-
-			delta := time.Duration(a.windowSize.Width)
-			first = utils.ToReference(first.Add(-time.Hour * delta))
-			last = utils.ToReference(last.Add(time.Hour * delta))
-
-			list, err := a.CandlesticksClient.Read(context.TODO(), client.ReadCandlesticksPayload{
-				Exchange: "binance",
-				Pair:     "ETH-USDT",
-				Period:   period.H1,
-				Start:    first,
-				End:      last,
-			})
-			if err != nil {
-				return
-			}
-			_ = a.candlesticks.UpsertData(list)
-			a.Program.Send(dataUpdate{})
-		}()
-	}
 }
 
 func (a *App) View() string {
@@ -131,11 +64,10 @@ func (a *App) View() string {
 	}
 
 	// Generate help view
-	helpView := a.help.View(keys)
+	helpView := a.help.View(newKeyMap(a.subview.Keys()))
 	helpViewHeight := strings.Count(helpView, "\n") + 1
 
-	a.canvas.SetHeight(a.windowSize.Height - helpViewHeight)
-	a.canvas.SetWidth(a.windowSize.Width)
+	subview := a.subview.View(0, helpViewHeight)
 
-	return a.canvas.View() + helpView
+	return subview + helpView
 }
