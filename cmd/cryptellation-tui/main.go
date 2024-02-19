@@ -31,8 +31,8 @@ func main() {
 }
 
 func (a *App) Init() tea.Cmd {
+	a.subview = &empty{}
 	a.subview = NewCandlesticksView(a.Program)
-	// a.subview = &empty{}
 	return tea.ClearScreen
 }
 

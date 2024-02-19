@@ -12,6 +12,7 @@ import (
 var (
 	modules = []string{
 		"cmd/cryptellation",
+		"cmd/cryptellation-tui",
 		"svc/backtests",
 		"svc/candlesticks",
 		"svc/exchanges",
@@ -21,7 +22,7 @@ var (
 )
 
 var rootCmd = &cobra.Command{
-	Use:   "cryptellation-tag",
+	Use:   "go run ./tools/tag <path:tag>...",
 	Short: "A simple CLI to tag the Cryptellation system",
 	Args:  cobra.RangeArgs(1, 100000),
 	RunE: func(cmd *cobra.Command, args []string) error {
