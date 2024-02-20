@@ -2,6 +2,7 @@ package domain
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	"github.com/lerenn/cryptellation/pkg/adapters/telemetry"
@@ -76,7 +77,7 @@ func getDownloadStartEndTimes(ranges []timeserie.TimeRange, p period.Symbol) (ti
 		end = end.Add(p.Duration() * difference / 2)
 	}
 
-	return start, end
+	return p.RoundInterval(&start, &end)
 }
 
 func (app Candlesticks) download(ctx context.Context, cl *candlestick.List, start, end time.Time, limit uint) error {
@@ -132,23 +133,26 @@ func (app Candlesticks) upsert(ctx context.Context, cl *candlestick.List) error 
 	csToInsert := candlestick.NewListFrom(cl)
 	csToUpdate := candlestick.NewListFrom(cl)
 	if err := cl.Loop(func(ts time.Time, cs candlestick.Candlestick) (bool, error) {
-		_, exists := rcl.Get(ts)
+		rcs, exists := rcl.Get(ts)
 		if !exists {
 			return false, csToInsert.Set(ts, cs)
-		} else {
+		} else if !rcs.Equal(cs) {
 			return false, csToUpdate.Set(ts, cs)
 		}
+		return false, nil
 	}); err != nil {
 		return err
 	}
 
+	var insertErr error
 	if csToInsert.Len() > 0 {
-		return app.db.CreateCandlesticks(ctx, csToInsert)
+		insertErr = app.db.CreateCandlesticks(ctx, csToInsert)
 	}
 
+	var updateErr error
 	if csToUpdate.Len() > 0 {
-		return app.db.UpdateCandlesticks(ctx, csToUpdate)
+		updateErr = app.db.UpdateCandlesticks(ctx, csToUpdate)
 	}
 
-	return nil
+	return errors.Join(insertErr, updateErr)
 }
