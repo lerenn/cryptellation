@@ -1,4 +1,4 @@
-package main
+package views
 
 import (
 	"strings"
@@ -7,21 +7,24 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 )
 
-type empty struct {
+type Empty struct {
 	windowSize tea.WindowSizeMsg
 }
 
-func (e empty) Keys() []key.Binding {
+func (e Empty) Keys() []key.Binding {
 	return []key.Binding{}
 }
 
-func (e *empty) Update(message tea.Msg) {
+func (e *Empty) Update(message tea.Msg) {
 	switch msg := message.(type) {
 	case tea.WindowSizeMsg:
 		e.windowSize = msg
 	}
 }
 
-func (e empty) View(_, yPad int) string {
+func (e Empty) View(_, yPad int) string {
+	if e.windowSize.Height < yPad {
+		return ""
+	}
 	return strings.Repeat("\n", e.windowSize.Height-yPad)
 }

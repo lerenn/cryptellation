@@ -1,4 +1,4 @@
-package main
+package views
 
 import (
 	"context"
@@ -16,6 +16,8 @@ import (
 	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/candlestick"
 	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/period"
 )
+
+type candlesticksDataUpdate struct{}
 
 type CandlesticksView struct {
 	client           candlesticksclient.Client
@@ -98,7 +100,7 @@ func (cv *CandlesticksView) updateMissingCandlesticks() {
 			_ = cv.chart.UpsertData(list)
 
 			// Send the main program an update
-			cv.program.Send(dataUpdate{})
+			cv.program.Send(candlesticksDataUpdate{})
 		}()
 	}
 }
