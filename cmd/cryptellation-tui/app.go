@@ -34,8 +34,20 @@ func (a *App) Update(message tea.Msg) (tea.Model, tea.Cmd) {
 		case "q", "quit":
 			return a, tea.Quit
 		case "c", "candlesticks":
-			a.subview = views.NewCandlesticksView(a.Program)
-			a.subview.Update(a.windowSize)
+			if len(msg.Arguments) == 0 {
+				a.cmdBar.AddError("Missing exchange name")
+			} else if len(msg.Arguments) == 1 {
+				a.cmdBar.AddError("Missing pair")
+			} else if len(msg.Arguments) == 2 {
+				a.cmdBar.AddError("Missing period")
+			} else {
+				a.subview = views.NewCandlesticksView(
+					a.Program,
+					msg.Arguments[0],
+					msg.Arguments[1],
+					msg.Arguments[2])
+				a.subview.Update(a.windowSize)
+			}
 		default:
 			a.cmdBar.AddError(fmt.Sprintf("Unknown command: %q", msg.Name))
 		}

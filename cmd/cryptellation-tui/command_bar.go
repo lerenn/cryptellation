@@ -8,7 +8,8 @@ import (
 )
 
 type Command struct {
-	Name string
+	Name      string
+	Arguments []string
 }
 
 type CommandBar struct {
@@ -37,9 +38,16 @@ func (cb *CommandBar) Update(msg tea.KeyMsg) {
 	if key.Matches(msg, escapeKey) {
 		cb.Disable()
 	} else if key.Matches(msg, enterKey) {
-		go cb.app.Program.Send(Command{
-			Name: cb.input,
-		})
+		elements := strings.Split(cb.input, " ")
+		cmd := Command{
+			Name: elements[0],
+		}
+
+		if len(elements) > 0 {
+			cmd.Arguments = elements[1:]
+		}
+
+		go cb.app.Program.Send(cmd)
 		cb.Disable()
 	} else if key.Matches(msg, backspaceKey) {
 		if len(cb.input) > 0 {

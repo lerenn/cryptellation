@@ -3,6 +3,7 @@ package views
 import (
 	"context"
 	"log"
+	"strings"
 	"time"
 
 	"github.com/charmbracelet/bubbles/key"
@@ -26,18 +27,30 @@ type CandlesticksView struct {
 	chart            *candlesticks.Chart
 	windowSize       tea.WindowSizeMsg
 
+	exchange string
+	pair     string
+	period   period.Symbol
+
 	program *tea.Program
 }
 
-func NewCandlesticksView(program *tea.Program) *CandlesticksView {
+func NewCandlesticksView(program *tea.Program, exchange, pair, periodSymbol string) *CandlesticksView {
 	candlesticksClient, err := candlesticksclient.NewClient(config.LoadNATS())
 	if err != nil {
 		log.Fatal(err)
 	}
 
+	per := period.Symbol(strings.ToUpper(periodSymbol))
+	if err := per.Validate(); err != nil {
+		log.Fatal(err)
+	}
+
 	cv := &CandlesticksView{
-		client:  candlesticksClient,
-		program: program,
+		client:   candlesticksClient,
+		program:  program,
+		exchange: strings.ToLower(exchange),
+		pair:     strings.ToUpper(pair),
+		period:   per,
 	}
 
 	cv.chart = candlesticks.NewChart(&candlestick.List{}, period.H1)
@@ -88,9 +101,9 @@ func (cv *CandlesticksView) updateMissingCandlesticks() {
 			last = utils.ToReference(last.Add(time.Hour * delta))
 
 			list, err := cv.client.Read(context.TODO(), client.ReadCandlesticksPayload{
-				Exchange: "binance",
-				Pair:     "ETH-USDT",
-				Period:   period.H1,
+				Exchange: cv.exchange,
+				Pair:     cv.pair,
+				Period:   cv.period,
 				Start:    first,
 				End:      last,
 			})
