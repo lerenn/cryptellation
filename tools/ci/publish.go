@@ -19,25 +19,33 @@ var (
 
 func dockerImagePublishers() map[string]func(ctx context.Context) error {
 	return map[string]func(ctx context.Context) error{
+		pathCmdCli: publish.PublishDockerImage(
+			backtestsCi.Runner(client),
+			pathCmdCli[1:],
+			"lerenn/cryptellation-cli"),
+		pathCmdTui: publish.PublishDockerImage(
+			backtestsCi.Runner(client),
+			pathCmdTui[1:],
+			"lerenn/cryptellation-tui"),
 		pathSvcBacktests: publish.PublishDockerImage(
 			backtestsCi.Runner(client),
-			pathSvcBacktests,
+			pathSvcBacktests[1:],
 			"lerenn/cryptellation-backtests"),
 		pathSvcCandlesticks: publish.PublishDockerImage(
 			candlesticksCi.Runner(client),
-			pathSvcCandlesticks,
+			pathSvcCandlesticks[1:],
 			"lerenn/cryptellation-candlesticks"),
 		pathSvcExchanges: publish.PublishDockerImage(
 			exchangesCi.Runner(client),
-			pathSvcExchanges,
+			pathSvcExchanges[1:],
 			"lerenn/cryptellation-exchanges"),
 		pathSvcIndicators: publish.PublishDockerImage(
 			indicatorsCi.Runner(client),
-			pathSvcIndicators,
+			pathSvcIndicators[1:],
 			"lerenn/cryptellation-indicators"),
 		pathSvcTicks: publish.PublishDockerImage(
 			ticksCi.Runner(client),
-			pathSvcTicks,
+			pathSvcTicks[1:],
 			"lerenn/cryptellation-ticks"),
 	}
 }

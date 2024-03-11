@@ -10,7 +10,7 @@ import (
 
 func PublishDockerImage(
 	container *dagger.Container,
-	modulePath, imageName string,
+	moduleName, imageName string,
 ) func(ctx context.Context) error {
 	return func(ctx context.Context) error {
 		// Publish with hash
@@ -30,7 +30,7 @@ func PublishDockerImage(
 		}
 
 		// Publish with version from git
-		ver, err := version.VersionFromGit(".", modulePath)
+		ver, err := version.VersionFromGit(".", moduleName)
 		if err != nil {
 			return err
 		}
@@ -39,7 +39,7 @@ func PublishDockerImage(
 		}
 
 		// Publish with full version
-		fullVersion, err := version.FullVersionFromGit(".", modulePath)
+		fullVersion, err := version.FullVersionFromGit(".", moduleName)
 		if err != nil {
 			return err
 		}

@@ -1,36 +1,27 @@
 package main
 
 var (
-	pathCmdCli = "cmd/cryptellation"
-	pathCmdTui = "cmd/cryptellation-tui"
+	pathCmdCli = "/cmd/cryptellation"
+	pathCmdTui = "/cmd/cryptellation-tui"
 
-	pathPkg = "pkg"
+	pathPkg = "/pkg"
 
-	pathSvcBacktests    = "svc/backtests"
-	pathSvcCandlesticks = "svc/candlesticks"
-	pathSvcExchanges    = "svc/exchanges"
-	pathSvcIndicators   = "svc/indicators"
-	pathSvcTicks        = "svc/ticks"
+	pathSvcBacktests    = "/svc/backtests"
+	pathSvcCandlesticks = "/svc/candlesticks"
+	pathSvcExchanges    = "/svc/exchanges"
+	pathSvcIndicators   = "/svc/indicators"
+	pathSvcTicks        = "/svc/ticks"
 
-	pathToolsCi = "tools/ci"
+	pathToolsCi = "/tools/ci"
 )
 
 var (
-	pathCmd = []string{
-		pathCmdCli,
-		pathCmdTui,
-	}
-
 	pathServices = []string{
 		pathSvcBacktests,
 		pathSvcCandlesticks,
 		pathSvcExchanges,
 		pathSvcIndicators,
 		pathSvcTicks,
-	}
-
-	pathTools = []string{
-		pathToolsCi,
 	}
 )
 
