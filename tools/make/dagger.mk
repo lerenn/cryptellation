@@ -1,5 +1,9 @@
 DAGGER_CMD        := dagger run go run ./tools/ci
 
+ifndef TAGS
+	TAGS=""
+endif
+
 .PHONY: ci
 ci: ## Execute all basic CI steps
 	@$(DAGGER_CMD)
@@ -13,8 +17,8 @@ lint: ## Lint code
 	@$(DAGGER_CMD) lint
 
 .PHONY: publish
-publish: ## Publish docker images publically
-	@$(DAGGER_CMD) publish
+publish: ## Publish new tag on git, docker hub, etc.
+	@$(DAGGER_CMD) publish --tags ${TAGS}
 
 .PHONY: test
 test: test/unit test/integration test/end-to-end ## Launch tests 

@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/lerenn/cryptellation/pkg/ci"
+	"github.com/lerenn/cryptellation/pkg/ci/publish"
 	backtestsCi "github.com/lerenn/cryptellation/svc/backtests/pkg/ci"
 	candlesticksCi "github.com/lerenn/cryptellation/svc/candlesticks/pkg/ci"
 	exchangesCi "github.com/lerenn/cryptellation/svc/exchanges/pkg/ci"
@@ -12,42 +13,56 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func publishers() map[string]func(ctx context.Context) error {
+var (
+	tagsFlag []string
+)
+
+func dockerImagePublishers() map[string]func(ctx context.Context) error {
 	return map[string]func(ctx context.Context) error{
-		"svc/backtests": ci.PublishDockerImage(
+		pathSvcBacktests: publish.PublishDockerImage(
 			backtestsCi.Runner(client),
-			"svc/backtests",
+			pathSvcBacktests,
 			"lerenn/cryptellation-backtests"),
-		"svc/candlesticks": ci.PublishDockerImage(
+		pathSvcCandlesticks: publish.PublishDockerImage(
 			candlesticksCi.Runner(client),
-			"svc/candlesticks",
+			pathSvcCandlesticks,
 			"lerenn/cryptellation-candlesticks"),
-		"svc/exchanges": ci.PublishDockerImage(
+		pathSvcExchanges: publish.PublishDockerImage(
 			exchangesCi.Runner(client),
-			"svc/exchanges",
+			pathSvcExchanges,
 			"lerenn/cryptellation-exchanges"),
-		"svc/indicators": ci.PublishDockerImage(
+		pathSvcIndicators: publish.PublishDockerImage(
 			indicatorsCi.Runner(client),
-			"svc/indicators",
+			pathSvcIndicators,
 			"lerenn/cryptellation-indicators"),
-		"svc/ticks": ci.PublishDockerImage(
+		pathSvcTicks: publish.PublishDockerImage(
 			ticksCi.Runner(client),
-			"svc/ticks",
+			pathSvcTicks,
 			"lerenn/cryptellation-ticks"),
 	}
 }
 
-func runPublishers(cmd *cobra.Command, args []string) {
-	ci.ExecuteInParallel(context.Background(), filterWithPath(publishers())...)
+func runPublishers(cmd *cobra.Command, args []string) error {
+	if err := publish.GitTagAndPush(pathModules, tagsFlag); err != nil {
+		return err
+	}
+
+	ci.ExecuteInParallel(context.Background(), filterWithPath(dockerImagePublishers())...)
+	return nil
 }
 
 var publishCmd = &cobra.Command{
 	Use:     "publish",
 	Aliases: []string{"p"},
 	Short:   "Execute publish step of the CI",
-	Run:     runPublishers,
+	RunE:    runPublishers,
 }
 
 func addPublishCmdTo(cmd *cobra.Command) {
+	publishCmd.Flags().StringArrayVarP(
+		&tagsFlag, "tags", "t", []string{},
+		"Tags used to tag services (with <path|bump> where "+
+			"'path' is the module path, 'empty' for codebase or '*' for all modules"+
+			"and 'bump' is 'major', 'minor' or 'fix')")
 	cmd.AddCommand(publishCmd)
 }

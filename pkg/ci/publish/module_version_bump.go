@@ -1,4 +1,4 @@
-package main
+package publish
 
 import (
 	"fmt"
@@ -26,7 +26,7 @@ func newModuleVersionBump(schema string) moduleVersionBump {
 	}
 }
 
-func (mvb moduleVersionBump) Validate() error {
+func (mvb moduleVersionBump) Validate(modules []string) error {
 	validModule := false
 
 	if mvb.Module == "" {

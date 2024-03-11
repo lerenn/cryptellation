@@ -12,5 +12,5 @@ use (
     ./svc/indicators
     ./svc/ticks
 
-    ./tools
+    ./tools/ci
 )

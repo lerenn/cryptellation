@@ -20,34 +20,35 @@ var (
 
 func unitTests() map[string]*dagger.Container {
 	return map[string]*dagger.Container{
-		"cmd/cryptellation":     ci.UnitTests(client, "/cmd/cryptellation"),
-		"cmd/cryptellation-tui": ci.UnitTests(client, "/cmd/cryptellation-tui"),
-		"pkg":                   ci.UnitTests(client, "/pkg"),
-		"svc/backtests":         backtestsCi.UnitTests(client),
-		"svc/candlesticks":      candlesticksCi.UnitTests(client),
-		"svc/exchanges":         exchangesCi.UnitTests(client),
-		"svc/indicators":        indicatorsCi.UnitTests(client),
-		"svc/ticks":             ticksCi.UnitTests(client),
+		pathCmdCli:          ci.UnitTests(client, pathCmdCli),
+		pathCmdTui:          ci.UnitTests(client, pathCmdTui),
+		pathPkg:             ci.UnitTests(client, pathPkg),
+		pathSvcBacktests:    backtestsCi.UnitTests(client),
+		pathSvcCandlesticks: candlesticksCi.UnitTests(client),
+		pathSvcExchanges:    exchangesCi.UnitTests(client),
+		pathSvcIndicators:   indicatorsCi.UnitTests(client),
+		pathSvcTicks:        ticksCi.UnitTests(client),
+		pathToolsCi:         ci.UnitTests(client, pathToolsCi),
 	}
 }
 
 func integrationTests() map[string]*dagger.Container {
 	return map[string]*dagger.Container{
-		"svc/backtests":    backtestsCi.IntegrationTests(client),
-		"svc/candlesticks": candlesticksCi.IntegrationTests(client),
-		"svc/exchanges":    exchangesCi.IntegrationTests(client),
-		"svc/indicators":   indicatorsCi.IntegrationTests(client),
-		"svc/ticks":        ticksCi.IntegrationTests(client),
+		pathSvcBacktests:    backtestsCi.IntegrationTests(client),
+		pathSvcCandlesticks: candlesticksCi.IntegrationTests(client),
+		pathSvcExchanges:    exchangesCi.IntegrationTests(client),
+		pathSvcIndicators:   indicatorsCi.IntegrationTests(client),
+		pathSvcTicks:        ticksCi.IntegrationTests(client),
 	}
 }
 
 func endToEndTests() map[string]*dagger.Container {
 	return map[string]*dagger.Container{
-		"svc/backtests":    backtestsCi.EndToEndTests(client),
-		"svc/candlesticks": candlesticksCi.EndToEndTests(client),
-		"svc/exchanges":    exchangesCi.EndToEndTests(client),
-		"svc/indicators":   indicatorsCi.EndToEndTests(client),
-		"svc/ticks":        ticksCi.EndToEndTests(client),
+		pathSvcBacktests:    backtestsCi.EndToEndTests(client),
+		pathSvcCandlesticks: candlesticksCi.EndToEndTests(client),
+		pathSvcExchanges:    exchangesCi.EndToEndTests(client),
+		pathSvcIndicators:   indicatorsCi.EndToEndTests(client),
+		pathSvcTicks:        ticksCi.EndToEndTests(client),
 	}
 }
 

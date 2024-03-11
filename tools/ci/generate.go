@@ -8,13 +8,11 @@ import (
 )
 
 func generators() map[string]func(context.Context) error {
-	return map[string]func(context.Context) error{
-		"svc/backtests":    ci.Generator(client, "svc/backtests"),
-		"svc/candlesticks": ci.Generator(client, "svc/candlesticks"),
-		"svc/exchanges":    ci.Generator(client, "svc/exchanges"),
-		"svc/indicators":   ci.Generator(client, "svc/indicators"),
-		"svc/ticks":        ci.Generator(client, "svc/ticks"),
+	m := make(map[string]func(context.Context) error)
+	for _, path := range pathServices {
+		m[path] = ci.Generator(client, path)
 	}
+	return m
 }
 
 func runGenerators(cmd *cobra.Command, args []string) {

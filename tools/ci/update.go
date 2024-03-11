@@ -8,18 +8,11 @@ import (
 )
 
 func updators() map[string]func(context.Context) error {
-	return map[string]func(context.Context) error{
-		"cmd/cryptellation":     ci.UpdateGoMod(client, "cmd/cryptellation"),
-		"cmd/cryptellation-tui": ci.UpdateGoMod(client, "cmd/cryptellation-tui"),
-		"pkg":                   ci.UpdateGoMod(client, "pkg"),
-		"svc/backtests":         ci.UpdateGoMod(client, "svc/backtests"),
-		"svc/candlesticks":      ci.UpdateGoMod(client, "svc/candlesticks"),
-		"svc/exchanges":         ci.UpdateGoMod(client, "svc/exchanges"),
-		"svc/indicators":        ci.UpdateGoMod(client, "svc/indicators"),
-		"svc/ticks":             ci.UpdateGoMod(client, "svc/ticks"),
-		"tools/ci":              ci.UpdateGoMod(client, "tools/ci"),
-		"tools/tag":             ci.UpdateGoMod(client, "tools/tag"),
+	m := make(map[string]func(context.Context) error)
+	for _, path := range pathModules {
+		m[path] = ci.UpdateGoMod(client, path)
 	}
+	return m
 }
 
 func runUpdators(cmd *cobra.Command, args []string) {
