@@ -51,7 +51,8 @@ func dockerImagePublishers() map[string]func(ctx context.Context) error {
 }
 
 func runPublishers(cmd *cobra.Command, args []string) error {
-	if err := publish.GitTagAndPush(pathModules, tagsFlag); err != nil {
+	modules := removeLeadingSlash(pathModules)
+	if err := publish.GitTagAndPush(modules, tagsFlag); err != nil {
 		return err
 	}
 
