@@ -53,9 +53,9 @@ func NewCandlesticksView(program *tea.Program, exchange, pair, periodSymbol stri
 		period:   per,
 	}
 
-	cv.chart = candlesticks.NewChart(&candlestick.List{}, period.H1)
+	cv.chart = candlesticks.NewChart(&candlestick.List{}, per)
 
-	cv.canvas = charts.NewCanvas(utils.Must(time.Parse(time.RFC3339, "2022-12-01T01:00:00Z")), time.Hour)
+	cv.canvas = charts.NewCanvas(utils.Must(time.Parse(time.RFC3339, "2024-01-01T01:00:00Z")), per.Duration())
 	cv.canvas.AddChart(cv.chart)
 
 	return cv
@@ -97,8 +97,8 @@ func (cv *CandlesticksView) updateMissingCandlesticks() {
 			defer func() { cv.updateInProgress = false }()
 
 			delta := time.Duration(cv.windowSize.Width)
-			first = utils.ToReference(first.Add(-time.Hour * delta))
-			last = utils.ToReference(last.Add(time.Hour * delta))
+			first = utils.ToReference(first.Add(-cv.period.Duration() * delta))
+			last = utils.ToReference(last.Add(cv.period.Duration() * delta))
 
 			list, err := cv.client.Read(context.TODO(), client.ReadCandlesticksPayload{
 				Exchange: cv.exchange,
@@ -110,7 +110,10 @@ func (cv *CandlesticksView) updateMissingCandlesticks() {
 			if err != nil {
 				return
 			}
-			_ = cv.chart.UpsertData(list)
+
+			if err := cv.chart.UpsertData(list); err != nil {
+				log.Fatal(err)
+			}
 
 			// Send the main program an update
 			cv.program.Send(candlesticksDataUpdate{})

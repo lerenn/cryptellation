@@ -17,7 +17,7 @@ type App struct {
 }
 
 func (a *App) Init() tea.Cmd {
-	a.subview = &views.Empty{}
+	a.subview = &views.Help{}
 	return tea.ClearScreen
 }
 
