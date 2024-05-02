@@ -42,10 +42,10 @@ var candlesticksReadCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		list, err := candlesticksClient.Read(context.Background(), client.ReadCandlesticksPayload{
 			Exchange: "binance",
-			Pair:         "ETH-USDT",
-			Period:       period.H1,
-			Start:        utils.ToReference(time.Now().AddDate(0, 0, -8)),
-			End:          utils.ToReference(time.Now().AddDate(0, 0, -1)),
+			Pair:     "ETH-USDT",
+			Period:   period.H1,
+			Start:    utils.ToReference(time.Now().AddDate(0, 0, -8)),
+			End:      utils.ToReference(time.Now().AddDate(0, 0, -1)),
 		})
 		if err != nil {
 			return err
@@ -67,13 +67,7 @@ var candlesticksInfoCmd = &cobra.Command{
 	Aliases: []string{"info"},
 	Short:   "Read info from candlesticks service",
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		info, err := candlesticksClient.ServiceInfo(context.TODO())
-		if err != nil {
-			return err
-		}
-
-		fmt.Printf("%+v\n", info)
-		return nil
+		return displayServiceInfo(candlesticksClient)
 	},
 }
 

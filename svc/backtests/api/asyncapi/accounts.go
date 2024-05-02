@@ -2,11 +2,11 @@ package asyncapi
 
 import "github.com/lerenn/cryptellation/svc/backtests/pkg/account"
 
-func (msg *ListBacktestAccountsRequestMessage) Set(backtestID uint) {
+func (msg *AccountsListRequestMessage) Set(backtestID uint) {
 	msg.Payload.Id = BacktestIDSchema(backtestID)
 }
 
-func (msg *ListBacktestAccountsResponseMessage) Set(accounts map[string]account.Account) {
+func (msg *AccountsListResponseMessage) Set(accounts map[string]account.Account) {
 	// Format accounts
 	respAccounts := make([]AccountSchema, 0, len(accounts))
 	for name, acc := range accounts {
@@ -17,7 +17,7 @@ func (msg *ListBacktestAccountsResponseMessage) Set(accounts map[string]account.
 	msg.Payload.Accounts = respAccounts
 }
 
-func (msg *ListBacktestAccountsResponseMessage) ToModel() map[string]account.Account {
+func (msg *AccountsListResponseMessage) ToModel() map[string]account.Account {
 	accounts := make(map[string]account.Account)
 	for _, accAPI := range msg.Payload.Accounts {
 		name, accModel := accountModelFromAPI(accAPI)

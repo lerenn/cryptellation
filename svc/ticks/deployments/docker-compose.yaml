@@ -1,5 +1,3 @@
-version: "3.5"
-
 services:
   ticks-sql:
     image: postgres:15.3

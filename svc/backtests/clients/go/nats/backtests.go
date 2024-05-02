@@ -7,6 +7,7 @@ import (
 
 	"github.com/lerenn/asyncapi-codegen/pkg/extensions"
 	"github.com/lerenn/asyncapi-codegen/pkg/extensions/brokers/nats"
+	helpers "github.com/lerenn/cryptellation/pkg/asyncapi"
 	clientPkg "github.com/lerenn/cryptellation/pkg/client"
 	"github.com/lerenn/cryptellation/pkg/config"
 	asyncapi "github.com/lerenn/cryptellation/svc/backtests/api/asyncapi"
@@ -68,7 +69,7 @@ func (b Client) ListenEvents(ctx context.Context, backtestID uint) (<-chan event
 	ch := make(chan event.Event, 256)
 
 	// Create callback when a tick appears
-	callback := func(ctx context.Context, msg asyncapi.BacktestsEventMessage) {
+	callback := func(ctx context.Context, msg asyncapi.EventMessage) error {
 		// Generate event
 		e := event.Event{
 			Time: time.Time(msg.Payload.Time),
@@ -89,8 +90,9 @@ func (b Client) ListenEvents(ctx context.Context, backtestID uint) (<-chan event
 				Price:    msg.Payload.Content.Price,
 			}
 		default:
-			b.logger.Error(ctx, fmt.Sprintf("received unknown event type: %s", msg.Payload.Type))
-			return
+			err := fmt.Errorf("received unknown event type: %s", msg.Payload.Type)
+			b.logger.Error(ctx, err.Error())
+			return err
 		}
 
 		// Try to send tick or drop it
@@ -99,23 +101,24 @@ func (b Client) ListenEvents(ctx context.Context, backtestID uint) (<-chan event
 		default:
 			// Drop if it's full or closed
 		}
+
+		return nil
 	}
 
 	// Listen to channel
-	return ch, b.ctrl.SubscribeBacktestEvent(ctx, asyncapi.CryptellationBacktestsEventsParameters{
-		Id: int64(backtestID),
+	return ch, b.ctrl.SubscribeToEventOperation(ctx, asyncapi.EventsChannelParameters{
+		Id: fmt.Sprintf("%d", backtestID),
 	}, callback)
 }
 
 func (b Client) Create(ctx context.Context, payload client.BacktestCreationPayload) (uint, error) {
 	// Set message
-	reqMsg := asyncapi.NewCreateBacktestRequestMessage()
+	reqMsg := asyncapi.NewCreateRequestMessage()
+	reqMsg.Headers.ReplyTo = helpers.AddReplyToSuffix(asyncapi.CreateRequestChannelPath)
 	reqMsg.Set(payload)
 
 	// Send request
-	respMsg, err := b.ctrl.WaitForCreateBacktestResponse(ctx, &reqMsg, func(ctx context.Context) error {
-		return b.ctrl.PublishCreateBacktestRequest(ctx, reqMsg)
-	})
+	respMsg, err := b.ctrl.RequestToCreateOperation(ctx, reqMsg)
 	if err != nil {
 		return 0, err
 	}
@@ -130,13 +133,12 @@ func (b Client) Create(ctx context.Context, payload client.BacktestCreationPaylo
 
 func (b Client) Subscribe(ctx context.Context, backtestID uint, exchange, pair string) error {
 	// Set message
-	reqMsg := asyncapi.NewSubscribeBacktestRequestMessage()
+	reqMsg := asyncapi.NewSubscribeRequestMessage()
+	reqMsg.Headers.ReplyTo = helpers.AddReplyToSuffix(asyncapi.SubscribeRequestChannelPath)
 	reqMsg.Set(backtestID, exchange, pair)
 
 	// Send request
-	respMsg, err := b.ctrl.WaitForSubscribeBacktestResponse(ctx, &reqMsg, func(ctx context.Context) error {
-		return b.ctrl.PublishSubscribeBacktestRequest(ctx, reqMsg)
-	})
+	respMsg, err := b.ctrl.RequestToSubscribeOperation(ctx, reqMsg)
 	if err != nil {
 		return err
 	}
@@ -151,13 +153,12 @@ func (b Client) Subscribe(ctx context.Context, backtestID uint, exchange, pair s
 
 func (b Client) Advance(ctx context.Context, backtestID uint) error {
 	// Set message
-	reqMsg := asyncapi.NewAdvanceBacktestRequestMessage()
+	reqMsg := asyncapi.NewAdvanceRequestMessage()
+	reqMsg.Headers.ReplyTo = helpers.AddReplyToSuffix(asyncapi.AdvanceRequestChannelPath)
 	reqMsg.Set(backtestID)
 
 	// Send request
-	respMsg, err := b.ctrl.WaitForAdvanceBacktestResponse(ctx, &reqMsg, func(ctx context.Context) error {
-		return b.ctrl.PublishAdvanceBacktestRequest(ctx, reqMsg)
-	})
+	respMsg, err := b.ctrl.RequestToAdvanceOperation(ctx, reqMsg)
 	if err != nil {
 		return err
 	}
@@ -172,13 +173,12 @@ func (b Client) Advance(ctx context.Context, backtestID uint) error {
 
 func (b Client) CreateOrder(ctx context.Context, payload client.OrderCreationPayload) error {
 	// Set message
-	reqMsg := asyncapi.NewCreateBacktestOrderRequestMessage()
+	reqMsg := asyncapi.NewOrdersCreateRequestMessage()
+	reqMsg.Headers.ReplyTo = helpers.AddReplyToSuffix(asyncapi.OrdersCreateRequestChannelPath)
 	reqMsg.Set(payload)
 
 	// Send request
-	respMsg, err := b.ctrl.WaitForCreateBacktestOrderResponse(ctx, &reqMsg, func(ctx context.Context) error {
-		return b.ctrl.PublishCreateBacktestOrderRequest(ctx, reqMsg)
-	})
+	respMsg, err := b.ctrl.RequestToOrdersCreateOperation(ctx, reqMsg)
 	if err != nil {
 		return err
 	}
@@ -193,13 +193,12 @@ func (b Client) CreateOrder(ctx context.Context, payload client.OrderCreationPay
 
 func (b Client) GetAccounts(ctx context.Context, backtestID uint) (map[string]account.Account, error) {
 	// Set message
-	reqMsg := asyncapi.NewListBacktestAccountsRequestMessage()
+	reqMsg := asyncapi.NewAccountsListRequestMessage()
+	reqMsg.Headers.ReplyTo = helpers.AddReplyToSuffix(asyncapi.AccountsListRequestChannelPath)
 	reqMsg.Set(backtestID)
 
 	// Send request
-	respMsg, err := b.ctrl.WaitForListBacktestAccountsResponse(ctx, &reqMsg, func(ctx context.Context) error {
-		return b.ctrl.PublishListBacktestAccountsRequest(ctx, reqMsg)
-	})
+	respMsg, err := b.ctrl.RequestToAccountsListOperation(ctx, reqMsg)
 	if err != nil {
 		return nil, err
 	}
@@ -215,11 +214,10 @@ func (b Client) GetAccounts(ctx context.Context, backtestID uint) (map[string]ac
 func (b Client) ServiceInfo(ctx context.Context) (clientPkg.ServiceInfo, error) {
 	// Set message
 	reqMsg := asyncapi.NewServiceInfoRequestMessage()
+	reqMsg.Headers.ReplyTo = helpers.AddReplyToSuffix(asyncapi.ServiceInfoRequestChannelPath)
 
 	// Send request
-	respMsg, err := b.ctrl.WaitForServiceInfoResponse(ctx, &reqMsg, func(ctx context.Context) error {
-		return b.ctrl.PublishServiceInfoRequest(ctx, reqMsg)
-	})
+	respMsg, err := b.ctrl.RequestToServiceInfoOperation(ctx, reqMsg)
 	if err != nil {
 		return clientPkg.ServiceInfo{}, err
 	}

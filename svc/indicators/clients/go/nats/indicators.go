@@ -6,6 +6,7 @@ import (
 
 	"github.com/lerenn/asyncapi-codegen/pkg/extensions"
 	"github.com/lerenn/asyncapi-codegen/pkg/extensions/brokers/nats"
+	helpers "github.com/lerenn/cryptellation/pkg/asyncapi"
 	clientPkg "github.com/lerenn/cryptellation/pkg/client"
 	"github.com/lerenn/cryptellation/pkg/config"
 	"github.com/lerenn/cryptellation/pkg/timeserie"
@@ -62,13 +63,12 @@ func WithIndicatorsLogger(logger extensions.Logger) IndicatorsOption {
 
 func (ids Client) SMA(ctx context.Context, payload client.SMAPayload) (*timeserie.TimeSerie[float64], error) {
 	// Set message
-	reqMsg := asyncapi.NewGetSMARequestMessage()
+	reqMsg := asyncapi.NewSMARequestMessage()
+	reqMsg.Headers.ReplyTo = helpers.AddReplyToSuffix(asyncapi.SMARequestChannelPath)
 	reqMsg.Set(payload)
 
 	// Send request
-	respMsg, err := ids.ctrl.WaitForGetSMAResponse(ctx, &reqMsg, func(ctx context.Context) error {
-		return ids.ctrl.PublishGetSMARequest(ctx, reqMsg)
-	})
+	respMsg, err := ids.ctrl.RequestToSMAOperation(ctx, reqMsg)
 	if err != nil {
 		return nil, err
 	}
@@ -85,11 +85,10 @@ func (ids Client) SMA(ctx context.Context, payload client.SMAPayload) (*timeseri
 func (ids Client) ServiceInfo(ctx context.Context) (clientPkg.ServiceInfo, error) {
 	// Set message
 	reqMsg := asyncapi.NewServiceInfoRequestMessage()
+	reqMsg.Headers.ReplyTo = helpers.AddReplyToSuffix(asyncapi.ServiceInfoRequestChannelPath)
 
 	// Send request
-	respMsg, err := ids.ctrl.WaitForServiceInfoResponse(ctx, &reqMsg, func(ctx context.Context) error {
-		return ids.ctrl.PublishServiceInfoRequest(ctx, reqMsg)
-	})
+	respMsg, err := ids.ctrl.RequestToServiceInfoOperation(ctx, reqMsg)
 	if err != nil {
 		return clientPkg.ServiceInfo{}, err
 	}

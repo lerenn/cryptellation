@@ -6,6 +6,7 @@ import (
 
 	"github.com/lerenn/asyncapi-codegen/pkg/extensions"
 	"github.com/lerenn/asyncapi-codegen/pkg/extensions/brokers/nats"
+	helpers "github.com/lerenn/cryptellation/pkg/asyncapi"
 	clientPkg "github.com/lerenn/cryptellation/pkg/client"
 	"github.com/lerenn/cryptellation/pkg/config"
 	asyncapi "github.com/lerenn/cryptellation/svc/candlesticks/api/asyncapi"
@@ -62,13 +63,12 @@ func WithLogger(logger extensions.Logger) ClientOption {
 
 func (c Client) Read(ctx context.Context, payload client.ReadCandlesticksPayload) (*candlestick.List, error) {
 	// Set message
-	reqMsg := asyncapi.NewListCandlesticksRequestMessage()
+	reqMsg := asyncapi.NewListRequestMessage()
+	reqMsg.Headers.ReplyTo = helpers.AddReplyToSuffix(asyncapi.ListRequestChannelPath)
 	reqMsg.Set(payload)
 
 	// Send request
-	respMsg, err := c.ctrl.WaitForListCandlesticksResponse(ctx, &reqMsg, func(ctx context.Context) error {
-		return c.ctrl.PublishListCandlesticksRequest(ctx, reqMsg)
-	})
+	respMsg, err := c.ctrl.RequestToListOperation(ctx, reqMsg)
 	if err != nil {
 		return nil, err
 	}
@@ -85,11 +85,10 @@ func (c Client) Read(ctx context.Context, payload client.ReadCandlesticksPayload
 func (c Client) ServiceInfo(ctx context.Context) (clientPkg.ServiceInfo, error) {
 	// Set message
 	reqMsg := asyncapi.NewServiceInfoRequestMessage()
+	reqMsg.Headers.ReplyTo = helpers.AddReplyToSuffix(asyncapi.ServiceInfoRequestChannelPath)
 
 	// Send request
-	respMsg, err := c.ctrl.WaitForServiceInfoResponse(ctx, &reqMsg, func(ctx context.Context) error {
-		return c.ctrl.PublishServiceInfoRequest(ctx, reqMsg)
-	})
+	respMsg, err := c.ctrl.RequestToServiceInfoOperation(ctx, reqMsg)
 	if err != nil {
 		return clientPkg.ServiceInfo{}, err
 	}

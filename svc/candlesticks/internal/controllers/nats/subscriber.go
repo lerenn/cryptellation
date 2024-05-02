@@ -21,49 +21,42 @@ func newCandlesticksSubscriber(controller *asyncapi.AppController, app app.Candl
 	}
 }
 
-func (s candlesticksSubscriber) ListCandlesticksRequest(ctx context.Context, msg asyncapi.ListCandlesticksRequestMessage) {
-	// Prepare response and set send at the end
-	resp := asyncapi.NewListCandlesticksResponseMessage()
-	resp.SetAsResponseFrom(&msg)
-	defer func() { _ = s.controller.PublishListCandlesticksResponse(ctx, resp) }()
-
-	// Set list payload
-	payload, err := msg.ToModel()
-	if err != nil {
-		resp.Payload.Error = &asyncapi.ErrorSchema{
-			Code:    http.StatusBadRequest,
-			Message: err.Error(),
+func (s candlesticksSubscriber) ListOperationReceived(ctx context.Context, msg asyncapi.ListRequestMessage) error {
+	return s.controller.ReplyToListOperation(ctx, msg, func(replyMsg *asyncapi.ListResponseMessage) {
+		// Set list payload
+		payload, err := msg.ToModel()
+		if err != nil {
+			replyMsg.Payload.Error = &asyncapi.ErrorSchema{
+				Code:    http.StatusBadRequest,
+				Message: err.Error(),
+			}
+			return
 		}
-		return
-	}
 
-	// Request list
-	list, err := s.candlesticks.GetCached(context.Background(), payload)
-	if err != nil {
-		resp.Payload.Error = &asyncapi.ErrorSchema{
-			Code:    http.StatusInternalServerError,
-			Message: err.Error(),
+		// Request list
+		list, err := s.candlesticks.GetCached(context.Background(), payload)
+		if err != nil {
+			replyMsg.Payload.Error = &asyncapi.ErrorSchema{
+				Code:    http.StatusInternalServerError,
+				Message: err.Error(),
+			}
+			return
 		}
-		return
-	}
 
-	// Add list to response
-	if err := resp.Set(list); err != nil {
-		resp.Payload.Error = &asyncapi.ErrorSchema{
-			Code:    http.StatusInternalServerError,
-			Message: err.Error(),
+		// Add list to response
+		if err := replyMsg.Set(list); err != nil {
+			replyMsg.Payload.Error = &asyncapi.ErrorSchema{
+				Code:    http.StatusInternalServerError,
+				Message: err.Error(),
+			}
+			return
 		}
-		return
-	}
+	})
 }
 
-func (s candlesticksSubscriber) ServiceInfoRequest(ctx context.Context, msg asyncapi.ServiceInfoRequestMessage) {
-	// Prepare response and set send at the end
-	resp := asyncapi.NewServiceInfoResponseMessage()
-	resp.SetAsResponseFrom(&msg)
-	defer func() { _ = s.controller.PublishServiceInfoResponse(ctx, resp) }()
-
-	// Set info
-	resp.Payload.ApiVersion = asyncapi.AsyncAPIVersion
-	resp.Payload.BinVersion = version.Version()
+func (s candlesticksSubscriber) ServiceInfoOperationReceived(ctx context.Context, msg asyncapi.ServiceInfoRequestMessage) error {
+	return s.controller.ReplyToServiceInfoOperation(ctx, msg, func(replyMsg *asyncapi.ServiceInfoResponseMessage) {
+		replyMsg.Payload.ApiVersion = asyncapi.AsyncAPIVersion
+		replyMsg.Payload.BinVersion = version.Version()
+	})
 }

@@ -1,55 +1,78 @@
-asyncapi: 2.5.0
+asyncapi: 3.0.0
 info:
   title: Cryptellation Indicators Service
   version: 1.0.0
   description: >
     This service is serving indicators history through a caching system that is
     proxying exchanges API.
-channels:
-  cryptellation.indicators.sma.request:
-    publish:
-      operationId: GetSMARequest
-      description: Request a simple moving average timeserie
-      tags:
-        - name: candlestick sma
-      message:
-        $ref: '#/components/messages/GetSMARequest'
 
-  cryptellation.indicators.sma.response:
-    subscribe:
-      operationId: GetSMAResponse
-      description: Response to a simple moving average timeserie request
-      tags:
-        - name: candlestick sma
-      message:
-        $ref: '#/components/messages/GetSMAResponse'
+channels: 
+  SMARequest:
+    address: cryptellation.indicators.sma
+    messages:
+      SMARequest:
+        $ref: "#/components/messages/SMARequest"
+  SMAResponse:
+    messages:
+      ListResponse:
+        $ref: "#/components/messages/SMAResponse"
 
-  cryptellation.indicators.service.info.request:
-    publish:
-      operationId: ServiceInfoRequest
-      description: Request information about the service
-      tags:
-        - name: info request
-      message:
-        $ref: '#/components/messages/ServiceInfoRequest'
-  cryptellation.indicators.service.info.response:
-    subscribe:
-      operationId: ServiceInfoResponse
-      description: Receive information about the service
-      tags:
-        - name: info response
-      message:
-        $ref: '#/components/messages/ServiceInfoResponse'
+  ServiceInfoRequest:
+    address: cryptellation.indicators.info
+    messages:
+      ServiceInfoRequest:
+        $ref: "#/components/messages/ServiceInfoRequest"
+  ServiceInfoResponse:
+    messages:
+      ServiceInfoResponse:
+        $ref: "#/components/messages/ServiceInfoResponse"
+
+operations:
+  SMA:
+    action: receive
+    channel: 
+      $ref: "#/channels/SMARequest"
+    reply:
+      address:
+        location: "$message.header#/replyTo"
+      channel:
+        $ref: '#/channels/SMAResponse'
+
+  ServiceInfo:
+    action: receive
+    channel: 
+      $ref: "#/channels/ServiceInfoRequest"
+    reply:
+      address:
+        location: "$message.header#/replyTo"
+      channel:
+        $ref: '#/channels/ServiceInfoResponse'
+
 
 components:
-  messages:
-    GetSMARequest:
+  messageTraits:
+    withReplyTo:
+      headers:
+        type: object
+        required:
+          - replyTo
+        properties:
+          replyTo:
+            description: Channel used to respond to request
+            type: string
+    withCorrelationID:
       headers:
         type: object
         properties:
           correlationId:
             description: Correlation ID set by client
             type: string
+      correlationId:
+        description: Default Correlation ID
+        location: $message.header#/correlationId
+
+  messages:
+    SMARequest:
       payload:
         type: object
         description: Candlestick SMA request with filters and time boundaries
@@ -84,16 +107,10 @@ components:
           limit:
             $ref: '#/components/schemas/Limit'
             description: The maximum candlesticks to retrieve (0 = unlimited)
-      correlationId:
-        description: Default Correlation ID
-        location: $message.header#/correlationId
-    GetSMAResponse:
-      headers:
-        type: object
-        properties:
-          correlationId:
-            description: Correlation ID set by client on corresponding request
-            type: string
+      traits:
+        - $ref: "#/components/messageTraits/withReplyTo"
+        - $ref: "#/components/messageTraits/withCorrelationID"
+    SMAResponse:
       payload:
         type: object
         oneOf:
@@ -103,30 +120,16 @@ components:
         - properties:
             error:
               $ref: '#/components/schemas/Error'
-      correlationId:
-        description: Default Correlation ID
-        location: $message.header#/correlationId
+      traits:
+        - $ref: "#/components/messageTraits/withCorrelationID"
 
-    # ServiceInfo
     ServiceInfoRequest:
-      headers:
-        type: object
-        properties:
-          correlationId:
-            description: Correlation ID set by client
-            type: string
       payload:
         type: object
-      correlationId:
-        description: Default Correlation ID
-        location: $message.header#/correlationId
+      traits:
+        - $ref: "#/components/messageTraits/withReplyTo"
+        - $ref: "#/components/messageTraits/withCorrelationID"
     ServiceInfoResponse:
-      headers:
-        type: object
-        properties:
-          correlationId:
-            description: Correlation ID set by client
-            type: string
       payload:
         type: object
         required:
@@ -141,9 +144,8 @@ components:
             description: Version of the binary
             type: string
             example: 1.0.0
-      correlationId:
-        description: Default Correlation ID
-        location: $message.header#/correlationId
+      traits:
+        - $ref: "#/components/messageTraits/withCorrelationID"
 
   schemas:
     Exchange:
@@ -232,5 +234,3 @@ components:
       type: integer
       format: int32
       description: Number of periods used
-
-

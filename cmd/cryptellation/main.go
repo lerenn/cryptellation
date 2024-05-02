@@ -33,8 +33,10 @@ var CryptellationCmd = &cobra.Command{
 }
 
 func init() {
+	initBacktests(CryptellationCmd)
 	initCandlesticks(CryptellationCmd)
 	initExchanges(CryptellationCmd)
+	initIndicators(CryptellationCmd)
 	initTicks(CryptellationCmd)
 }
 

@@ -1,5 +1,3 @@
-version: "3.5"
-
 services:
   candlesticks-sql:
     image: postgres:15.3

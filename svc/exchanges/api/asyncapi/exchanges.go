@@ -1,20 +1,20 @@
 // Exchanges
-//go:generate go run github.com/lerenn/asyncapi-codegen/cmd/asyncapi-codegen@v0.30.2 -g application -p asyncapi -i ./../asyncapi.yaml -o ./app.gen.go
-//go:generate go run github.com/lerenn/asyncapi-codegen/cmd/asyncapi-codegen@v0.30.2 -g user        -p asyncapi -i ./../asyncapi.yaml -o ./user.gen.go
-//go:generate go run github.com/lerenn/asyncapi-codegen/cmd/asyncapi-codegen@v0.30.2 -g types       -p asyncapi -i ./../asyncapi.yaml -o ./types.gen.go
+//go:generate go run github.com/lerenn/asyncapi-codegen/cmd/asyncapi-codegen@v0.39.0 -g application -p asyncapi -i ./../asyncapi.yaml -o ./app.gen.go
+//go:generate go run github.com/lerenn/asyncapi-codegen/cmd/asyncapi-codegen@v0.39.0 -g user        -p asyncapi -i ./../asyncapi.yaml -o ./user.gen.go
+//go:generate go run github.com/lerenn/asyncapi-codegen/cmd/asyncapi-codegen@v0.39.0 -g types       -p asyncapi -i ./../asyncapi.yaml -o ./types.gen.go
 
 package asyncapi
 
 import "github.com/lerenn/cryptellation/svc/exchanges/pkg/exchange"
 
-func (msg *ListExchangesRequestMessage) Set(names ...string) {
+func (msg *ListRequestMessage) Set(names ...string) {
 	msg.Payload = make([]ExchangeNameSchema, 0, len(names))
 	for _, name := range names {
 		msg.Payload = append(msg.Payload, ExchangeNameSchema(name))
 	}
 }
 
-func (msg *ListExchangesRequestMessage) ToModel() []string {
+func (msg *ListRequestMessage) ToModel() []string {
 	exchangesNames := make([]string, len(msg.Payload))
 	for i, e := range msg.Payload {
 		exchangesNames[i] = string(e)
@@ -22,7 +22,7 @@ func (msg *ListExchangesRequestMessage) ToModel() []string {
 	return exchangesNames
 }
 
-func (msg *ListExchangesResponseMessage) Set(exchanges []exchange.Exchange) {
+func (msg *ListResponseMessage) Set(exchanges []exchange.Exchange) {
 	msg.Payload.Exchanges = make([]ExchangeSchema, len(exchanges))
 	for i, exch := range exchanges {
 		// Periods
@@ -48,7 +48,7 @@ func (msg *ListExchangesResponseMessage) Set(exchanges []exchange.Exchange) {
 	}
 }
 
-func (msg *ListExchangesResponseMessage) ToModel() []exchange.Exchange {
+func (msg *ListResponseMessage) ToModel() []exchange.Exchange {
 	exchanges := make([]exchange.Exchange, len(msg.Payload.Exchanges))
 	for i, exch := range msg.Payload.Exchanges {
 		// Periods

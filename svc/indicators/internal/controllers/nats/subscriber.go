@@ -2,7 +2,6 @@ package nats
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 
 	"github.com/lerenn/cryptellation/pkg/version"
@@ -22,44 +21,36 @@ func newSubscriber(controller *asyncapi.AppController, app app.Indicators) subsc
 	}
 }
 
-func (s subscriber) GetSMARequest(ctx context.Context, msg asyncapi.GetSMARequestMessage) {
-	// Prepare response and set send at the end
-	resp := asyncapi.NewGetSMAResponseMessage()
-	resp.SetAsResponseFrom(&msg)
-	defer func() { _ = s.controller.PublishGetSMAResponse(ctx, resp) }()
-
-	// Change from requests type to application types
-	payload, err := msg.ToModel()
-	if err != nil {
-		resp.Payload.Error = &asyncapi.ErrorSchema{
-			Code:    http.StatusBadRequest,
-			Message: err.Error(),
+func (s subscriber) SMAOperationReceived(ctx context.Context, msg asyncapi.SMARequestMessage) error {
+	return s.controller.ReplyToSMAOperation(ctx, msg, func(replyMsg *asyncapi.SMAResponseMessage) {
+		// Change from requests type to application types
+		payload, err := msg.ToModel()
+		if err != nil {
+			replyMsg.Payload.Error = &asyncapi.ErrorSchema{
+				Code:    http.StatusBadRequest,
+				Message: err.Error(),
+			}
+			return
 		}
-		return
-	}
 
-	// Request exchange(s) information
-	indicators, err := s.indicators.GetCachedSMA(context.Background(), payload)
-	if err != nil {
-		resp.Payload.Error = &asyncapi.ErrorSchema{
-			Code:    http.StatusInternalServerError,
-			Message: err.Error(),
+		// Request exchange(s) information
+		indicators, err := s.indicators.GetCachedSMA(context.Background(), payload)
+		if err != nil {
+			replyMsg.Payload.Error = &asyncapi.ErrorSchema{
+				Code:    http.StatusInternalServerError,
+				Message: err.Error(),
+			}
+			return
 		}
-		return
-	}
 
-	// Add indicators to response
-	resp.Set(indicators)
-	fmt.Println(len(*resp.Payload.Data))
+		// Add indicators to response
+		replyMsg.Set(indicators)
+	})
 }
 
-func (s subscriber) ServiceInfoRequest(ctx context.Context, msg asyncapi.ServiceInfoRequestMessage) {
-	// Prepare response and set send at the end
-	resp := asyncapi.NewServiceInfoResponseMessage()
-	resp.SetAsResponseFrom(&msg)
-	defer func() { _ = s.controller.PublishServiceInfoResponse(ctx, resp) }()
-
-	// Set info
-	resp.Payload.ApiVersion = asyncapi.AsyncAPIVersion
-	resp.Payload.BinVersion = version.Version()
+func (s subscriber) ServiceInfoOperationReceived(ctx context.Context, msg asyncapi.ServiceInfoRequestMessage) error {
+	return s.controller.ReplyToServiceInfoOperation(ctx, msg, func(replyMsg *asyncapi.ServiceInfoResponseMessage) {
+		replyMsg.Payload.ApiVersion = asyncapi.AsyncAPIVersion
+		replyMsg.Payload.BinVersion = version.Version()
+	})
 }

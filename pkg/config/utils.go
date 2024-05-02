@@ -7,7 +7,7 @@ import (
 
 func overrideFromEnv(variable *string, name string) {
 	env := os.Getenv(name)
-	if name != "" {
+	if env != "" {
 		*variable = env
 	}
 }

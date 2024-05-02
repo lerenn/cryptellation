@@ -1,5 +1,3 @@
-version: "3.5"
-
 services:
   indicators-sql:
     image: postgres:15.3

@@ -21,3 +21,9 @@ func RoundDownTime(t time.Time, interval time.Duration) time.Time {
 	diff := t.Unix() % int64(interval/time.Second)
 	return time.Unix(t.Unix()-diff, 0)
 }
+
+func ElapsedTime(callback func() error) (time.Duration, error) {
+	start := time.Now()
+	err := callback()
+	return time.Since(start), err
+}

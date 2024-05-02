@@ -1,110 +1,112 @@
-asyncapi: 2.5.0
+asyncapi: 3.0.0
 info:
   title: Cryptellation Ticks Service
   version: 1.0.0
   description: >
     This service is serving ticks in real time, proxying exchanges API.
-channels:
-  cryptellation.ticks.register.request:
-    publish:
-      operationId: RegisterToTicksRequest
-      description: Register to listen a specific symbol ticks
-      tags:
-        - name: register
-      message:
-        $ref: '#/components/messages/RegisteringRequest'
-  cryptellation.ticks.register.response:
-    subscribe:
-      operationId: RegisterToTicksResponse
-      description: Response to registering for listening to specific symbol ticks
-      tags:
-        - name: register
-      message:
-        $ref: '#/components/messages/RegisteringResponse'
 
-  cryptellation.ticks.live.{exchange}.{pair}:
+channels:
+  RegisterRequest:
+    address: cryptellation.ticks.register
+    messages:
+      ListRequest:
+        $ref: "#/components/messages/RegisteringRequest"
+  RegisterResponse:
+    messages:
+      RegisterResponse:
+        $ref: "#/components/messages/RegisteringResponse"
+
+  Live:
+    address: cryptellation.ticks.live.{exchange}.{pair}
     parameters:
       exchange:
         description: Filter for ticks by exchange name
-        schema:
-          $ref: '#/components/schemas/Exchange'
       pair:
         description: Filter for ticks by pair symbol
-        schema:
-          $ref: '#/components/schemas/Pair'
-    subscribe:
-      operationId: WatchTicks
-      description: Listen to ticks based on their exchange and their symbol
-      tags:
-        - name: listen
-      message:
-        $ref: '#/components/messages/Tick'
+    messages:
+      Tick:
+        $ref: "#/components/messages/Tick"
 
-  cryptellation.ticks.unregister.request:
-    publish:
-      operationId: UnregisterToTicksRequest
-      description: Unregister from listening to a specific symbol ticks
-      tags:
-        - name: unregister
-      message:
-        $ref: '#/components/messages/RegisteringRequest'
-  cryptellation.ticks.unregister.response:
-    subscribe:
-      operationId: UnregisterToTicksResponse
-      description: Response to unregistering for listening to specific symbol ticks
-      tags:
-        - name: unregister
-      message:
-        $ref: '#/components/messages/RegisteringResponse'
+  UnregisterRequest:
+    address: cryptellation.ticks.unregister
+    messages:
+      ListRequest:
+        $ref: "#/components/messages/RegisteringRequest"
+  UnregisterResponse:
+    messages:
+      UnregisterResponse:
+        $ref: "#/components/messages/RegisteringResponse"
 
-  cryptellation.ticks.service.info.request:
-    publish:
-      operationId: ServiceInfoRequest
-      description: Request information about the service
-      tags:
-        - name: info request
-      message:
-        $ref: '#/components/messages/ServiceInfoRequest'
-  cryptellation.ticks.service.info.response:
-    subscribe:
-      operationId: ServiceInfoResponse
-      description: Receive information about the service
-      tags:
-        - name: info response
-      message:
-        $ref: '#/components/messages/ServiceInfoResponse'
+  ServiceInfoRequest:
+    address: cryptellation.ticks.info
+    messages:
+      ServiceInfoRequest:
+        $ref: "#/components/messages/ServiceInfoRequest"
+  ServiceInfoResponse:
+    messages:
+      ServiceInfoResponse:
+        $ref: "#/components/messages/ServiceInfoResponse"
+
+operations:
+  Register:
+    action: receive
+    channel: 
+      $ref: "#/channels/RegisterRequest"
+    reply:
+      address:
+        location: "$message.header#/replyTo"
+      channel:
+        $ref: '#/channels/RegisterResponse'
+
+  Live:
+    action: send
+    channel: 
+      $ref: "#/channels/Live"
+
+  Unregister:
+    action: receive
+    channel: 
+      $ref: "#/channels/UnregisterRequest"
+    reply:
+      address:
+        location: "$message.header#/replyTo"
+      channel:
+        $ref: '#/channels/UnregisterResponse'
+
+  ServiceInfo:
+    action: receive
+    channel: 
+      $ref: "#/channels/ServiceInfoRequest"
+    reply:
+      address:
+        location: "$message.header#/replyTo"
+      channel:
+        $ref: '#/channels/ServiceInfoResponse'
 
 components:
-  messages:
-    # Registering
-    RegisteringResponse:
+  messageTraits:
+    withReplyTo:
+      headers:
+        type: object
+        required:
+          - replyTo
+        properties:
+          replyTo:
+            description: Channel used to respond to request
+            type: string
+    withCorrelationID:
       headers:
         type: object
         properties:
           correlationId:
             description: Correlation ID set by client
             type: string
-      payload:
-        type: object
-        properties:
-          count:
-            type: integer
-            description: count of listener after the call is complete
-          error:
-            $ref: '#/components/schemas/Error'
       correlationId:
         description: Default Correlation ID
         location: $message.header#/correlationId
-    Tick:
-      payload:
-        $ref: '#/components/schemas/Tick'
+
+  messages:
     RegisteringRequest:
-      headers:
-        type: object
-        properties:
-          correlationId:
-            description: Correlation ID set by client
-            type: string
       payload:
         type: object
         required:
@@ -115,30 +117,32 @@ components:
             $ref: '#/components/schemas/Exchange'
           pair:
             $ref: '#/components/schemas/Pair'
-      correlationId:
-        description: Default Correlation ID
-        location: $message.header#/correlationId
-
-    # ServiceInfo
-    ServiceInfoRequest:
-      headers:
-        type: object
-        properties:
-          correlationId:
-            description: Correlation ID set by client
-            type: string
+      traits:
+        - $ref: "#/components/messageTraits/withReplyTo"
+        - $ref: "#/components/messageTraits/withCorrelationID"
+    RegisteringResponse:
       payload:
         type: object
-      correlationId:
-        description: Default Correlation ID
-        location: $message.header#/correlationId
-    ServiceInfoResponse:
-      headers:
-        type: object
         properties:
-          correlationId:
-            description: Correlation ID set by client
-            type: string
+          count:
+            type: integer
+            description: count of listener after the call is complete
+          error:
+            $ref: '#/components/schemas/Error'
+      traits:
+        - $ref: "#/components/messageTraits/withCorrelationID"
+
+    Tick:
+      payload:
+        $ref: '#/components/schemas/Tick'
+
+    ServiceInfoRequest:
+      payload:
+        type: object
+      traits:
+        - $ref: "#/components/messageTraits/withReplyTo"
+        - $ref: "#/components/messageTraits/withCorrelationID"
+    ServiceInfoResponse:
       payload:
         type: object
         required:
@@ -153,9 +157,8 @@ components:
             description: Version of the binary
             type: string
             example: 1.0.0
-      correlationId:
-        description: Default Correlation ID
-        location: $message.header#/correlationId
+      traits:
+        - $ref: "#/components/messageTraits/withCorrelationID"
 
   schemas:
     Tick:

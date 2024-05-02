@@ -8,14 +8,14 @@ import (
 	"github.com/lerenn/cryptellation/svc/backtests/pkg/order"
 )
 
-func (msg *ListBacktestOrdersResponseMessage) Set(orders []order.Order) {
+func (msg *OrdersListResponseMessage) Set(orders []order.Order) {
 	msg.Payload.Orders = make([]OrderSchema, len(orders))
 	for i, o := range orders {
 		msg.Payload.Orders[i] = orderModelToAPI(o)
 	}
 }
 
-func (msg *CreateBacktestOrderRequestMessage) Set(payload client.OrderCreationPayload) {
+func (msg *OrdersCreateRequestMessage) Set(payload client.OrderCreationPayload) {
 	// Backtest
 	msg.Payload.Id = BacktestIDSchema(payload.BacktestID)
 
@@ -27,7 +27,7 @@ func (msg *CreateBacktestOrderRequestMessage) Set(payload client.OrderCreationPa
 	msg.Payload.Order.Quantity = payload.Quantity
 }
 
-func (msg CreateBacktestOrderRequestMessage) ToModel() (order.Order, error) {
+func (msg OrdersCreateRequestMessage) ToModel() (order.Order, error) {
 	return orderModelFromAPI(msg.Payload.Order)
 }
 

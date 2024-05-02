@@ -10,7 +10,7 @@ import (
 func generators() map[string]func(context.Context) error {
 	m := make(map[string]func(context.Context) error)
 	for _, path := range pathServices {
-		m[path] = ci.Generator(client, path[1:])
+		m[path] = ci.Generator(client, path)
 	}
 	return m
 }

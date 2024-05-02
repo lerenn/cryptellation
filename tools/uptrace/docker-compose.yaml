@@ -1,5 +1,3 @@
-version: "3.5"
-
 services:
   uptrace-otelcollector:
     image: otel/opentelemetry-collector-contrib:0.88.0

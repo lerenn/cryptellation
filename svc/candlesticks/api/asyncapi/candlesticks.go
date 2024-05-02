@@ -1,7 +1,7 @@
 // Candlesticks
-//go:generate go run github.com/lerenn/asyncapi-codegen/cmd/asyncapi-codegen@v0.30.2 -g application -p asyncapi -i ../asyncapi.yaml -o ./app.gen.go
-//go:generate go run github.com/lerenn/asyncapi-codegen/cmd/asyncapi-codegen@v0.30.2 -g user        -p asyncapi -i ../asyncapi.yaml -o ./user.gen.go
-//go:generate go run github.com/lerenn/asyncapi-codegen/cmd/asyncapi-codegen@v0.30.2 -g types       -p asyncapi -i ../asyncapi.yaml -o ./types.gen.go
+//go:generate go run github.com/lerenn/asyncapi-codegen/cmd/asyncapi-codegen@v0.39.0 -g application -p asyncapi -i ../asyncapi.yaml -o ./app.gen.go
+//go:generate go run github.com/lerenn/asyncapi-codegen/cmd/asyncapi-codegen@v0.39.0 -g user        -p asyncapi -i ../asyncapi.yaml -o ./user.gen.go
+//go:generate go run github.com/lerenn/asyncapi-codegen/cmd/asyncapi-codegen@v0.39.0 -g types       -p asyncapi -i ../asyncapi.yaml -o ./types.gen.go
 
 package asyncapi
 
@@ -15,7 +15,7 @@ import (
 	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/period"
 )
 
-func (msg *ListCandlesticksRequestMessage) Set(payload client.ReadCandlesticksPayload) {
+func (msg *ListRequestMessage) Set(payload client.ReadCandlesticksPayload) {
 	msg.Payload.Exchange = ExchangeSchema(payload.Exchange)
 	msg.Payload.Pair = PairSchema(payload.Pair)
 	msg.Payload.Period = PeriodSchema(payload.Period.String())
@@ -28,7 +28,7 @@ func (msg *ListCandlesticksRequestMessage) Set(payload client.ReadCandlesticksPa
 	msg.Payload.Limit = LimitSchema(payload.Limit)
 }
 
-func (msg *ListCandlesticksRequestMessage) ToModel() (app.GetCachedPayload, error) {
+func (msg *ListRequestMessage) ToModel() (app.GetCachedPayload, error) {
 	// Process specific types
 	per, err := period.FromString(string(msg.Payload.Period))
 	if err != nil {
@@ -46,7 +46,7 @@ func (msg *ListCandlesticksRequestMessage) ToModel() (app.GetCachedPayload, erro
 	}, nil
 }
 
-func (msg *ListCandlesticksResponseMessage) Set(list *candlestick.List) error {
+func (msg *ListResponseMessage) Set(list *candlestick.List) error {
 	respList := make(CandlestickListSchema, 0, list.Len())
 	if err := list.Loop(func(t time.Time, cs candlestick.Candlestick) (bool, error) {
 		respList = append(respList, CandlestickSchema{
@@ -66,7 +66,7 @@ func (msg *ListCandlesticksResponseMessage) Set(list *candlestick.List) error {
 	return nil
 }
 
-func (msg *ListCandlesticksResponseMessage) ToModel(exchange, pair string, symbol period.Symbol) (*candlestick.List, error) {
+func (msg *ListResponseMessage) ToModel(exchange, pair string, symbol period.Symbol) (*candlestick.List, error) {
 	// Create list
 	list := candlestick.NewList(exchange, pair, symbol)
 

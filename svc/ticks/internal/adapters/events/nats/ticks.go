@@ -17,10 +17,10 @@ func (a *Adapter) Publish(ctx context.Context, tick tick.Tick) error {
 	msg.Payload.Time = asyncapi.DateSchema(tick.Time)
 
 	// Send message
-	return a.app.PublishWatchTicks(ctx,
-		asyncapi.CryptellationTicksLiveParameters{
-			Exchange: asyncapi.ExchangeSchema(tick.Exchange),
-			Pair:     asyncapi.PairSchema(tick.Pair),
+	return a.app.SendAsLiveOperation(ctx,
+		asyncapi.LiveChannelParameters{
+			Exchange: tick.Exchange,
+			Pair:     tick.Pair,
 		}, msg)
 }
 

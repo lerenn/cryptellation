@@ -17,7 +17,7 @@ type SMASuite struct {
 }
 
 func (suite *SMASuite) TestSetGetSMAResponseMessage() {
-	resp := NewGetSMAResponseMessage()
+	resp := NewSMAResponseMessage()
 	resp.Set(timeserie.New[float64]().
 		Set(time.Unix(0, 0), 1).
 		Set(time.Unix(60, 0), 2))

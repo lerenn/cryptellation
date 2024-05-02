@@ -47,7 +47,7 @@ func NewController(c config.NATS, candlesticks app.Candlesticks) (*Controller, e
 
 func (s *Controller) Listen() error {
 	sub := newCandlesticksSubscriber(s.controller, s.candlesticks)
-	return s.controller.SubscribeAll(context.Background(), sub)
+	return s.controller.SubscribeToAllChannels(context.Background(), sub)
 }
 
 func (s *Controller) Close() {

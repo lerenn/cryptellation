@@ -47,7 +47,7 @@ func NewController(c config.NATS, backtests app.Backtests) (*Controller, error) 
 
 func (s *Controller) Listen() error {
 	sub := newSubscriber(s.controller, s.backtests)
-	return s.controller.SubscribeAll(context.Background(), sub)
+	return s.controller.SubscribeToAllChannels(context.Background(), sub)
 }
 
 func (s *Controller) Close() {

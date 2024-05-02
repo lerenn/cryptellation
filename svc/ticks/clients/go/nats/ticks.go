@@ -6,6 +6,7 @@ import (
 
 	"github.com/lerenn/asyncapi-codegen/pkg/extensions"
 	"github.com/lerenn/asyncapi-codegen/pkg/extensions/brokers/nats"
+	helpers "github.com/lerenn/cryptellation/pkg/asyncapi"
 	clientPkg "github.com/lerenn/cryptellation/pkg/client"
 	"github.com/lerenn/cryptellation/pkg/config"
 	asyncapi "github.com/lerenn/cryptellation/svc/ticks/api/asyncapi"
@@ -63,12 +64,11 @@ func WithLogger(logger extensions.Logger) ClientOption {
 func (t Client) Register(ctx context.Context, payload client.TicksFilterPayload) error {
 	// Generate message
 	msg := asyncapi.NewRegisteringRequestMessage()
+	msg.Headers.ReplyTo = helpers.AddReplyToSuffix(asyncapi.RegisterRequestChannelPath)
 	msg.Set(payload)
 
 	// Send message
-	resp, err := t.ctrl.WaitForRegisterToTicksResponse(ctx, &msg, func(ctx context.Context) error {
-		return t.ctrl.PublishRegisterToTicksRequest(ctx, msg)
-	})
+	resp, err := t.ctrl.RequestToRegisterOperation(ctx, msg)
 	if err != nil {
 		return err
 	}
@@ -85,34 +85,34 @@ func (t Client) Listen(ctx context.Context, payload client.TicksFilterPayload) (
 	ch := make(chan tick.Tick, 256)
 
 	// Create params for channel path
-	params := asyncapi.CryptellationTicksLiveParameters{
-		Exchange: asyncapi.ExchangeSchema(payload.Exchange),
-		Pair:     asyncapi.PairSchema(payload.Pair),
+	params := asyncapi.LiveChannelParameters{
+		Exchange: payload.Exchange,
+		Pair:     payload.Pair,
 	}
 
 	// Create callback when a tick appears
-	callback := func(ctx context.Context, msg asyncapi.TickMessage) {
+	callback := func(ctx context.Context, msg asyncapi.TickMessage) error {
 		// Try to send tick or drop it
 		select {
 		case ch <- msg.ToModel():
 		default:
 			// Drop if it's full or closed
 		}
+		return nil
 	}
 
 	// Listen to channel
-	return ch, t.ctrl.SubscribeWatchTicks(ctx, params, callback)
+	return ch, t.ctrl.SubscribeToLiveOperation(ctx, params, callback)
 }
 
 func (t Client) Unregister(ctx context.Context, payload client.TicksFilterPayload) error {
 	// Generate message
 	msg := asyncapi.NewRegisteringRequestMessage()
+	msg.Headers.ReplyTo = helpers.AddReplyToSuffix(asyncapi.UnregisterRequestChannelPath)
 	msg.Set(payload)
 
 	// Send message
-	resp, err := t.ctrl.WaitForUnregisterToTicksResponse(ctx, &msg, func(ctx context.Context) error {
-		return t.ctrl.PublishUnregisterToTicksRequest(ctx, msg)
-	})
+	resp, err := t.ctrl.RequestToUnregisterOperation(ctx, msg)
 	if err != nil {
 		return err
 	}
@@ -128,11 +128,10 @@ func (t Client) Unregister(ctx context.Context, payload client.TicksFilterPayloa
 func (t Client) ServiceInfo(ctx context.Context) (clientPkg.ServiceInfo, error) {
 	// Set message
 	reqMsg := asyncapi.NewServiceInfoRequestMessage()
+	reqMsg.Headers.ReplyTo = helpers.AddReplyToSuffix(asyncapi.ServiceInfoRequestChannelPath)
 
 	// Send request
-	respMsg, err := t.ctrl.WaitForServiceInfoResponse(ctx, &reqMsg, func(ctx context.Context) error {
-		return t.ctrl.PublishServiceInfoRequest(ctx, reqMsg)
-	})
+	respMsg, err := t.ctrl.RequestToServiceInfoOperation(ctx, reqMsg)
 	if err != nil {
 		return clientPkg.ServiceInfo{}, err
 	}

@@ -22,71 +22,61 @@ func newSubscriber(controller *asyncapi.AppController, app ticks.Ticks) subscrib
 	}
 }
 
-func (s subscriber) RegisterToTicksRequest(ctx context.Context, msg asyncapi.RegisteringRequestMessage) {
+func (s subscriber) RegisterOperationReceived(ctx context.Context, msg asyncapi.RegisteringRequestMessage) error {
 	telemetry.L(ctx).Infof("Received register request: %+v\n", msg)
 
-	// Set response
-	resp := asyncapi.NewRegisteringResponseMessage()
-	resp.SetAsResponseFrom(&msg)
-	defer func() { _ = s.controller.PublishRegisterToTicksResponse(ctx, resp) }()
+	return s.controller.ReplyToRegisterOperation(ctx, msg, func(resp *asyncapi.RegisteringResponseMessage) {
+		// Register as requested
+		count, err := s.ticks.Register(
+			context.Background(),
+			string(msg.Payload.Exchange),
+			string(msg.Payload.Pair),
+		)
 
-	// Register as requested
-	count, err := s.ticks.Register(
-		context.Background(),
-		string(msg.Payload.Exchange),
-		string(msg.Payload.Pair),
-	)
-
-	// If there is an error, return it as BadRequest
-	// TODO: get correct error
-	if err != nil {
-		resp.Payload.Error = &asyncapi.ErrorSchema{
-			Code:    http.StatusBadRequest,
-			Message: err.Error(),
+		// If there is an error, return it as BadRequest
+		// TODO: get correct error
+		if err != nil {
+			resp.Payload.Error = &asyncapi.ErrorSchema{
+				Code:    http.StatusBadRequest,
+				Message: err.Error(),
+			}
+			return
 		}
-		return
-	}
 
-	// Otherwise, return count
-	resp.Payload.Count = &count
+		// Otherwise, return count
+		resp.Payload.Count = &count
+	})
 }
 
-func (s subscriber) UnregisterToTicksRequest(ctx context.Context, msg asyncapi.RegisteringRequestMessage) {
+func (s subscriber) UnregisterOperationReceived(ctx context.Context, msg asyncapi.RegisteringRequestMessage) error {
 	telemetry.L(ctx).Infof("Received unregister request: %+v\n", msg)
 
-	// Set response
-	resp := asyncapi.NewRegisteringResponseMessage()
-	resp.SetAsResponseFrom(&msg)
-	defer func() { _ = s.controller.PublishUnregisterToTicksResponse(ctx, resp) }()
+	return s.controller.ReplyToUnregisterOperation(ctx, msg, func(resp *asyncapi.RegisteringResponseMessage) {
+		// Register as requested
+		count, err := s.ticks.Unregister(
+			context.Background(),
+			string(msg.Payload.Exchange),
+			string(msg.Payload.Pair),
+		)
 
-	// Register as requested
-	count, err := s.ticks.Unregister(
-		context.Background(),
-		string(msg.Payload.Exchange),
-		string(msg.Payload.Pair),
-	)
-
-	// If there is an error, return it as BadRequest
-	// TODO: get correct error
-	if err != nil {
-		resp.Payload.Error = &asyncapi.ErrorSchema{
-			Code:    http.StatusBadRequest,
-			Message: err.Error(),
+		// If there is an error, return it as BadRequest
+		// TODO: get correct error
+		if err != nil {
+			resp.Payload.Error = &asyncapi.ErrorSchema{
+				Code:    http.StatusBadRequest,
+				Message: err.Error(),
+			}
+			return
 		}
-		return
-	}
 
-	// Otherwise, return count
-	resp.Payload.Count = &count
+		// Otherwise, return count
+		resp.Payload.Count = &count
+	})
 }
 
-func (s subscriber) ServiceInfoRequest(ctx context.Context, msg asyncapi.ServiceInfoRequestMessage) {
-	// Prepare response and set send at the end
-	resp := asyncapi.NewServiceInfoResponseMessage()
-	resp.SetAsResponseFrom(&msg)
-	defer func() { _ = s.controller.PublishServiceInfoResponse(ctx, resp) }()
-
-	// Set info
-	resp.Payload.ApiVersion = asyncapi.AsyncAPIVersion
-	resp.Payload.BinVersion = version.Version()
+func (s subscriber) ServiceInfoOperationReceived(ctx context.Context, msg asyncapi.ServiceInfoRequestMessage) error {
+	return s.controller.ReplyToServiceInfoOperation(ctx, msg, func(replyMsg *asyncapi.ServiceInfoResponseMessage) {
+		replyMsg.Payload.ApiVersion = asyncapi.AsyncAPIVersion
+		replyMsg.Payload.BinVersion = version.Version()
+	})
 }

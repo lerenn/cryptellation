@@ -1,56 +1,77 @@
-asyncapi: 2.5.0
+asyncapi: 3.0.0
 info:
   title: Cryptellation Candlesticks Service
   version: 1.0.0
   description: >
     This service is serving candlesticks history through a caching system that is
     proxying exchanges API.
+
 channels:
-  cryptellation.candlesticks.list.request:
-    publish:
-      operationId: ListCandlesticksRequest
-      description: Request a candlestick list from historic data
-      tags:
-        - name: candlestick list
-      message:
-        $ref: '#/components/messages/ListCandlesticksRequest'
+  ListRequest:
+    address: cryptellation.candlesticks.list
+    messages:
+      ListRequest:
+        $ref: "#/components/messages/ListRequest"
+  ListResponse:
+    messages:
+      ListResponse:
+        $ref: "#/components/messages/ListResponse"
 
-  cryptellation.candlesticks.list.response:
-    subscribe:
-      operationId: ListCandlesticksResponse
-      description: Response to a list request, with the corresponding candlestick list
-      tags:
-        - name: candlestick list
-      message:
-        $ref: '#/components/messages/ListCandlesticksResponse'
+  ServiceInfoRequest:
+    address: cryptellation.candlesticks.info
+    messages:
+      ServiceInfoRequest:
+        $ref: "#/components/messages/ServiceInfoRequest"
+  ServiceInfoResponse:
+    messages:
+      ServiceInfoResponse:
+        $ref: "#/components/messages/ServiceInfoResponse"
 
-  cryptellation.candlesticks.service.info.request:
-    publish:
-      operationId: ServiceInfoRequest
-      description: Request information about the service
-      tags:
-        - name: info request
-      message:
-        $ref: '#/components/messages/ServiceInfoRequest'
-  cryptellation.candlesticks.service.info.response:
-    subscribe:
-      operationId: ServiceInfoResponse
-      description: Receive information about the service
-      tags:
-        - name: info response
-      message:
-        $ref: '#/components/messages/ServiceInfoResponse'
+operations:
+  List:
+    action: receive
+    channel: 
+      $ref: "#/channels/ListRequest"
+    reply:
+      address:
+        location: "$message.header#/replyTo"
+      channel:
+        $ref: '#/channels/ListResponse'
+
+  ServiceInfo:
+    action: receive
+    channel: 
+      $ref: "#/channels/ServiceInfoRequest"
+    reply:
+      address:
+        location: "$message.header#/replyTo"
+      channel:
+        $ref: '#/channels/ServiceInfoResponse'
 
 components:
-  messages:
-    # ListCandlesticks
-    ListCandlesticksRequest:
+  messageTraits:
+    withReplyTo:
+      headers:
+        type: object
+        required:
+          - replyTo
+        properties:
+          replyTo:
+            description: Channel used to respond to request
+            type: string
+    withCorrelationID:
       headers:
         type: object
         properties:
           correlationId:
             description: Correlation ID set by client
             type: string
+      correlationId:
+        description: Default Correlation ID
+        location: $message.header#/correlationId
+
+  messages:
+    ListRequest:
       payload:
         type: object
         description: Candlestick list request with filters and time boundaries
@@ -80,16 +101,10 @@ components:
           limit:
             $ref: '#/components/schemas/Limit'
             description: The maximum candlesticks to retrieve (0 = unlimited)
-      correlationId:
-        description: Default Correlation ID
-        location: $message.header#/correlationId
-    ListCandlesticksResponse:
-      headers:
-        type: object
-        properties:
-          correlationId:
-            description: Correlation ID set by client on corresponding request
-            type: string
+      traits:
+        - $ref: "#/components/messageTraits/withReplyTo"
+        - $ref: "#/components/messageTraits/withCorrelationID"
+    ListResponse:
       payload:
         type: object
         oneOf:
@@ -99,30 +114,16 @@ components:
         - properties:
             error:
               $ref: '#/components/schemas/Error'
-      correlationId:
-        description: Default Correlation ID
-        location: $message.header#/correlationId
+      traits:
+        - $ref: "#/components/messageTraits/withCorrelationID"
 
-    # ServiceInfo
     ServiceInfoRequest:
-      headers:
-        type: object
-        properties:
-          correlationId:
-            description: Correlation ID set by client
-            type: string
       payload:
         type: object
-      correlationId:
-        description: Default Correlation ID
-        location: $message.header#/correlationId
+      traits:
+        - $ref: "#/components/messageTraits/withReplyTo"
+        - $ref: "#/components/messageTraits/withCorrelationID"
     ServiceInfoResponse:
-      headers:
-        type: object
-        properties:
-          correlationId:
-            description: Correlation ID set by client
-            type: string
       payload:
         type: object
         required:
@@ -137,9 +138,8 @@ components:
             description: Version of the binary
             type: string
             example: 1.0.0
-      correlationId:
-        description: Default Correlation ID
-        location: $message.header#/correlationId
+      traits:
+        - $ref: "#/components/messageTraits/withCorrelationID"
 
   schemas:
     Candlestick:
@@ -246,5 +246,3 @@ components:
           description: Main error reason
           examples:
             - "Invalid request: no time specified"
-
-

@@ -47,7 +47,7 @@ func NewController(c config.NATS, exchanges exchanges.Exchanges) (*Controller, e
 
 func (s *Controller) Listen() error {
 	sub := newSubscriber(s.controller, s.exchanges)
-	return s.controller.SubscribeAll(context.Background(), sub)
+	return s.controller.SubscribeToAllChannels(context.Background(), sub)
 }
 
 func (s *Controller) Close() {

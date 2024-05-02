@@ -1,7 +1,7 @@
 // Backtests
-//go:generate go run github.com/lerenn/asyncapi-codegen/cmd/asyncapi-codegen@v0.30.2 -g application -p asyncapi -i ../asyncapi.yaml -o ./app.gen.go
-//go:generate go run github.com/lerenn/asyncapi-codegen/cmd/asyncapi-codegen@v0.30.2 -g user        -p asyncapi -i ../asyncapi.yaml -o ./user.gen.go
-//go:generate go run github.com/lerenn/asyncapi-codegen/cmd/asyncapi-codegen@v0.30.2 -g types       -p asyncapi -i ../asyncapi.yaml -o ./types.gen.go
+//go:generate go run github.com/lerenn/asyncapi-codegen/cmd/asyncapi-codegen@v0.39.0 -g application -p asyncapi -i ../asyncapi.yaml -o ./app.gen.go
+//go:generate go run github.com/lerenn/asyncapi-codegen/cmd/asyncapi-codegen@v0.39.0 -g user        -p asyncapi -i ../asyncapi.yaml -o ./user.gen.go
+//go:generate go run github.com/lerenn/asyncapi-codegen/cmd/asyncapi-codegen@v0.39.0 -g types       -p asyncapi -i ../asyncapi.yaml -o ./types.gen.go
 
 package asyncapi
 
@@ -17,7 +17,7 @@ import (
 	"github.com/lerenn/cryptellation/svc/ticks/pkg/tick"
 )
 
-func (msg *CreateBacktestRequestMessage) Set(payload client.BacktestCreationPayload) {
+func (msg *CreateRequestMessage) Set(payload client.BacktestCreationPayload) {
 	msg.Payload.StartTime = DateSchema(payload.StartTime)
 	msg.Payload.EndTime = (*DateSchema)(payload.EndTime)
 	msg.Payload.Accounts = accountModelsToAPI(payload.Accounts)
@@ -45,17 +45,17 @@ func accountModelsToAPI(accounts map[string]account.Account) []AccountSchema {
 	return apiAccounts
 }
 
-func (msg *SubscribeBacktestRequestMessage) Set(backtestID uint, exchange, pair string) {
+func (msg *SubscribeRequestMessage) Set(backtestID uint, exchange, pair string) {
 	msg.Payload.Id = BacktestIDSchema(backtestID)
 	msg.Payload.Exchange = ExchangeSchema(exchange)
 	msg.Payload.Pair = PairSchema(pair)
 }
 
-func (msg *AdvanceBacktestRequestMessage) Set(backtestID uint) {
+func (msg *AdvanceRequestMessage) Set(backtestID uint) {
 	msg.Payload.Id = BacktestIDSchema(backtestID)
 }
 
-func (msg *CreateBacktestRequestMessage) ToModel() (backtest.NewPayload, error) {
+func (msg *CreateRequestMessage) ToModel() (backtest.NewPayload, error) {
 	// Format accounts
 	accounts := make(map[string]account.Account)
 	for _, acc := range msg.Payload.Accounts {
@@ -83,7 +83,7 @@ func (msg *CreateBacktestRequestMessage) ToModel() (backtest.NewPayload, error) 
 	}, nil
 }
 
-func (msg *BacktestsEventMessage) Set(evt event.Event) error {
+func (msg *EventMessage) Set(evt event.Event) error {
 	msg.Payload.Time = DateSchema(evt.Time)
 	msg.Payload.Type = evt.Type.String()
 

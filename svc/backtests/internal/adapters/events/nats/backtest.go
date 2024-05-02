@@ -2,6 +2,7 @@ package backtests
 
 import (
 	"context"
+	"fmt"
 
 	asyncapi "github.com/lerenn/cryptellation/svc/backtests/api/asyncapi"
 	"github.com/lerenn/cryptellation/svc/backtests/pkg/event"
@@ -9,7 +10,7 @@ import (
 
 func (a *Adapter) Publish(ctx context.Context, backtestID uint, evt event.Event) error {
 	// Generated message
-	msg := asyncapi.NewBacktestsEventMessage()
+	msg := asyncapi.NewEventMessage()
 
 	// Set from event
 	if err := msg.Set(evt); err != nil {
@@ -17,8 +18,8 @@ func (a *Adapter) Publish(ctx context.Context, backtestID uint, evt event.Event)
 	}
 
 	// Send message
-	return a.app.PublishBacktestEvent(ctx, asyncapi.CryptellationBacktestsEventsParameters{
-		Id: int64(backtestID),
+	return a.app.SendAsEventOperation(ctx, asyncapi.EventsChannelParameters{
+		Id: fmt.Sprintf("%d", backtestID),
 	}, msg)
 }
 

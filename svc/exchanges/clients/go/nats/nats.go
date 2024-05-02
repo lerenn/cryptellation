@@ -6,6 +6,7 @@ import (
 
 	"github.com/lerenn/asyncapi-codegen/pkg/extensions"
 	"github.com/lerenn/asyncapi-codegen/pkg/extensions/brokers/nats"
+	helpers "github.com/lerenn/cryptellation/pkg/asyncapi"
 	asyncapi "github.com/lerenn/cryptellation/svc/exchanges/api/asyncapi"
 
 	"github.com/lerenn/cryptellation/pkg/client"
@@ -63,13 +64,12 @@ func WithLogger(logger extensions.Logger) ClientOption {
 
 func (c Client) Read(ctx context.Context, names ...string) ([]exchange.Exchange, error) {
 	// Set message
-	reqMsg := asyncapi.NewListExchangesRequestMessage()
+	reqMsg := asyncapi.NewListRequestMessage()
+	reqMsg.Headers.ReplyTo = helpers.AddReplyToSuffix(asyncapi.ListRequestChannelPath)
 	reqMsg.Set(names...)
 
 	// Send request
-	respMsg, err := c.ctrl.WaitForListExchangesResponse(ctx, &reqMsg, func(ctx context.Context) error {
-		return c.ctrl.PublishListExchangesRequest(ctx, reqMsg)
-	})
+	respMsg, err := c.ctrl.RequestToListOperation(ctx, reqMsg)
 	if err != nil {
 		return nil, err
 	}
@@ -86,11 +86,10 @@ func (c Client) Read(ctx context.Context, names ...string) ([]exchange.Exchange,
 func (c Client) ServiceInfo(ctx context.Context) (client.ServiceInfo, error) {
 	// Set message
 	reqMsg := asyncapi.NewServiceInfoRequestMessage()
+	reqMsg.Headers.ReplyTo = helpers.AddReplyToSuffix(asyncapi.ServiceInfoRequestChannelPath)
 
 	// Send request
-	respMsg, err := c.ctrl.WaitForServiceInfoResponse(ctx, &reqMsg, func(ctx context.Context) error {
-		return c.ctrl.PublishServiceInfoRequest(ctx, reqMsg)
-	})
+	respMsg, err := c.ctrl.RequestToServiceInfoOperation(ctx, reqMsg)
 	if err != nil {
 		return client.ServiceInfo{}, err
 	}

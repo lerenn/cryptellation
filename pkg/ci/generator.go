@@ -9,10 +9,6 @@ import (
 
 // Generator returns a container that generates code.
 func Generator(client *dagger.Client, path string) func(ctx context.Context) error {
-	if path[0] == '/' {
-		path = "." + path
-	}
-
 	return func(ctx context.Context) error {
 		_, err := client.Container().
 			// Add base image

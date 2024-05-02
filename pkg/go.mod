@@ -18,7 +18,7 @@ require (
 	github.com/go-redsync/redsync/v4 v4.11.0
 	github.com/google/go-cmp v0.6.0
 	github.com/joho/godotenv v1.5.1
-	github.com/lerenn/asyncapi-codegen v0.30.2
+	github.com/lerenn/asyncapi-codegen v0.34.0
 	github.com/lerenn/cryptellation/svc/exchanges v0.0.0-00010101000000-000000000000
 	github.com/stretchr/testify v1.8.4
 	go.opentelemetry.io/otel v1.22.0

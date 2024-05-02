@@ -43,11 +43,11 @@ func (c *NATS) overrideFromEnv() {
 
 func (c NATS) Validate() error {
 	if c.Host == "" {
-		return fmt.Errorf("reading host from env (%s is %q): %w", NatsHostEnvName, c.Host, ErrInvalidNATS)
+		return fmt.Errorf("NATS host is empty (%q env is %q): %w", NatsHostEnvName, c.Host, ErrInvalidNATS)
 	}
 
 	if c.Port == 0 {
-		return fmt.Errorf("reading port from env (%s is %q): %w", NatsPortEnvName, c.Port, ErrInvalidNATS)
+		return fmt.Errorf("NATS port is empty (%q env is %q): %w", NatsPortEnvName, c.Port, ErrInvalidNATS)
 	}
 
 	return nil

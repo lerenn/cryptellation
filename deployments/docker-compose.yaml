@@ -1,5 +1,3 @@
-version: "3.5"
-
 include:
     # Services
     - ../svc/backtests/deployments/docker-compose.yaml

@@ -11,7 +11,7 @@ import (
 	"github.com/lerenn/cryptellation/svc/indicators/internal/app"
 )
 
-func (msg *GetSMARequestMessage) Set(payload client.SMAPayload) {
+func (msg *SMARequestMessage) Set(payload client.SMAPayload) {
 	msg.Payload.Exchange = ExchangeSchema(payload.Exchange)
 	msg.Payload.Pair = PairSchema(payload.Pair)
 	msg.Payload.Period = PeriodSchema(payload.Period)
@@ -21,7 +21,7 @@ func (msg *GetSMARequestMessage) Set(payload client.SMAPayload) {
 	msg.Payload.PriceType = utils.ToReference(PriceTypeSchema(payload.PriceType))
 }
 
-func (msg *GetSMARequestMessage) ToModel() (app.GetCachedSMAPayload, error) {
+func (msg *SMARequestMessage) ToModel() (app.GetCachedSMAPayload, error) {
 	per := period.Symbol(msg.Payload.Period)
 	if err := per.Validate(); err != nil {
 		return app.GetCachedSMAPayload{}, err
@@ -43,7 +43,7 @@ func (msg *GetSMARequestMessage) ToModel() (app.GetCachedSMAPayload, error) {
 	}, nil
 }
 
-func (msg *GetSMAResponseMessage) Set(ts *timeserie.TimeSerie[float64]) {
+func (msg *SMAResponseMessage) Set(ts *timeserie.TimeSerie[float64]) {
 	count := 0
 	data := make(NumericTimeSerieSchema, ts.Len())
 	_ = ts.Loop(func(t time.Time, v float64) (bool, error) {
@@ -61,7 +61,7 @@ func (msg *GetSMAResponseMessage) Set(ts *timeserie.TimeSerie[float64]) {
 	msg.Payload.Data = &data
 }
 
-func (msg *GetSMAResponseMessage) ToModel() *timeserie.TimeSerie[float64] {
+func (msg *SMAResponseMessage) ToModel() *timeserie.TimeSerie[float64] {
 	ts := timeserie.New[float64]()
 	for _, point := range *msg.Payload.Data {
 		ts.Set(time.Time(point.Time), point.Value)
