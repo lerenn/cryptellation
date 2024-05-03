@@ -12,7 +12,7 @@ COPY ./ /go/src/github.com/lerenn/cryptellation
 WORKDIR /go/src/github.com/lerenn/cryptellation/svc/backtests
 
 # Build everything in cmd/
-RUN --mount=type=cache,target=/root/.cache/go-build go install ./cmd/*
+RUN --mount=type=cache,target=/root/.cache/go-build --mount=type=cache,target=/go/pkg/mod go install ./cmd/*
 
 # Get final base image
 FROM alpine

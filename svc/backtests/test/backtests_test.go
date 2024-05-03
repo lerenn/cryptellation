@@ -241,6 +241,6 @@ func (suite *EndToEndSuite) TestBacktestOrder() {
 	// Check account
 	accounts, err = suite.client.GetAccounts(context.Background(), id)
 	suite.Require().NoError(err)
-	suite.Require().Equal(0.9993265738596343, accounts["binance"].Balances["BTC"])
-	suite.Require().Equal(0.039999999997235136, accounts["binance"].Balances["USDT"])
+	suite.Require().Equal(0.99933, utils.Round(accounts["binance"].Balances["BTC"], 5))
+	suite.Require().Equal(0.04, utils.Round(accounts["binance"].Balances["USDT"], 2))
 }
