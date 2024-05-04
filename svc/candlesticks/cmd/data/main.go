@@ -2,10 +2,10 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"os"
 
 	"github.com/lerenn/cryptellation/pkg/adapters/telemetry"
+	"github.com/lerenn/cryptellation/pkg/adapters/telemetry/console"
 	"github.com/lerenn/cryptellation/pkg/adapters/telemetry/otel"
 	"github.com/lerenn/cryptellation/pkg/version"
 	"github.com/spf13/cobra"
@@ -24,22 +24,12 @@ func init() {
 
 func main() {
 	// Init opentelemetry and set it globally
-	tlr, err := otel.NewTelemeter(context.Background(), "cryptellation-candlesticks")
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "An error occured when setting telemetry: %s\n", err.Error())
-	} else {
-		// Close when exiting
-		defer tlr.Close(context.TODO())
-
-		// Set telemetry globally
-		telemetry.Set(tlr)
-	}
+	console.Fallback(otel.NewTelemeter(context.Background(), "cryptellation-candlesticks"))
+	defer telemetry.Close(context.TODO())
 
 	// Execute command
 	if err := RootCmd.Execute(); err != nil {
-		tlr.Logger(context.TODO()).Error(
-			fmt.Sprintf("an error occured: %s", err.Error()),
-		)
+		telemetry.L(context.TODO()).Errorf("an error occured: %s", err.Error())
 		os.Exit(1)
 	}
 }

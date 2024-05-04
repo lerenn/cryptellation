@@ -3,6 +3,7 @@ package config
 import (
 	"errors"
 	"fmt"
+	"os"
 
 	"github.com/joho/godotenv"
 )
@@ -16,19 +17,40 @@ type Binance struct {
 	SecretKey string
 }
 
-func LoadBinance() (c Binance) {
+func LoadBinance(defaultValues *Binance, additionalEnvFilePaths ...string) (c Binance) {
+	if defaultValues != nil {
+		c = *defaultValues
+	}
+
 	c.setDefault()
-	c.overrideFromEnv()
+	c.overrideFromEnv(additionalEnvFilePaths...)
+
 	return c
+}
+
+func LoadBinanceTest() Binance {
+	// Find the .credentials.env file in the parent directories
+	p := ".credentials.env"
+	for i := 0; i < 20; i++ {
+		if _, err := os.Stat(p); err == nil {
+			break
+		}
+
+		p = "../" + p
+	}
+
+	// Load the config
+	return LoadBinance(nil, p)
 }
 
 func (c *Binance) setDefault() {
 	// Nothing to do
 }
 
-func (c *Binance) overrideFromEnv() {
+func (c *Binance) overrideFromEnv(additionalEnvFilePaths ...string) {
 	// Attempting to load from .env
 	_ = godotenv.Load(".env")
+	_ = godotenv.Load(additionalEnvFilePaths...)
 
 	// Overriding variables
 	overrideFromEnv(&c.ApiKey, "BINANCE_API_KEY")

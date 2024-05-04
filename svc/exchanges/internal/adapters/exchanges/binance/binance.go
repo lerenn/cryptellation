@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/lerenn/cryptellation/pkg/adapters/exchanges/binance"
+	"github.com/lerenn/cryptellation/pkg/config"
 	"github.com/lerenn/cryptellation/svc/exchanges/pkg/exchange"
 )
 
@@ -14,7 +15,7 @@ type Service struct {
 }
 
 func New() (*Service, error) {
-	s, err := binance.New()
+	s, err := binance.New(config.LoadBinanceTest())
 	return &Service{
 		Service: s,
 	}, err

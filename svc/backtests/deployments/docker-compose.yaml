@@ -1,4 +1,12 @@
 services:
+  backtests-redis:
+    image: redis:6.2
+    networks:
+      - cryptellation
+    expose:
+      - "6379"
+    ports:
+      - "6100:6379"
   backtests-sql:
     image: postgres:15.3
     networks:
@@ -9,9 +17,12 @@ services:
       POSTGRES_DB: backtests
     expose:
       - "5432"
+    ports:
+      - "6000:5432"
   backtests-api:
     image: cosmtrek/air
     depends_on:
+      - backtests-redis
       - backtests-sql
       - nats
       - uptrace-otelcollector

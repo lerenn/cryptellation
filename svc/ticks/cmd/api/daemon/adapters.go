@@ -20,7 +20,7 @@ type adapters struct {
 
 func newAdapters(ctx context.Context) (adapters, error) {
 	// Init database client
-	db, err := sql.New(config.LoadSQL())
+	db, err := sql.New(config.LoadSQL(nil))
 	if err != nil {
 		return adapters{}, err
 	}

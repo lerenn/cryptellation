@@ -25,15 +25,12 @@ type Service struct {
 	Client *client.Client
 }
 
-func New() (*Service, error) {
-	// Get config
-	config := config.LoadBinance()
-
-	c := client.NewClient(config.ApiKey, config.SecretKey)
+func New(conf config.Binance) (*Service, error) {
+	c := client.NewClient(conf.ApiKey, conf.SecretKey)
 	c.Logger.SetOutput(io.Discard)
 
 	// Return service
 	return &Service{
 		Client: c,
-	}, config.Validate()
+	}, conf.Validate()
 }

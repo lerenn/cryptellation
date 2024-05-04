@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/lerenn/cryptellation/pkg/config"
+	"github.com/lerenn/cryptellation/svc/backtests/deployments"
 	"github.com/lerenn/cryptellation/svc/backtests/internal/app/ports/db"
 	"github.com/stretchr/testify/suite"
 )
@@ -18,9 +19,10 @@ type BacktestSuite struct {
 }
 
 func (suite *BacktestSuite) SetupTest() {
-	defer tmpEnvVar("SQLDB_DATABASE", "backtests")()
-
-	db, err := New(config.LoadSQL())
+	db, err := New(config.LoadSQL(&config.SQL{
+		Database: "backtests",
+		Port:     deployments.DockerComposeSQLDBPort,
+	}))
 	suite.Require().NoError(err)
 	suite.Require().NoError(db.Reset(context.TODO()))
 

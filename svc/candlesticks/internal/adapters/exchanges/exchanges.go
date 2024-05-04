@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	binancePkg "github.com/lerenn/cryptellation/pkg/adapters/exchanges/binance"
+	"github.com/lerenn/cryptellation/pkg/config"
 	"github.com/lerenn/cryptellation/svc/candlesticks/internal/adapters/exchanges/binance"
 	"github.com/lerenn/cryptellation/svc/candlesticks/internal/app/ports/exchanges"
 	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/candlestick"
@@ -15,7 +16,7 @@ type Exchanges struct {
 }
 
 func New() (Exchanges, error) {
-	b, err := binance.New()
+	b, err := binance.New(config.LoadBinanceTest())
 	if err != nil {
 		return Exchanges{}, err
 	}

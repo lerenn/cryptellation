@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/lerenn/cryptellation/pkg/config"
+	"github.com/lerenn/cryptellation/svc/backtests/deployments"
 	"github.com/stretchr/testify/suite"
 )
 
@@ -19,9 +20,10 @@ type SqlDatabaseSuite struct {
 }
 
 func (suite *SqlDatabaseSuite) SetupTest() {
-	defer tmpEnvVar("SQLDB_DATABASE", "backtests")()
-
-	db, err := New(config.LoadSQL())
+	db, err := New(config.LoadSQL(&config.SQL{
+		Database: "backtests",
+		Port:     deployments.DockerComposeSQLDBPort,
+	}))
 	suite.Require().NoError(err)
 	suite.Require().NoError(db.Reset(context.TODO()))
 
@@ -32,7 +34,7 @@ func (suite *SqlDatabaseSuite) TestNewWithURIError() {
 	defer tmpEnvVar("SQLDB_HOST", "")()
 
 	var err error
-	_, err = New(config.LoadSQL())
+	_, err = New(config.LoadSQL(nil))
 	suite.Require().Error(err)
 }
 

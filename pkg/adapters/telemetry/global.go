@@ -21,3 +21,7 @@ func T(ctx context.Context, tracer, name string) (context.Context, Tracer) {
 func CI(meter, name, description string) (Counter, error) {
 	return globalTelemeter.CounterInt(meter, name, description)
 }
+
+func Close(ctx context.Context) {
+	globalTelemeter.Close(ctx)
+}

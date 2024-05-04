@@ -14,6 +14,12 @@ import (
 )
 
 var (
+	hostFlag     string
+	userFlag     string
+	passwordFlag string
+	databaseFlag string
+	portFlag     int
+
 	migrator *gormigrate.Gormigrate
 )
 
@@ -22,8 +28,14 @@ var migrationsCmd = &cobra.Command{
 	Aliases: []string{"m"},
 	Short:   "Manage migrations",
 	PersistentPreRunE: func(cmd *cobra.Command, args []string) (err error) {
-		// Load config from environment
-		c := config.LoadSQL()
+		// Set default config and load from environment
+		c := config.LoadSQL(&config.SQL{
+			Host:     hostFlag,
+			User:     userFlag,
+			Password: passwordFlag,
+			Database: databaseFlag,
+			Port:     portFlag,
+		})
 		if err := c.Validate(); err != nil {
 			return err
 		}
@@ -56,5 +68,11 @@ var migrateCmd = &cobra.Command{
 }
 
 func addCommandsToMigrationsCmd() {
+	migrateCmd.Flags().StringVarP(&hostFlag, "host", "H", "localhost", "Host of the database")
+	migrateCmd.Flags().StringVarP(&userFlag, "user", "u", "postgres", "User of the database")
+	migrateCmd.Flags().StringVarP(&passwordFlag, "password", "P", "example", "Password of the database")
+	migrateCmd.Flags().StringVarP(&databaseFlag, "database", "d", "exchanges", "Database to migrate")
+	migrateCmd.Flags().IntVarP(&portFlag, "port", "p", 6002, "Port of the database")
+
 	migrationsCmd.AddCommand(migrateCmd)
 }

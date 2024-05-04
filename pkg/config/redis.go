@@ -16,14 +16,19 @@ type Redis struct {
 	Password string
 }
 
-func LoadRedis() (c Redis) {
+func LoadRedis(defaultValues *Redis) (c Redis) {
+	if defaultValues != nil {
+		c = *defaultValues
+	}
+
 	c.setDefault()
 	c.overrideFromEnv()
+
 	return c
 }
 
 func (c *Redis) setDefault() {
-	// Nothing to do
+	overrideString(&c.Address, "localhost:6379")
 }
 
 func (c *Redis) overrideFromEnv() {

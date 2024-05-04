@@ -27,14 +27,22 @@ type SQL struct {
 	Database string
 }
 
-func LoadSQL() (c SQL) {
+func LoadSQL(defaultValues *SQL) (c SQL) {
+	if defaultValues != nil {
+		c = *defaultValues
+	}
+
 	c.setDefault()
 	c.overrideFromEnv()
+
 	return c
 }
 
 func (c *SQL) setDefault() {
-	// Nothing to do
+	overrideString(&c.Host, "localhost")
+	overrideInt(&c.Port, 26257)
+	overrideString(&c.User, "postgres")
+	overrideString(&c.Password, "example")
 }
 
 func (c *SQL) overrideFromEnv() {

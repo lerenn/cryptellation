@@ -9,6 +9,8 @@ services:
       POSTGRES_DB: exchanges
     expose:
       - "5432"
+    ports:
+      - "6002:5432"
   exchanges-api:
     image: cosmtrek/air
     depends_on:

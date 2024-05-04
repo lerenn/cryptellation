@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/lerenn/cryptellation/pkg/adapters/exchanges/binance"
+	"github.com/lerenn/cryptellation/pkg/config"
 	"github.com/lerenn/cryptellation/svc/candlesticks/internal/adapters/exchanges/binance/entities"
 	"github.com/lerenn/cryptellation/svc/candlesticks/internal/app/ports/exchanges"
 	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/candlestick"
@@ -14,8 +15,8 @@ type Service struct {
 	*binance.Service
 }
 
-func New() (*Service, error) {
-	s, err := binance.New()
+func New(c config.Binance) (*Service, error) {
+	s, err := binance.New(c)
 	return &Service{
 		Service: s,
 	}, err

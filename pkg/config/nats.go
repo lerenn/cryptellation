@@ -23,8 +23,8 @@ func LoadNATS() (c NATS) {
 }
 
 func (c *NATS) setDefault() {
-	c.Host = "localhost"
-	c.Port = 4222
+	overrideString(&c.Host, "localhost")
+	overrideInt(&c.Port, 4222)
 }
 
 const (

@@ -4,37 +4,37 @@ ifndef TAGS
 	TAGS=""
 endif
 
-.PHONY: ci
-ci: ## Execute all basic CI steps
+.PHONY: dagger/ci
+dagger/ci: ## Execute all basic CI steps
 	@$(DAGGER_CMD)
 
-.PHONY: generate
-generate: ## Generate code files
+.PHONY: dagger/generate
+dagger/generate: ## Generate code files
 	@$(DAGGER_CMD) generate
 
-.PHONY: lint
-lint: ## Lint code
+.PHONY: dagger/lint
+dagger/lint: ## Lint code
 	@$(DAGGER_CMD) lint
 
-.PHONY: publish
-publish: ## Publish new tag on git, docker hub, etc.
+.PHONY: dagger/publish
+dagger/publish: ## Publish new tag on git, docker hub, etc.
 	@$(DAGGER_CMD) publish --tags ${TAGS}
 
-.PHONY: test
-test: test/unit test/integration test/end-to-end ## Launch tests 
+.PHONY: dagger/dagger/test
+dagger/test: test/unit test/integration test/end-to-end ## Launch tests 
 
-.PHONY: test/unit
-test/unit: ## Launch unit tests
+.PHONY: dagger/test/unit
+dagger/test/unit: ## Launch unit tests
 	@$(DAGGER_CMD) test --type=unit
 
-.PHONY: test/integration
-test/integration: ## Launch integration tests
+.PHONY: dagger/test/integration
+dagger/test/integration: ## Launch integration tests
 	@$(DAGGER_CMD) test --type=integration
 
-.PHONY: test/end-to-end
-test/end-to-end: ## Launch end-to-end tests
+.PHONY: dagger/test/end-to-end
+dagger/test/end-to-end: ## Launch end-to-end tests
 	@$(DAGGER_CMD) test --type=end-to-end
 
-.PHONY: update
-update: ## Update the dependencies
+.PHONY: dagger/update
+dagger/update: ## Update the dependencies
 	@$(DAGGER_CMD) update

@@ -5,6 +5,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/lerenn/cryptellation/pkg/config"
 	"github.com/lerenn/cryptellation/svc/candlesticks/internal/app/ports/exchanges"
 	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/candlestick"
 	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/period"
@@ -21,7 +22,7 @@ type BinanceSuite struct {
 }
 
 func (suite *BinanceSuite) SetupTest() {
-	service, err := New()
+	service, err := New(config.LoadBinanceTest())
 	suite.Require().NoError(err)
 	suite.service = service
 }

@@ -3,9 +3,12 @@ package backtests
 import (
 	"context"
 	"errors"
+	"fmt"
 	"testing"
 	"time"
 
+	"github.com/lerenn/cryptellation/pkg/config"
+	"github.com/lerenn/cryptellation/svc/backtests/deployments"
 	"github.com/lerenn/cryptellation/svc/backtests/internal/app/ports/db"
 	"github.com/lerenn/cryptellation/svc/backtests/pkg/account"
 	"github.com/lerenn/cryptellation/svc/backtests/pkg/backtest"
@@ -23,7 +26,11 @@ type BacktestSuite struct {
 }
 
 func (suite *BacktestSuite) SetupTest() {
-	db, err := New()
+	db, err := New(config.LoadRedis(
+		&config.Redis{
+			Address: fmt.Sprintf("localhost:%d", deployments.DockerComposeRedisPort),
+		},
+	))
 	suite.Require().NoError(err)
 	suite.DB = &db
 }

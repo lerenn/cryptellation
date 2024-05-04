@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/lerenn/cryptellation/pkg/config"
+	"github.com/lerenn/cryptellation/svc/exchanges/deployments"
 	"github.com/lerenn/cryptellation/svc/exchanges/internal/app/ports/db"
 	"github.com/stretchr/testify/suite"
 )
@@ -18,9 +19,10 @@ type ExchangesSuite struct {
 }
 
 func (suite *ExchangesSuite) SetupTest() {
-	defer tmpEnvVar("SQLDB_DATABASE", "exchanges")()
-
-	db, err := New(config.LoadSQL())
+	db, err := New(config.LoadSQL(&config.SQL{
+		Database: "exchanges",
+		Port:     deployments.DockerComposeSQLDBPort,
+	}))
 	suite.Require().NoError(err)
 	suite.Require().NoError(db.Reset(context.TODO()))
 

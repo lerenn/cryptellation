@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/lerenn/cryptellation/pkg/config"
+	"github.com/lerenn/cryptellation/svc/exchanges/deployments"
 	"github.com/lerenn/cryptellation/svc/exchanges/internal/adapters/db/sql/entities"
 	"github.com/lerenn/cryptellation/svc/exchanges/pkg/exchange"
 	"github.com/stretchr/testify/suite"
@@ -22,9 +23,10 @@ type SqlDatabaseSuite struct {
 }
 
 func (suite *SqlDatabaseSuite) SetupTest() {
-	defer tmpEnvVar("SQLDB_DATABASE", "exchanges")()
-
-	db, err := New(config.LoadSQL())
+	db, err := New(config.LoadSQL(&config.SQL{
+		Database: "exchanges",
+		Port:     deployments.DockerComposeSQLDBPort,
+	}))
 	suite.Require().NoError(err)
 	suite.Require().NoError(db.Reset(context.TODO()))
 
@@ -35,7 +37,7 @@ func (suite *SqlDatabaseSuite) TestNewWithURIError() {
 	defer tmpEnvVar("SQLDB_HOST", "")()
 
 	var err error
-	_, err = New(config.LoadSQL())
+	_, err = New(config.LoadSQL(nil))
 	suite.Error(err)
 }
 

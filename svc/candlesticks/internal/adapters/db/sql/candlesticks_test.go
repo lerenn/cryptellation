@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/lerenn/cryptellation/pkg/config"
-	"github.com/lerenn/cryptellation/pkg/utils"
+	"github.com/lerenn/cryptellation/svc/candlesticks/deployments"
 	"github.com/lerenn/cryptellation/svc/candlesticks/internal/app/ports/db"
 	"github.com/stretchr/testify/suite"
 )
@@ -19,9 +19,10 @@ type CandlesticksSuite struct {
 }
 
 func (suite *CandlesticksSuite) SetupTest() {
-	defer utils.TemporaryEnvVar("SQLDB_DATABASE", "candlesticks")()
-
-	db, err := New(config.LoadSQL())
+	db, err := New(config.LoadSQL(&config.SQL{
+		Database: "candlesticks",
+		Port:     deployments.DockerComposeSQLDBPort,
+	}))
 	suite.Require().NoError(err)
 	suite.Require().NoError(db.Reset(context.TODO()))
 

@@ -30,7 +30,7 @@ func (suite *RedisSuite) TestLoadValidate() {
 		defer tmpEnvVar("REDIS_URL", c.Address)()
 		defer tmpEnvVar("REDIS_PASSWORD", c.Password)()
 
-		cfg := LoadRedis()
+		cfg := LoadRedis(nil)
 		suite.Require().Equal(c.Err, cfg.Validate(), i)
 	}
 }

@@ -9,6 +9,7 @@ import (
 	client "github.com/adshao/go-binance/v2"
 	"github.com/lerenn/cryptellation/pkg/adapters/exchanges/binance"
 	"github.com/lerenn/cryptellation/pkg/adapters/telemetry"
+	"github.com/lerenn/cryptellation/pkg/config"
 	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/pair"
 	"github.com/lerenn/cryptellation/svc/ticks/pkg/tick"
 )
@@ -18,7 +19,7 @@ type Service struct {
 }
 
 func New() (*Service, error) {
-	s, err := binance.New()
+	s, err := binance.New(config.LoadBinanceTest())
 	return &Service{
 		Service: s,
 	}, err

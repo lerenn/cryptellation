@@ -14,8 +14,7 @@ type Adapter struct {
 	ClientLock *redsync.Redsync
 }
 
-func New() (Adapter, error) {
-	c := config.LoadRedis()
+func New(c config.Redis) (Adapter, error) {
 	if err := c.Validate(); err != nil {
 		return Adapter{}, fmt.Errorf("loading redis config: %w", err)
 	}

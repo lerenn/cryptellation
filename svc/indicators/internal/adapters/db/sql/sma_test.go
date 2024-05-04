@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/lerenn/cryptellation/pkg/config"
-	"github.com/lerenn/cryptellation/pkg/utils"
+	"github.com/lerenn/cryptellation/svc/indicators/deployments"
 	"github.com/lerenn/cryptellation/svc/indicators/internal/app/ports/db"
 	"github.com/stretchr/testify/suite"
 )
@@ -19,9 +19,10 @@ type IndicatorsSuite struct {
 }
 
 func (suite *IndicatorsSuite) SetupTest() {
-	defer utils.TemporaryEnvVar("SQLDB_DATABASE", "indicators")()
-
-	db, err := New(config.LoadSQL())
+	db, err := New(config.LoadSQL(&config.SQL{
+		Database: "indicators",
+		Port:     deployments.DockerComposeSQLDBPort,
+	}))
 	suite.Require().NoError(err)
 	suite.Require().NoError(db.Reset(context.TODO()))
 
