@@ -10,16 +10,16 @@ import (
 )
 
 type Candlestick struct {
-	Exchange   string    `gorm:"primaryKey;autoIncrement:false;index:candlestick,unique"`
-	Pair       string    `gorm:"primaryKey;autoIncrement:false;index:candlestick,unique"`
-	Period     string    `gorm:"primaryKey;autoIncrement:false;index:candlestick,unique"`
-	Time       time.Time `gorm:"primaryKey;autoIncrement:false;index:candlestick,unique"`
-	Open       float64
-	High       float64
-	Low        float64
-	Close      float64
-	Volume     float64
-	Uncomplete bool
+	Exchange   string    `bson:"exchange"`
+	Pair       string    `bson:"pair"`
+	Period     string    `bson:"period"`
+	Time       time.Time `bson:"time"`
+	Open       float64   `bson:"open"`
+	High       float64   `bson:"high"`
+	Low        float64   `bson:"low"`
+	Close      float64   `bson:"close"`
+	Volume     float64   `bson:"volume"`
+	Uncomplete bool      `bson:"uncomplete"`
 }
 
 func (c *Candlestick) FromModel(exchange, pair, period string, t time.Time, model candlestick.Candlestick) {

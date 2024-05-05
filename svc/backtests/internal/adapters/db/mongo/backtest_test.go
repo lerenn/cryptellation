@@ -25,11 +25,12 @@ type BacktestSuite struct {
 }
 
 func (suite *BacktestSuite) SetupTest() {
-	db, err := New(config.LoadMongo(
-		&config.Mongo{
+	db, err := New(
+		context.Background(),
+		config.LoadMongo(&config.Mongo{
 			Database: "cryptellation-backtests-testdb",
-		},
-	))
+		}),
+	)
 	suite.Require().NoError(err)
 	suite.DB = db
 }

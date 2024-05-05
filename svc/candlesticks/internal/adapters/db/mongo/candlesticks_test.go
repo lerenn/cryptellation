@@ -1,11 +1,10 @@
-package sql
+package mongo
 
 import (
 	"context"
 	"testing"
 
 	"github.com/lerenn/cryptellation/pkg/config"
-	"github.com/lerenn/cryptellation/svc/candlesticks/deployments"
 	"github.com/lerenn/cryptellation/svc/candlesticks/internal/app/ports/db"
 	"github.com/stretchr/testify/suite"
 )
@@ -19,10 +18,12 @@ type CandlesticksSuite struct {
 }
 
 func (suite *CandlesticksSuite) SetupTest() {
-	db, err := New(config.LoadSQL(&config.SQL{
-		Database: "candlesticks",
-		Port:     deployments.DockerComposeSQLDBPort,
-	}))
+	db, err := New(
+		context.Background(),
+		config.LoadMongo(
+			&config.Mongo{
+				Database: "cryptellation-candlesticks-testdb",
+			}))
 	suite.Require().NoError(err)
 	suite.Require().NoError(db.Reset(context.TODO()))
 

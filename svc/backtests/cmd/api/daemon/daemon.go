@@ -30,7 +30,7 @@ func New(ctx context.Context) (Daemon, error) {
 	go h.HTTPServe(ctx)
 
 	// Init adapters
-	adapters, err := newAdapters()
+	adapters, err := newAdapters(ctx)
 	if err != nil {
 		return Daemon{}, err
 	}

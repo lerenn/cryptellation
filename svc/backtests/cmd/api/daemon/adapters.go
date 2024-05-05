@@ -19,9 +19,9 @@ type adapters struct {
 	candlesticks candlesticks.Client
 }
 
-func newAdapters() (adapters, error) {
+func newAdapters(ctx context.Context) (adapters, error) {
 	// Init database client
-	db, err := mongo.New(config.LoadMongo(nil))
+	db, err := mongo.New(ctx, config.LoadMongo(nil))
 	if err != nil {
 		return adapters{}, err
 	}
