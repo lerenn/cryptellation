@@ -5,6 +5,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/lerenn/cryptellation/svc/backtests/internal/app"
 	"github.com/lerenn/cryptellation/svc/backtests/internal/app/ports/db"
 	"github.com/lerenn/cryptellation/svc/backtests/internal/app/ports/events"
@@ -40,24 +41,30 @@ func (suite *CreationSuite) SetupTest() {
 
 func (suite *CreationSuite) TestHappyPass() {
 	ctx := context.Background()
+	var appSetID uuid.UUID
 
 	// Set DB mock expectations
-	suite.db.EXPECT().CreateBacktest(ctx, gomock.Eq(&backtest.Backtest{
-		StartTime: time.Unix(0, 0),
-		CurrentCsTick: backtest.CurrentCsTick{
-			Time:      time.Unix(0, 0),
-			PriceType: candlestick.PriceTypeIsOpen,
-		},
-		EndTime: time.Unix(120, 0),
-		Accounts: map[string]account.Account{
-			"exchange": {
-				Balances: map[string]float64{"DAI": 1000},
-			},
-		},
-		PeriodBetweenEvents: period.M1,
-		TickSubscriptions:   make([]event.TickSubscription, 0),
-		Orders:              make([]order.Order, 0)})).
-		Do(func(ctx context.Context, bt *backtest.Backtest) { bt.ID = 1 }).
+	suite.db.EXPECT().CreateBacktest(ctx, gomock.Any()).
+		Do(func(ctx context.Context, bt backtest.Backtest) {
+			appSetID = bt.ID
+
+			suite.Require().Equal(backtest.Backtest{
+				ID:        bt.ID,
+				StartTime: time.Unix(0, 0),
+				CurrentCsTick: backtest.CurrentCsTick{
+					Time:      time.Unix(0, 0),
+					PriceType: candlestick.PriceTypeIsOpen,
+				},
+				EndTime: time.Unix(120, 0),
+				Accounts: map[string]account.Account{
+					"exchange": {
+						Balances: map[string]float64{"DAI": 1000},
+					},
+				},
+				PeriodBetweenEvents: period.M1,
+				TickSubscriptions:   make([]event.TickSubscription, 0),
+				Orders:              make([]order.Order, 0)}, bt)
+		}).
 		Return(nil)
 
 	// Execute creation
@@ -73,7 +80,7 @@ func (suite *CreationSuite) TestHappyPass() {
 	})
 
 	// Check that returned value is correct
-	suite.Require().Equal(uint(1), id)
+	suite.Require().Equal(appSetID, id)
 	suite.Require().NoError(err)
 }
 

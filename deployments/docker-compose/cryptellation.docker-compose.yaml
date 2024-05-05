@@ -1,0 +1,6 @@
+include:
+    - ../../svc/backtests/deployments/docker-compose.yaml
+    - ../../svc/candlesticks/deployments/docker-compose.yaml
+    - ../../svc/exchanges/deployments/docker-compose.yaml
+    - ../../svc/indicators/deployments/docker-compose.yaml
+    - ../../svc/ticks/deployments/docker-compose.yaml

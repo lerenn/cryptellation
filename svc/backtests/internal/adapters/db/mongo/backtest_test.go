@@ -3,12 +3,11 @@ package backtests
 import (
 	"context"
 	"errors"
-	"fmt"
 	"testing"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/lerenn/cryptellation/pkg/config"
-	"github.com/lerenn/cryptellation/svc/backtests/deployments"
 	"github.com/lerenn/cryptellation/svc/backtests/internal/app/ports/db"
 	"github.com/lerenn/cryptellation/svc/backtests/pkg/account"
 	"github.com/lerenn/cryptellation/svc/backtests/pkg/backtest"
@@ -26,17 +25,18 @@ type BacktestSuite struct {
 }
 
 func (suite *BacktestSuite) SetupTest() {
-	db, err := New(config.LoadRedis(
-		&config.Redis{
-			Address: fmt.Sprintf("localhost:%d", deployments.DockerComposeRedisPort),
+	db, err := New(config.LoadMongo(
+		&config.Mongo{
+			Database: "cryptellation-backtests-testdb",
 		},
 	))
 	suite.Require().NoError(err)
-	suite.DB = &db
+	suite.DB = db
 }
 
 func (suite *BacktestSuite) TestPanicLock() {
 	bt := backtest.Backtest{
+		ID:        uuid.New(),
 		StartTime: time.Unix(0, 0),
 		CurrentCsTick: backtest.CurrentCsTick{
 			Time:      time.Unix(60, 0),
@@ -52,7 +52,7 @@ func (suite *BacktestSuite) TestPanicLock() {
 			},
 		},
 	}
-	suite.Require().NoError(suite.DB.CreateBacktest(context.TODO(), &bt))
+	suite.Require().NoError(suite.DB.CreateBacktest(context.TODO(), bt))
 
 	// Check that lock works even with panic
 	suite.Require().NoError(suite.DB.LockedBacktest(context.TODO(), bt.ID, func(bt *backtest.Backtest) error {

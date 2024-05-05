@@ -3,6 +3,7 @@ package asyncapi
 import (
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/lerenn/cryptellation/pkg/utils"
 	client "github.com/lerenn/cryptellation/svc/backtests/clients/go"
 	"github.com/lerenn/cryptellation/svc/backtests/pkg/order"
@@ -17,7 +18,7 @@ func (msg *OrdersListResponseMessage) Set(orders []order.Order) {
 
 func (msg *OrdersCreateRequestMessage) Set(payload client.OrderCreationPayload) {
 	// Backtest
-	msg.Payload.Id = BacktestIDSchema(payload.BacktestID)
+	msg.Payload.Id = BacktestIDSchema(payload.BacktestID.String())
 
 	// Order
 	msg.Payload.Order.Exchange = ExchangeSchema(payload.Exchange)
@@ -44,9 +45,15 @@ func orderModelFromAPI(o OrderSchema) (order.Order, error) {
 		return order.Order{}, err
 	}
 
+	// Check IF
+	id, err := uuid.Parse(utils.FromReferenceOrDefault(o.Id))
+	if err != nil {
+		return order.Order{}, err
+	}
+
 	// Return order
 	return order.Order{
-		ID:            uint64(utils.FromReferenceOrDefault(o.Id)),
+		ID:            id,
 		ExecutionTime: (*time.Time)(o.ExecutionTime),
 		Type:          t,
 		Exchange:      string(o.Exchange),
@@ -59,7 +66,7 @@ func orderModelFromAPI(o OrderSchema) (order.Order, error) {
 
 func orderModelToAPI(o order.Order) OrderSchema {
 	return OrderSchema{
-		Id:            (*int64)(utils.ToReference((int64)(o.ID))),
+		Id:            utils.ToReference(o.ID.String()),
 		ExecutionTime: (*DateSchema)(o.ExecutionTime),
 		Type:          OrderTypeSchema(o.Type.String()),
 		Exchange:      ExchangeSchema(o.Exchange),

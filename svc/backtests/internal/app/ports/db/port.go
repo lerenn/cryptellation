@@ -7,6 +7,7 @@ import (
 	"context"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/lerenn/cryptellation/svc/backtests/pkg/backtest"
 )
 
@@ -19,10 +20,10 @@ const (
 type LockedBacktestCallback func(bt *backtest.Backtest) error
 
 type Port interface {
-	CreateBacktest(ctx context.Context, bt *backtest.Backtest) error
-	ReadBacktest(ctx context.Context, id uint) (backtest.Backtest, error)
+	CreateBacktest(ctx context.Context, bt backtest.Backtest) error
+	ReadBacktest(ctx context.Context, id uuid.UUID) (backtest.Backtest, error)
 	UpdateBacktest(ctx context.Context, bt backtest.Backtest) error
 	DeleteBacktest(ctx context.Context, bt backtest.Backtest) error
 
-	LockedBacktest(ctx context.Context, id uint, fn LockedBacktestCallback) error
+	LockedBacktest(ctx context.Context, id uuid.UUID, fn LockedBacktestCallback) error
 }

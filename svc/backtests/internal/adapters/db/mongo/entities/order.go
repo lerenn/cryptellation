@@ -3,19 +3,19 @@ package entities
 import (
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/lerenn/cryptellation/svc/backtests/pkg/order"
 )
 
 type Order struct {
-	ID            uint `gorm:"primaryKey"`
-	BacktestID    uint
-	ExecutionTime *time.Time
-	Type          string
-	Exchange      string
-	Pair          string
-	Side          string
-	Quantity      float64
-	Price         float64
+	ID            string     `bson:"id"`
+	ExecutionTime *time.Time `bson:"execution_time"`
+	Type          string     `bson:"type"`
+	Exchange      string     `bson:"exchange"`
+	Pair          string     `bson:"pair"`
+	Side          string     `bson:"side"`
+	Quantity      float64    `bson:"quantity"`
+	Price         float64    `bson:"price"`
 }
 
 func (o Order) ToModel() (order.Order, error) {
@@ -29,8 +29,13 @@ func (o Order) ToModel() (order.Order, error) {
 		return order.Order{}, err
 	}
 
+	id, err := uuid.Parse(o.ID)
+	if err != nil {
+		return order.Order{}, err
+	}
+
 	return order.Order{
-		ID:            uint64(o.ID),
+		ID:            id,
 		ExecutionTime: o.ExecutionTime,
 		Type:          t,
 		Exchange:      o.Exchange,
@@ -52,18 +57,17 @@ func ToOrderModels(orders []Order) ([]order.Order, error) {
 	return models, nil
 }
 
-func FromOrderModels(backtestID uint, models []order.Order) []Order {
+func FromOrderModels(models []order.Order) []Order {
 	entities := make([]Order, len(models))
 	for i, m := range models {
-		entities[i] = FromOrderModel(backtestID, m)
+		entities[i] = FromOrderModel(m)
 	}
 	return entities
 }
 
-func FromOrderModel(backtestID uint, m order.Order) Order {
+func FromOrderModel(m order.Order) Order {
 	return Order{
-		ID:            uint(m.ID),
-		BacktestID:    backtestID,
+		ID:            m.ID.String(),
 		ExecutionTime: m.ExecutionTime,
 		Type:          m.Type.String(),
 		Exchange:      m.Exchange,

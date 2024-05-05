@@ -4,18 +4,19 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/google/uuid"
 	"github.com/lerenn/cryptellation/svc/backtests/pkg/backtest"
 )
 
-func (b Backtests) Create(ctx context.Context, req backtest.NewPayload) (id uint, err error) {
+func (b Backtests) Create(ctx context.Context, req backtest.NewPayload) (id uuid.UUID, err error) {
 	bt, err := backtest.New(ctx, req)
 	if err != nil {
-		return 0, fmt.Errorf("creating a new backtest from request: %w", err)
+		return uuid.Nil, fmt.Errorf("creating a new backtest from request: %w", err)
 	}
 
-	err = b.db.CreateBacktest(ctx, &bt)
+	err = b.db.CreateBacktest(ctx, bt)
 	if err != nil {
-		return 0, fmt.Errorf("adding backtest to db: %w", err)
+		return uuid.Nil, fmt.Errorf("adding backtest to db: %w", err)
 	}
 
 	return bt.ID, nil

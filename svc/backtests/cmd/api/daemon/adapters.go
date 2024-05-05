@@ -5,7 +5,7 @@ import (
 
 	asyncapipkg "github.com/lerenn/cryptellation/pkg/asyncapi"
 	"github.com/lerenn/cryptellation/pkg/config"
-	sql "github.com/lerenn/cryptellation/svc/backtests/internal/adapters/db/sql"
+	mongo "github.com/lerenn/cryptellation/svc/backtests/internal/adapters/db/mongo"
 	natsBacktests "github.com/lerenn/cryptellation/svc/backtests/internal/adapters/events/nats"
 	"github.com/lerenn/cryptellation/svc/backtests/internal/app/ports/db"
 	"github.com/lerenn/cryptellation/svc/backtests/internal/app/ports/events"
@@ -21,7 +21,7 @@ type adapters struct {
 
 func newAdapters() (adapters, error) {
 	// Init database client
-	db, err := sql.New(config.LoadSQL(nil))
+	db, err := mongo.New(config.LoadMongo(nil))
 	if err != nil {
 		return adapters{}, err
 	}

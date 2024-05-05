@@ -8,7 +8,7 @@ import (
 )
 
 var (
-	ErrInvalidConfig = errors.New("invalid redis config")
+	ErrInvalidRedisConfig = errors.New("invalid redis config")
 )
 
 type Redis struct {
@@ -42,7 +42,7 @@ func (c *Redis) overrideFromEnv() {
 
 func (c Redis) Validate() error {
 	if c.Address == "" {
-		return fmt.Errorf("reading address from env (%q): %w", c.Address, ErrInvalidConfig)
+		return fmt.Errorf("reading address from env (%q): %w", c.Address, ErrInvalidRedisConfig)
 	}
 
 	return nil

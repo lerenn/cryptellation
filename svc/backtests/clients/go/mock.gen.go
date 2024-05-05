@@ -8,6 +8,7 @@ import (
 	context "context"
 	reflect "reflect"
 
+	uuid "github.com/google/uuid"
 	client "github.com/lerenn/cryptellation/pkg/client"
 	account "github.com/lerenn/cryptellation/svc/backtests/pkg/account"
 	event "github.com/lerenn/cryptellation/svc/backtests/pkg/event"
@@ -38,7 +39,7 @@ func (m *MockClient) EXPECT() *MockClientMockRecorder {
 }
 
 // Advance mocks base method.
-func (m *MockClient) Advance(ctx context.Context, backtestID uint) error {
+func (m *MockClient) Advance(ctx context.Context, backtestID uuid.UUID) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Advance", ctx, backtestID)
 	ret0, _ := ret[0].(error)
@@ -64,10 +65,10 @@ func (mr *MockClientMockRecorder) Close(ctx interface{}) *gomock.Call {
 }
 
 // Create mocks base method.
-func (m *MockClient) Create(ctx context.Context, payload BacktestCreationPayload) (uint, error) {
+func (m *MockClient) Create(ctx context.Context, payload BacktestCreationPayload) (uuid.UUID, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Create", ctx, payload)
-	ret0, _ := ret[0].(uint)
+	ret0, _ := ret[0].(uuid.UUID)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -93,7 +94,7 @@ func (mr *MockClientMockRecorder) CreateOrder(ctx, payload interface{}) *gomock.
 }
 
 // GetAccounts mocks base method.
-func (m *MockClient) GetAccounts(ctx context.Context, backtestID uint) (map[string]account.Account, error) {
+func (m *MockClient) GetAccounts(ctx context.Context, backtestID uuid.UUID) (map[string]account.Account, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetAccounts", ctx, backtestID)
 	ret0, _ := ret[0].(map[string]account.Account)
@@ -108,7 +109,7 @@ func (mr *MockClientMockRecorder) GetAccounts(ctx, backtestID interface{}) *gomo
 }
 
 // ListenEvents mocks base method.
-func (m *MockClient) ListenEvents(ctx context.Context, backtestID uint) (<-chan event.Event, error) {
+func (m *MockClient) ListenEvents(ctx context.Context, backtestID uuid.UUID) (<-chan event.Event, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ListenEvents", ctx, backtestID)
 	ret0, _ := ret[0].(<-chan event.Event)
@@ -138,7 +139,7 @@ func (mr *MockClientMockRecorder) ServiceInfo(ctx interface{}) *gomock.Call {
 }
 
 // Subscribe mocks base method.
-func (m *MockClient) Subscribe(ctx context.Context, backtestID uint, exchange, pair string) error {
+func (m *MockClient) Subscribe(ctx context.Context, backtestID uuid.UUID, exchange, pair string) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Subscribe", ctx, backtestID, exchange, pair)
 	ret0, _ := ret[0].(error)

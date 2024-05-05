@@ -211,7 +211,7 @@ components:
         oneOf:
         - properties:
             id:
-              type: integer
+              type: string
               description: Newly created backtest ID
         - properties:
             error:
@@ -414,7 +414,7 @@ components:
           type: number
           format: double
     BacktestID:
-      type: integer
+      type: string
       description: Targeted backtest ID
     Date:
       type: string
@@ -454,7 +454,7 @@ components:
         - quantity
       properties:
         id:
-          type: integer
+          type: string
           description: Order ID set by the system
         execution_time:
           description: Effective time of order execution

@@ -3,6 +3,8 @@ package order
 import (
 	"errors"
 	"time"
+
+	"github.com/google/uuid"
 )
 
 var (
@@ -10,7 +12,7 @@ var (
 )
 
 type Order struct {
-	ID            uint64
+	ID            uuid.UUID
 	ExecutionTime *time.Time
 	Type          Type
 	Exchange      string

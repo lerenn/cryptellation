@@ -8,6 +8,7 @@ import (
 	context "context"
 	reflect "reflect"
 
+	uuid "github.com/google/uuid"
 	backtest "github.com/lerenn/cryptellation/svc/backtests/pkg/backtest"
 	gomock "go.uber.org/mock/gomock"
 )
@@ -36,7 +37,7 @@ func (m *MockPort) EXPECT() *MockPortMockRecorder {
 }
 
 // CreateBacktest mocks base method.
-func (m *MockPort) CreateBacktest(ctx context.Context, bt *backtest.Backtest) error {
+func (m *MockPort) CreateBacktest(ctx context.Context, bt backtest.Backtest) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreateBacktest", ctx, bt)
 	ret0, _ := ret[0].(error)
@@ -64,7 +65,7 @@ func (mr *MockPortMockRecorder) DeleteBacktest(ctx, bt interface{}) *gomock.Call
 }
 
 // LockedBacktest mocks base method.
-func (m *MockPort) LockedBacktest(ctx context.Context, id uint, fn LockedBacktestCallback) error {
+func (m *MockPort) LockedBacktest(ctx context.Context, id uuid.UUID, fn LockedBacktestCallback) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "LockedBacktest", ctx, id, fn)
 	ret0, _ := ret[0].(error)
@@ -78,7 +79,7 @@ func (mr *MockPortMockRecorder) LockedBacktest(ctx, id, fn interface{}) *gomock.
 }
 
 // ReadBacktest mocks base method.
-func (m *MockPort) ReadBacktest(ctx context.Context, id uint) (backtest.Backtest, error) {
+func (m *MockPort) ReadBacktest(ctx context.Context, id uuid.UUID) (backtest.Backtest, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ReadBacktest", ctx, id)
 	ret0, _ := ret[0].(backtest.Backtest)

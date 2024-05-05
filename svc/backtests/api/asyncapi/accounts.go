@@ -1,9 +1,12 @@
 package asyncapi
 
-import "github.com/lerenn/cryptellation/svc/backtests/pkg/account"
+import (
+	"github.com/google/uuid"
+	"github.com/lerenn/cryptellation/svc/backtests/pkg/account"
+)
 
-func (msg *AccountsListRequestMessage) Set(backtestID uint) {
-	msg.Payload.Id = BacktestIDSchema(backtestID)
+func (msg *AccountsListRequestMessage) Set(backtestID uuid.UUID) {
+	msg.Payload.Id = BacktestIDSchema(backtestID.String())
 }
 
 func (msg *AccountsListResponseMessage) Set(accounts map[string]account.Account) {

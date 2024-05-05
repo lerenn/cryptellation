@@ -8,6 +8,7 @@ import (
 	context "context"
 	reflect "reflect"
 
+	uuid "github.com/google/uuid"
 	event "github.com/lerenn/cryptellation/svc/backtests/pkg/event"
 	gomock "go.uber.org/mock/gomock"
 )
@@ -48,7 +49,7 @@ func (mr *MockPortMockRecorder) Close(ctx interface{}) *gomock.Call {
 }
 
 // Publish mocks base method.
-func (m *MockPort) Publish(ctx context.Context, backtestID uint, event event.Event) error {
+func (m *MockPort) Publish(ctx context.Context, backtestID uuid.UUID, event event.Event) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Publish", ctx, backtestID, event)
 	ret0, _ := ret[0].(error)
@@ -62,7 +63,7 @@ func (mr *MockPortMockRecorder) Publish(ctx, backtestID, event interface{}) *gom
 }
 
 // Subscribe mocks base method.
-func (m *MockPort) Subscribe(ctx context.Context, backtestID uint) (<-chan event.Event, error) {
+func (m *MockPort) Subscribe(ctx context.Context, backtestID uuid.UUID) (<-chan event.Event, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Subscribe", ctx, backtestID)
 	ret0, _ := ret[0].(<-chan event.Event)

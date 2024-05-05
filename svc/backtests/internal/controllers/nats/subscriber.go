@@ -4,6 +4,7 @@ import (
 	"context"
 	"net/http"
 
+	"github.com/google/uuid"
 	"github.com/lerenn/cryptellation/pkg/version"
 	asyncapi "github.com/lerenn/cryptellation/svc/backtests/api/asyncapi"
 	"github.com/lerenn/cryptellation/svc/backtests/internal/app"
@@ -23,8 +24,18 @@ func newSubscriber(controller *asyncapi.AppController, app app.Backtests) subscr
 
 func (s subscriber) AccountsListOperationReceived(ctx context.Context, msg asyncapi.AccountsListRequestMessage) error {
 	return s.controller.ReplyToAccountsListOperation(ctx, msg, func(replyMsg *asyncapi.AccountsListResponseMessage) {
+		// Parse backtest ID
+		id, err := uuid.Parse(string(msg.Payload.Id))
+		if err != nil {
+			replyMsg.Payload.Error = &asyncapi.ErrorSchema{
+				Code:    http.StatusBadRequest,
+				Message: err.Error(),
+			}
+			return
+		}
+
 		// Get accounts
-		accounts, err := s.backtests.GetAccounts(context.Background(), uint(msg.Payload.Id))
+		accounts, err := s.backtests.GetAccounts(context.Background(), id)
 		if err != nil {
 			replyMsg.Payload.Error = &asyncapi.ErrorSchema{
 				Code:    http.StatusInternalServerError,
@@ -40,8 +51,18 @@ func (s subscriber) AccountsListOperationReceived(ctx context.Context, msg async
 
 func (s subscriber) AdvanceOperationReceived(ctx context.Context, msg asyncapi.AdvanceRequestMessage) error {
 	return s.controller.ReplyToAdvanceOperation(ctx, msg, func(replyMsg *asyncapi.AdvanceResponseMessage) {
-		err := s.backtests.Advance(context.Background(), uint(msg.Payload.Id))
+		// Parse backtest ID
+		id, err := uuid.Parse(string(msg.Payload.Id))
 		if err != nil {
+			replyMsg.Payload.Error = &asyncapi.ErrorSchema{
+				Code:    http.StatusBadRequest,
+				Message: err.Error(),
+			}
+			return
+		}
+
+		// Advance backtest
+		if err := s.backtests.Advance(context.Background(), id); err != nil {
 			replyMsg.Payload.Error = &asyncapi.ErrorSchema{
 				Code:    http.StatusInternalServerError,
 				Message: err.Error(),
@@ -73,12 +94,22 @@ func (s subscriber) CreateOperationReceived(ctx context.Context, msg asyncapi.Cr
 		}
 
 		// Set response ID
-		replyMsg.Payload.Id = int64(id)
+		replyMsg.Payload.Id = id.String()
 	})
 }
 
 func (s subscriber) OrdersCreateOperationReceived(ctx context.Context, msg asyncapi.OrdersCreateRequestMessage) error {
 	return s.controller.ReplyToOrdersCreateOperation(ctx, msg, func(replyMsg *asyncapi.OrdersCreateResponseMessage) {
+		// Parse backtest ID
+		id, err := uuid.Parse(string(msg.Payload.Id))
+		if err != nil {
+			replyMsg.Payload.Error = &asyncapi.ErrorSchema{
+				Code:    http.StatusBadRequest,
+				Message: err.Error(),
+			}
+			return
+		}
+
 		// Set order model from API
 		order, err := msg.ToModel()
 		if err != nil {
@@ -90,8 +121,7 @@ func (s subscriber) OrdersCreateOperationReceived(ctx context.Context, msg async
 		}
 
 		// Create the order
-		err = s.backtests.CreateOrder(context.Background(), uint(msg.Payload.Id), order)
-		if err != nil {
+		if err := s.backtests.CreateOrder(context.Background(), id, order); err != nil {
 			replyMsg.Payload.Error = &asyncapi.ErrorSchema{
 				Code:    http.StatusInternalServerError,
 				Message: err.Error(),
@@ -103,8 +133,18 @@ func (s subscriber) OrdersCreateOperationReceived(ctx context.Context, msg async
 
 func (s subscriber) OrdersListOperationReceived(ctx context.Context, msg asyncapi.OrdersListRequestMessage) error {
 	return s.controller.ReplyToOrdersListOperation(ctx, msg, func(replyMsg *asyncapi.OrdersListResponseMessage) {
+		// Parse backtest ID
+		id, err := uuid.Parse(string(msg.Payload.Id))
+		if err != nil {
+			replyMsg.Payload.Error = &asyncapi.ErrorSchema{
+				Code:    http.StatusBadRequest,
+				Message: err.Error(),
+			}
+			return
+		}
+
 		// Get list of orders
-		list, err := s.backtests.GetOrders(context.Background(), uint(msg.Payload.Id))
+		list, err := s.backtests.GetOrders(context.Background(), id)
 		if err != nil {
 			replyMsg.Payload.Error = &asyncapi.ErrorSchema{
 				Code:    http.StatusInternalServerError,
@@ -120,13 +160,23 @@ func (s subscriber) OrdersListOperationReceived(ctx context.Context, msg asyncap
 
 func (s subscriber) SubscribeOperationReceived(ctx context.Context, msg asyncapi.SubscribeRequestMessage) error {
 	return s.controller.ReplyToSubscribeOperation(ctx, msg, func(replyMsg *asyncapi.SubscribeResponseMessage) {
-		err := s.backtests.SubscribeToEvents(
+		// Parse backtest ID
+		id, err := uuid.Parse(string(msg.Payload.Id))
+		if err != nil {
+			replyMsg.Payload.Error = &asyncapi.ErrorSchema{
+				Code:    http.StatusBadRequest,
+				Message: err.Error(),
+			}
+			return
+		}
+
+		// Subscribe to events
+		if err := s.backtests.SubscribeToEvents(
 			context.Background(),
-			uint(msg.Payload.Id),
+			id,
 			string(msg.Payload.Exchange),
 			string(msg.Payload.Pair),
-		)
-		if err != nil {
+		); err != nil {
 			replyMsg.Payload.Error = &asyncapi.ErrorSchema{
 				Code:    http.StatusInternalServerError,
 				Message: err.Error(),

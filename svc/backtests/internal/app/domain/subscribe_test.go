@@ -4,6 +4,7 @@ import (
 	"context"
 	"testing"
 
+	"github.com/google/uuid"
 	"github.com/lerenn/cryptellation/svc/backtests/internal/app"
 	"github.com/lerenn/cryptellation/svc/backtests/internal/app/ports/db"
 	"github.com/lerenn/cryptellation/svc/backtests/internal/app/ports/events"
@@ -35,12 +36,13 @@ func (suite *SubscribeSuite) SetupTest() {
 
 func (suite *SubscribeSuite) TestHappyPath() {
 	ctx := context.Background()
+	id := uuid.New()
 
 	// Set DB expected operations
-	suite.db.EXPECT().LockedBacktest(ctx, uint(1234), gomock.Any()).
-		DoAndReturn(func(ctx context.Context, id uint, fn db.LockedBacktestCallback) error {
+	suite.db.EXPECT().LockedBacktest(ctx, id, gomock.Any()).
+		DoAndReturn(func(ctx context.Context, id uuid.UUID, fn db.LockedBacktestCallback) error {
 			bt := backtest.Backtest{
-				ID:                1234,
+				ID:                uuid.New(),
 				TickSubscriptions: make([]event.TickSubscription, 0),
 			}
 
@@ -49,7 +51,7 @@ func (suite *SubscribeSuite) TestHappyPath() {
 			}
 
 			suite.Require().Equal(backtest.Backtest{
-				ID: 1234,
+				ID: bt.ID,
 				TickSubscriptions: []event.TickSubscription{
 					{
 						Exchange: "exchange",
@@ -62,6 +64,6 @@ func (suite *SubscribeSuite) TestHappyPath() {
 		})
 
 	// Execute operation
-	err := suite.operator.SubscribeToEvents(ctx, uint(1234), "exchange", "ETH-USDT")
+	err := suite.operator.SubscribeToEvents(ctx, id, "exchange", "ETH-USDT")
 	suite.Require().NoError(err)
 }

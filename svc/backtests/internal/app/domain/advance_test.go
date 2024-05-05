@@ -5,6 +5,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/lerenn/cryptellation/pkg/utils"
 	"github.com/lerenn/cryptellation/svc/backtests/internal/app"
 	"github.com/lerenn/cryptellation/svc/backtests/internal/app/ports/db"
@@ -39,12 +40,13 @@ func (suite *AdvanceSuite) SetupTest() {
 
 func (suite *AdvanceSuite) TestWithoutAccount() {
 	ctx := context.Background()
+	id := uuid.New()
 
 	// Set DB calls expectated
-	suite.db.EXPECT().LockedBacktest(ctx, uint(1234), gomock.Any()).
-		DoAndReturn(func(ctx context.Context, id uint, fn db.LockedBacktestCallback) error {
+	suite.db.EXPECT().LockedBacktest(ctx, id, gomock.Any()).
+		DoAndReturn(func(ctx context.Context, id uuid.UUID, fn db.LockedBacktestCallback) error {
 			bt := backtest.Backtest{
-				ID: 1234,
+				ID: id,
 				CurrentCsTick: backtest.CurrentCsTick{
 					Time:      time.Unix(0, 0),
 					PriceType: candlestick.PriceTypeIsOpen,
@@ -64,7 +66,7 @@ func (suite *AdvanceSuite) TestWithoutAccount() {
 			}
 
 			suite.Require().Equal(backtest.Backtest{
-				ID: 1234,
+				ID: id,
 				CurrentCsTick: backtest.CurrentCsTick{
 					Time:      time.Unix(120, 0),
 					PriceType: candlestick.PriceTypeIsOpen,
@@ -93,10 +95,10 @@ func (suite *AdvanceSuite) TestWithoutAccount() {
 	}).Return(candlestick.NewList("exchange", "ETH-USDT", period.M1), nil)
 
 	// Set Events expected calls
-	suite.events.EXPECT().Publish(context.Background(), uint(1234), event.NewStatusEvent(time.Unix(120, 0), event.Status{Finished: true}))
+	suite.events.EXPECT().Publish(context.Background(), id, event.NewStatusEvent(time.Unix(120, 0), event.Status{Finished: true}))
 
 	// Execute operation
-	err := suite.operator.Advance(context.Background(), uint(1234))
+	err := suite.operator.Advance(context.Background(), id)
 
 	// Check return
 	suite.Require().NoError(err)

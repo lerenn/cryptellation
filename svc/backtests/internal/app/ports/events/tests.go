@@ -5,6 +5,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/lerenn/cryptellation/svc/backtests/pkg/event"
 	"github.com/lerenn/cryptellation/svc/ticks/pkg/tick"
 	"github.com/stretchr/testify/suite"
@@ -20,7 +21,7 @@ type EventsClientSuite struct {
 }
 
 func (suite *EventsClientSuite) TestOnePubOneSubObject() {
-	backtestID := uint(1)
+	backtestID := uuid.New()
 	ts := time.Unix(60, 0).UTC()
 	t := tick.Tick{
 		Pair:     "BTC-USDC",

@@ -707,7 +707,7 @@ type CreateResponseMessagePayload struct {
 	Error *ErrorSchema `json:"error"`
 
 	// Description: Newly created backtest ID
-	Id int64 `json:"id"`
+	Id string `json:"id"`
 }
 
 // CreateResponseMessage is the message expected for 'CreateResponseMessage' channel.
@@ -1752,7 +1752,7 @@ type AssetSchema struct {
 
 // BacktestIDSchema is a schema from the AsyncAPI specification required in messages
 // Description: Targeted backtest ID
-type BacktestIDSchema int64
+type BacktestIDSchema string
 
 // DateSchema is a schema from the AsyncAPI specification required in messages
 // Description: Date-Time format according to RFC3339
@@ -1798,7 +1798,7 @@ type OrderSchema struct {
 	ExecutionTime *DateSchema `json:"execution_time"`
 
 	// Description: Order ID set by the system
-	Id *int64 `json:"id"`
+	Id *string `json:"id"`
 
 	// Description: Pair symbol
 	Pair PairSchema `json:"pair"`

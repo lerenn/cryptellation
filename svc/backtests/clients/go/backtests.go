@@ -7,6 +7,7 @@ import (
 	"context"
 	"time"
 
+	"github.com/google/uuid"
 	client "github.com/lerenn/cryptellation/pkg/client"
 	"github.com/lerenn/cryptellation/svc/backtests/pkg/account"
 	"github.com/lerenn/cryptellation/svc/backtests/pkg/event"
@@ -14,12 +15,12 @@ import (
 )
 
 type Client interface {
-	Advance(ctx context.Context, backtestID uint) error
-	Create(ctx context.Context, payload BacktestCreationPayload) (uint, error)
+	Advance(ctx context.Context, backtestID uuid.UUID) error
+	Create(ctx context.Context, payload BacktestCreationPayload) (uuid.UUID, error)
 	CreateOrder(ctx context.Context, payload OrderCreationPayload) error
-	GetAccounts(ctx context.Context, backtestID uint) (map[string]account.Account, error)
-	Subscribe(ctx context.Context, backtestID uint, exchange, pair string) error
-	ListenEvents(ctx context.Context, backtestID uint) (<-chan event.Event, error)
+	GetAccounts(ctx context.Context, backtestID uuid.UUID) (map[string]account.Account, error)
+	Subscribe(ctx context.Context, backtestID uuid.UUID, exchange, pair string) error
+	ListenEvents(ctx context.Context, backtestID uuid.UUID) (<-chan event.Event, error)
 
 	ServiceInfo(ctx context.Context) (client.ServiceInfo, error)
 	Close(ctx context.Context)
@@ -32,7 +33,7 @@ type BacktestCreationPayload struct {
 }
 
 type OrderCreationPayload struct {
-	BacktestID uint
+	BacktestID uuid.UUID
 	Type       order.Type
 	Exchange   string
 	Pair       string

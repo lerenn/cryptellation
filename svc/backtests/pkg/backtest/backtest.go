@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/lerenn/cryptellation/svc/backtests/pkg/account"
 	"github.com/lerenn/cryptellation/svc/backtests/pkg/event"
 	"github.com/lerenn/cryptellation/svc/backtests/pkg/order"
@@ -30,7 +31,7 @@ type CurrentCsTick struct {
 }
 
 type Backtest struct {
-	ID                  uint
+	ID                  uuid.UUID
 	StartTime           time.Time
 	CurrentCsTick       CurrentCsTick
 	EndTime             time.Time
@@ -94,6 +95,7 @@ func New(ctx context.Context, payload NewPayload) (Backtest, error) {
 	}
 
 	return Backtest{
+		ID:        uuid.New(),
 		StartTime: payload.StartTime,
 		CurrentCsTick: CurrentCsTick{
 			Time:      payload.StartTime,
@@ -209,7 +211,7 @@ func (bt *Backtest) AddOrder(ord order.Order, cs candlestick.Candlestick) error 
 		bt.Accounts[ord.Exchange].Balances[baseSymbol] -= ord.Quantity
 	}
 
-	ord.ID = uint64(len(bt.Orders))
+	ord.ID = uuid.New()
 	ord.ExecutionTime = &bt.CurrentCsTick.Time
 	ord.Price = price
 

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	uuid "github.com/google/uuid"
 	"github.com/lerenn/cryptellation/svc/backtests/pkg/account"
 	"github.com/lerenn/cryptellation/svc/backtests/pkg/backtest"
 	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/candlestick"
@@ -19,6 +20,7 @@ type BacktestSuite struct {
 
 func (suite *BacktestSuite) TestCreateRead() {
 	bt := backtest.Backtest{
+		ID:        uuid.New(),
 		StartTime: time.Unix(0, 0),
 		CurrentCsTick: backtest.CurrentCsTick{
 			Time:      time.Unix(60, 0),
@@ -34,9 +36,9 @@ func (suite *BacktestSuite) TestCreateRead() {
 			},
 		},
 	}
-	suite.Require().NoError(suite.DB.CreateBacktest(context.TODO(), &bt))
+	suite.Require().NoError(suite.DB.CreateBacktest(context.TODO(), bt))
 	rp, err := suite.DB.ReadBacktest(context.TODO(), bt.ID)
-	suite.Require().NoError(err)
+	suite.Require().NoError(err, bt.ID.String())
 
 	suite.Require().Equal(bt.ID, rp.ID)
 	suite.Require().Len(rp.Accounts, 1)
@@ -46,6 +48,7 @@ func (suite *BacktestSuite) TestCreateRead() {
 
 func (suite *BacktestSuite) TestUpdate() {
 	bt := backtest.Backtest{
+		ID:        uuid.New(),
 		StartTime: time.Unix(0, 0),
 		CurrentCsTick: backtest.CurrentCsTick{
 			Time:      time.Unix(60, 0),
@@ -61,7 +64,7 @@ func (suite *BacktestSuite) TestUpdate() {
 			},
 		},
 	}
-	suite.Require().NoError(suite.DB.CreateBacktest(context.TODO(), &bt))
+	suite.Require().NoError(suite.DB.CreateBacktest(context.TODO(), bt))
 	bt2 := backtest.Backtest{
 		ID:        bt.ID,
 		StartTime: time.Unix(0, 0),
@@ -93,6 +96,7 @@ func (suite *BacktestSuite) TestUpdate() {
 
 func (suite *BacktestSuite) TestDelete() {
 	bt := backtest.Backtest{
+		ID:        uuid.New(),
 		StartTime: time.Unix(0, 0),
 		CurrentCsTick: backtest.CurrentCsTick{
 			Time:      time.Unix(60, 0),
@@ -108,7 +112,7 @@ func (suite *BacktestSuite) TestDelete() {
 			},
 		},
 	}
-	suite.Require().NoError(suite.DB.CreateBacktest(context.TODO(), &bt))
+	suite.Require().NoError(suite.DB.CreateBacktest(context.TODO(), bt))
 	suite.Require().NoError(suite.DB.DeleteBacktest(context.TODO(), bt))
 	_, err := suite.DB.ReadBacktest(context.TODO(), bt.ID)
 	suite.Error(err)
@@ -116,6 +120,7 @@ func (suite *BacktestSuite) TestDelete() {
 
 func (suite *BacktestSuite) TestDeleteInexistant() {
 	bt := backtest.Backtest{
+		ID:        uuid.New(),
 		StartTime: time.Unix(0, 0),
 		CurrentCsTick: backtest.CurrentCsTick{
 			Time:      time.Unix(60, 0),
@@ -131,13 +136,14 @@ func (suite *BacktestSuite) TestDeleteInexistant() {
 			},
 		},
 	}
-	suite.Require().NoError(suite.DB.CreateBacktest(context.TODO(), &bt))
+	suite.Require().NoError(suite.DB.CreateBacktest(context.TODO(), bt))
 	suite.Require().NoError(suite.DB.DeleteBacktest(context.TODO(), bt))
 	suite.Require().NoError(suite.DB.DeleteBacktest(context.TODO(), bt))
 }
 
 func (suite *BacktestSuite) TestLock() {
 	bt := backtest.Backtest{
+		ID:        uuid.New(),
 		StartTime: time.Unix(0, 0),
 		CurrentCsTick: backtest.CurrentCsTick{
 			Time:      time.Unix(60, 0),
@@ -153,7 +159,7 @@ func (suite *BacktestSuite) TestLock() {
 			},
 		},
 	}
-	suite.Require().NoError(suite.DB.CreateBacktest(context.TODO(), &bt))
+	suite.Require().NoError(suite.DB.CreateBacktest(context.TODO(), bt))
 
 	// Check that lock works even with panic
 	// suite.Require().NoError(suite.DB.LockedBacktest(context.TODO(), bt.ID, func(bt *backtest.Backtest) error {

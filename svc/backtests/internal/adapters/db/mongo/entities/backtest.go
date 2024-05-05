@@ -3,21 +3,22 @@ package entities
 import (
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/lerenn/cryptellation/svc/backtests/pkg/backtest"
 	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/candlestick"
 	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/period"
 )
 
 type Backtest struct {
-	ID                  uint `gorm:"primaryKey"`
-	StartTime           time.Time
-	CurrentTime         time.Time
-	CurrentPriceType    string
-	EndTime             time.Time
-	PeriodBetweenEvents string
-	Balances            []Balance
-	Orders              []Order
-	TickSubscriptions   []TickSubscription
+	ID                  string             `bson:"_id"`
+	StartTime           time.Time          `bson:"start_time"`
+	CurrentTime         time.Time          `bson:"current_time"`
+	CurrentPriceType    string             `bson:"current_price_type"`
+	EndTime             time.Time          `bson:"end_time"`
+	PeriodBetweenEvents string             `bson:"period_between_events"`
+	Balances            []Balance          `bson:"balances"`
+	Orders              []Order            `bson:"orders"`
+	TickSubscriptions   []TickSubscription `bson:"tick_subscriptions"`
 }
 
 func (bt Backtest) ToModel() (backtest.Backtest, error) {
@@ -36,8 +37,13 @@ func (bt Backtest) ToModel() (backtest.Backtest, error) {
 		return backtest.Backtest{}, err
 	}
 
+	id, err := uuid.Parse(bt.ID)
+	if err != nil {
+		return backtest.Backtest{}, err
+	}
+
 	return backtest.Backtest{
-		ID:        bt.ID,
+		ID:        id,
 		StartTime: bt.StartTime,
 		CurrentCsTick: backtest.CurrentCsTick{
 			Time:      bt.CurrentTime,
@@ -53,14 +59,14 @@ func (bt Backtest) ToModel() (backtest.Backtest, error) {
 
 func FromBacktestModel(bt backtest.Backtest) Backtest {
 	return Backtest{
-		ID:                  bt.ID,
+		ID:                  bt.ID.String(),
 		StartTime:           bt.StartTime,
 		CurrentTime:         bt.CurrentCsTick.Time,
 		CurrentPriceType:    bt.CurrentCsTick.PriceType.String(),
 		EndTime:             bt.EndTime,
 		PeriodBetweenEvents: bt.PeriodBetweenEvents.String(),
-		Balances:            FromAccountModels(bt.ID, bt.Accounts),
-		Orders:              FromOrderModels(bt.ID, bt.Orders),
-		TickSubscriptions:   FromTickSubscriptionModels(bt.ID, bt.TickSubscriptions),
+		Balances:            FromAccountModels(bt.Accounts),
+		Orders:              FromOrderModels(bt.Orders),
+		TickSubscriptions:   FromTickSubscriptionModels(bt.TickSubscriptions),
 	}
 }

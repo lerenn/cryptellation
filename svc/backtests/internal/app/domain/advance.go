@@ -4,13 +4,14 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/google/uuid"
 	"github.com/lerenn/cryptellation/pkg/adapters/telemetry"
 	"github.com/lerenn/cryptellation/svc/backtests/pkg/backtest"
 	"github.com/lerenn/cryptellation/svc/backtests/pkg/event"
 	candlesticks "github.com/lerenn/cryptellation/svc/candlesticks/clients/go"
 )
 
-func (b Backtests) Advance(ctx context.Context, backtestId uint) error {
+func (b Backtests) Advance(ctx context.Context, backtestId uuid.UUID) error {
 	return b.db.LockedBacktest(ctx, backtestId, func(bt *backtest.Backtest) (err error) {
 		// Advance backtest
 		finished := bt.Advance()
@@ -75,7 +76,7 @@ func (b Backtests) readActualEvents(ctx context.Context, bt backtest.Backtest) (
 	return evts, nil
 }
 
-func (b Backtests) broadcastEvents(ctx context.Context, backtestId uint, evts []event.Event) {
+func (b Backtests) broadcastEvents(ctx context.Context, backtestId uuid.UUID, evts []event.Event) {
 	telemetry.L(ctx).Infof("Broadcasting %d events on backtest %d", len(evts), backtestId)
 
 	var count uint

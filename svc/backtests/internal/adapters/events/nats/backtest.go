@@ -2,13 +2,13 @@ package backtests
 
 import (
 	"context"
-	"fmt"
 
+	"github.com/google/uuid"
 	asyncapi "github.com/lerenn/cryptellation/svc/backtests/api/asyncapi"
 	"github.com/lerenn/cryptellation/svc/backtests/pkg/event"
 )
 
-func (a *Adapter) Publish(ctx context.Context, backtestID uint, evt event.Event) error {
+func (a *Adapter) Publish(ctx context.Context, backtestID uuid.UUID, evt event.Event) error {
 	// Generated message
 	msg := asyncapi.NewEventMessage()
 
@@ -19,11 +19,11 @@ func (a *Adapter) Publish(ctx context.Context, backtestID uint, evt event.Event)
 
 	// Send message
 	return a.app.SendAsEventOperation(ctx, asyncapi.EventsChannelParameters{
-		Id: fmt.Sprintf("%d", backtestID),
+		Id: backtestID.String(),
 	}, msg)
 }
 
-func (a *Adapter) Subscribe(ctx context.Context, backtestID uint) (<-chan event.Event, error) {
+func (a *Adapter) Subscribe(ctx context.Context, backtestID uuid.UUID) (<-chan event.Event, error) {
 	return a.client.ListenEvents(ctx, backtestID)
 }
 

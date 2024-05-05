@@ -8,6 +8,7 @@ package asyncapi
 import (
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/lerenn/cryptellation/pkg/utils"
 	client "github.com/lerenn/cryptellation/svc/backtests/clients/go"
 	"github.com/lerenn/cryptellation/svc/backtests/pkg/account"
@@ -45,14 +46,14 @@ func accountModelsToAPI(accounts map[string]account.Account) []AccountSchema {
 	return apiAccounts
 }
 
-func (msg *SubscribeRequestMessage) Set(backtestID uint, exchange, pair string) {
-	msg.Payload.Id = BacktestIDSchema(backtestID)
+func (msg *SubscribeRequestMessage) Set(backtestID uuid.UUID, exchange, pair string) {
+	msg.Payload.Id = BacktestIDSchema(backtestID.String())
 	msg.Payload.Exchange = ExchangeSchema(exchange)
 	msg.Payload.Pair = PairSchema(pair)
 }
 
-func (msg *AdvanceRequestMessage) Set(backtestID uint) {
-	msg.Payload.Id = BacktestIDSchema(backtestID)
+func (msg *AdvanceRequestMessage) Set(backtestID uuid.UUID) {
+	msg.Payload.Id = BacktestIDSchema(backtestID.String())
 }
 
 func (msg *CreateRequestMessage) ToModel() (backtest.NewPayload, error) {

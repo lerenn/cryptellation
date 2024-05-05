@@ -4,13 +4,14 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/google/uuid"
 	"github.com/lerenn/cryptellation/pkg/adapters/telemetry"
 	"github.com/lerenn/cryptellation/svc/backtests/pkg/backtest"
 	"github.com/lerenn/cryptellation/svc/backtests/pkg/order"
 	candlesticks "github.com/lerenn/cryptellation/svc/candlesticks/clients/go"
 )
 
-func (b Backtests) CreateOrder(ctx context.Context, backtestId uint, order order.Order) error {
+func (b Backtests) CreateOrder(ctx context.Context, backtestId uuid.UUID, order order.Order) error {
 	return b.db.LockedBacktest(ctx, backtestId, func(bt *backtest.Backtest) error {
 		list, err := b.candlesticks.Read(ctx, candlesticks.ReadCandlesticksPayload{
 			Exchange: order.Exchange,

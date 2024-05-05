@@ -6,11 +6,12 @@ package events
 import (
 	"context"
 
+	"github.com/google/uuid"
 	"github.com/lerenn/cryptellation/svc/backtests/pkg/event"
 )
 
 type Port interface {
-	Publish(ctx context.Context, backtestID uint, event event.Event) error
-	Subscribe(ctx context.Context, backtestID uint) (<-chan event.Event, error)
+	Publish(ctx context.Context, backtestID uuid.UUID, event event.Event) error
+	Subscribe(ctx context.Context, backtestID uuid.UUID) (<-chan event.Event, error)
 	Close(ctx context.Context)
 }

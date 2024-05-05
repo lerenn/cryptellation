@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/lerenn/asyncapi-codegen/pkg/extensions"
 	"github.com/lerenn/asyncapi-codegen/pkg/extensions/brokers/nats"
 	helpers "github.com/lerenn/cryptellation/pkg/asyncapi"
@@ -65,7 +66,7 @@ func WithLogger(logger extensions.Logger) BacktestsOption {
 	}
 }
 
-func (b Client) ListenEvents(ctx context.Context, backtestID uint) (<-chan event.Event, error) {
+func (b Client) ListenEvents(ctx context.Context, backtestID uuid.UUID) (<-chan event.Event, error) {
 	ch := make(chan event.Event, 256)
 
 	// Create callback when a tick appears
@@ -107,11 +108,11 @@ func (b Client) ListenEvents(ctx context.Context, backtestID uint) (<-chan event
 
 	// Listen to channel
 	return ch, b.ctrl.SubscribeToEventOperation(ctx, asyncapi.EventsChannelParameters{
-		Id: fmt.Sprintf("%d", backtestID),
+		Id: backtestID.String(),
 	}, callback)
 }
 
-func (b Client) Create(ctx context.Context, payload client.BacktestCreationPayload) (uint, error) {
+func (b Client) Create(ctx context.Context, payload client.BacktestCreationPayload) (uuid.UUID, error) {
 	// Set message
 	reqMsg := asyncapi.NewCreateRequestMessage()
 	reqMsg.Headers.ReplyTo = helpers.AddReplyToSuffix(asyncapi.CreateRequestChannelPath)
@@ -120,18 +121,18 @@ func (b Client) Create(ctx context.Context, payload client.BacktestCreationPaylo
 	// Send request
 	respMsg, err := b.ctrl.RequestToCreateOperation(ctx, reqMsg)
 	if err != nil {
-		return 0, err
+		return uuid.Nil, err
 	}
 
 	// Check error
 	if respMsg.Payload.Error != nil {
-		return 0, fmt.Errorf("%d Error: %s", respMsg.Payload.Error.Code, respMsg.Payload.Error.Message)
+		return uuid.Nil, fmt.Errorf("%d Error: %s", respMsg.Payload.Error.Code, respMsg.Payload.Error.Message)
 	}
 
-	return uint(respMsg.Payload.Id), nil
+	return uuid.Parse(respMsg.Payload.Id)
 }
 
-func (b Client) Subscribe(ctx context.Context, backtestID uint, exchange, pair string) error {
+func (b Client) Subscribe(ctx context.Context, backtestID uuid.UUID, exchange, pair string) error {
 	// Set message
 	reqMsg := asyncapi.NewSubscribeRequestMessage()
 	reqMsg.Headers.ReplyTo = helpers.AddReplyToSuffix(asyncapi.SubscribeRequestChannelPath)
@@ -151,7 +152,7 @@ func (b Client) Subscribe(ctx context.Context, backtestID uint, exchange, pair s
 	return nil
 }
 
-func (b Client) Advance(ctx context.Context, backtestID uint) error {
+func (b Client) Advance(ctx context.Context, backtestID uuid.UUID) error {
 	// Set message
 	reqMsg := asyncapi.NewAdvanceRequestMessage()
 	reqMsg.Headers.ReplyTo = helpers.AddReplyToSuffix(asyncapi.AdvanceRequestChannelPath)
@@ -191,7 +192,7 @@ func (b Client) CreateOrder(ctx context.Context, payload client.OrderCreationPay
 	return nil
 }
 
-func (b Client) GetAccounts(ctx context.Context, backtestID uint) (map[string]account.Account, error) {
+func (b Client) GetAccounts(ctx context.Context, backtestID uuid.UUID) (map[string]account.Account, error) {
 	// Set message
 	reqMsg := asyncapi.NewAccountsListRequestMessage()
 	reqMsg.Headers.ReplyTo = helpers.AddReplyToSuffix(asyncapi.AccountsListRequestChannelPath)
