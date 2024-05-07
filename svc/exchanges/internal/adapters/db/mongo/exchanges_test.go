@@ -1,11 +1,10 @@
-package exchanges
+package mongo
 
 import (
 	"context"
 	"testing"
 
 	"github.com/lerenn/cryptellation/pkg/config"
-	"github.com/lerenn/cryptellation/svc/exchanges/deployments"
 	"github.com/lerenn/cryptellation/svc/exchanges/internal/app/ports/db"
 	"github.com/stretchr/testify/suite"
 )
@@ -19,10 +18,12 @@ type ExchangesSuite struct {
 }
 
 func (suite *ExchangesSuite) SetupTest() {
-	db, err := New(config.LoadSQL(&config.SQL{
-		Database: "exchanges",
-		Port:     deployments.DockerComposeSQLDBPort,
-	}))
+	db, err := New(
+		context.Background(),
+		config.LoadMongo(
+			&config.Mongo{
+				Database: "cryptellation-exchanges-testdb",
+			}))
 	suite.Require().NoError(err)
 	suite.Require().NoError(db.Reset(context.TODO()))
 

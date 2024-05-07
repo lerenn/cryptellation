@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/lerenn/cryptellation/pkg/config"
-	sql "github.com/lerenn/cryptellation/svc/exchanges/internal/adapters/db/sql"
+	mongo "github.com/lerenn/cryptellation/svc/exchanges/internal/adapters/db/mongo"
 	"github.com/lerenn/cryptellation/svc/exchanges/internal/adapters/exchanges"
 	"github.com/lerenn/cryptellation/svc/exchanges/internal/app/ports/db"
 	exchangesPort "github.com/lerenn/cryptellation/svc/exchanges/internal/app/ports/exchanges"
@@ -17,7 +17,7 @@ type adapters struct {
 
 func newAdapters(ctx context.Context) (adapters, error) {
 	// Init database client
-	db, err := sql.New(config.LoadSQL(nil))
+	db, err := mongo.New(ctx, config.LoadMongo(nil))
 	if err != nil {
 		return adapters{}, err
 	}
