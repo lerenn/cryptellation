@@ -22,7 +22,7 @@ func (suite *SMASuite) SetupTest() {
 		context.Background(),
 		config.LoadMongo(
 			&config.Mongo{
-				Database: "cryptellation-indicators-testdb",
+				Database: "cryptellation-indicators-integration-tests",
 			}))
 	suite.Require().NoError(err)
 	suite.Require().NoError(db.Reset(context.TODO()))

@@ -14,14 +14,11 @@ services:
     environment:
       DEV_MODE: true
       HEALTH_PORT: 9000
+      MONGO_CONNECTION_STRING: mongodb://mongo:27017
+      MONGO_DATABASE: cryptellation-indicators
       NATS_HOST: nats
       NATS_PORT: 4222
       OPENTELEMETRY_GRPC_ENDPOINT: uptrace-otelcollector:4317
-      SQLDB_HOST: indicators-sql
-      SQLDB_PORT: 5432
-      SQLDB_USER: postgres
-      SQLDB_PASSWORD: example
-      SQLDB_DATABASE: indicators
     env_file:
       - path: ../../../.credentials.env
         required: true

@@ -22,7 +22,7 @@ func (suite *SymbolListenersSuite) SetupTest() {
 		context.Background(),
 		config.LoadMongo(
 			&config.Mongo{
-				Database: "cryptellation-ticks-testdb",
+				Database: "cryptellation-ticks-integration-tests",
 			}))
 	suite.Require().NoError(err)
 	suite.Require().NoError(db.Reset(context.TODO()))

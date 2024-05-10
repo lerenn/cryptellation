@@ -22,7 +22,7 @@ func (suite *CandlesticksSuite) SetupTest() {
 		context.Background(),
 		config.LoadMongo(
 			&config.Mongo{
-				Database: "cryptellation-candlesticks-testdb",
+				Database: "cryptellation-candlesticks-integration-tests",
 			}))
 	suite.Require().NoError(err)
 	suite.Require().NoError(db.Reset(context.TODO()))

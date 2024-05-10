@@ -28,7 +28,7 @@ func (suite *BacktestSuite) SetupTest() {
 	db, err := New(
 		context.Background(),
 		config.LoadMongo(&config.Mongo{
-			Database: "cryptellation-backtests-testdb",
+			Database: "cryptellation-backtests-integration-tests",
 		}),
 	)
 	suite.Require().NoError(err)

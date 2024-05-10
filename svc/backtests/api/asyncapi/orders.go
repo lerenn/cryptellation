@@ -47,7 +47,7 @@ func orderModelFromAPI(o OrderSchema) (order.Order, error) {
 
 	// Check IF
 	id, err := uuid.Parse(utils.FromReferenceOrDefault(o.Id))
-	if err != nil {
+	if err != nil && id != uuid.Nil {
 		return order.Order{}, err
 	}
 

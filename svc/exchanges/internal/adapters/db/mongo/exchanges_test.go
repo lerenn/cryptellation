@@ -22,7 +22,7 @@ func (suite *ExchangesSuite) SetupTest() {
 		context.Background(),
 		config.LoadMongo(
 			&config.Mongo{
-				Database: "cryptellation-exchanges-testdb",
+				Database: "cryptellation-exchanges-integration-tests",
 			}))
 	suite.Require().NoError(err)
 	suite.Require().NoError(db.Reset(context.TODO()))

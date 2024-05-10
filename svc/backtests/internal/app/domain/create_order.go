@@ -12,6 +12,10 @@ import (
 )
 
 func (b Backtests) CreateOrder(ctx context.Context, backtestId uuid.UUID, order order.Order) error {
+	if order.ID == uuid.Nil {
+		order.ID = uuid.New()
+	}
+
 	return b.db.LockedBacktest(ctx, backtestId, func(bt *backtest.Backtest) error {
 		list, err := b.candlesticks.Read(ctx, candlesticks.ReadCandlesticksPayload{
 			Exchange: order.Exchange,

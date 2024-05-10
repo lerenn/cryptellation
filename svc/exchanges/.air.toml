@@ -2,5 +2,5 @@ root = "."
 
 [build]
   cmd = "go install -buildvcs=false ./svc/exchanges/cmd/*"
-  full_bin = "data migrations migrate && api serve"
+  full_bin = "api serve"
   include_dir = ["pkg", "svc/exchanges"]

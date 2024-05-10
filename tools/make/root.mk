@@ -91,4 +91,4 @@ go/test/end-to-end: ## Launch golang end-to-end tests
 test/end-to-end: local/up go/test/end-to-end ## Launch end-to-end tests
 
 .PHONY: test
-test: test/unit test/integration ## Launch tests
+test: test/unit test/integration test/end-to-end ## Launch tests
