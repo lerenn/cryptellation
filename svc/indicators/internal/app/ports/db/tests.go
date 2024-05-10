@@ -19,7 +19,7 @@ func (suite *IndicatorsSuite) TestGet() {
 	exchange := "exchange"
 	pair := "ETC-USDT"
 	per := period.M1
-	periodNumber := uint(3)
+	periodNumber := 3
 	priceType := candlestick.PriceTypeIsClose
 	ts := timeserie.New[float64]().
 		Set(time.Unix(0, 0), 1).
@@ -85,7 +85,7 @@ func (suite *IndicatorsSuite) TestUpsert() {
 	exchange := "exchange"
 	pair := "ETC-USDT"
 	per := period.M1
-	periodNumber := uint(3)
+	periodNumber := 3
 	priceType := candlestick.PriceTypeIsClose
 	ts := timeserie.New[float64]().
 		Set(time.Unix(0, 0), 1).

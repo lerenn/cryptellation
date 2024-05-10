@@ -19,6 +19,6 @@ type GetCachedSMAPayload struct {
 	Period       period.Symbol
 	Start        time.Time
 	End          time.Time
-	PeriodNumber uint
+	PeriodNumber int
 	PriceType    candlestick.PriceType
 }

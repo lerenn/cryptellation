@@ -6,7 +6,7 @@ import (
 	"github.com/lerenn/cryptellation/pkg/config"
 	candlesticks "github.com/lerenn/cryptellation/svc/candlesticks/clients/go"
 	candlesticksNats "github.com/lerenn/cryptellation/svc/candlesticks/clients/go/nats"
-	sql "github.com/lerenn/cryptellation/svc/indicators/internal/adapters/db/sql"
+	"github.com/lerenn/cryptellation/svc/indicators/internal/adapters/db/mongo"
 	"github.com/lerenn/cryptellation/svc/indicators/internal/app/ports/db"
 )
 
@@ -17,7 +17,7 @@ type adapters struct {
 
 func newAdapters(ctx context.Context) (adapters, error) {
 	// Init database client
-	db, err := sql.New(config.LoadSQL(nil))
+	db, err := mongo.New(ctx, config.LoadMongo(nil))
 	if err != nil {
 		return adapters{}, err
 	}

@@ -1,0 +1,31 @@
+package mongo
+
+import (
+	"context"
+	"testing"
+
+	"github.com/lerenn/cryptellation/pkg/config"
+	"github.com/lerenn/cryptellation/svc/indicators/internal/app/ports/db"
+	"github.com/stretchr/testify/suite"
+)
+
+func TestSMASuite(t *testing.T) {
+	suite.Run(t, new(SMASuite))
+}
+
+type SMASuite struct {
+	db.IndicatorsSuite
+}
+
+func (suite *SMASuite) SetupTest() {
+	db, err := New(
+		context.Background(),
+		config.LoadMongo(
+			&config.Mongo{
+				Database: "cryptellation-candlesticks-testdb",
+			}))
+	suite.Require().NoError(err)
+	suite.Require().NoError(db.Reset(context.TODO()))
+
+	suite.DB = db
+}

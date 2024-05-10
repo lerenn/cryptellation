@@ -5,22 +5,30 @@ import (
 
 	"github.com/lerenn/cryptellation/pkg/timeserie"
 	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/candlestick"
+	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/period"
 )
 
 type SimpleMovingAverage struct {
-	Exchange     string    `gorm:"primaryKey;autoIncrement:false;index:candlestick,unique"`
-	Pair         string    `gorm:"primaryKey;autoIncrement:false;index:candlestick,unique"`
-	Period       string    `gorm:"primaryKey;autoIncrement:false;index:candlestick,unique"`
-	PeriodNumber int       `gorm:"primaryKey;autoIncrement:false;index:candlestick,unique"`
-	PriceType    string    `gorm:"primaryKey;autoIncrement:false;index:candlestick,unique"`
-	Time         time.Time `gorm:"primaryKey;autoIncrement:false;index:candlestick,unique"`
+	Exchange     string    `bson:"exchange"`
+	Pair         string    `bson:"pair"`
+	Period       string    `bson:"period"`
+	PeriodNumber int       `bson:"period_number"`
+	PriceType    string    `bson:"price_type"`
+	Time         time.Time `bson:"time"`
 	Price        float64
 }
 
-func (s *SimpleMovingAverage) FromModel(exchange, pair, period string, periodNb int, priceType candlestick.PriceType, t time.Time, price float64) {
+func (s *SimpleMovingAverage) FromModel(
+	exchange, pair string,
+	period period.Symbol,
+	periodNb int,
+	priceType candlestick.PriceType,
+	t time.Time,
+	price float64,
+) {
 	s.Exchange = exchange
 	s.Pair = pair
-	s.Period = period
+	s.Period = period.String()
 	s.PeriodNumber = periodNb
 	s.PriceType = priceType.String()
 	s.Time = t
@@ -37,7 +45,13 @@ func (s SimpleMovingAverage) ToModel() (exchange, pair, period string, periodNb 
 		s.Price
 }
 
-func FromModelListToEntityList(exchange, pair, period string, periodNb int, priceType candlestick.PriceType, ts *timeserie.TimeSerie[float64]) []SimpleMovingAverage {
+func FromModelListToEntityList(
+	exchange, pair string,
+	period period.Symbol,
+	periodNb int,
+	priceType candlestick.PriceType,
+	ts *timeserie.TimeSerie[float64],
+) []SimpleMovingAverage {
 	entities := make([]SimpleMovingAverage, 0, ts.Len())
 	_ = ts.Loop(func(t time.Time, p float64) (bool, error) {
 		sma := SimpleMovingAverage{}

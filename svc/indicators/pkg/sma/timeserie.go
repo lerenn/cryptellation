@@ -12,7 +12,7 @@ type TimeSeriePayload struct {
 	PriceType    candlestick.PriceType
 	Start        time.Time
 	End          time.Time
-	PeriodNumber uint
+	PeriodNumber int
 }
 
 func TimeSerie(payload TimeSeriePayload) *timeserie.TimeSerie[float64] {

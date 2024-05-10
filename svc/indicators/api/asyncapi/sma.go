@@ -38,7 +38,7 @@ func (msg *SMARequestMessage) ToModel() (app.GetCachedSMAPayload, error) {
 		Period:       per,
 		Start:        time.Time(*msg.Payload.Start),
 		End:          time.Time(*msg.Payload.End),
-		PeriodNumber: uint(msg.Payload.PeriodNumber),
+		PeriodNumber: int(msg.Payload.PeriodNumber),
 		PriceType:    pt,
 	}, nil
 }
