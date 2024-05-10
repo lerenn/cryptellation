@@ -12,10 +12,8 @@ go/test/unit: ## Launch unit tests
 
 .PHONY: go/test/integration
 go/test/integration: ## Launch integration tests
-	@if [ -d "./cmd/data" ]; then go run ./cmd/data migrations migrate; fi
 	@go test ./internal/adapters/...
 
 .PHONY: go/test/end-to-end
 go/test/end-to-end: ## Launch end-to-end tests
-	@if [ -d "./cmd/data" ]; then go run ./cmd/data migrations migrate; fi
 	@go test ./test/...

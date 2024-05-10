@@ -5,24 +5,24 @@ import (
 	"testing"
 
 	"github.com/lerenn/cryptellation/pkg/config"
-	"github.com/lerenn/cryptellation/svc/indicators/internal/app/ports/db"
+	"github.com/lerenn/cryptellation/svc/ticks/internal/app/ports/db"
 	"github.com/stretchr/testify/suite"
 )
 
-func TestSMASuite(t *testing.T) {
-	suite.Run(t, new(SMASuite))
+func TestSymbolListenersSuite(t *testing.T) {
+	suite.Run(t, new(SymbolListenersSuite))
 }
 
-type SMASuite struct {
-	db.IndicatorsSuite
+type SymbolListenersSuite struct {
+	db.SymbolListenerSuite
 }
 
-func (suite *SMASuite) SetupTest() {
+func (suite *SymbolListenersSuite) SetupTest() {
 	db, err := New(
 		context.Background(),
 		config.LoadMongo(
 			&config.Mongo{
-				Database: "cryptellation-indicators-testdb",
+				Database: "cryptellation-ticks-testdb",
 			}))
 	suite.Require().NoError(err)
 	suite.Require().NoError(db.Reset(context.TODO()))
