@@ -92,3 +92,18 @@ test/end-to-end: local/up go/test/end-to-end ## Launch end-to-end tests
 
 .PHONY: test
 test: test/unit test/integration test/end-to-end ## Launch tests
+
+.PHONY: go/update
+go/update: ## Update Golang modules
+	@$(MAKE) -C ./cmd/cryptellation go/update
+	@$(MAKE) -C ./cmd/cryptellation-tui go/update
+	@$(MAKE) -C ./pkg go/update
+	@$(MAKE) -C ./svc/backtests go/update
+	@$(MAKE) -C ./svc/candlesticks go/update
+	@$(MAKE) -C ./svc/exchanges go/update
+	@$(MAKE) -C ./svc/indicators go/update
+	@$(MAKE) -C ./svc/ticks go/update
+	@$(MAKE) -C ./tools/ci go/update
+
+.PHONY: update
+update: go/update ## Update dependencies

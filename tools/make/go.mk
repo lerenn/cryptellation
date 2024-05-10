@@ -17,3 +17,7 @@ go/test/integration: ## Launch integration tests
 .PHONY: go/test/end-to-end
 go/test/end-to-end: ## Launch end-to-end tests
 	@go test ./test/...
+
+.PHONY: go/update
+go/update: ## Update Go modules
+	@go mod tidy
