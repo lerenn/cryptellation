@@ -3,6 +3,7 @@ package domain
 import (
 	"context"
 	"errors"
+	"fmt"
 	"time"
 
 	"github.com/lerenn/cryptellation/pkg/adapters/telemetry"
@@ -24,7 +25,8 @@ func (app Candlesticks) GetCached(ctx context.Context, payload app.GetCachedPayl
 	telemetry.L(ctx).Infof("Requests candlesticks from %s to %s (limit: %d)", payload.Start, payload.End, payload.Limit)
 
 	// Be sure that we do not try to get data in the future
-	if payload.End.After(time.Now()) {
+	fmt.Println("payload.End", payload.End)
+	if payload.End == nil || payload.End.After(time.Now()) {
 		payload.End = utils.ToReference(time.Now())
 	}
 
