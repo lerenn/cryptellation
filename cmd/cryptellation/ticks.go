@@ -6,12 +6,7 @@ import (
 	"time"
 
 	client "github.com/lerenn/cryptellation/svc/ticks/clients/go"
-	ticks "github.com/lerenn/cryptellation/svc/ticks/clients/go/nats"
 	"github.com/spf13/cobra"
-)
-
-var (
-	ticksClient ticks.Client
 )
 
 var ticksCmd = &cobra.Command{
@@ -23,11 +18,6 @@ var ticksCmd = &cobra.Command{
 			return err
 		}
 
-		ticksClient, err = ticks.NewClient(globalConfig)
-		if err != nil {
-			return fmt.Errorf("error when creating new candlesticks client: %w", err)
-		}
-
 		return nil
 	},
 }
@@ -37,7 +27,7 @@ var ticksRegisterCmd = &cobra.Command{
 	Aliases: []string{"r"},
 	Short:   "Register to ticks on service",
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		err = ticksClient.Register(context.Background(), client.TicksFilterPayload{
+		err = globalClient.Ticks().Register(context.Background(), client.TicksFilterPayload{
 			Exchange: "binance",
 			Pair:     "BTC-USDT",
 		})
@@ -51,7 +41,7 @@ var ticksWatchCmd = &cobra.Command{
 	Aliases: []string{"r"},
 	Short:   "Listen to ticks on service",
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		ch, err := ticksClient.Listen(context.Background(), client.TicksFilterPayload{
+		ch, err := globalClient.Ticks().Listen(context.Background(), client.TicksFilterPayload{
 			Exchange: "binance",
 			Pair:     "BTC-USDT",
 		})
@@ -75,7 +65,7 @@ var ticksUnregisterCmd = &cobra.Command{
 	Aliases: []string{"r"},
 	Short:   "Unregister to ticks on service",
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		err = ticksClient.Unregister(context.Background(), client.TicksFilterPayload{
+		err = globalClient.Ticks().Unregister(context.Background(), client.TicksFilterPayload{
 			Exchange: "binance",
 			Pair:     "BTC-USDT",
 		})
@@ -89,7 +79,7 @@ var ticksInfoCmd = &cobra.Command{
 	Aliases: []string{"info"},
 	Short:   "Read info from ticks service",
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		return displayServiceInfo(ticksClient)
+		return displayServiceInfo(globalClient.Ticks())
 	},
 }
 

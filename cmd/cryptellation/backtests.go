@@ -1,14 +1,7 @@
 package main
 
 import (
-	"fmt"
-
-	backtests "github.com/lerenn/cryptellation/svc/backtests/clients/go/nats"
 	"github.com/spf13/cobra"
-)
-
-var (
-	backtestsClient backtests.Client
 )
 
 var backtestsCmd = &cobra.Command{
@@ -20,11 +13,6 @@ var backtestsCmd = &cobra.Command{
 			return err
 		}
 
-		backtestsClient, err = backtests.NewClient(globalConfig)
-		if err != nil {
-			return fmt.Errorf("error when creating new backtests client: %w", err)
-		}
-
 		return nil
 	},
 }
@@ -34,7 +22,7 @@ var backtestsInfoCmd = &cobra.Command{
 	Aliases: []string{"info"},
 	Short:   "Read info from backtests service",
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		return displayServiceInfo(backtestsClient)
+		return displayServiceInfo(globalClient.Backtests())
 	},
 }
 

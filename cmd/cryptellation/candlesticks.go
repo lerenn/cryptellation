@@ -7,14 +7,9 @@ import (
 
 	"github.com/lerenn/cryptellation/pkg/utils"
 	client "github.com/lerenn/cryptellation/svc/candlesticks/clients/go"
-	candlesticks "github.com/lerenn/cryptellation/svc/candlesticks/clients/go/nats"
 	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/candlestick"
 	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/period"
 	"github.com/spf13/cobra"
-)
-
-var (
-	candlesticksClient candlesticks.Client
 )
 
 var candlesticksCmd = &cobra.Command{
@@ -26,11 +21,6 @@ var candlesticksCmd = &cobra.Command{
 			return err
 		}
 
-		candlesticksClient, err = candlesticks.NewClient(globalConfig)
-		if err != nil {
-			return fmt.Errorf("error when creating new candlesticks client: %w", err)
-		}
-
 		return nil
 	},
 }
@@ -40,7 +30,7 @@ var candlesticksReadCmd = &cobra.Command{
 	Aliases: []string{"r"},
 	Short:   "Read candlesticks from service",
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		list, err := candlesticksClient.Read(context.Background(), client.ReadCandlesticksPayload{
+		list, err := globalClient.Candlesticks().Read(context.Background(), client.ReadCandlesticksPayload{
 			Exchange: "binance",
 			Pair:     "ETH-USDT",
 			Period:   period.H1,
@@ -67,7 +57,7 @@ var candlesticksInfoCmd = &cobra.Command{
 	Aliases: []string{"info"},
 	Short:   "Read info from candlesticks service",
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		return displayServiceInfo(candlesticksClient)
+		return displayServiceInfo(globalClient.Candlesticks())
 	},
 }
 

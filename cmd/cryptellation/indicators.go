@@ -1,14 +1,7 @@
 package main
 
 import (
-	"fmt"
-
-	indicators "github.com/lerenn/cryptellation/svc/indicators/clients/go/nats"
 	"github.com/spf13/cobra"
-)
-
-var (
-	indicatorsClient indicators.Client
 )
 
 var indicatorsCmd = &cobra.Command{
@@ -20,11 +13,6 @@ var indicatorsCmd = &cobra.Command{
 			return err
 		}
 
-		indicatorsClient, err = indicators.NewClient(globalConfig)
-		if err != nil {
-			return fmt.Errorf("error when creating new indicators client: %w", err)
-		}
-
 		return nil
 	},
 }
@@ -34,7 +22,7 @@ var indicatorsInfoCmd = &cobra.Command{
 	Aliases: []string{"info"},
 	Short:   "Read info from indicators service",
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		return displayServiceInfo(indicatorsClient)
+		return displayServiceInfo(globalClient.Indicators())
 	},
 }
 
