@@ -160,7 +160,6 @@ components:
         type: object
         required:
           - time
-          - value
         properties:
           time:
             $ref: '#/components/schemas/Date'

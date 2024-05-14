@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 
+	"github.com/lerenn/cryptellation/pkg/adapters/telemetry"
 	"github.com/lerenn/cryptellation/pkg/timeserie"
 	"github.com/lerenn/cryptellation/pkg/utils"
 	client "github.com/lerenn/cryptellation/svc/candlesticks/clients/go"
@@ -13,6 +14,10 @@ import (
 )
 
 func (ind indicators) GetCachedSMA(ctx context.Context, payload app.GetCachedSMAPayload) (*timeserie.TimeSerie[float64], error) {
+	telemetry.L(ctx).Infof(
+		"Got request for SMA from %s to %s on %q (%s) for %q",
+		payload.Start, payload.End, payload.Pair, payload.Exchange, payload.Period)
+
 	// Get cached SMA from DB
 	ts, err := ind.db.GetSMA(ctx, db.ReadSMAPayload{
 		Exchange:     payload.Exchange,
@@ -26,6 +31,7 @@ func (ind indicators) GetCachedSMA(ctx context.Context, payload app.GetCachedSMA
 	if err != nil {
 		return ts, err
 	}
+	telemetry.L(ctx).Infof("Got %d SMA points", ts.Len())
 
 	// Check if current candlestick will be requested
 	// If that's the case, we'll need to recalculate the SMA as the value has changed
@@ -38,8 +44,10 @@ func (ind indicators) GetCachedSMA(ctx context.Context, payload app.GetCachedSMA
 
 	// Check if we can return or if we can return right now
 	if !missingPoints && !possiblyOutdatedSMA {
+		telemetry.L(ctx).Infof("SMA is up to date, returning")
 		return ts, nil
 	}
+	telemetry.L(ctx).Infof("SMA is outdated or missing points, recalculating")
 
 	// Generate SMA points
 	ts, err = ind.generateSMA(ctx, payload)
@@ -48,6 +56,7 @@ func (ind indicators) GetCachedSMA(ctx context.Context, payload app.GetCachedSMA
 	}
 
 	// Save SMA points to DB and return the result
+	defer telemetry.L(ctx).Infof("Upserting %d SMA points", ts.Len())
 	return ts, ind.db.UpsertSMA(ctx, db.WriteSMAPayload{
 		Exchange:     payload.Exchange,
 		Pair:         payload.Pair,

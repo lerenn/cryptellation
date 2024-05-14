@@ -11,6 +11,7 @@ require (
 	github.com/charmbracelet/bubbletea v0.26.2
 	github.com/dsnet/golib/unitconv v1.0.2
 	github.com/fatih/color v1.16.0
+	github.com/go-echarts/go-echarts/v2 v2.3.3
 	github.com/go-git/go-git/v5 v5.12.0
 	github.com/google/go-cmp v0.6.0
 	github.com/google/uuid v1.6.0

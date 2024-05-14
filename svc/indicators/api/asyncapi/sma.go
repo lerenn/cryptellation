@@ -1,6 +1,7 @@
 package asyncapi
 
 import (
+	"math"
 	"time"
 
 	"github.com/lerenn/cryptellation/pkg/timeserie"
@@ -51,7 +52,9 @@ func (msg *SMAResponseMessage) Set(ts *timeserie.TimeSerie[float64]) {
 
 		// Set point
 		point.Time = DateSchema(t)
-		point.Value = v
+		if !math.IsNaN(v) {
+			point.Value = &v
+		}
 		data[count] = point
 
 		count++
@@ -64,7 +67,9 @@ func (msg *SMAResponseMessage) Set(ts *timeserie.TimeSerie[float64]) {
 func (msg *SMAResponseMessage) ToModel() *timeserie.TimeSerie[float64] {
 	ts := timeserie.New[float64]()
 	for _, point := range *msg.Payload.Data {
-		ts.Set(time.Time(point.Time), point.Value)
+		if point.Value != nil {
+			ts.Set(time.Time(point.Time), *point.Value)
+		}
 	}
 	return ts
 }

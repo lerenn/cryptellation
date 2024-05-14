@@ -592,7 +592,7 @@ type ItemSchemaForNumericTimeSerieSchema struct {
 	Time DateSchema `json:"time"`
 
 	// Description: Numerical value
-	Value float64 `json:"value"`
+	Value *float64 `json:"value"`
 }
 
 // PairSchema is a schema from the AsyncAPI specification required in messages
