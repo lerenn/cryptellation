@@ -35,13 +35,15 @@ func (c Generator) Candlesticks(ctx context.Context, payload CandlesticksPayload
 
 	x := make([]string, 0, l.Len())
 	y := make([]opts.KlineData, 0, l.Len())
-	l.Loop(func(t time.Time, c candlestick.Candlestick) (bool, error) {
+	if err := l.Loop(func(t time.Time, c candlestick.Candlestick) (bool, error) {
 		x = append(x, t.Format("2006-01-02 15:04:05"))
 		y = append(y, opts.KlineData{
 			Value: [4]float64{c.Open, c.Close, c.Low, c.High},
 		})
 		return false, nil
-	})
+	}); err != nil {
+		return nil, err
+	}
 
 	chart := charts.NewKLine()
 	chart.SetXAxis(x).AddSeries(payload.Name, y).SetSeriesOptions(
@@ -89,13 +91,15 @@ func (c Generator) SMA(ctx context.Context, payload SMAPayload) (*charts.Line, e
 
 	x := make([]string, 0, l.Len())
 	y := make([]opts.LineData, 0, l.Len())
-	l.Loop(func(t time.Time, v float64) (bool, error) {
+	if err := l.Loop(func(t time.Time, v float64) (bool, error) {
 		x = append(x, t.Format("2006-01-02 15:04:05"))
 		y = append(y, opts.LineData{
 			Value: v,
 		})
 		return false, nil
-	})
+	}); err != nil {
+		return nil, err
+	}
 
 	chart := charts.NewLine()
 	chart.SetXAxis(x).AddSeries("SMA", y).SetSeriesOptions(

@@ -5,6 +5,7 @@ all: generate lint test ## Generate, lint and test the code
 
 .PHONY: clean
 clean: local/down ## Clean the project
+	@$(MAKE) -C ./clients/go clean
 	@$(MAKE) -C ./cmd/cryptellation clean
 	@$(MAKE) -C ./cmd/cryptellation-tui clean
 	@$(MAKE) -C ./pkg clean
@@ -25,6 +26,7 @@ local/up: ## Start the local environment
 
 .PHONY: go/generate
 go/generate: ## Generate the golang code
+	@$(MAKE) -C ./clients/go go/generate
 	@$(MAKE) -C ./cmd/cryptellation go/generate
 	@$(MAKE) -C ./cmd/cryptellation-tui go/generate
 	@$(MAKE) -C ./pkg go/generate
@@ -40,6 +42,7 @@ generate: go/generate ## Generate the code
 
 .PHONY: go/lint
 go/lint: ## Lint the code
+	@$(MAKE) -C ./clients/go go/lint
 	@$(MAKE) -C ./cmd/cryptellation go/lint
 	@$(MAKE) -C ./cmd/cryptellation-tui go/lint
 	@$(MAKE) -C ./pkg go/lint
@@ -55,6 +58,7 @@ lint: go/lint ## Lint the golang code
 
 .PHONY: go/test/unit
 go/test/unit: ## Launch golang unit tests
+	@$(MAKE) -C ./clients/go go/test/unit
 	@$(MAKE) -C ./cmd/cryptellation go/test/unit
 	@$(MAKE) -C ./cmd/cryptellation-tui go/test/unit
 	@$(MAKE) -C ./pkg go/test/unit
@@ -92,18 +96,3 @@ test/end-to-end: local/up go/test/end-to-end ## Launch end-to-end tests
 
 .PHONY: test
 test: test/unit test/integration test/end-to-end ## Launch tests
-
-.PHONY: go/update
-go/update: ## Update Golang modules
-	@$(MAKE) -C ./cmd/cryptellation go/update
-	@$(MAKE) -C ./cmd/cryptellation-tui go/update
-	@$(MAKE) -C ./pkg go/update
-	@$(MAKE) -C ./svc/backtests go/update
-	@$(MAKE) -C ./svc/candlesticks go/update
-	@$(MAKE) -C ./svc/exchanges go/update
-	@$(MAKE) -C ./svc/indicators go/update
-	@$(MAKE) -C ./svc/ticks go/update
-	@$(MAKE) -C ./tools/ci go/update
-
-.PHONY: update
-update: go/update ## Update dependencies
