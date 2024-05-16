@@ -11,7 +11,7 @@ import (
 )
 
 var (
-	globalClient client.Client
+	globalClient client.Services
 )
 
 var CryptellationCmd = &cobra.Command{
@@ -28,7 +28,7 @@ var CryptellationCmd = &cobra.Command{
 		}
 
 		// Create client
-		globalClient, err = client.NewNATSClient(conf)
+		globalClient, err = client.NewServices(conf)
 		return err
 	},
 }

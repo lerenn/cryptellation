@@ -159,7 +159,6 @@ func (bt *Backtest) CreateTickSubscription(exchange string, pair string) (event.
 	}
 
 	s := event.TickSubscription{
-		ID:       len(bt.TickSubscriptions),
 		Exchange: exchange,
 		Pair:     pair,
 	}

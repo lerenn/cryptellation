@@ -13,10 +13,10 @@ import (
 )
 
 type Generator struct {
-	client client.Client
+	client client.Services
 }
 
-func NewGenerator(client client.Client) *Generator {
+func NewGenerator(client client.Services) *Generator {
 	return &Generator{
 		client: client,
 	}
@@ -44,7 +44,14 @@ func (c Generator) Candlesticks(ctx context.Context, payload CandlesticksPayload
 	})
 
 	chart := charts.NewKLine()
-	chart.SetXAxis(x).AddSeries(payload.Name, y)
+	chart.SetXAxis(x).AddSeries(payload.Name, y).SetSeriesOptions(
+		charts.WithItemStyleOpts(opts.ItemStyle{
+			Color:        "#60AF67",
+			Color0:       "#DC6157",
+			BorderColor:  "#60AF67",
+			BorderColor0: "#DC6157",
+		}),
+	)
 	chart.SetGlobalOptions(
 		charts.WithXAxisOpts(opts.XAxis{
 			SplitNumber: 20,

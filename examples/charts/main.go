@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"time"
 
-	client "github.com/lerenn/cryptellation/clients/go"
+	cryptellation "github.com/lerenn/cryptellation/clients/go"
 	"github.com/lerenn/cryptellation/pkg/charts"
 	"github.com/lerenn/cryptellation/pkg/config"
 	"github.com/lerenn/cryptellation/pkg/utils"
@@ -25,7 +25,7 @@ func httpserver(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Received request")
 
 	// Create a cryptellation client
-	client, err := client.NewNATSClient(config.LoadNATS())
+	client, err := cryptellation.NewServices(config.LoadNATS())
 	if err != nil {
 		panic(err)
 	}
