@@ -2,15 +2,15 @@ package nats
 
 import (
 	"context"
-	"fmt"
+	"time"
 
 	"github.com/lerenn/asyncapi-codegen/pkg/extensions"
 	"github.com/lerenn/asyncapi-codegen/pkg/extensions/brokers/nats"
 	helpers "github.com/lerenn/cryptellation/pkg/asyncapi"
 	clientPkg "github.com/lerenn/cryptellation/pkg/client"
 	"github.com/lerenn/cryptellation/pkg/config"
+	"github.com/lerenn/cryptellation/pkg/event"
 	asyncapi "github.com/lerenn/cryptellation/svc/ticks/api/asyncapi"
-	client "github.com/lerenn/cryptellation/svc/ticks/clients/go"
 	"github.com/lerenn/cryptellation/svc/ticks/pkg/tick"
 )
 
@@ -61,68 +61,44 @@ func WithLogger(logger extensions.Logger) ClientOption {
 	}
 }
 
-func (t Client) Register(ctx context.Context, payload client.TicksFilterPayload) error {
-	// Generate message
-	msg := asyncapi.NewRegisteringRequestMessage()
-	msg.Headers.ReplyTo = helpers.AddReplyToSuffix(asyncapi.RegisterRequestChannelPath)
-	msg.Set(payload)
+func (t Client) sendSubscriptionRequest(ctx context.Context, sub event.TickSubscription) error {
+	// Create message
+	msg := asyncapi.NewListeningNotificationMessage()
+	msg.FromModel(sub)
 
 	// Send message
-	resp, err := t.ctrl.RequestToRegisterOperation(ctx, msg)
-	if err != nil {
-		return err
-	}
-
-	// Check error from server
-	if resp.Payload.Error != nil {
-		return fmt.Errorf("%d Error: %s", resp.Payload.Error.Code, resp.Payload.Error.Message)
-	}
-
-	return nil
+	return t.ctrl.SendToListeningOperation(ctx, msg)
 }
 
-func (t Client) Listen(ctx context.Context, payload client.TicksFilterPayload) (<-chan tick.Tick, error) {
-	ch := make(chan tick.Tick, 256)
-
-	// Create params for channel path
-	params := asyncapi.LiveChannelParameters{
-		Exchange: payload.Exchange,
-		Pair:     payload.Pair,
-	}
-
-	// Create callback when a tick appears
-	callback := func(ctx context.Context, msg asyncapi.TickMessage) error {
-		// Try to send tick or drop it
-		select {
-		case ch <- msg.ToModel():
-		default:
-			// Drop if it's full or closed
+func (t Client) SubscribeToTicks(ctx context.Context, sub event.TickSubscription) (<-chan tick.Tick, error) {
+	// Send subscription request periodically
+	go func() {
+		for {
+			select {
+			case <-ctx.Done():
+				return
+			case <-time.After(1 * time.Second):
+				if err := t.sendSubscriptionRequest(ctx, sub); err != nil {
+					// Log error
+					continue
+				}
+			}
 		}
+	}()
+
+	// Subscribe to new ticks
+	ch := make(chan tick.Tick, 16)
+	if err := t.ctrl.SubscribeToSendNewTicksOperation(ctx, asyncapi.LiveChannelParameters{
+		Exchange: sub.Exchange,
+		Pair:     sub.Pair,
+	}, func(ctx context.Context, msg asyncapi.TickMessage) error {
+		ch <- msg.ToModel()
 		return nil
+	}); err != nil {
+		return nil, err
 	}
 
-	// Listen to channel
-	return ch, t.ctrl.SubscribeToLiveOperation(ctx, params, callback)
-}
-
-func (t Client) Unregister(ctx context.Context, payload client.TicksFilterPayload) error {
-	// Generate message
-	msg := asyncapi.NewRegisteringRequestMessage()
-	msg.Headers.ReplyTo = helpers.AddReplyToSuffix(asyncapi.UnregisterRequestChannelPath)
-	msg.Set(payload)
-
-	// Send message
-	resp, err := t.ctrl.RequestToUnregisterOperation(ctx, msg)
-	if err != nil {
-		return err
-	}
-
-	// Check error from server
-	if resp.Payload.Error != nil {
-		return fmt.Errorf("%d Error: %s", resp.Payload.Error.Code, resp.Payload.Error.Message)
-	}
-
-	return nil
+	return ch, nil
 }
 
 func (t Client) ServiceInfo(ctx context.Context) (clientPkg.ServiceInfo, error) {

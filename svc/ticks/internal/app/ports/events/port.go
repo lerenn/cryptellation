@@ -6,11 +6,13 @@ package events
 import (
 	"context"
 
+	"github.com/lerenn/cryptellation/pkg/event"
 	"github.com/lerenn/cryptellation/svc/ticks/pkg/tick"
 )
 
 type Port interface {
-	Publish(ctx context.Context, tick tick.Tick) error
-	Subscribe(ctx context.Context, symbol string) (<-chan tick.Tick, error)
+	PublishTick(ctx context.Context, tick tick.Tick) error
+	SubscribeToTicks(ctx context.Context, sub event.TickSubscription) (<-chan tick.Tick, error)
+
 	Close(ctx context.Context)
 }

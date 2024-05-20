@@ -4,10 +4,10 @@ import (
 	"context"
 	"time"
 
+	"github.com/lerenn/cryptellation/pkg/event"
 	"github.com/lerenn/cryptellation/pkg/utils"
 	client "github.com/lerenn/cryptellation/svc/backtests/clients/go"
 	"github.com/lerenn/cryptellation/svc/backtests/pkg/account"
-	"github.com/lerenn/cryptellation/svc/backtests/pkg/event"
 	"github.com/lerenn/cryptellation/svc/backtests/pkg/order"
 	"github.com/lerenn/cryptellation/svc/ticks/pkg/tick"
 )

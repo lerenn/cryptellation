@@ -12,14 +12,11 @@ import (
 
 // AppSubscriber contains all handlers that are listening messages for App
 type AppSubscriber interface {
-	// RegisterOperationReceived receive all RegisteringRequest messages from RegisterRequest channel.
-	RegisterOperationReceived(ctx context.Context, msg RegisteringRequestMessage) error
+	// ListeningOperationReceived receive all ListeningNotification messages from Listening channel.
+	ListeningOperationReceived(ctx context.Context, msg ListeningNotificationMessage) error
 
 	// ServiceInfoOperationReceived receive all ServiceInfoRequest messages from ServiceInfoRequest channel.
 	ServiceInfoOperationReceived(ctx context.Context, msg ServiceInfoRequestMessage) error
-
-	// UnregisterOperationReceived receive all RegisteringRequest messages from UnregisterRequest channel.
-	UnregisterOperationReceived(ctx context.Context, msg RegisteringRequestMessage) error
 }
 
 // AppController is the structure that provides sending capabilities to the
@@ -131,13 +128,10 @@ func (c *AppController) SubscribeToAllChannels(ctx context.Context, as AppSubscr
 		return extensions.ErrNilAppSubscriber
 	}
 
-	if err := c.SubscribeToRegisterOperation(ctx, as.RegisterOperationReceived); err != nil {
+	if err := c.SubscribeToListeningOperation(ctx, as.ListeningOperationReceived); err != nil {
 		return err
 	}
 	if err := c.SubscribeToServiceInfoOperation(ctx, as.ServiceInfoOperationReceived); err != nil {
-		return err
-	}
-	if err := c.SubscribeToUnregisterOperation(ctx, as.UnregisterOperationReceived); err != nil {
 		return err
 	}
 
@@ -146,12 +140,11 @@ func (c *AppController) SubscribeToAllChannels(ctx context.Context, as AppSubscr
 
 // UnsubscribeFromAllChannels will stop the subscription of all remaining subscribed channels
 func (c *AppController) UnsubscribeFromAllChannels(ctx context.Context) {
-	c.UnsubscribeFromRegisterOperation(ctx)
+	c.UnsubscribeFromListeningOperation(ctx)
 	c.UnsubscribeFromServiceInfoOperation(ctx)
-	c.UnsubscribeFromUnregisterOperation(ctx)
 }
 
-// SubscribeToRegisterOperation will receive RegisteringRequest messages from RegisterRequest channel.
+// SubscribeToListeningOperation will receive ListeningNotification messages from Listening channel.
 //
 // Callback function 'fn' will be called each time a new message is received.
 //
@@ -159,12 +152,12 @@ func (c *AppController) UnsubscribeFromAllChannels(ctx context.Context) {
 //
 // NOTE: for now, this only support the first message from AsyncAPI list.
 // If you need support for other messages, please raise an issue.
-func (c *AppController) SubscribeToRegisterOperation(
+func (c *AppController) SubscribeToListeningOperation(
 	ctx context.Context,
-	fn func(ctx context.Context, msg RegisteringRequestMessage) error,
+	fn func(ctx context.Context, msg ListeningNotificationMessage) error,
 ) error {
 	// Get channel address
-	addr := "cryptellation.ticks.register"
+	addr := "cryptellation.ticks.listening"
 
 	// Set context
 	ctx = addAppContextValues(ctx, addr)
@@ -204,14 +197,9 @@ func (c *AppController) SubscribeToRegisterOperation(
 			// Execute middlewares before handling the message
 			if err := c.executeMiddlewares(ctx, &acknowledgeableBrokerMessage.BrokerMessage, func(ctx context.Context) error {
 				// Process message
-				msg, err := brokerMessageToRegisteringRequestMessage(acknowledgeableBrokerMessage.BrokerMessage)
+				msg, err := brokerMessageToListeningNotificationMessage(acknowledgeableBrokerMessage.BrokerMessage)
 				if err != nil {
 					return err
-				}
-
-				// Add correlation ID to context if it exists
-				if id := msg.CorrelationID(); id != "" {
-					ctx = context.WithValue(ctx, extensions.ContextKeyIsCorrelationID, id)
 				}
 
 				// Execute the subscription function
@@ -235,31 +223,13 @@ func (c *AppController) SubscribeToRegisterOperation(
 	c.subscriptions[addr] = sub
 
 	return nil
-}
-
-// ReplyToRegisterOperation is a helper function to
-// reply to a RegisteringRequest message with a RegisteringResponse message on RegisterResponse channel.
-func (c *AppController) ReplyToRegisterOperation(ctx context.Context, recvMsg RegisteringRequestMessage, fn func(replyMsg *RegisteringResponseMessage)) error {
-	// Create reply message
-	replyMsg := NewRegisteringResponseMessage()
-	replyMsg.SetAsResponseFrom(&recvMsg)
-
-	// Execute callback function
-	fn(&replyMsg)
-
-	// Publish reply
-	chanAddr := recvMsg.Headers.ReplyTo
-
-	return c.SendAsReplyToRegisterOperation(ctx, chanAddr, replyMsg)
-}
-
-// UnsubscribeFromRegisterOperation will stop the reception of RegisteringRequest messages from RegisterRequest channel.
+} // UnsubscribeFromListeningOperation will stop the reception of ListeningNotification messages from Listening channel.
 // A timeout can be set in context to avoid blocking operation, if needed.
-func (c *AppController) UnsubscribeFromRegisterOperation(
+func (c *AppController) UnsubscribeFromListeningOperation(
 	ctx context.Context,
 ) {
 	// Get channel address
-	addr := "cryptellation.ticks.register"
+	addr := "cryptellation.ticks.listening"
 
 	// Check if there receivers for this channel
 	sub, exists := c.subscriptions[addr]
@@ -402,138 +372,13 @@ func (c *AppController) UnsubscribeFromServiceInfoOperation(
 	delete(c.subscriptions, addr)
 
 	c.logger.Info(ctx, "Unsubscribed from channel")
-} // SubscribeToUnregisterOperation will receive RegisteringRequest messages from UnregisterRequest channel.
-// Callback function 'fn' will be called each time a new message is received.
-//
-// NOTE: for now, this only support the first message from AsyncAPI list.
-//
-// NOTE: for now, this only support the first message from AsyncAPI list.
-// If you need support for other messages, please raise an issue.
-func (c *AppController) SubscribeToUnregisterOperation(
-	ctx context.Context,
-	fn func(ctx context.Context, msg RegisteringRequestMessage) error,
-) error {
-	// Get channel address
-	addr := "cryptellation.ticks.unregister"
-
-	// Set context
-	ctx = addAppContextValues(ctx, addr)
-	ctx = context.WithValue(ctx, extensions.ContextKeyIsDirection, "reception")
-
-	// Check if the controller is already subscribed
-	_, exists := c.subscriptions[addr]
-	if exists {
-		err := fmt.Errorf("%w: controller is already subscribed on channel %q", extensions.ErrAlreadySubscribedChannel, addr)
-		c.logger.Error(ctx, err.Error())
-		return err
-	}
-
-	// Subscribe to broker channel
-	sub, err := c.broker.Subscribe(ctx, addr)
-	if err != nil {
-		c.logger.Error(ctx, err.Error())
-		return err
-	}
-	c.logger.Info(ctx, "Subscribed to channel")
-
-	// Asynchronously listen to new messages and pass them to app receiver
-	go func() {
-		for {
-			// Wait for next message
-			acknowledgeableBrokerMessage, open := <-sub.MessagesChannel()
-
-			// If subscription is closed and there is no more message
-			// (i.e. uninitialized message), then exit the function
-			if !open && acknowledgeableBrokerMessage.IsUninitialized() {
-				return
-			}
-
-			// Set broker message to context
-			ctx = context.WithValue(ctx, extensions.ContextKeyIsBrokerMessage, acknowledgeableBrokerMessage.String())
-
-			// Execute middlewares before handling the message
-			if err := c.executeMiddlewares(ctx, &acknowledgeableBrokerMessage.BrokerMessage, func(ctx context.Context) error {
-				// Process message
-				msg, err := brokerMessageToRegisteringRequestMessage(acknowledgeableBrokerMessage.BrokerMessage)
-				if err != nil {
-					return err
-				}
-
-				// Add correlation ID to context if it exists
-				if id := msg.CorrelationID(); id != "" {
-					ctx = context.WithValue(ctx, extensions.ContextKeyIsCorrelationID, id)
-				}
-
-				// Execute the subscription function
-				if err := fn(ctx, msg); err != nil {
-					return err
-				}
-
-				acknowledgeableBrokerMessage.Ack()
-
-				return nil
-			}); err != nil {
-				c.errorHandler(ctx, addr, &acknowledgeableBrokerMessage, err)
-				// On error execute the acknowledgeableBrokerMessage nack() function and
-				// let the BrokerAcknowledgment decide what is the right nack behavior for the broker
-				acknowledgeableBrokerMessage.Nak()
-			}
-		}
-	}()
-
-	// Add the cancel channel to the inside map
-	c.subscriptions[addr] = sub
-
-	return nil
 }
 
-// ReplyToUnregisterOperation is a helper function to
-// reply to a RegisteringRequest message with a RegisteringResponse message on UnregisterResponse channel.
-func (c *AppController) ReplyToUnregisterOperation(ctx context.Context, recvMsg RegisteringRequestMessage, fn func(replyMsg *RegisteringResponseMessage)) error {
-	// Create reply message
-	replyMsg := NewRegisteringResponseMessage()
-	replyMsg.SetAsResponseFrom(&recvMsg)
-
-	// Execute callback function
-	fn(&replyMsg)
-
-	// Publish reply
-	chanAddr := recvMsg.Headers.ReplyTo
-
-	return c.SendAsReplyToUnregisterOperation(ctx, chanAddr, replyMsg)
-}
-
-// UnsubscribeFromUnregisterOperation will stop the reception of RegisteringRequest messages from UnregisterRequest channel.
-// A timeout can be set in context to avoid blocking operation, if needed.
-func (c *AppController) UnsubscribeFromUnregisterOperation(
-	ctx context.Context,
-) {
-	// Get channel address
-	addr := "cryptellation.ticks.unregister"
-
-	// Check if there receivers for this channel
-	sub, exists := c.subscriptions[addr]
-	if !exists {
-		return
-	}
-
-	// Set context
-	ctx = addAppContextValues(ctx, addr)
-
-	// Stop the subscription
-	sub.Cancel(ctx)
-
-	// Remove if from the receivers
-	delete(c.subscriptions, addr)
-
-	c.logger.Info(ctx, "Unsubscribed from channel")
-}
-
-// SendAsLiveOperation will send a Tick message on Live channel.
+// SendAsSendNewTicksOperation will send a Tick message on Live channel.
 //
 // NOTE: for now, this only support the first message from AsyncAPI list.
 // If you need support for other messages, please raise an issue.
-func (c *AppController) SendAsLiveOperation(
+func (c *AppController) SendAsSendNewTicksOperation(
 	ctx context.Context,
 	params LiveChannelParameters,
 	msg TickMessage,
@@ -560,45 +405,6 @@ func (c *AppController) SendAsLiveOperation(
 	})
 }
 
-// SendAsReplyToRegisterOperation will send a RegisteringResponse message on RegisterResponse channel.
-//
-// NOTE: for now, this only support the first message from AsyncAPI list.
-// If you need support for other messages, please raise an issue.
-func (c *AppController) SendAsReplyToRegisterOperation(
-	ctx context.Context,
-	chanAddr string,
-	msg RegisteringResponseMessage,
-) error {
-	// Set channel address
-	addr := chanAddr
-
-	// Set correlation ID if it does not exist
-	if id := msg.CorrelationID(); id == "" {
-		c.logger.Error(ctx, extensions.ErrNoCorrelationIDSet.Error())
-		return extensions.ErrNoCorrelationIDSet
-
-	}
-
-	// Set context
-	ctx = addAppContextValues(ctx, addr)
-	ctx = context.WithValue(ctx, extensions.ContextKeyIsDirection, "publication")
-	ctx = context.WithValue(ctx, extensions.ContextKeyIsCorrelationID, msg.CorrelationID())
-
-	// Convert to BrokerMessage
-	brokerMsg, err := msg.toBrokerMessage()
-	if err != nil {
-		return err
-	}
-
-	// Set broker message to context
-	ctx = context.WithValue(ctx, extensions.ContextKeyIsBrokerMessage, brokerMsg.String())
-
-	// Send the message on event-broker through middlewares
-	return c.executeMiddlewares(ctx, &brokerMsg, func(ctx context.Context) error {
-		return c.broker.Publish(ctx, addr, brokerMsg)
-	})
-}
-
 // SendAsReplyToServiceInfoOperation will send a ServiceInfoResponse message on ServiceInfoResponse channel.
 //
 // NOTE: for now, this only support the first message from AsyncAPI list.
@@ -607,45 +413,6 @@ func (c *AppController) SendAsReplyToServiceInfoOperation(
 	ctx context.Context,
 	chanAddr string,
 	msg ServiceInfoResponseMessage,
-) error {
-	// Set channel address
-	addr := chanAddr
-
-	// Set correlation ID if it does not exist
-	if id := msg.CorrelationID(); id == "" {
-		c.logger.Error(ctx, extensions.ErrNoCorrelationIDSet.Error())
-		return extensions.ErrNoCorrelationIDSet
-
-	}
-
-	// Set context
-	ctx = addAppContextValues(ctx, addr)
-	ctx = context.WithValue(ctx, extensions.ContextKeyIsDirection, "publication")
-	ctx = context.WithValue(ctx, extensions.ContextKeyIsCorrelationID, msg.CorrelationID())
-
-	// Convert to BrokerMessage
-	brokerMsg, err := msg.toBrokerMessage()
-	if err != nil {
-		return err
-	}
-
-	// Set broker message to context
-	ctx = context.WithValue(ctx, extensions.ContextKeyIsBrokerMessage, brokerMsg.String())
-
-	// Send the message on event-broker through middlewares
-	return c.executeMiddlewares(ctx, &brokerMsg, func(ctx context.Context) error {
-		return c.broker.Publish(ctx, addr, brokerMsg)
-	})
-}
-
-// SendAsReplyToUnregisterOperation will send a RegisteringResponse message on UnregisterResponse channel.
-//
-// NOTE: for now, this only support the first message from AsyncAPI list.
-// If you need support for other messages, please raise an issue.
-func (c *AppController) SendAsReplyToUnregisterOperation(
-	ctx context.Context,
-	chanAddr string,
-	msg RegisteringResponseMessage,
 ) error {
 	// Set channel address
 	addr := chanAddr

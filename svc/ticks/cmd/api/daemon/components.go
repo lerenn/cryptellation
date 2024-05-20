@@ -11,7 +11,7 @@ type components struct {
 
 func newComponents(adapters adapters) components {
 	return components{
-		ticks: domain.New(adapters.events, adapters.db, adapters.exchanges),
+		ticks: domain.New(adapters.exchanges, adapters.events),
 	}
 }
 

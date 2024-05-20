@@ -5,8 +5,14 @@ import (
 	"fmt"
 	"time"
 
-	client "github.com/lerenn/cryptellation/svc/ticks/clients/go"
+	"github.com/lerenn/cryptellation/pkg/event"
 	"github.com/spf13/cobra"
+)
+
+var (
+	ticksExchange string
+	ticksPair     string
+	ticksTimeout  string
 )
 
 var ticksCmd = &cobra.Command{
@@ -22,29 +28,21 @@ var ticksCmd = &cobra.Command{
 	},
 }
 
-var ticksRegisterCmd = &cobra.Command{
-	Use:     "register",
-	Aliases: []string{"r"},
-	Short:   "Register to ticks on service",
-	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		err = globalClient.Ticks().Register(context.Background(), client.TicksFilterPayload{
-			Exchange: "binance",
-			Pair:     "BTC-USDT",
-		})
-
-		return err
-	},
-}
-
-var ticksWatchCmd = &cobra.Command{
+var ticksListenCmd = &cobra.Command{
 	Use:     "listen",
 	Aliases: []string{"r"},
 	Short:   "Listen to ticks on service",
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		ch, err := globalClient.Ticks().Listen(context.Background(), client.TicksFilterPayload{
-			Exchange: "binance",
-			Pair:     "BTC-USDT",
-		})
+		timeout, err := time.ParseDuration(ticksTimeout)
+		if err != nil {
+			return err
+		}
+
+		ts := event.TickSubscription{
+			Exchange: ticksExchange,
+			Pair:     ticksPair,
+		}
+		ch, err := globalClient.Ticks().SubscribeToTicks(context.TODO(), ts)
 		if err != nil {
 			return err
 		}
@@ -53,24 +51,10 @@ var ticksWatchCmd = &cobra.Command{
 			select {
 			case t := <-ch:
 				fmt.Println(t.String())
-			case <-time.After(10 * time.Second):
-				return fmt.Errorf("Timeout")
+			case <-time.After(timeout):
+				return fmt.Errorf("timeout after %s", timeout)
 			}
 		}
-	},
-}
-
-var ticksUnregisterCmd = &cobra.Command{
-	Use:     "unregister",
-	Aliases: []string{"r"},
-	Short:   "Unregister to ticks on service",
-	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		err = globalClient.Ticks().Unregister(context.Background(), client.TicksFilterPayload{
-			Exchange: "binance",
-			Pair:     "BTC-USDT",
-		})
-
-		return err
 	},
 }
 
@@ -84,10 +68,12 @@ var ticksInfoCmd = &cobra.Command{
 }
 
 func initTicks(rootCmd *cobra.Command) {
+	ticksListenCmd.Flags().StringVarP(&ticksExchange, "exchange", "e", "binance", "Exchange to listen to")
+	ticksListenCmd.Flags().StringVarP(&ticksPair, "pair", "p", "BTC-USDT", "Pair to listen to")
+	ticksListenCmd.Flags().StringVarP(&ticksTimeout, "timeout", "t", "30s", "Timeout for listening to ticks")
+	ticksCmd.AddCommand(ticksListenCmd)
+
 	ticksCmd.AddCommand(ticksInfoCmd)
-	ticksCmd.AddCommand(ticksRegisterCmd)
-	ticksCmd.AddCommand(ticksUnregisterCmd)
-	ticksCmd.AddCommand(ticksWatchCmd)
 
 	rootCmd.AddCommand(ticksCmd)
 }

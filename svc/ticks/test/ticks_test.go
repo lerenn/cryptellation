@@ -1,42 +1,29 @@
 package test
 
-// func (suite *TicksSuite) TestManualCleanUp() {
-// 	err := suite.client.Unregister(context.Background(), client.TicksFilterPayload{
-// 		Exchange: "binance",
-// 		Pair:   "BTC-USDT",
-// 	})
-// 	suite.Require().NoError(err)
-// }
+import (
+	"context"
+	"time"
 
-// TODO: fix listening
-// func (suite *TicksSuite) TestListen() {
-// 	// Register listener
-// 	err := suite.client.Register(context.Background(), client.TicksFilterPayload{
-// 		Exchange: "binance",
-// 		Pair:   "BTC-USDT",
-// 	})
-// 	suite.Require().NoError(err)
+	"github.com/lerenn/cryptellation/pkg/event"
+)
 
-// 	// Listen to ticks
-// 	ch, err := suite.client.Listen(context.Background(), client.TicksFilterPayload{
-// 		Exchange: "binance",
-// 		Pair:   "BTC-USDT",
-// 	})
-// 	suite.Require().NoError(err)
+func (suite *EndToEndSuite) TestListenTicks() {
+	// WHEN subscribing to ticks
+	cancelableCtx, cancel := context.WithCancel(context.Background())
+	ch, err := suite.client.SubscribeToTicks(cancelableCtx, event.TickSubscription{
+		Exchange: "binance",
+		Pair:     "ETH-USDT",
+	})
+	defer cancel()
 
-// 	// Check that ticks are correct
-// 	for i := 0; i < 3; i++ {
-// 		t := <-ch
-// 		suite.Require().Equal("binance", t.Exchange)
-// 		suite.Require().Equal("BTC-USDT", t.Pair)
-// 		suite.Require().NotEqual(0, t.Price)
-// 		suite.Require().WithinDuration(time.Now(), t.Time, time.Second)
-// 	}
+	// THEN no error occurs
+	suite.Require().NoError(err)
 
-// 	// Unregister listener
-// 	err = suite.client.Unregister(context.Background(), client.TicksFilterPayload{
-// 		Exchange: "binance",
-// 		Pair:   "BTC-USDT",
-// 	})
-// 	suite.Require().NoError(err)
-// }
+	// AND ticks are received
+	select {
+	case tick := <-ch:
+		suite.Require().NotEmpty(tick)
+	case <-time.After(10 * time.Second):
+		suite.Fail("No tick received")
+	}
+}

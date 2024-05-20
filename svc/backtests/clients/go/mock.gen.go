@@ -11,7 +11,7 @@ import (
 	uuid "github.com/google/uuid"
 	client "github.com/lerenn/cryptellation/pkg/client"
 	account "github.com/lerenn/cryptellation/svc/backtests/pkg/account"
-	event "github.com/lerenn/cryptellation/svc/backtests/pkg/event"
+	event "github.com/lerenn/cryptellation/pkg/event"
 	gomock "go.uber.org/mock/gomock"
 )
 

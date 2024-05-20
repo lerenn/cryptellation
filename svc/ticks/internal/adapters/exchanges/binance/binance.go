@@ -31,8 +31,16 @@ func (s *Service) ListenSymbol(ctx context.Context, symbol string) (chan tick.Ti
 		return nil, nil, err
 	}
 
-	tickChan := make(chan tick.Tick)
+	var lastBid, lastAsk string
+	tickChan := make(chan tick.Tick, 64)
 	_, stop, err := client.WsBookTickerServe(binanceSymbol, func(event *client.WsBookTickerEvent) {
+		// Skip if same price as last tick
+		if event.BestAskPrice == lastAsk && event.BestBidPrice == lastBid {
+			return
+		}
+		lastAsk = event.BestAskPrice
+		lastBid = event.BestBidPrice
+
 		ask, err := strconv.ParseFloat(event.BestAskPrice, 64)
 		if err != nil {
 			telemetry.L(ctx).Error(err.Error())
@@ -56,7 +64,7 @@ func (s *Service) ListenSymbol(ctx context.Context, symbol string) (chan tick.Ti
 		select {
 		case tickChan <- t:
 		default:
-			telemetry.L(ctx).Infof("Dropped %q tick from binance adapter\n", symbol)
+			telemetry.L(ctx).Warningf("Dropped %q tick from binance adapter", symbol)
 		}
 
 	}, nil)

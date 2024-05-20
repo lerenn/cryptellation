@@ -5,11 +5,11 @@ import (
 	"testing"
 
 	"github.com/google/uuid"
+	"github.com/lerenn/cryptellation/pkg/event"
 	"github.com/lerenn/cryptellation/svc/backtests/internal/app"
 	"github.com/lerenn/cryptellation/svc/backtests/internal/app/ports/db"
 	"github.com/lerenn/cryptellation/svc/backtests/internal/app/ports/events"
 	"github.com/lerenn/cryptellation/svc/backtests/pkg/backtest"
-	"github.com/lerenn/cryptellation/svc/backtests/pkg/event"
 	candlesticks "github.com/lerenn/cryptellation/svc/candlesticks/clients/go"
 	"github.com/stretchr/testify/suite"
 	"go.uber.org/mock/gomock"

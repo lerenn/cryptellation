@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	binancePkg "github.com/lerenn/cryptellation/pkg/adapters/exchanges/binance"
+	"github.com/lerenn/cryptellation/pkg/event"
 	"github.com/lerenn/cryptellation/svc/ticks/internal/adapters/exchanges/binance"
 	"github.com/lerenn/cryptellation/svc/ticks/internal/app/ports/exchanges"
 	"github.com/lerenn/cryptellation/svc/ticks/pkg/tick"
@@ -25,11 +26,11 @@ func New() (Exchanges, error) {
 	}, nil
 }
 
-func (e Exchanges) ListenSymbol(ctx context.Context, exchange, symbol string) (chan tick.Tick, chan struct{}, error) {
-	switch exchange {
+func (e Exchanges) ListenSymbol(ctx context.Context, sub event.TickSubscription) (chan tick.Tick, chan struct{}, error) {
+	switch sub.Exchange {
 	case binancePkg.Infos.Name:
-		return e.binance.ListenSymbol(ctx, symbol)
+		return e.binance.ListenSymbol(ctx, sub.Pair)
 	default:
-		return nil, nil, fmt.Errorf("%w: %q", exchanges.ErrInexistantExchange, exchange)
+		return nil, nil, fmt.Errorf("%w: %q", exchanges.ErrInexistantExchange, sub.Exchange)
 	}
 }

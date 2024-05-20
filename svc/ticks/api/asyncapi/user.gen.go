@@ -14,8 +14,8 @@ import (
 
 // UserSubscriber contains all handlers that are listening messages for User
 type UserSubscriber interface {
-	// LiveOperationReceived receive all Tick messages from Live channel.
-	LiveOperationReceived(ctx context.Context, msg TickMessage) error
+	// SendNewTicksOperationReceived receive all Tick messages from Live channel.
+	SendNewTicksOperationReceived(ctx context.Context, msg TickMessage) error
 }
 
 // UserController is the structure that provides sending capabilities to the
@@ -134,7 +134,7 @@ func (c *UserController) SubscribeToAllChannels(ctx context.Context, as UserSubs
 func (c *UserController) UnsubscribeFromAllChannels(ctx context.Context) {
 }
 
-// SubscribeToLiveOperation will receive Tick messages from Live channel.
+// SubscribeToSendNewTicksOperation will receive Tick messages from Live channel.
 //
 // Callback function 'fn' will be called each time a new message is received.
 //
@@ -142,7 +142,7 @@ func (c *UserController) UnsubscribeFromAllChannels(ctx context.Context) {
 //
 // NOTE: for now, this only support the first message from AsyncAPI list.
 // If you need support for other messages, please raise an issue.
-func (c *UserController) SubscribeToLiveOperation(
+func (c *UserController) SubscribeToSendNewTicksOperation(
 	ctx context.Context,
 	params LiveChannelParameters,
 	fn func(ctx context.Context, msg TickMessage) error,
@@ -214,9 +214,9 @@ func (c *UserController) SubscribeToLiveOperation(
 	c.subscriptions[addr] = sub
 
 	return nil
-} // UnsubscribeFromLiveOperation will stop the reception of Tick messages from Live channel.
+} // UnsubscribeFromSendNewTicksOperation will stop the reception of Tick messages from Live channel.
 // A timeout can be set in context to avoid blocking operation, if needed.
-func (c *UserController) UnsubscribeFromLiveOperation(
+func (c *UserController) UnsubscribeFromSendNewTicksOperation(
 	ctx context.Context,
 	params LiveChannelParameters,
 ) {
@@ -241,27 +241,20 @@ func (c *UserController) UnsubscribeFromLiveOperation(
 	c.logger.Info(ctx, "Unsubscribed from channel")
 }
 
-// SendToRegisterOperation will send a RegisteringRequest message on RegisterRequest channel.
+// SendToListeningOperation will send a ListeningNotification message on Listening channel.
 //
-// NOTE: this won't wait for reply, use the normal version to get the reply or do the catching reply manually.
 // NOTE: for now, this only support the first message from AsyncAPI list.
 // If you need support for other messages, please raise an issue.
-func (c *UserController) SendToRegisterOperation(
+func (c *UserController) SendToListeningOperation(
 	ctx context.Context,
-	msg RegisteringRequestMessage,
+	msg ListeningNotificationMessage,
 ) error {
 	// Set channel address
-	addr := "cryptellation.ticks.register"
-
-	// Set correlation ID if it does not exist
-	if id := msg.CorrelationID(); id == "" {
-		msg.SetCorrelationID(uuid.New().String())
-	}
+	addr := "cryptellation.ticks.listening"
 
 	// Set context
 	ctx = addUserContextValues(ctx, addr)
 	ctx = context.WithValue(ctx, extensions.ContextKeyIsDirection, "publication")
-	ctx = context.WithValue(ctx, extensions.ContextKeyIsCorrelationID, msg.CorrelationID())
 
 	// Convert to BrokerMessage
 	brokerMsg, err := msg.toBrokerMessage()
@@ -276,100 +269,6 @@ func (c *UserController) SendToRegisterOperation(
 	return c.executeMiddlewares(ctx, &brokerMsg, func(ctx context.Context) error {
 		return c.broker.Publish(ctx, addr, brokerMsg)
 	})
-}
-
-// RequestToRegisterOperation will send a RegisteringRequest message on RegisterRequest channel
-// and wait for a RegisteringResponse message from RegisterResponse channel.
-//
-// If a correlation ID is set in the AsyncAPI, then this will wait for the
-// reply with the same correlation ID. Otherwise, it will returns the first
-// message on the reply channel.
-//
-// A timeout can be set in context to avoid blocking operation, if needed.
-
-func (c *UserController) RequestToRegisterOperation(
-	ctx context.Context,
-	msg RegisteringRequestMessage,
-) (RegisteringResponseMessage, error) {
-	// Get receiving channel address
-	addr := msg.Headers.ReplyTo
-
-	// Set context
-	ctx = addUserContextValues(ctx, addr)
-
-	// Subscribe to broker channel
-	sub, err := c.broker.Subscribe(ctx, addr)
-	if err != nil {
-		c.logger.Error(ctx, err.Error())
-		return RegisteringResponseMessage{}, err
-	}
-	c.logger.Info(ctx, "Subscribed to channel")
-
-	// Close receiver on leave
-	defer func() {
-		// Stop the subscription
-		sub.Cancel(ctx)
-
-		// Logging unsubscribing
-		c.logger.Info(ctx, "Unsubscribed from channel")
-	}()
-
-	// Set correlation ID if it does not exist
-	if id := msg.CorrelationID(); id == "" {
-		msg.SetCorrelationID(uuid.New().String())
-	}
-
-	// Send the message
-	if err := c.SendToRegisterOperation(ctx, msg); err != nil {
-		c.logger.Error(ctx, "error happened when sending message", extensions.LogInfo{Key: "error", Value: err.Error()})
-		return RegisteringResponseMessage{}, fmt.Errorf("error happened when sending message: %w", err)
-	}
-
-	// Wait for corresponding response
-	for {
-		select {
-		case acknowledgeableBrokerMessage, open := <-sub.MessagesChannel():
-			// If subscription is closed and there is no more message
-			// (i.e. uninitialized message), then the subscription ended before
-			// receiving the expected message
-			if !open && acknowledgeableBrokerMessage.IsUninitialized() {
-				c.logger.Error(ctx, "Channel closed before getting message")
-				return RegisteringResponseMessage{}, extensions.ErrSubscriptionCanceled
-			}
-
-			// Get new message
-			rmsg, err := brokerMessageToRegisteringResponseMessage(acknowledgeableBrokerMessage.BrokerMessage)
-			if err != nil {
-				c.logger.Error(ctx, err.Error())
-			}
-
-			acknowledgeableBrokerMessage.Ack()
-
-			// If message doesn't have corresponding correlation ID, then ingore and continue
-			if msg.CorrelationID() != rmsg.CorrelationID() {
-				continue
-			}
-
-			// Set context with received values as it is the expected message
-			msgCtx := context.WithValue(ctx, extensions.ContextKeyIsBrokerMessage, acknowledgeableBrokerMessage.String())
-			msgCtx = context.WithValue(msgCtx, extensions.ContextKeyIsDirection, "reception")
-			msgCtx = context.WithValue(msgCtx, extensions.ContextKeyIsCorrelationID, msg.CorrelationID())
-
-			// Execute middlewares before returning
-			if err := c.executeMiddlewares(msgCtx, &acknowledgeableBrokerMessage.BrokerMessage, nil); err != nil {
-				return RegisteringResponseMessage{}, err
-			}
-
-			// Return the message to the caller
-			//
-			// NOTE: it is transformed from the broker again, as it could have
-			// been modified by middlewares
-			return brokerMessageToRegisteringResponseMessage(acknowledgeableBrokerMessage.BrokerMessage)
-		case <-ctx.Done(): // Set corrsponding error if context is done
-			c.logger.Error(ctx, "Context done before getting message")
-			return RegisteringResponseMessage{}, extensions.ErrContextCanceled
-		}
-	}
 }
 
 // SendToServiceInfoOperation will send a ServiceInfoRequest message on ServiceInfoRequest channel.
@@ -499,137 +398,6 @@ func (c *UserController) RequestToServiceInfoOperation(
 		case <-ctx.Done(): // Set corrsponding error if context is done
 			c.logger.Error(ctx, "Context done before getting message")
 			return ServiceInfoResponseMessage{}, extensions.ErrContextCanceled
-		}
-	}
-}
-
-// SendToUnregisterOperation will send a RegisteringRequest message on UnregisterRequest channel.
-//
-// NOTE: this won't wait for reply, use the normal version to get the reply or do the catching reply manually.
-// NOTE: for now, this only support the first message from AsyncAPI list.
-// If you need support for other messages, please raise an issue.
-func (c *UserController) SendToUnregisterOperation(
-	ctx context.Context,
-	msg RegisteringRequestMessage,
-) error {
-	// Set channel address
-	addr := "cryptellation.ticks.unregister"
-
-	// Set correlation ID if it does not exist
-	if id := msg.CorrelationID(); id == "" {
-		msg.SetCorrelationID(uuid.New().String())
-	}
-
-	// Set context
-	ctx = addUserContextValues(ctx, addr)
-	ctx = context.WithValue(ctx, extensions.ContextKeyIsDirection, "publication")
-	ctx = context.WithValue(ctx, extensions.ContextKeyIsCorrelationID, msg.CorrelationID())
-
-	// Convert to BrokerMessage
-	brokerMsg, err := msg.toBrokerMessage()
-	if err != nil {
-		return err
-	}
-
-	// Set broker message to context
-	ctx = context.WithValue(ctx, extensions.ContextKeyIsBrokerMessage, brokerMsg.String())
-
-	// Send the message on event-broker through middlewares
-	return c.executeMiddlewares(ctx, &brokerMsg, func(ctx context.Context) error {
-		return c.broker.Publish(ctx, addr, brokerMsg)
-	})
-}
-
-// RequestToUnregisterOperation will send a RegisteringRequest message on UnregisterRequest channel
-// and wait for a RegisteringResponse message from UnregisterResponse channel.
-//
-// If a correlation ID is set in the AsyncAPI, then this will wait for the
-// reply with the same correlation ID. Otherwise, it will returns the first
-// message on the reply channel.
-//
-// A timeout can be set in context to avoid blocking operation, if needed.
-
-func (c *UserController) RequestToUnregisterOperation(
-	ctx context.Context,
-	msg RegisteringRequestMessage,
-) (RegisteringResponseMessage, error) {
-	// Get receiving channel address
-	addr := msg.Headers.ReplyTo
-
-	// Set context
-	ctx = addUserContextValues(ctx, addr)
-
-	// Subscribe to broker channel
-	sub, err := c.broker.Subscribe(ctx, addr)
-	if err != nil {
-		c.logger.Error(ctx, err.Error())
-		return RegisteringResponseMessage{}, err
-	}
-	c.logger.Info(ctx, "Subscribed to channel")
-
-	// Close receiver on leave
-	defer func() {
-		// Stop the subscription
-		sub.Cancel(ctx)
-
-		// Logging unsubscribing
-		c.logger.Info(ctx, "Unsubscribed from channel")
-	}()
-
-	// Set correlation ID if it does not exist
-	if id := msg.CorrelationID(); id == "" {
-		msg.SetCorrelationID(uuid.New().String())
-	}
-
-	// Send the message
-	if err := c.SendToUnregisterOperation(ctx, msg); err != nil {
-		c.logger.Error(ctx, "error happened when sending message", extensions.LogInfo{Key: "error", Value: err.Error()})
-		return RegisteringResponseMessage{}, fmt.Errorf("error happened when sending message: %w", err)
-	}
-
-	// Wait for corresponding response
-	for {
-		select {
-		case acknowledgeableBrokerMessage, open := <-sub.MessagesChannel():
-			// If subscription is closed and there is no more message
-			// (i.e. uninitialized message), then the subscription ended before
-			// receiving the expected message
-			if !open && acknowledgeableBrokerMessage.IsUninitialized() {
-				c.logger.Error(ctx, "Channel closed before getting message")
-				return RegisteringResponseMessage{}, extensions.ErrSubscriptionCanceled
-			}
-
-			// Get new message
-			rmsg, err := brokerMessageToRegisteringResponseMessage(acknowledgeableBrokerMessage.BrokerMessage)
-			if err != nil {
-				c.logger.Error(ctx, err.Error())
-			}
-
-			acknowledgeableBrokerMessage.Ack()
-
-			// If message doesn't have corresponding correlation ID, then ingore and continue
-			if msg.CorrelationID() != rmsg.CorrelationID() {
-				continue
-			}
-
-			// Set context with received values as it is the expected message
-			msgCtx := context.WithValue(ctx, extensions.ContextKeyIsBrokerMessage, acknowledgeableBrokerMessage.String())
-			msgCtx = context.WithValue(msgCtx, extensions.ContextKeyIsDirection, "reception")
-			msgCtx = context.WithValue(msgCtx, extensions.ContextKeyIsCorrelationID, msg.CorrelationID())
-
-			// Execute middlewares before returning
-			if err := c.executeMiddlewares(msgCtx, &acknowledgeableBrokerMessage.BrokerMessage, nil); err != nil {
-				return RegisteringResponseMessage{}, err
-			}
-
-			// Return the message to the caller
-			//
-			// NOTE: it is transformed from the broker again, as it could have
-			// been modified by middlewares
-			return brokerMessageToRegisteringResponseMessage(acknowledgeableBrokerMessage.BrokerMessage)
-		case <-ctx.Done(): // Set corrsponding error if context is done
-			c.logger.Error(ctx, "Context done before getting message")
-			return RegisteringResponseMessage{}, extensions.ErrContextCanceled
 		}
 	}
 }

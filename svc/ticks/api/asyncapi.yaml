@@ -6,15 +6,11 @@ info:
     This service is serving ticks in real time, proxying exchanges API.
 
 channels:
-  RegisterRequest:
-    address: cryptellation.ticks.register
+  Listening: 
+    address: cryptellation.ticks.listening
     messages:
-      ListRequest:
-        $ref: "#/components/messages/RegisteringRequest"
-  RegisterResponse:
-    messages:
-      RegisterResponse:
-        $ref: "#/components/messages/RegisteringResponse"
+      ListeningNotification:
+        $ref: "#/components/messages/ListeningNotification"
 
   Live:
     address: cryptellation.ticks.live.{exchange}.{pair}
@@ -27,16 +23,6 @@ channels:
       Tick:
         $ref: "#/components/messages/Tick"
 
-  UnregisterRequest:
-    address: cryptellation.ticks.unregister
-    messages:
-      ListRequest:
-        $ref: "#/components/messages/RegisteringRequest"
-  UnregisterResponse:
-    messages:
-      UnregisterResponse:
-        $ref: "#/components/messages/RegisteringResponse"
-
   ServiceInfoRequest:
     address: cryptellation.ticks.info
     messages:
@@ -48,34 +34,19 @@ channels:
         $ref: "#/components/messages/ServiceInfoResponse"
 
 operations:
-  Register:
+  Listening:
     action: receive
-    channel: 
-      $ref: "#/channels/RegisterRequest"
-    reply:
-      address:
-        location: "$message.header#/replyTo"
-      channel:
-        $ref: '#/channels/RegisterResponse'
+    channel:
+      $ref: "#/channels/Listening"
 
-  Live:
+  SendNewTicks:
     action: send
-    channel: 
+    channel:
       $ref: "#/channels/Live"
-
-  Unregister:
-    action: receive
-    channel: 
-      $ref: "#/channels/UnregisterRequest"
-    reply:
-      address:
-        location: "$message.header#/replyTo"
-      channel:
-        $ref: '#/channels/UnregisterResponse'
 
   ServiceInfo:
     action: receive
-    channel: 
+    channel:
       $ref: "#/channels/ServiceInfoRequest"
     reply:
       address:
@@ -106,7 +77,7 @@ components:
         location: $message.header#/correlationId
 
   messages:
-    RegisteringRequest:
+    ListeningNotification:
       payload:
         type: object
         required:
@@ -117,20 +88,6 @@ components:
             $ref: '#/components/schemas/Exchange'
           pair:
             $ref: '#/components/schemas/Pair'
-      traits:
-        - $ref: "#/components/messageTraits/withReplyTo"
-        - $ref: "#/components/messageTraits/withCorrelationID"
-    RegisteringResponse:
-      payload:
-        type: object
-        properties:
-          count:
-            type: integer
-            description: count of listener after the call is complete
-          error:
-            $ref: '#/components/schemas/Error'
-      traits:
-        - $ref: "#/components/messageTraits/withCorrelationID"
 
     Tick:
       payload:

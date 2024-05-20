@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/lerenn/cryptellation/svc/backtests/pkg/event"
+	"github.com/lerenn/cryptellation/pkg/event"
 	"github.com/lerenn/cryptellation/svc/ticks/pkg/tick"
 	"github.com/stretchr/testify/suite"
 )

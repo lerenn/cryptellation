@@ -71,6 +71,11 @@ func (e *Error) Error() string {
 	return fmt.Sprintf("channel %q: err %v", e.Channel, e.Err)
 }
 
+// Message 'ListeningNotificationMessageFromListeningChannel' reference another one at '#/components/messages/ListeningNotification'.
+// This should be fixed in a future version to allow message override.
+// If you encounter this message, feel free to open an issue on this subject
+// to let know that you need this functionnality.
+
 // LiveChannelParameters represents LiveChannel channel parameters
 type LiveChannelParameters struct {
 	// Exchange is a channel parameter: Filter for ticks by exchange name
@@ -80,16 +85,6 @@ type LiveChannelParameters struct {
 }
 
 // Message 'TickMessageFromLiveChannel' reference another one at '#/components/messages/Tick'.
-// This should be fixed in a future version to allow message override.
-// If you encounter this message, feel free to open an issue on this subject
-// to let know that you need this functionnality.
-
-// Message 'ListRequestMessageFromRegisterRequestChannel' reference another one at '#/components/messages/RegisteringRequest'.
-// This should be fixed in a future version to allow message override.
-// If you encounter this message, feel free to open an issue on this subject
-// to let know that you need this functionnality.
-
-// Message 'RegisterResponseMessageFromRegisterResponseChannel' reference another one at '#/components/messages/RegisteringResponse'.
 // This should be fixed in a future version to allow message override.
 // If you encounter this message, feel free to open an issue on this subject
 // to let know that you need this functionnality.
@@ -104,27 +99,8 @@ type LiveChannelParameters struct {
 // If you encounter this message, feel free to open an issue on this subject
 // to let know that you need this functionnality.
 
-// Message 'ListRequestMessageFromUnregisterRequestChannel' reference another one at '#/components/messages/RegisteringRequest'.
-// This should be fixed in a future version to allow message override.
-// If you encounter this message, feel free to open an issue on this subject
-// to let know that you need this functionnality.
-
-// Message 'UnregisterResponseMessageFromUnregisterResponseChannel' reference another one at '#/components/messages/RegisteringResponse'.
-// This should be fixed in a future version to allow message override.
-// If you encounter this message, feel free to open an issue on this subject
-// to let know that you need this functionnality.
-
-// HeadersFromRegisteringRequestMessage is a schema from the AsyncAPI specification required in messages
-type HeadersFromRegisteringRequestMessage struct {
-	// Description: Correlation ID set by client
-	CorrelationId *string `json:"correlationId"`
-
-	// Description: Channel used to respond to request
-	ReplyTo string `json:"replyTo"`
-}
-
-// RegisteringRequestMessagePayload is a schema from the AsyncAPI specification required in messages
-type RegisteringRequestMessagePayload struct {
+// ListeningNotificationMessagePayload is a schema from the AsyncAPI specification required in messages
+type ListeningNotificationMessagePayload struct {
 	// Description: Exchange name
 	Exchange ExchangeSchema `json:"exchange"`
 
@@ -132,28 +108,21 @@ type RegisteringRequestMessagePayload struct {
 	Pair PairSchema `json:"pair"`
 }
 
-// RegisteringRequestMessage is the message expected for 'RegisteringRequestMessage' channel.
-type RegisteringRequestMessage struct {
-	// Headers will be used to fill the message headers
-	Headers HeadersFromRegisteringRequestMessage
-
+// ListeningNotificationMessage is the message expected for 'ListeningNotificationMessage' channel.
+type ListeningNotificationMessage struct {
 	// Payload will be inserted in the message payload
-	Payload RegisteringRequestMessagePayload
+	Payload ListeningNotificationMessagePayload
 }
 
-func NewRegisteringRequestMessage() RegisteringRequestMessage {
-	var msg RegisteringRequestMessage
-
-	// Set correlation ID
-	u := uuid.New().String()
-	msg.Headers.CorrelationId = &u
+func NewListeningNotificationMessage() ListeningNotificationMessage {
+	var msg ListeningNotificationMessage
 
 	return msg
 }
 
-// brokerMessageToRegisteringRequestMessage will fill a new RegisteringRequestMessage with data from generic broker message
-func brokerMessageToRegisteringRequestMessage(bMsg extensions.BrokerMessage) (RegisteringRequestMessage, error) {
-	var msg RegisteringRequestMessage
+// brokerMessageToListeningNotificationMessage will fill a new ListeningNotificationMessage with data from generic broker message
+func brokerMessageToListeningNotificationMessage(bMsg extensions.BrokerMessage) (ListeningNotificationMessage, error) {
+	var msg ListeningNotificationMessage
 
 	// Unmarshal payload to expected message payload format
 	err := json.Unmarshal(bMsg.Payload, &msg.Payload)
@@ -161,26 +130,13 @@ func brokerMessageToRegisteringRequestMessage(bMsg extensions.BrokerMessage) (Re
 		return msg, err
 	}
 
-	// Get each headers from broker message
-	for k, v := range bMsg.Headers {
-		switch {
-		case k == "correlationId": // Retrieving CorrelationId header
-			h := string(v)
-			msg.Headers.CorrelationId = &h
-		case k == "replyTo": // Retrieving ReplyTo header
-			msg.Headers.ReplyTo = string(v)
-		default:
-			// TODO: log unknown error
-		}
-	}
-
 	// TODO: run checks on msg type
 
 	return msg, nil
 }
 
-// toBrokerMessage will generate a generic broker message from RegisteringRequestMessage data
-func (msg RegisteringRequestMessage) toBrokerMessage() (extensions.BrokerMessage, error) {
+// toBrokerMessage will generate a generic broker message from ListeningNotificationMessage data
+func (msg ListeningNotificationMessage) toBrokerMessage() (extensions.BrokerMessage, error) {
 	// TODO: implement checks on message
 
 	// Marshal payload to JSON
@@ -189,147 +145,13 @@ func (msg RegisteringRequestMessage) toBrokerMessage() (extensions.BrokerMessage
 		return extensions.BrokerMessage{}, err
 	}
 
-	// Add each headers to broker message
-	headers := make(map[string][]byte, 2)
-
-	// Adding CorrelationId header
-	if msg.Headers.CorrelationId != nil {
-		headers["correlationId"] = []byte(*msg.Headers.CorrelationId)
-	} // Adding ReplyTo header
-	headers["replyTo"] = []byte(msg.Headers.ReplyTo)
+	// There is no headers here
+	headers := make(map[string][]byte, 0)
 
 	return extensions.BrokerMessage{
 		Headers: headers,
 		Payload: payload,
 	}, nil
-}
-
-// CorrelationID will give the correlation ID of the message, based on AsyncAPI spec
-func (msg RegisteringRequestMessage) CorrelationID() string {
-	if msg.Headers.CorrelationId != nil {
-		return *msg.Headers.CorrelationId
-	}
-
-	return ""
-}
-
-// SetCorrelationID will set the correlation ID of the message, based on AsyncAPI spec
-func (msg *RegisteringRequestMessage) SetCorrelationID(id string) {
-	msg.Headers.CorrelationId = &id
-}
-
-// SetAsResponseFrom will correlate the message with the one passed in parameter.
-// It will assign the 'req' message correlation ID to the message correlation ID,
-// both specified in AsyncAPI spec.
-func (msg *RegisteringRequestMessage) SetAsResponseFrom(req MessageWithCorrelationID) {
-	id := req.CorrelationID()
-	msg.Headers.CorrelationId = &id
-}
-
-// HeadersFromRegisteringResponseMessage is a schema from the AsyncAPI specification required in messages
-type HeadersFromRegisteringResponseMessage struct {
-	// Description: Correlation ID set by client
-	CorrelationId *string `json:"correlationId"`
-}
-
-// RegisteringResponseMessagePayload is a schema from the AsyncAPI specification required in messages
-type RegisteringResponseMessagePayload struct {
-	// Description: count of listener after the call is complete
-	Count *int64 `json:"count"`
-
-	// Description: Response to a failed call
-	Error *ErrorSchema `json:"error"`
-}
-
-// RegisteringResponseMessage is the message expected for 'RegisteringResponseMessage' channel.
-type RegisteringResponseMessage struct {
-	// Headers will be used to fill the message headers
-	Headers HeadersFromRegisteringResponseMessage
-
-	// Payload will be inserted in the message payload
-	Payload RegisteringResponseMessagePayload
-}
-
-func NewRegisteringResponseMessage() RegisteringResponseMessage {
-	var msg RegisteringResponseMessage
-
-	// Set correlation ID
-	u := uuid.New().String()
-	msg.Headers.CorrelationId = &u
-
-	return msg
-}
-
-// brokerMessageToRegisteringResponseMessage will fill a new RegisteringResponseMessage with data from generic broker message
-func brokerMessageToRegisteringResponseMessage(bMsg extensions.BrokerMessage) (RegisteringResponseMessage, error) {
-	var msg RegisteringResponseMessage
-
-	// Unmarshal payload to expected message payload format
-	err := json.Unmarshal(bMsg.Payload, &msg.Payload)
-	if err != nil {
-		return msg, err
-	}
-
-	// Get each headers from broker message
-	for k, v := range bMsg.Headers {
-		switch {
-		case k == "correlationId": // Retrieving CorrelationId header
-			h := string(v)
-			msg.Headers.CorrelationId = &h
-		default:
-			// TODO: log unknown error
-		}
-	}
-
-	// TODO: run checks on msg type
-
-	return msg, nil
-}
-
-// toBrokerMessage will generate a generic broker message from RegisteringResponseMessage data
-func (msg RegisteringResponseMessage) toBrokerMessage() (extensions.BrokerMessage, error) {
-	// TODO: implement checks on message
-
-	// Marshal payload to JSON
-	payload, err := json.Marshal(msg.Payload)
-	if err != nil {
-		return extensions.BrokerMessage{}, err
-	}
-
-	// Add each headers to broker message
-	headers := make(map[string][]byte, 1)
-
-	// Adding CorrelationId header
-	if msg.Headers.CorrelationId != nil {
-		headers["correlationId"] = []byte(*msg.Headers.CorrelationId)
-	}
-
-	return extensions.BrokerMessage{
-		Headers: headers,
-		Payload: payload,
-	}, nil
-}
-
-// CorrelationID will give the correlation ID of the message, based on AsyncAPI spec
-func (msg RegisteringResponseMessage) CorrelationID() string {
-	if msg.Headers.CorrelationId != nil {
-		return *msg.Headers.CorrelationId
-	}
-
-	return ""
-}
-
-// SetCorrelationID will set the correlation ID of the message, based on AsyncAPI spec
-func (msg *RegisteringResponseMessage) SetCorrelationID(id string) {
-	msg.Headers.CorrelationId = &id
-}
-
-// SetAsResponseFrom will correlate the message with the one passed in parameter.
-// It will assign the 'req' message correlation ID to the message correlation ID,
-// both specified in AsyncAPI spec.
-func (msg *RegisteringResponseMessage) SetAsResponseFrom(req MessageWithCorrelationID) {
-	id := req.CorrelationID()
-	msg.Headers.CorrelationId = &id
 }
 
 // HeadersFromServiceInfoRequestMessage is a schema from the AsyncAPI specification required in messages
@@ -644,29 +466,20 @@ type TickSchema struct {
 }
 
 const (
+	// ListeningChannelPath is the constant representing the 'ListeningChannel' channel path.
+	ListeningChannelPath = "cryptellation.ticks.listening"
 	// LiveChannelPath is the constant representing the 'LiveChannel' channel path.
 	LiveChannelPath = "cryptellation.ticks.live.{exchange}.{pair}"
-	// RegisterRequestChannelPath is the constant representing the 'RegisterRequestChannel' channel path.
-	RegisterRequestChannelPath = "cryptellation.ticks.register"
-	// RegisterResponseChannelPath is the constant representing the 'RegisterResponseChannel' channel path.
-	RegisterResponseChannelPath = ""
 	// ServiceInfoRequestChannelPath is the constant representing the 'ServiceInfoRequestChannel' channel path.
 	ServiceInfoRequestChannelPath = "cryptellation.ticks.info"
 	// ServiceInfoResponseChannelPath is the constant representing the 'ServiceInfoResponseChannel' channel path.
 	ServiceInfoResponseChannelPath = ""
-	// UnregisterRequestChannelPath is the constant representing the 'UnregisterRequestChannel' channel path.
-	UnregisterRequestChannelPath = "cryptellation.ticks.unregister"
-	// UnregisterResponseChannelPath is the constant representing the 'UnregisterResponseChannel' channel path.
-	UnregisterResponseChannelPath = ""
 )
 
 // ChannelsPaths is an array of all channels paths
 var ChannelsPaths = []string{
+	ListeningChannelPath,
 	LiveChannelPath,
-	RegisterRequestChannelPath,
-	RegisterResponseChannelPath,
 	ServiceInfoRequestChannelPath,
 	ServiceInfoResponseChannelPath,
-	UnregisterRequestChannelPath,
-	UnregisterResponseChannelPath,
 }

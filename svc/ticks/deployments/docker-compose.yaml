@@ -5,7 +5,6 @@ services:
   ticks-api:
     image: cosmtrek/air
     depends_on:
-      - mongo
       - nats
       - uptrace-otelcollector
     networks:

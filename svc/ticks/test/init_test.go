@@ -5,8 +5,8 @@ import (
 	"testing"
 
 	"github.com/lerenn/cryptellation/pkg/config"
-	client "github.com/lerenn/cryptellation/svc/candlesticks/clients/go"
-	"github.com/lerenn/cryptellation/svc/candlesticks/clients/go/nats"
+	client "github.com/lerenn/cryptellation/svc/ticks/clients/go"
+	"github.com/lerenn/cryptellation/svc/ticks/clients/go/nats"
 	"github.com/stretchr/testify/suite"
 )
 

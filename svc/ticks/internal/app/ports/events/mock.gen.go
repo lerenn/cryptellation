@@ -8,6 +8,7 @@ import (
 	context "context"
 	reflect "reflect"
 
+	event "github.com/lerenn/cryptellation/pkg/event"
 	tick "github.com/lerenn/cryptellation/svc/ticks/pkg/tick"
 	gomock "go.uber.org/mock/gomock"
 )
@@ -47,31 +48,46 @@ func (mr *MockPortMockRecorder) Close(ctx interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Close", reflect.TypeOf((*MockPort)(nil).Close), ctx)
 }
 
-// Publish mocks base method.
-func (m *MockPort) Publish(ctx context.Context, tick tick.Tick) error {
+// PublishTick mocks base method.
+func (m *MockPort) PublishTick(ctx context.Context, tick tick.Tick) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Publish", ctx, tick)
+	ret := m.ctrl.Call(m, "PublishTick", ctx, tick)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
-// Publish indicates an expected call of Publish.
-func (mr *MockPortMockRecorder) Publish(ctx, tick interface{}) *gomock.Call {
+// PublishTick indicates an expected call of PublishTick.
+func (mr *MockPortMockRecorder) PublishTick(ctx, tick interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Publish", reflect.TypeOf((*MockPort)(nil).Publish), ctx, tick)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PublishTick", reflect.TypeOf((*MockPort)(nil).PublishTick), ctx, tick)
 }
 
-// Subscribe mocks base method.
-func (m *MockPort) Subscribe(ctx context.Context, symbol string) (<-chan tick.Tick, error) {
+// SubscribeToTicks mocks base method.
+func (m *MockPort) SubscribeToTicks(ctx context.Context, sub event.TickSubscription) (<-chan tick.Tick, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Subscribe", ctx, symbol)
+	ret := m.ctrl.Call(m, "SubscribeToTicks", ctx, sub)
 	ret0, _ := ret[0].(<-chan tick.Tick)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// Subscribe indicates an expected call of Subscribe.
-func (mr *MockPortMockRecorder) Subscribe(ctx, symbol interface{}) *gomock.Call {
+// SubscribeToTicks indicates an expected call of SubscribeToTicks.
+func (mr *MockPortMockRecorder) SubscribeToTicks(ctx, sub interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Subscribe", reflect.TypeOf((*MockPort)(nil).Subscribe), ctx, symbol)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SubscribeToTicks", reflect.TypeOf((*MockPort)(nil).SubscribeToTicks), ctx, sub)
+}
+
+// Watch mocks base method.
+func (m *MockPort) Watch(ctx context.Context) (<-chan event.TickSubscription, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Watch", ctx)
+	ret0, _ := ret[0].(<-chan event.TickSubscription)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Watch indicates an expected call of Watch.
+func (mr *MockPortMockRecorder) Watch(ctx interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Watch", reflect.TypeOf((*MockPort)(nil).Watch), ctx)
 }

@@ -18,7 +18,7 @@ func Runner(client *dagger.Client) *dagger.Container {
 
 func RunnerWithDependencies(client *dagger.Client, dependencies ...dagger.WithContainerFunc) *dagger.Container {
 	r := Runner(client).
-		With(ci.CockroachDependency(ci.CockroachDBService(client, ServiceName), ServiceName)).
+		With(ci.MongoDependency(ci.MongoService(client))).
 		With(ci.BinanceDependency(client))
 
 	for _, d := range dependencies {

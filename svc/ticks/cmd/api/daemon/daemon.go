@@ -30,7 +30,7 @@ func New(ctx context.Context) (Daemon, error) {
 	go h.HTTPServe(ctx)
 
 	// Init adapters
-	adapters, err := newAdapters(ctx)
+	adapters, err := newAdapters()
 	if err != nil {
 		return Daemon{}, err
 	}
@@ -56,6 +56,7 @@ func New(ctx context.Context) (Daemon, error) {
 }
 
 func (d Daemon) Serve(ctx context.Context) error {
+	// Start listening on controllers
 	if err := d.controllers.AsyncListen(); err != nil {
 		return err
 	}

@@ -3,8 +3,8 @@ package client
 import (
 	"context"
 
+	"github.com/lerenn/cryptellation/pkg/event"
 	backtests "github.com/lerenn/cryptellation/svc/backtests/clients/go"
-	"github.com/lerenn/cryptellation/svc/backtests/pkg/event"
 )
 
 type Backtest struct {

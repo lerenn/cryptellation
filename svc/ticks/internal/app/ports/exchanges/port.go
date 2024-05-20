@@ -6,9 +6,10 @@ package exchanges
 import (
 	"context"
 
+	"github.com/lerenn/cryptellation/pkg/event"
 	"github.com/lerenn/cryptellation/svc/ticks/pkg/tick"
 )
 
 type Port interface {
-	ListenSymbol(ctx context.Context, exchange, symbol string) (chan tick.Tick, chan struct{}, error)
+	ListenSymbol(ctx context.Context, sub event.TickSubscription) (chan tick.Tick, chan struct{}, error)
 }

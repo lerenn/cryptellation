@@ -25,13 +25,12 @@ func IntegrationTests(client *dagger.Client) *dagger.Container {
 		// Add source code as work directory
 		With(ci.SourceAsWorkdir(client, "/svc/"+ServiceName)).
 		// Dependencies
-		With(ci.CockroachDependency(ci.CockroachDBService(client, ServiceName), ServiceName)).
-		With(ci.RedisDependency(ci.RedisService(client))).
+		With(ci.MongoDependency(ci.MongoService(client))).
 		With(ci.BinanceDependency(client)).
 		With(ci.NatsDependency(ci.NatsService(client))).
 		// Run tests
 		WithExec([]string{"sh", "-c",
-			"go run ./cmd/data migrations migrate && go test ./internal/adapters/...",
+			"go test ./internal/adapters/...",
 		})
 }
 

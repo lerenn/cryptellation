@@ -3,32 +3,34 @@ package nats
 import (
 	"context"
 
+	"github.com/lerenn/cryptellation/pkg/event"
 	asyncapi "github.com/lerenn/cryptellation/svc/ticks/api/asyncapi"
-	client "github.com/lerenn/cryptellation/svc/ticks/clients/go"
 	"github.com/lerenn/cryptellation/svc/ticks/pkg/tick"
 )
 
-func (a *Adapter) Publish(ctx context.Context, tick tick.Tick) error {
+func (a *Adapter) PublishTick(ctx context.Context, tick tick.Tick) error {
 	// Generated message
 	msg := asyncapi.NewTickMessage()
-	msg.Payload.Exchange = asyncapi.ExchangeSchema(tick.Exchange)
-	msg.Payload.Pair = asyncapi.PairSchema(tick.Pair)
-	msg.Payload.Price = tick.Price
-	msg.Payload.Time = asyncapi.DateSchema(tick.Time)
+	msg.FromModel(tick)
 
 	// Send message
-	return a.app.SendAsLiveOperation(ctx,
+	return a.app.SendAsSendNewTicksOperation(ctx,
 		asyncapi.LiveChannelParameters{
 			Exchange: tick.Exchange,
 			Pair:     tick.Pair,
 		}, msg)
 }
 
-func (a *Adapter) Subscribe(ctx context.Context, symbol string) (<-chan tick.Tick, error) {
-	return a.client.Listen(ctx, client.TicksFilterPayload{
-		Exchange: "*",
-		Pair:     symbol,
+func (a *Adapter) SubscribeToTicks(ctx context.Context, sub event.TickSubscription) (<-chan tick.Tick, error) {
+	ch := make(chan tick.Tick, 16)
+	err := a.user.SubscribeToSendNewTicksOperation(ctx, asyncapi.LiveChannelParameters{
+		Exchange: sub.Exchange,
+		Pair:     sub.Pair,
+	}, func(ctx context.Context, msg asyncapi.TickMessage) error {
+		ch <- msg.ToModel()
+		return nil
 	})
+	return ch, err
 }
 
 func (a *Adapter) Close(ctx context.Context) {

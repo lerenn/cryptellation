@@ -4,8 +4,8 @@ import (
 	"context"
 
 	"github.com/google/uuid"
+	"github.com/lerenn/cryptellation/pkg/event"
 	asyncapi "github.com/lerenn/cryptellation/svc/backtests/api/asyncapi"
-	"github.com/lerenn/cryptellation/svc/backtests/pkg/event"
 )
 
 func (a *Adapter) Publish(ctx context.Context, backtestID uuid.UUID, evt event.Event) error {

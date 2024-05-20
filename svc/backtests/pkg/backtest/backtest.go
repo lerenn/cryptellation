@@ -8,8 +8,8 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/lerenn/cryptellation/pkg/event"
 	"github.com/lerenn/cryptellation/svc/backtests/pkg/account"
-	"github.com/lerenn/cryptellation/svc/backtests/pkg/event"
 	"github.com/lerenn/cryptellation/svc/backtests/pkg/order"
 	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/candlestick"
 	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/pair"

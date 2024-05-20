@@ -4,14 +4,12 @@ import (
 	adapter "github.com/lerenn/cryptellation/pkg/adapters/events/nats"
 	"github.com/lerenn/cryptellation/pkg/config"
 	asyncapi "github.com/lerenn/cryptellation/svc/ticks/api/asyncapi"
-	client "github.com/lerenn/cryptellation/svc/ticks/clients/go"
-	natsClient "github.com/lerenn/cryptellation/svc/ticks/clients/go/nats"
 )
 
 type Adapter struct {
 	events *adapter.Adapter
 	app    *asyncapi.AppController
-	client client.Client
+	user   *asyncapi.UserController
 }
 
 func New(c config.NATS) (*Adapter, error) {
@@ -27,8 +25,8 @@ func New(c config.NATS) (*Adapter, error) {
 		return nil, err
 	}
 
-	// Create a new client
-	client, err := natsClient.NewClient(c)
+	// Create a new user controller
+	user, err := asyncapi.NewUserController(events.Broker())
 	if err != nil {
 		return nil, err
 	}
@@ -36,6 +34,6 @@ func New(c config.NATS) (*Adapter, error) {
 	return &Adapter{
 		events: events,
 		app:    app,
-		client: client,
+		user:   user,
 	}, nil
 }

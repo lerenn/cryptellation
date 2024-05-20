@@ -7,14 +7,12 @@ import (
 	"context"
 
 	client "github.com/lerenn/cryptellation/pkg/client"
+	"github.com/lerenn/cryptellation/pkg/event"
 	"github.com/lerenn/cryptellation/svc/ticks/pkg/tick"
 )
 
 type Client interface {
-	Register(ctx context.Context, payload TicksFilterPayload) error
-	Listen(ctx context.Context, payload TicksFilterPayload) (<-chan tick.Tick, error)
-	Unregister(ctx context.Context, payload TicksFilterPayload) error
-
+	SubscribeToTicks(ctx context.Context, sub event.TickSubscription) (<-chan tick.Tick, error)
 	ServiceInfo(ctx context.Context) (client.ServiceInfo, error)
 	Close(ctx context.Context)
 }

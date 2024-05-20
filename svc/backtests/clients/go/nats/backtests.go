@@ -11,10 +11,10 @@ import (
 	helpers "github.com/lerenn/cryptellation/pkg/asyncapi"
 	clientPkg "github.com/lerenn/cryptellation/pkg/client"
 	"github.com/lerenn/cryptellation/pkg/config"
+	"github.com/lerenn/cryptellation/pkg/event"
 	asyncapi "github.com/lerenn/cryptellation/svc/backtests/api/asyncapi"
 	client "github.com/lerenn/cryptellation/svc/backtests/clients/go"
 	"github.com/lerenn/cryptellation/svc/backtests/pkg/account"
-	"github.com/lerenn/cryptellation/svc/backtests/pkg/event"
 	"github.com/lerenn/cryptellation/svc/ticks/pkg/tick"
 )
 

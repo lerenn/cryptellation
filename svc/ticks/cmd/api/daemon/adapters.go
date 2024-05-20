@@ -4,27 +4,18 @@ import (
 	"context"
 
 	"github.com/lerenn/cryptellation/pkg/config"
-	"github.com/lerenn/cryptellation/svc/ticks/internal/adapters/db/mongo"
 	natsTicks "github.com/lerenn/cryptellation/svc/ticks/internal/adapters/events/nats"
 	"github.com/lerenn/cryptellation/svc/ticks/internal/adapters/exchanges"
-	"github.com/lerenn/cryptellation/svc/ticks/internal/app/ports/db"
 	"github.com/lerenn/cryptellation/svc/ticks/internal/app/ports/events"
 	exchangesPort "github.com/lerenn/cryptellation/svc/ticks/internal/app/ports/exchanges"
 )
 
 type adapters struct {
-	db        db.Port
 	events    events.Port
 	exchanges exchangesPort.Port
 }
 
-func newAdapters(ctx context.Context) (adapters, error) {
-	// Init database client
-	db, err := mongo.New(ctx, config.LoadMongo(nil))
-	if err != nil {
-		return adapters{}, err
-	}
-
+func newAdapters() (adapters, error) {
 	// Init exchanges connections
 	exchanges, err := exchanges.New()
 	if err != nil {
@@ -38,7 +29,6 @@ func newAdapters(ctx context.Context) (adapters, error) {
 	}
 
 	return adapters{
-		db:        db,
 		events:    events,
 		exchanges: exchanges,
 	}, nil

@@ -1,7 +1,7 @@
 package client
 
 import (
-	"github.com/lerenn/cryptellation/svc/backtests/pkg/event"
+	"github.com/lerenn/cryptellation/pkg/event"
 )
 
 type Bot interface {

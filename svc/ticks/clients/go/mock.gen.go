@@ -9,6 +9,7 @@ import (
 	reflect "reflect"
 
 	client "github.com/lerenn/cryptellation/pkg/client"
+	event "github.com/lerenn/cryptellation/pkg/event"
 	tick "github.com/lerenn/cryptellation/svc/ticks/pkg/tick"
 	gomock "go.uber.org/mock/gomock"
 )
@@ -48,35 +49,6 @@ func (mr *MockClientMockRecorder) Close(ctx interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Close", reflect.TypeOf((*MockClient)(nil).Close), ctx)
 }
 
-// Listen mocks base method.
-func (m *MockClient) Listen(ctx context.Context, payload TicksFilterPayload) (<-chan tick.Tick, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Listen", ctx, payload)
-	ret0, _ := ret[0].(<-chan tick.Tick)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// Listen indicates an expected call of Listen.
-func (mr *MockClientMockRecorder) Listen(ctx, payload interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Listen", reflect.TypeOf((*MockClient)(nil).Listen), ctx, payload)
-}
-
-// Register mocks base method.
-func (m *MockClient) Register(ctx context.Context, payload TicksFilterPayload) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Register", ctx, payload)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// Register indicates an expected call of Register.
-func (mr *MockClientMockRecorder) Register(ctx, payload interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Register", reflect.TypeOf((*MockClient)(nil).Register), ctx, payload)
-}
-
 // ServiceInfo mocks base method.
 func (m *MockClient) ServiceInfo(ctx context.Context) (client.ServiceInfo, error) {
 	m.ctrl.T.Helper()
@@ -92,16 +64,17 @@ func (mr *MockClientMockRecorder) ServiceInfo(ctx interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ServiceInfo", reflect.TypeOf((*MockClient)(nil).ServiceInfo), ctx)
 }
 
-// Unregister mocks base method.
-func (m *MockClient) Unregister(ctx context.Context, payload TicksFilterPayload) error {
+// SubscribeToTicks mocks base method.
+func (m *MockClient) SubscribeToTicks(ctx context.Context, sub event.TickSubscription) (<-chan tick.Tick, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Unregister", ctx, payload)
-	ret0, _ := ret[0].(error)
-	return ret0
+	ret := m.ctrl.Call(m, "SubscribeToTicks", ctx, sub)
+	ret0, _ := ret[0].(<-chan tick.Tick)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
-// Unregister indicates an expected call of Unregister.
-func (mr *MockClientMockRecorder) Unregister(ctx, payload interface{}) *gomock.Call {
+// SubscribeToTicks indicates an expected call of SubscribeToTicks.
+func (mr *MockClientMockRecorder) SubscribeToTicks(ctx, sub interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Unregister", reflect.TypeOf((*MockClient)(nil).Unregister), ctx, payload)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SubscribeToTicks", reflect.TypeOf((*MockClient)(nil).SubscribeToTicks), ctx, sub)
 }
