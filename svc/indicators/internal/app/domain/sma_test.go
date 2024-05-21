@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/lerenn/cryptellation/pkg/timeserie"
+	"github.com/lerenn/cryptellation/pkg/models/timeserie"
 	"github.com/lerenn/cryptellation/pkg/utils"
 	client "github.com/lerenn/cryptellation/svc/candlesticks/clients/go"
 	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/candlestick"

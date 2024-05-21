@@ -82,7 +82,7 @@ func (c Services) Exchanges() exchanges.Client {
 	return c.exchanges
 }
 
-func (c Services) Forwardtests() forwardtests.Client {
+func (c Services) ForwardTests() forwardtests.Client {
 	return c.forwardtests
 }
 

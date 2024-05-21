@@ -8,8 +8,8 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/lerenn/cryptellation/pkg/config"
+	"github.com/lerenn/cryptellation/pkg/models/account"
 	"github.com/lerenn/cryptellation/svc/backtests/internal/app/ports/db"
-	"github.com/lerenn/cryptellation/svc/backtests/pkg/account"
 	"github.com/lerenn/cryptellation/svc/backtests/pkg/backtest"
 	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/candlestick"
 	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/period"

@@ -6,7 +6,7 @@ import (
 )
 
 type components struct {
-	forwardtests app.Forwardtests
+	forwardtests app.ForwardTests
 }
 
 func newComponents(adapters adapters) components {

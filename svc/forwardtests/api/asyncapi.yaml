@@ -1,11 +1,21 @@
 asyncapi: 3.0.0
 info:
-  title: Cryptellation Forwardtests Service
+  title: Cryptellation ForwardTests Service
   version: 1.0.0
   description: >
     This service is providing simulations on live data.
 
 channels:
+  CreateRequest:
+    address: cryptellation.backtests.create
+    messages:
+      CreateRequest:
+        $ref: "#/components/messages/CreateRequest"
+  CreateResponse:
+    messages:
+      CreateResponse:
+        $ref: "#/components/messages/CreateResponse"
+
   ServiceInfoRequest:
     address: cryptellation.forwardtests.info
     messages:
@@ -17,6 +27,16 @@ channels:
         $ref: "#/components/messages/ServiceInfoResponse"
 
 operations:
+  Create:
+    action: receive
+    channel: 
+      $ref: "#/channels/CreateRequest"
+    reply:
+      address:
+        location: "$message.header#/replyTo"
+      channel:
+        $ref: '#/channels/CreateResponse'
+
   ServiceInfo:
     action: receive
     channel: 
@@ -51,6 +71,35 @@ components:
         location: $message.header#/correlationId
 
   messages:
+    CreateRequest:
+      payload:
+        type: object
+        required:
+          - accounts
+        properties:
+          accounts:
+            type: array
+            items:
+              $ref: '#/components/schemas/Account'
+      traits:
+        - $ref: "#/components/messageTraits/withReplyTo"
+        - $ref: "#/components/messageTraits/withCorrelationID"
+    CreateResponse:
+      payload:
+        type: object
+        required:
+          - id
+        oneOf:
+        - properties:
+            id:
+              type: string
+              description: Newly created backtest ID
+        - properties:
+            error:
+              $ref: '#/components/schemas/Error'
+      traits:
+        - $ref: "#/components/messageTraits/withCorrelationID"
+
     ServiceInfoRequest:
       payload:
         type: object
@@ -74,3 +123,46 @@ components:
             example: 1.0.0
       traits:
         - $ref: "#/components/messageTraits/withCorrelationID"
+
+  schemas:
+    Account:
+      type: object
+      required:
+        - name
+        - assets
+      properties:
+        name:
+          type: string
+          description: Account's name
+        assets:
+          type: array
+          description: Account's assets
+          items:
+            $ref: '#/components/schemas/Asset'
+    Asset:
+      type: object
+      description: An asset is a particular commodity with an amount
+      required:
+        - name
+        - amount
+      properties:
+        name:
+          type: string
+        amount:
+          type: number
+          format: double
+    Error:
+      type: object
+      description: Response to a failed call
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          description: Code to identify the error type, based on HTTP errors
+        message:
+          type: string
+          description: Main error reason
+          examples:
+            - "Invalid request: no time specified"

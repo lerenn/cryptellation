@@ -2,8 +2,30 @@ package asyncapi
 
 import (
 	"github.com/google/uuid"
-	"github.com/lerenn/cryptellation/svc/backtests/pkg/account"
+	"github.com/lerenn/cryptellation/pkg/models/account"
 )
+
+func accountModelsToAPI(accounts map[string]account.Account) []AccountSchema {
+	apiAccounts := make([]AccountSchema, 0, len(accounts))
+	for accName, acc := range accounts {
+		// Set assets
+		assets := make([]AssetSchema, 0, len(acc.Balances))
+		for assetName, amount := range acc.Balances {
+			assets = append(assets, AssetSchema{
+				Name:   assetName,
+				Amount: amount,
+			})
+		}
+
+		// Set account
+		apiAccounts = append(apiAccounts, AccountSchema{
+			Name:   accName,
+			Assets: assets,
+		})
+	}
+
+	return apiAccounts
+}
 
 func (msg *AccountsListRequestMessage) Set(backtestID uuid.UUID) {
 	msg.Payload.Id = BacktestIDSchema(backtestID.String())

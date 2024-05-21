@@ -9,7 +9,7 @@ import (
 	helpers "github.com/lerenn/cryptellation/pkg/asyncapi"
 	clientPkg "github.com/lerenn/cryptellation/pkg/client"
 	"github.com/lerenn/cryptellation/pkg/config"
-	"github.com/lerenn/cryptellation/pkg/timeserie"
+	"github.com/lerenn/cryptellation/pkg/models/timeserie"
 	asyncapi "github.com/lerenn/cryptellation/svc/indicators/api/asyncapi"
 	client "github.com/lerenn/cryptellation/svc/indicators/clients/go"
 )

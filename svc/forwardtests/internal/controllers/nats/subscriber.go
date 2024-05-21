@@ -2,6 +2,7 @@ package nats
 
 import (
 	"context"
+	"net/http"
 
 	"github.com/lerenn/cryptellation/pkg/adapters/telemetry"
 	"github.com/lerenn/cryptellation/pkg/version"
@@ -10,15 +11,40 @@ import (
 )
 
 type subscriber struct {
-	forwardtests app.Forwardtests
+	forwardtests app.ForwardTests
 	controller   *asyncapi.AppController
 }
 
-func newSubscriber(controller *asyncapi.AppController, app app.Forwardtests) subscriber {
+func newSubscriber(controller *asyncapi.AppController, app app.ForwardTests) subscriber {
 	return subscriber{
 		forwardtests: app,
 		controller:   controller,
 	}
+}
+
+func (s subscriber) CreateOperationReceived(ctx context.Context, msg asyncapi.CreateRequestMessage) error {
+	return s.controller.ReplyToCreateOperation(ctx, msg, func(replyMsg *asyncapi.CreateResponseMessage) {
+		// Get model request from message payload
+		req, err := msg.ToModel()
+		if err != nil {
+			replyMsg.Payload.Error = &asyncapi.ErrorSchema{
+				Code:    http.StatusBadRequest,
+				Message: err.Error(),
+			}
+			return
+		}
+
+		id, err := s.forwardtests.Create(ctx, req)
+		if err != nil {
+			replyMsg.Payload.Error = &asyncapi.ErrorSchema{
+				Code:    http.StatusInternalServerError,
+				Message: err.Error(),
+			}
+			return
+		}
+
+		replyMsg.Payload.Id = id.String()
+	})
 }
 
 func (s subscriber) ServiceInfoOperationReceived(ctx context.Context, msg asyncapi.ServiceInfoRequestMessage) error {

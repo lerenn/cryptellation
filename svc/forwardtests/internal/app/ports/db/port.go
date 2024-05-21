@@ -3,5 +3,16 @@
 
 package db
 
+import (
+	"context"
+
+	"github.com/google/uuid"
+	"github.com/lerenn/cryptellation/svc/forwardtests/pkg/forwardtest"
+)
+
 type Port interface {
+	CreateForwardTest(ctx context.Context, ft forwardtest.ForwardTest) error
+	ReadForwardTest(ctx context.Context, id uuid.UUID) (forwardtest.ForwardTest, error)
+	UpdateForwardTest(ctx context.Context, ft forwardtest.ForwardTest) error
+	DeleteForwardTest(ctx context.Context, id uuid.UUID) error
 }

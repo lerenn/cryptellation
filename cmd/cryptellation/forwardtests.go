@@ -20,11 +20,11 @@ var forwardtestsInfoCmd = &cobra.Command{
 	Aliases: []string{"info"},
 	Short:   "Read info from forwardtests service",
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		return displayServiceInfo(globalClient.Forwardtests())
+		return displayServiceInfo(globalClient.ForwardTests())
 	},
 }
 
-func initForwardtests(rootCmd *cobra.Command) {
+func initForwardTests(rootCmd *cobra.Command) {
 	forwardtestsCmd.AddCommand(forwardtestsInfoCmd)
 	rootCmd.AddCommand(forwardtestsCmd)
 }

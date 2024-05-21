@@ -1,4 +1,4 @@
-package forwardtests
+package mongo
 
 import (
 	"context"

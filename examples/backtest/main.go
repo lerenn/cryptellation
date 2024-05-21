@@ -5,9 +5,9 @@ import (
 
 	cryptellation "github.com/lerenn/cryptellation/clients/go"
 	"github.com/lerenn/cryptellation/pkg/config"
+	"github.com/lerenn/cryptellation/pkg/models/account"
 	"github.com/lerenn/cryptellation/pkg/utils"
 	backtests "github.com/lerenn/cryptellation/svc/backtests/clients/go"
-	"github.com/lerenn/cryptellation/svc/backtests/pkg/account"
 )
 
 func main() {

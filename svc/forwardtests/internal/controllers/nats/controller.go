@@ -15,10 +15,10 @@ type Controller struct {
 	broker       *nats.Controller
 	controller   *asyncapi.AppController
 	logger       extensions.Logger
-	forwardtests app.Forwardtests
+	forwardtests app.ForwardTests
 }
 
-func NewController(c config.NATS, forwardtests app.Forwardtests) (*Controller, error) {
+func NewController(c config.NATS, forwardtests app.ForwardTests) (*Controller, error) {
 	// Validate configuration
 	if err := c.Validate(); err != nil {
 		return nil, err

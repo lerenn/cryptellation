@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/lerenn/cryptellation/pkg/adapters/telemetry"
-	"github.com/lerenn/cryptellation/pkg/event"
+	"github.com/lerenn/cryptellation/pkg/models/event"
 )
 
 type subscription struct {

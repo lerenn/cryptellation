@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/lerenn/cryptellation/pkg/timeserie"
+	"github.com/lerenn/cryptellation/pkg/models/timeserie"
 	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/candlestick"
 	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/period"
 	"github.com/stretchr/testify/suite"

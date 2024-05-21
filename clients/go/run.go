@@ -7,8 +7,8 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/lerenn/cryptellation/pkg/models/account"
 	client "github.com/lerenn/cryptellation/svc/backtests/clients/go"
-	"github.com/lerenn/cryptellation/svc/backtests/pkg/account"
 )
 
 var (

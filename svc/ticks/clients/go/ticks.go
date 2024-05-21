@@ -7,7 +7,7 @@ import (
 	"context"
 
 	client "github.com/lerenn/cryptellation/pkg/client"
-	"github.com/lerenn/cryptellation/pkg/event"
+	"github.com/lerenn/cryptellation/pkg/models/event"
 	"github.com/lerenn/cryptellation/svc/ticks/pkg/tick"
 )
 

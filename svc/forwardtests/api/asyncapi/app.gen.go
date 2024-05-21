@@ -12,6 +12,9 @@ import (
 
 // AppSubscriber contains all handlers that are listening messages for App
 type AppSubscriber interface {
+	// CreateOperationReceived receive all CreateRequest messages from CreateRequest channel.
+	CreateOperationReceived(ctx context.Context, msg CreateRequestMessage) error
+
 	// ServiceInfoOperationReceived receive all ServiceInfoRequest messages from ServiceInfoRequest channel.
 	ServiceInfoOperationReceived(ctx context.Context, msg ServiceInfoRequestMessage) error
 }
@@ -125,6 +128,9 @@ func (c *AppController) SubscribeToAllChannels(ctx context.Context, as AppSubscr
 		return extensions.ErrNilAppSubscriber
 	}
 
+	if err := c.SubscribeToCreateOperation(ctx, as.CreateOperationReceived); err != nil {
+		return err
+	}
 	if err := c.SubscribeToServiceInfoOperation(ctx, as.ServiceInfoOperationReceived); err != nil {
 		return err
 	}
@@ -134,11 +140,137 @@ func (c *AppController) SubscribeToAllChannels(ctx context.Context, as AppSubscr
 
 // UnsubscribeFromAllChannels will stop the subscription of all remaining subscribed channels
 func (c *AppController) UnsubscribeFromAllChannels(ctx context.Context) {
+	c.UnsubscribeFromCreateOperation(ctx)
 	c.UnsubscribeFromServiceInfoOperation(ctx)
 }
 
-// SubscribeToServiceInfoOperation will receive ServiceInfoRequest messages from ServiceInfoRequest channel.
+// SubscribeToCreateOperation will receive CreateRequest messages from CreateRequest channel.
 //
+// Callback function 'fn' will be called each time a new message is received.
+//
+// NOTE: for now, this only support the first message from AsyncAPI list.
+//
+// NOTE: for now, this only support the first message from AsyncAPI list.
+// If you need support for other messages, please raise an issue.
+func (c *AppController) SubscribeToCreateOperation(
+	ctx context.Context,
+	fn func(ctx context.Context, msg CreateRequestMessage) error,
+) error {
+	// Get channel address
+	addr := "cryptellation.backtests.create"
+
+	// Set context
+	ctx = addAppContextValues(ctx, addr)
+	ctx = context.WithValue(ctx, extensions.ContextKeyIsDirection, "reception")
+
+	// Check if the controller is already subscribed
+	_, exists := c.subscriptions[addr]
+	if exists {
+		err := fmt.Errorf("%w: controller is already subscribed on channel %q", extensions.ErrAlreadySubscribedChannel, addr)
+		c.logger.Error(ctx, err.Error())
+		return err
+	}
+
+	// Subscribe to broker channel
+	sub, err := c.broker.Subscribe(ctx, addr)
+	if err != nil {
+		c.logger.Error(ctx, err.Error())
+		return err
+	}
+	c.logger.Info(ctx, "Subscribed to channel")
+
+	// Asynchronously listen to new messages and pass them to app receiver
+	go func() {
+		for {
+			// Wait for next message
+			acknowledgeableBrokerMessage, open := <-sub.MessagesChannel()
+
+			// If subscription is closed and there is no more message
+			// (i.e. uninitialized message), then exit the function
+			if !open && acknowledgeableBrokerMessage.IsUninitialized() {
+				return
+			}
+
+			// Set broker message to context
+			ctx = context.WithValue(ctx, extensions.ContextKeyIsBrokerMessage, acknowledgeableBrokerMessage.String())
+
+			// Execute middlewares before handling the message
+			if err := c.executeMiddlewares(ctx, &acknowledgeableBrokerMessage.BrokerMessage, func(ctx context.Context) error {
+				// Process message
+				msg, err := brokerMessageToCreateRequestMessage(acknowledgeableBrokerMessage.BrokerMessage)
+				if err != nil {
+					return err
+				}
+
+				// Add correlation ID to context if it exists
+				if id := msg.CorrelationID(); id != "" {
+					ctx = context.WithValue(ctx, extensions.ContextKeyIsCorrelationID, id)
+				}
+
+				// Execute the subscription function
+				if err := fn(ctx, msg); err != nil {
+					return err
+				}
+
+				acknowledgeableBrokerMessage.Ack()
+
+				return nil
+			}); err != nil {
+				c.errorHandler(ctx, addr, &acknowledgeableBrokerMessage, err)
+				// On error execute the acknowledgeableBrokerMessage nack() function and
+				// let the BrokerAcknowledgment decide what is the right nack behavior for the broker
+				acknowledgeableBrokerMessage.Nak()
+			}
+		}
+	}()
+
+	// Add the cancel channel to the inside map
+	c.subscriptions[addr] = sub
+
+	return nil
+}
+
+// ReplyToCreateOperation is a helper function to
+// reply to a CreateRequest message with a CreateResponse message on CreateResponse channel.
+func (c *AppController) ReplyToCreateOperation(ctx context.Context, recvMsg CreateRequestMessage, fn func(replyMsg *CreateResponseMessage)) error {
+	// Create reply message
+	replyMsg := NewCreateResponseMessage()
+	replyMsg.SetAsResponseFrom(&recvMsg)
+
+	// Execute callback function
+	fn(&replyMsg)
+
+	// Publish reply
+	chanAddr := recvMsg.Headers.ReplyTo
+
+	return c.SendAsReplyToCreateOperation(ctx, chanAddr, replyMsg)
+}
+
+// UnsubscribeFromCreateOperation will stop the reception of CreateRequest messages from CreateRequest channel.
+// A timeout can be set in context to avoid blocking operation, if needed.
+func (c *AppController) UnsubscribeFromCreateOperation(
+	ctx context.Context,
+) {
+	// Get channel address
+	addr := "cryptellation.backtests.create"
+
+	// Check if there receivers for this channel
+	sub, exists := c.subscriptions[addr]
+	if !exists {
+		return
+	}
+
+	// Set context
+	ctx = addAppContextValues(ctx, addr)
+
+	// Stop the subscription
+	sub.Cancel(ctx)
+
+	// Remove if from the receivers
+	delete(c.subscriptions, addr)
+
+	c.logger.Info(ctx, "Unsubscribed from channel")
+} // SubscribeToServiceInfoOperation will receive ServiceInfoRequest messages from ServiceInfoRequest channel.
 // Callback function 'fn' will be called each time a new message is received.
 //
 // NOTE: for now, this only support the first message from AsyncAPI list.
@@ -263,6 +395,45 @@ func (c *AppController) UnsubscribeFromServiceInfoOperation(
 	delete(c.subscriptions, addr)
 
 	c.logger.Info(ctx, "Unsubscribed from channel")
+}
+
+// SendAsReplyToCreateOperation will send a CreateResponse message on CreateResponse channel.
+//
+// NOTE: for now, this only support the first message from AsyncAPI list.
+// If you need support for other messages, please raise an issue.
+func (c *AppController) SendAsReplyToCreateOperation(
+	ctx context.Context,
+	chanAddr string,
+	msg CreateResponseMessage,
+) error {
+	// Set channel address
+	addr := chanAddr
+
+	// Set correlation ID if it does not exist
+	if id := msg.CorrelationID(); id == "" {
+		c.logger.Error(ctx, extensions.ErrNoCorrelationIDSet.Error())
+		return extensions.ErrNoCorrelationIDSet
+
+	}
+
+	// Set context
+	ctx = addAppContextValues(ctx, addr)
+	ctx = context.WithValue(ctx, extensions.ContextKeyIsDirection, "publication")
+	ctx = context.WithValue(ctx, extensions.ContextKeyIsCorrelationID, msg.CorrelationID())
+
+	// Convert to BrokerMessage
+	brokerMsg, err := msg.toBrokerMessage()
+	if err != nil {
+		return err
+	}
+
+	// Set broker message to context
+	ctx = context.WithValue(ctx, extensions.ContextKeyIsBrokerMessage, brokerMsg.String())
+
+	// Send the message on event-broker through middlewares
+	return c.executeMiddlewares(ctx, &brokerMsg, func(ctx context.Context) error {
+		return c.broker.Publish(ctx, addr, brokerMsg)
+	})
 }
 
 // SendAsReplyToServiceInfoOperation will send a ServiceInfoResponse message on ServiceInfoResponse channel.

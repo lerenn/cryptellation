@@ -9,7 +9,7 @@ import (
 	helpers "github.com/lerenn/cryptellation/pkg/asyncapi"
 	clientPkg "github.com/lerenn/cryptellation/pkg/client"
 	"github.com/lerenn/cryptellation/pkg/config"
-	"github.com/lerenn/cryptellation/pkg/event"
+	"github.com/lerenn/cryptellation/pkg/models/event"
 	asyncapi "github.com/lerenn/cryptellation/svc/ticks/api/asyncapi"
 	"github.com/lerenn/cryptellation/svc/ticks/pkg/tick"
 )

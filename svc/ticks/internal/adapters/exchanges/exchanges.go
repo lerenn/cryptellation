@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	binancePkg "github.com/lerenn/cryptellation/pkg/adapters/exchanges/binance"
-	"github.com/lerenn/cryptellation/pkg/event"
+	"github.com/lerenn/cryptellation/pkg/models/event"
 	"github.com/lerenn/cryptellation/svc/ticks/internal/adapters/exchanges/binance"
 	"github.com/lerenn/cryptellation/svc/ticks/internal/app/ports/exchanges"
 	"github.com/lerenn/cryptellation/svc/ticks/pkg/tick"

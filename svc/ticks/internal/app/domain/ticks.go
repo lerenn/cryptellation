@@ -3,7 +3,7 @@ package domain
 import (
 	"context"
 
-	"github.com/lerenn/cryptellation/pkg/event"
+	"github.com/lerenn/cryptellation/pkg/models/event"
 	"github.com/lerenn/cryptellation/svc/ticks/internal/app/ports/events"
 	"github.com/lerenn/cryptellation/svc/ticks/internal/app/ports/exchanges"
 )

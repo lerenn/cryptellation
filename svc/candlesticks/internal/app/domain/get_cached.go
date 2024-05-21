@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/lerenn/cryptellation/pkg/adapters/telemetry"
-	"github.com/lerenn/cryptellation/pkg/timeserie"
+	"github.com/lerenn/cryptellation/pkg/models/timeserie"
 	"github.com/lerenn/cryptellation/pkg/utils"
 	"github.com/lerenn/cryptellation/svc/candlesticks/internal/app"
 	"github.com/lerenn/cryptellation/svc/candlesticks/internal/app/ports/exchanges"

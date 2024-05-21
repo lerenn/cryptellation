@@ -3,12 +3,14 @@ package nats
 import (
 	"context"
 
+	"github.com/google/uuid"
 	"github.com/lerenn/asyncapi-codegen/pkg/extensions"
 	"github.com/lerenn/asyncapi-codegen/pkg/extensions/brokers/nats"
 	helpers "github.com/lerenn/cryptellation/pkg/asyncapi"
 	clientPkg "github.com/lerenn/cryptellation/pkg/client"
 	"github.com/lerenn/cryptellation/pkg/config"
 	asyncapi "github.com/lerenn/cryptellation/svc/forwardtests/api/asyncapi"
+	"github.com/lerenn/cryptellation/svc/forwardtests/pkg/forwardtest"
 )
 
 type Client struct {
@@ -17,54 +19,69 @@ type Client struct {
 	logger extensions.Logger
 }
 
-type ForwardtestsOption func(b *Client)
+type ForwardTestsOption func(b *Client)
 
-func NewClient(c config.NATS, options ...ForwardtestsOption) (Client, error) {
-	var b Client
+func NewClient(c config.NATS, options ...ForwardTestsOption) (Client, error) {
+	var cl Client
 	var err error
 
 	// Execute options
 	for _, option := range options {
-		option(&b)
+		option(&cl)
 	}
 
 	// Create a NATS Controller
-	b.broker, err = nats.NewController(c.URL())
+	cl.broker, err = nats.NewController(c.URL())
 	if err != nil {
 		return Client{}, err
 	}
 
 	// Create a logger if asked
 	ctrlOpts := make([]asyncapi.ControllerOption, 0)
-	if b.logger != nil {
-		ctrlOpts = append(ctrlOpts, asyncapi.WithLogger(b.logger))
+	if cl.logger != nil {
+		ctrlOpts = append(ctrlOpts, asyncapi.WithLogger(cl.logger))
 	} else {
-		b.logger = extensions.DummyLogger{}
+		cl.logger = extensions.DummyLogger{}
 	}
 
 	// Create a new user controller
-	ctrl, err := asyncapi.NewUserController(b.broker, ctrlOpts...)
+	ctrl, err := asyncapi.NewUserController(cl.broker, ctrlOpts...)
 	if err != nil {
 		return Client{}, err
 	}
-	b.ctrl = ctrl
+	cl.ctrl = ctrl
 
-	return b, nil
+	return cl, nil
 }
 
-func WithLogger(logger extensions.Logger) ForwardtestsOption {
+func (cl Client) CreateForwardTest(ctx context.Context, payload forwardtest.NewPayload) (uuid.UUID, error) {
+	// Set message
+	reqMsg := asyncapi.NewCreateRequestMessage()
+	reqMsg.Set(payload)
+
+	// Send request
+	respMsg, err := cl.ctrl.RequestToCreateOperation(ctx, reqMsg)
+	if err != nil {
+		return uuid.Nil, err
+	}
+
+	return uuid.Parse(respMsg.Payload.Id)
+
+}
+
+func WithLogger(logger extensions.Logger) ForwardTestsOption {
 	return func(b *Client) {
 		b.logger = logger
 	}
 }
 
-func (b Client) ServiceInfo(ctx context.Context) (clientPkg.ServiceInfo, error) {
+func (cl Client) ServiceInfo(ctx context.Context) (clientPkg.ServiceInfo, error) {
 	// Set message
 	reqMsg := asyncapi.NewServiceInfoRequestMessage()
 	reqMsg.Headers.ReplyTo = helpers.AddReplyToSuffix(asyncapi.ServiceInfoRequestChannelPath)
 
 	// Send request
-	respMsg, err := b.ctrl.RequestToServiceInfoOperation(ctx, reqMsg)
+	respMsg, err := cl.ctrl.RequestToServiceInfoOperation(ctx, reqMsg)
 	if err != nil {
 		return clientPkg.ServiceInfo{}, err
 	}
@@ -72,7 +89,7 @@ func (b Client) ServiceInfo(ctx context.Context) (clientPkg.ServiceInfo, error) 
 	return respMsg.ToModel(), nil
 }
 
-func (b Client) Close(ctx context.Context) {
-	b.ctrl.Close(ctx)
-	b.broker.Close()
+func (cl Client) Close(ctx context.Context) {
+	cl.ctrl.Close(ctx)
+	cl.broker.Close()
 }

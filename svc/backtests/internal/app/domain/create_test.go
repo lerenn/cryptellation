@@ -6,11 +6,11 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/lerenn/cryptellation/pkg/event"
+	"github.com/lerenn/cryptellation/pkg/models/account"
+	"github.com/lerenn/cryptellation/pkg/models/event"
 	"github.com/lerenn/cryptellation/svc/backtests/internal/app"
 	"github.com/lerenn/cryptellation/svc/backtests/internal/app/ports/db"
 	"github.com/lerenn/cryptellation/svc/backtests/internal/app/ports/events"
-	"github.com/lerenn/cryptellation/svc/backtests/pkg/account"
 	"github.com/lerenn/cryptellation/svc/backtests/pkg/backtest"
 	"github.com/lerenn/cryptellation/svc/backtests/pkg/order"
 	candlesticks "github.com/lerenn/cryptellation/svc/candlesticks/clients/go"

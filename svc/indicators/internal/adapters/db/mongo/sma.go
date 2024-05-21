@@ -3,7 +3,7 @@ package mongo
 import (
 	"context"
 
-	"github.com/lerenn/cryptellation/pkg/timeserie"
+	"github.com/lerenn/cryptellation/pkg/models/timeserie"
 	"github.com/lerenn/cryptellation/svc/indicators/internal/adapters/db/mongo/entities"
 	"github.com/lerenn/cryptellation/svc/indicators/internal/app/ports/db"
 	"go.mongodb.org/mongo-driver/bson"

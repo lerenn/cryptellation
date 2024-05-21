@@ -9,8 +9,8 @@ import (
 
 	"github.com/google/uuid"
 	client "github.com/lerenn/cryptellation/pkg/client"
-	"github.com/lerenn/cryptellation/pkg/event"
-	"github.com/lerenn/cryptellation/svc/backtests/pkg/account"
+	"github.com/lerenn/cryptellation/pkg/models/account"
+	"github.com/lerenn/cryptellation/pkg/models/event"
 	"github.com/lerenn/cryptellation/svc/backtests/pkg/order"
 )
 

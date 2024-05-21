@@ -7,7 +7,7 @@ import (
 	"context"
 
 	"github.com/google/uuid"
-	"github.com/lerenn/cryptellation/pkg/event"
+	"github.com/lerenn/cryptellation/pkg/models/event"
 )
 
 type Port interface {

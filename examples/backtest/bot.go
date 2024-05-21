@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	cryptellation "github.com/lerenn/cryptellation/clients/go"
-	"github.com/lerenn/cryptellation/pkg/event"
+	"github.com/lerenn/cryptellation/pkg/models/event"
 	backtests "github.com/lerenn/cryptellation/svc/backtests/clients/go"
 	"github.com/lerenn/cryptellation/svc/backtests/pkg/order"
 	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/candlestick"
