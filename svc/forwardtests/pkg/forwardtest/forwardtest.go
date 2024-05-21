@@ -2,18 +2,25 @@ package forwardtest
 
 import (
 	"errors"
+	"fmt"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/lerenn/cryptellation/pkg/models/account"
+	"github.com/lerenn/cryptellation/pkg/models/order"
+	"github.com/lerenn/cryptellation/pkg/utils"
+	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/candlestick"
 )
 
 var (
-	ErrEmptyAccounts = errors.New("empty accounts")
+	ErrEmptyAccounts   = errors.New("empty accounts")
+	ErrInvalidExchange = errors.New("invalid exchange")
 )
 
 type ForwardTest struct {
 	ID       uuid.UUID
 	Accounts map[string]account.Account
+	Orders   []order.Order
 }
 
 type NewPayload struct {
@@ -33,4 +40,26 @@ func New(payload NewPayload) ForwardTest {
 		ID:       uuid.New(),
 		Accounts: payload.Accounts,
 	}
+}
+
+func (ft *ForwardTest) AddOrder(o order.Order, cs candlestick.Candlestick) error {
+	// Get exchange account
+	exchangeAccount, ok := ft.Accounts[o.Exchange]
+	if !ok {
+		return fmt.Errorf("error with orders exchange %q: %w", o.Exchange, ErrInvalidExchange)
+	}
+
+	// Apply order
+	price := cs.Close
+	if err := exchangeAccount.ApplyOrder(price, o); err != nil {
+		return err
+	}
+	ft.Accounts[o.Exchange] = exchangeAccount
+
+	// Update and save the order
+	o.ExecutionTime = utils.ToReference(time.Now())
+	o.Price = price
+	ft.Orders = append(ft.Orders, o)
+
+	return nil
 }

@@ -8,12 +8,23 @@ import (
 
 	"github.com/google/uuid"
 	client "github.com/lerenn/cryptellation/pkg/client"
+	"github.com/lerenn/cryptellation/pkg/models/order"
 	"github.com/lerenn/cryptellation/svc/forwardtests/pkg/forwardtest"
 )
 
 type Client interface {
 	CreateForwardTest(ctx context.Context, payload forwardtest.NewPayload) (uuid.UUID, error)
+	CreateOrder(ctx context.Context, payload OrderCreationPayload) error
 
 	ServiceInfo(ctx context.Context) (client.ServiceInfo, error)
 	Close(ctx context.Context)
+}
+
+type OrderCreationPayload struct {
+	ForwardTestID uuid.UUID
+	Type          order.Type
+	Exchange      string
+	Pair          string
+	Side          order.Side
+	Quantity      float64
 }

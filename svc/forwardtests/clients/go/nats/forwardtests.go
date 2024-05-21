@@ -10,6 +10,7 @@ import (
 	clientPkg "github.com/lerenn/cryptellation/pkg/client"
 	"github.com/lerenn/cryptellation/pkg/config"
 	asyncapi "github.com/lerenn/cryptellation/svc/forwardtests/api/asyncapi"
+	client "github.com/lerenn/cryptellation/svc/forwardtests/clients/go"
 	"github.com/lerenn/cryptellation/svc/forwardtests/pkg/forwardtest"
 )
 
@@ -54,6 +55,12 @@ func NewClient(c config.NATS, options ...ForwardTestsOption) (Client, error) {
 	return cl, nil
 }
 
+func WithLogger(logger extensions.Logger) ForwardTestsOption {
+	return func(b *Client) {
+		b.logger = logger
+	}
+}
+
 func (cl Client) CreateForwardTest(ctx context.Context, payload forwardtest.NewPayload) (uuid.UUID, error) {
 	// Set message
 	reqMsg := asyncapi.NewCreateRequestMessage()
@@ -69,10 +76,18 @@ func (cl Client) CreateForwardTest(ctx context.Context, payload forwardtest.NewP
 
 }
 
-func WithLogger(logger extensions.Logger) ForwardTestsOption {
-	return func(b *Client) {
-		b.logger = logger
+func (cl Client) CreateOrder(ctx context.Context, payload client.OrderCreationPayload) error {
+	// Set message
+	reqMsg := asyncapi.NewOrdersCreateRequestMessage()
+	reqMsg.Set(payload)
+
+	// Send request
+	_, err := cl.ctrl.RequestToOrdersCreateOperation(ctx, reqMsg)
+	if err != nil {
+		return err
 	}
+
+	return nil
 }
 
 func (cl Client) ServiceInfo(ctx context.Context) (clientPkg.ServiceInfo, error) {

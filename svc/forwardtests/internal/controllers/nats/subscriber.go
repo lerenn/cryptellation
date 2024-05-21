@@ -4,6 +4,7 @@ import (
 	"context"
 	"net/http"
 
+	"github.com/google/uuid"
 	"github.com/lerenn/cryptellation/pkg/adapters/telemetry"
 	"github.com/lerenn/cryptellation/pkg/version"
 	asyncapi "github.com/lerenn/cryptellation/svc/forwardtests/api/asyncapi"
@@ -44,6 +45,37 @@ func (s subscriber) CreateOperationReceived(ctx context.Context, msg asyncapi.Cr
 		}
 
 		replyMsg.Payload.Id = id.String()
+	})
+}
+
+func (s subscriber) OrdersCreateOperationReceived(ctx context.Context, msg asyncapi.OrdersCreateRequestMessage) error {
+	return s.controller.ReplyToOrdersCreateOperation(ctx, msg, func(replyMsg *asyncapi.OrdersCreateResponseMessage) {
+		// Get model request from message payload
+		req, err := msg.ToModel()
+		if err != nil {
+			replyMsg.Payload.Error = &asyncapi.ErrorSchema{
+				Code:    http.StatusBadRequest,
+				Message: err.Error(),
+			}
+			return
+		}
+
+		id, err := uuid.Parse(string(msg.Payload.Id))
+		if err != nil {
+			replyMsg.Payload.Error = &asyncapi.ErrorSchema{
+				Code:    http.StatusBadRequest,
+				Message: err.Error(),
+			}
+			return
+		}
+
+		if err := s.forwardtests.CreateOrder(ctx, id, req); err != nil {
+			replyMsg.Payload.Error = &asyncapi.ErrorSchema{
+				Code:    http.StatusInternalServerError,
+				Message: err.Error(),
+			}
+			return
+		}
 	})
 }
 

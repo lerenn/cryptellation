@@ -10,16 +10,14 @@ import (
 	"github.com/google/uuid"
 	"github.com/lerenn/cryptellation/pkg/models/account"
 	"github.com/lerenn/cryptellation/pkg/models/event"
-	"github.com/lerenn/cryptellation/svc/backtests/pkg/order"
+	"github.com/lerenn/cryptellation/pkg/models/order"
 	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/candlestick"
-	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/pair"
 	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/period"
 )
 
 var (
 	ErrTickSubscriptionAlreadyExists = errors.New("tick subscription already exists")
 	ErrInvalidExchange               = errors.New("invalid exchange")
-	ErrNotEnoughAsset                = errors.New("not enough asset")
 	ErrNoDataForOrderValidation      = errors.New("no data for order validation")
 	ErrStartAfterEnd                 = errors.New("start after end")
 )
@@ -174,46 +172,17 @@ func (bt *Backtest) AddOrder(ord order.Order, cs candlestick.Candlestick) error 
 		return fmt.Errorf("error with orders exchange %q: %w", ord.Exchange, ErrInvalidExchange)
 	}
 
-	// Get base and quote based on symbol
-	baseSymbol, quoteSymbol, err := pair.ParsePair(ord.Pair)
-	if err != nil {
-		return fmt.Errorf("error when parsing order pair symbol: %w", err)
-	}
-
+	// Execute the order
 	price := cs.PriceByType(bt.CurrentCsTick.PriceType)
-	quoteEquivalentQty := price * ord.Quantity
-	if ord.Side == order.SideIsBuy {
-		available, ok := exchangeAccount.Balances[quoteSymbol]
-		if !ok {
-			return fmt.Errorf("%w: no %s on %s", ErrNotEnoughAsset, quoteSymbol, ord.Pair)
-		} else if quoteEquivalentQty > available {
-			return fmt.Errorf(
-				"%w: not enough %s on %s (min=%f, got=%f)",
-				ErrNotEnoughAsset, quoteSymbol, ord.Pair,
-				quoteEquivalentQty, available)
-		}
-
-		bt.Accounts[ord.Exchange].Balances[quoteSymbol] -= quoteEquivalentQty
-		bt.Accounts[ord.Exchange].Balances[baseSymbol] += ord.Quantity
-	} else {
-		available, ok := exchangeAccount.Balances[baseSymbol]
-		if !ok {
-			return fmt.Errorf("%w: no %s on %s", ErrNotEnoughAsset, baseSymbol, ord.Pair)
-		} else if ord.Quantity > available {
-			return fmt.Errorf(
-				"%w: not enough %s on %s (min=%f, got=%f)",
-				ErrNotEnoughAsset, baseSymbol, ord.Pair,
-				ord.Quantity, available)
-		}
-
-		bt.Accounts[ord.Exchange].Balances[quoteSymbol] += quoteEquivalentQty
-		bt.Accounts[ord.Exchange].Balances[baseSymbol] -= ord.Quantity
+	if err := exchangeAccount.ApplyOrder(price, ord); err != nil {
+		return err
 	}
+	bt.Accounts[ord.Exchange] = exchangeAccount
 
-	ord.ID = uuid.New()
+	// Update and save the order
 	ord.ExecutionTime = &bt.CurrentCsTick.Time
 	ord.Price = price
-
 	bt.Orders = append(bt.Orders, ord)
+
 	return nil
 }

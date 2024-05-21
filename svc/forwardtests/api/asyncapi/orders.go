@@ -6,19 +6,12 @@ import (
 	"github.com/google/uuid"
 	"github.com/lerenn/cryptellation/pkg/models/order"
 	"github.com/lerenn/cryptellation/pkg/utils"
-	client "github.com/lerenn/cryptellation/svc/backtests/clients/go"
+	client "github.com/lerenn/cryptellation/svc/forwardtests/clients/go"
 )
-
-func (msg *OrdersListResponseMessage) Set(orders []order.Order) {
-	msg.Payload.Orders = make([]OrderSchema, len(orders))
-	for i, o := range orders {
-		msg.Payload.Orders[i] = orderModelToAPI(o)
-	}
-}
 
 func (msg *OrdersCreateRequestMessage) Set(payload client.OrderCreationPayload) {
 	// Backtest
-	msg.Payload.Id = BacktestIDSchema(payload.BacktestID.String())
+	msg.Payload.Id = ForwardTestIDSchema(payload.ForwardTestID.String())
 
 	// Order
 	msg.Payload.Order.Exchange = ExchangeSchema(payload.Exchange)
@@ -62,17 +55,4 @@ func orderModelFromAPI(o OrderSchema) (order.Order, error) {
 		Quantity:      o.Quantity,
 		Price:         utils.FromReferenceOrDefault(o.Price),
 	}, nil
-}
-
-func orderModelToAPI(o order.Order) OrderSchema {
-	return OrderSchema{
-		Id:            utils.ToReference(o.ID.String()),
-		ExecutionTime: (*DateSchema)(o.ExecutionTime),
-		Type:          OrderTypeSchema(o.Type.String()),
-		Exchange:      ExchangeSchema(o.Exchange),
-		Pair:          PairSchema(o.Pair),
-		Side:          OrderSideSchema(o.Side.String()),
-		Quantity:      o.Quantity,
-		Price:         &o.Price,
-	}
 }

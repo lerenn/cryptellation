@@ -10,8 +10,8 @@ import (
 
 	uuid "github.com/google/uuid"
 	client "github.com/lerenn/cryptellation/pkg/client"
-	event "github.com/lerenn/cryptellation/pkg/models/event"
 	account "github.com/lerenn/cryptellation/pkg/models/account"
+	event "github.com/lerenn/cryptellation/pkg/models/event"
 	gomock "go.uber.org/mock/gomock"
 )
 

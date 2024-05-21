@@ -6,8 +6,8 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/lerenn/cryptellation/pkg/adapters/telemetry"
+	"github.com/lerenn/cryptellation/pkg/models/order"
 	"github.com/lerenn/cryptellation/svc/backtests/pkg/backtest"
-	"github.com/lerenn/cryptellation/svc/backtests/pkg/order"
 	candlesticks "github.com/lerenn/cryptellation/svc/candlesticks/clients/go"
 )
 

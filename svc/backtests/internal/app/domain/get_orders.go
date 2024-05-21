@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/google/uuid"
-	"github.com/lerenn/cryptellation/svc/backtests/pkg/order"
+	"github.com/lerenn/cryptellation/pkg/models/order"
 )
 
 func (b Backtests) GetOrders(ctx context.Context, backtestId uuid.UUID) ([]order.Order, error) {

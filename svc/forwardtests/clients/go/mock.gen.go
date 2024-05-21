@@ -8,7 +8,9 @@ import (
 	context "context"
 	reflect "reflect"
 
+	uuid "github.com/google/uuid"
 	client "github.com/lerenn/cryptellation/pkg/client"
+	forwardtest "github.com/lerenn/cryptellation/svc/forwardtests/pkg/forwardtest"
 	gomock "go.uber.org/mock/gomock"
 )
 
@@ -45,6 +47,35 @@ func (m *MockClient) Close(ctx context.Context) {
 func (mr *MockClientMockRecorder) Close(ctx interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Close", reflect.TypeOf((*MockClient)(nil).Close), ctx)
+}
+
+// CreateForwardTest mocks base method.
+func (m *MockClient) CreateForwardTest(ctx context.Context, payload forwardtest.NewPayload) (uuid.UUID, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateForwardTest", ctx, payload)
+	ret0, _ := ret[0].(uuid.UUID)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CreateForwardTest indicates an expected call of CreateForwardTest.
+func (mr *MockClientMockRecorder) CreateForwardTest(ctx, payload interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateForwardTest", reflect.TypeOf((*MockClient)(nil).CreateForwardTest), ctx, payload)
+}
+
+// CreateOrder mocks base method.
+func (m *MockClient) CreateOrder(ctx context.Context, payload OrderCreationPayload) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateOrder", ctx, payload)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// CreateOrder indicates an expected call of CreateOrder.
+func (mr *MockClientMockRecorder) CreateOrder(ctx, payload interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateOrder", reflect.TypeOf((*MockClient)(nil).CreateOrder), ctx, payload)
 }
 
 // ServiceInfo mocks base method.

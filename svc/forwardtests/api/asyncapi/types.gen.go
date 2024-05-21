@@ -6,6 +6,7 @@ package asyncapi
 import (
 	"encoding/json"
 	"fmt"
+	"time"
 
 	"github.com/lerenn/asyncapi-codegen/pkg/extensions"
 
@@ -76,6 +77,16 @@ func (e *Error) Error() string {
 // to let know that you need this functionnality.
 
 // Message 'CreateResponseMessageFromCreateResponseChannel' reference another one at '#/components/messages/CreateResponse'.
+// This should be fixed in a future version to allow message override.
+// If you encounter this message, feel free to open an issue on this subject
+// to let know that you need this functionnality.
+
+// Message 'OrdersCreateRequestMessageFromOrdersCreateRequestChannel' reference another one at '#/components/messages/OrdersCreateRequest'.
+// This should be fixed in a future version to allow message override.
+// If you encounter this message, feel free to open an issue on this subject
+// to let know that you need this functionnality.
+
+// Message 'OrdersCreateResponseMessageFromOrdersCreateResponseChannel' reference another one at '#/components/messages/OrdersCreateResponse'.
 // This should be fixed in a future version to allow message override.
 // If you encounter this message, feel free to open an issue on this subject
 // to let know that you need this functionnality.
@@ -209,7 +220,7 @@ type CreateResponseMessagePayload struct {
 	// Description: Response to a failed call
 	Error *ErrorSchema `json:"error"`
 
-	// Description: Newly created backtest ID
+	// Description: Newly created forwardtest ID
 	Id string `json:"id"`
 }
 
@@ -300,6 +311,221 @@ func (msg *CreateResponseMessage) SetCorrelationID(id string) {
 // It will assign the 'req' message correlation ID to the message correlation ID,
 // both specified in AsyncAPI spec.
 func (msg *CreateResponseMessage) SetAsResponseFrom(req MessageWithCorrelationID) {
+	id := req.CorrelationID()
+	msg.Headers.CorrelationId = &id
+}
+
+// HeadersFromOrdersCreateRequestMessage is a schema from the AsyncAPI specification required in messages
+type HeadersFromOrdersCreateRequestMessage struct {
+	// Description: Correlation ID set by client
+	CorrelationId *string `json:"correlationId"`
+
+	// Description: Channel used to respond to request
+	ReplyTo string `json:"replyTo"`
+}
+
+// OrdersCreateRequestMessagePayload is a schema from the AsyncAPI specification required in messages
+type OrdersCreateRequestMessagePayload struct {
+	// Description: Targeted forwardtest ID
+	Id ForwardTestIDSchema `json:"id"`
+
+	// Description: Order sent to the market
+	Order OrderSchema `json:"order"`
+}
+
+// OrdersCreateRequestMessage is the message expected for 'OrdersCreateRequestMessage' channel.
+type OrdersCreateRequestMessage struct {
+	// Headers will be used to fill the message headers
+	Headers HeadersFromOrdersCreateRequestMessage
+
+	// Payload will be inserted in the message payload
+	Payload OrdersCreateRequestMessagePayload
+}
+
+func NewOrdersCreateRequestMessage() OrdersCreateRequestMessage {
+	var msg OrdersCreateRequestMessage
+
+	// Set correlation ID
+	u := uuid.New().String()
+	msg.Headers.CorrelationId = &u
+
+	return msg
+}
+
+// brokerMessageToOrdersCreateRequestMessage will fill a new OrdersCreateRequestMessage with data from generic broker message
+func brokerMessageToOrdersCreateRequestMessage(bMsg extensions.BrokerMessage) (OrdersCreateRequestMessage, error) {
+	var msg OrdersCreateRequestMessage
+
+	// Unmarshal payload to expected message payload format
+	err := json.Unmarshal(bMsg.Payload, &msg.Payload)
+	if err != nil {
+		return msg, err
+	}
+
+	// Get each headers from broker message
+	for k, v := range bMsg.Headers {
+		switch {
+		case k == "correlationId": // Retrieving CorrelationId header
+			h := string(v)
+			msg.Headers.CorrelationId = &h
+		case k == "replyTo": // Retrieving ReplyTo header
+			msg.Headers.ReplyTo = string(v)
+		default:
+			// TODO: log unknown error
+		}
+	}
+
+	// TODO: run checks on msg type
+
+	return msg, nil
+}
+
+// toBrokerMessage will generate a generic broker message from OrdersCreateRequestMessage data
+func (msg OrdersCreateRequestMessage) toBrokerMessage() (extensions.BrokerMessage, error) {
+	// TODO: implement checks on message
+
+	// Marshal payload to JSON
+	payload, err := json.Marshal(msg.Payload)
+	if err != nil {
+		return extensions.BrokerMessage{}, err
+	}
+
+	// Add each headers to broker message
+	headers := make(map[string][]byte, 2)
+
+	// Adding CorrelationId header
+	if msg.Headers.CorrelationId != nil {
+		headers["correlationId"] = []byte(*msg.Headers.CorrelationId)
+	} // Adding ReplyTo header
+	headers["replyTo"] = []byte(msg.Headers.ReplyTo)
+
+	return extensions.BrokerMessage{
+		Headers: headers,
+		Payload: payload,
+	}, nil
+}
+
+// CorrelationID will give the correlation ID of the message, based on AsyncAPI spec
+func (msg OrdersCreateRequestMessage) CorrelationID() string {
+	if msg.Headers.CorrelationId != nil {
+		return *msg.Headers.CorrelationId
+	}
+
+	return ""
+}
+
+// SetCorrelationID will set the correlation ID of the message, based on AsyncAPI spec
+func (msg *OrdersCreateRequestMessage) SetCorrelationID(id string) {
+	msg.Headers.CorrelationId = &id
+}
+
+// SetAsResponseFrom will correlate the message with the one passed in parameter.
+// It will assign the 'req' message correlation ID to the message correlation ID,
+// both specified in AsyncAPI spec.
+func (msg *OrdersCreateRequestMessage) SetAsResponseFrom(req MessageWithCorrelationID) {
+	id := req.CorrelationID()
+	msg.Headers.CorrelationId = &id
+}
+
+// HeadersFromOrdersCreateResponseMessage is a schema from the AsyncAPI specification required in messages
+type HeadersFromOrdersCreateResponseMessage struct {
+	// Description: Correlation ID set by client
+	CorrelationId *string `json:"correlationId"`
+}
+
+// OrdersCreateResponseMessagePayload is a schema from the AsyncAPI specification required in messages
+type OrdersCreateResponseMessagePayload struct {
+	// Description: Response to a failed call
+	Error *ErrorSchema `json:"error"`
+}
+
+// OrdersCreateResponseMessage is the message expected for 'OrdersCreateResponseMessage' channel.
+type OrdersCreateResponseMessage struct {
+	// Headers will be used to fill the message headers
+	Headers HeadersFromOrdersCreateResponseMessage
+
+	// Payload will be inserted in the message payload
+	Payload OrdersCreateResponseMessagePayload
+}
+
+func NewOrdersCreateResponseMessage() OrdersCreateResponseMessage {
+	var msg OrdersCreateResponseMessage
+
+	// Set correlation ID
+	u := uuid.New().String()
+	msg.Headers.CorrelationId = &u
+
+	return msg
+}
+
+// brokerMessageToOrdersCreateResponseMessage will fill a new OrdersCreateResponseMessage with data from generic broker message
+func brokerMessageToOrdersCreateResponseMessage(bMsg extensions.BrokerMessage) (OrdersCreateResponseMessage, error) {
+	var msg OrdersCreateResponseMessage
+
+	// Unmarshal payload to expected message payload format
+	err := json.Unmarshal(bMsg.Payload, &msg.Payload)
+	if err != nil {
+		return msg, err
+	}
+
+	// Get each headers from broker message
+	for k, v := range bMsg.Headers {
+		switch {
+		case k == "correlationId": // Retrieving CorrelationId header
+			h := string(v)
+			msg.Headers.CorrelationId = &h
+		default:
+			// TODO: log unknown error
+		}
+	}
+
+	// TODO: run checks on msg type
+
+	return msg, nil
+}
+
+// toBrokerMessage will generate a generic broker message from OrdersCreateResponseMessage data
+func (msg OrdersCreateResponseMessage) toBrokerMessage() (extensions.BrokerMessage, error) {
+	// TODO: implement checks on message
+
+	// Marshal payload to JSON
+	payload, err := json.Marshal(msg.Payload)
+	if err != nil {
+		return extensions.BrokerMessage{}, err
+	}
+
+	// Add each headers to broker message
+	headers := make(map[string][]byte, 1)
+
+	// Adding CorrelationId header
+	if msg.Headers.CorrelationId != nil {
+		headers["correlationId"] = []byte(*msg.Headers.CorrelationId)
+	}
+
+	return extensions.BrokerMessage{
+		Headers: headers,
+		Payload: payload,
+	}, nil
+}
+
+// CorrelationID will give the correlation ID of the message, based on AsyncAPI spec
+func (msg OrdersCreateResponseMessage) CorrelationID() string {
+	if msg.Headers.CorrelationId != nil {
+		return *msg.Headers.CorrelationId
+	}
+
+	return ""
+}
+
+// SetCorrelationID will set the correlation ID of the message, based on AsyncAPI spec
+func (msg *OrdersCreateResponseMessage) SetCorrelationID(id string) {
+	msg.Headers.CorrelationId = &id
+}
+
+// SetAsResponseFrom will correlate the message with the one passed in parameter.
+// It will assign the 'req' message correlation ID to the message correlation ID,
+// both specified in AsyncAPI spec.
+func (msg *OrdersCreateResponseMessage) SetAsResponseFrom(req MessageWithCorrelationID) {
 	id := req.CorrelationID()
 	msg.Headers.CorrelationId = &id
 }
@@ -532,6 +758,26 @@ type AssetSchema struct {
 	Name   string  `json:"name"`
 }
 
+// DateSchema is a schema from the AsyncAPI specification required in messages
+// Description: Date-Time format according to RFC3339
+type DateSchema time.Time
+
+// MarshalJSON will override the marshal as this is not a normal 'time.Time' type
+func (t DateSchema) MarshalJSON() ([]byte, error) {
+	return json.Marshal(time.Time(t))
+}
+
+// UnmarshalJSON will override the unmarshal as this is not a normal 'time.Time' type
+func (t *DateSchema) UnmarshalJSON(data []byte) error {
+	var timeFormat time.Time
+	if err := json.Unmarshal(data, &timeFormat); err != nil {
+		return err
+	}
+
+	*t = DateSchema(timeFormat)
+	return nil
+}
+
 // ErrorSchema is a schema from the AsyncAPI specification required in messages
 // Description: Response to a failed call
 type ErrorSchema struct {
@@ -542,11 +788,67 @@ type ErrorSchema struct {
 	Message string `json:"message"`
 }
 
+// ExchangeSchema is a schema from the AsyncAPI specification required in messages
+// Description: Exchange name
+type ExchangeSchema string
+
+// ForwardTestIDSchema is a schema from the AsyncAPI specification required in messages
+// Description: Targeted forwardtest ID
+type ForwardTestIDSchema string
+
+// OrderSchema is a schema from the AsyncAPI specification required in messages
+// Description: Order sent to the market
+type OrderSchema struct {
+	// Description: Exchange name
+	Exchange ExchangeSchema `json:"exchange"`
+
+	// Description: Effective time of order execution
+	ExecutionTime *DateSchema `json:"execution_time"`
+
+	// Description: Order ID set by the system
+	Id *string `json:"id"`
+
+	// Description: Pair symbol
+	Pair PairSchema `json:"pair"`
+
+	// Description: Price of the asset that where it should be traded
+	Price *float64 `json:"price"`
+
+	// Description: Quantity of the asset that should be traded
+	Quantity float64 `json:"quantity"`
+
+	// Description: Side used by an order
+	Side OrderSideSchema `json:"side"`
+
+	// Description: Type of an order
+	Type OrderTypeSchema `json:"type"`
+}
+
+// OrderSideSchema is a schema from the AsyncAPI specification required in messages
+// Description: Side used by an order
+type OrderSideSchema string
+
+// OrderTypeSchema is a schema from the AsyncAPI specification required in messages
+// Description: Type of an order
+type OrderTypeSchema string
+
+// PairSchema is a schema from the AsyncAPI specification required in messages
+// Description: Pair symbol
+type PairSchema string
+
+// PeriodSchema is a schema from the AsyncAPI specification required in messages
+// Description: Period symbol
+type PeriodSchema string
+
 const (
 	// CreateRequestChannelPath is the constant representing the 'CreateRequestChannel' channel path.
-	CreateRequestChannelPath = "cryptellation.backtests.create"
+	CreateRequestChannelPath = "cryptellation.forwardtests.create"
 	// CreateResponseChannelPath is the constant representing the 'CreateResponseChannel' channel path.
 	CreateResponseChannelPath = ""
+	// OrdersCreateRequestChannelPath is the constant representing the 'OrdersCreateRequestChannel' channel path.
+	OrdersCreateRequestChannelPath = "cryptellation.forwardtests.orders.create"
+	// OrdersCreateResponseChannelPath is the constant representing the 'OrdersCreateResponseChannel' channel path.
+	OrdersCreateResponseChannelPath = ""
 	// ServiceInfoRequestChannelPath is the constant representing the 'ServiceInfoRequestChannel' channel path.
 	ServiceInfoRequestChannelPath = "cryptellation.forwardtests.info"
 	// ServiceInfoResponseChannelPath is the constant representing the 'ServiceInfoResponseChannel' channel path.
@@ -557,6 +859,8 @@ const (
 var ChannelsPaths = []string{
 	CreateRequestChannelPath,
 	CreateResponseChannelPath,
+	OrdersCreateRequestChannelPath,
+	OrdersCreateResponseChannelPath,
 	ServiceInfoRequestChannelPath,
 	ServiceInfoResponseChannelPath,
 }

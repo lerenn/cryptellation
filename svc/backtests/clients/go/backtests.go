@@ -11,7 +11,7 @@ import (
 	client "github.com/lerenn/cryptellation/pkg/client"
 	"github.com/lerenn/cryptellation/pkg/models/account"
 	"github.com/lerenn/cryptellation/pkg/models/event"
-	"github.com/lerenn/cryptellation/svc/backtests/pkg/order"
+	"github.com/lerenn/cryptellation/pkg/models/order"
 )
 
 type Client interface {

@@ -7,7 +7,7 @@ info:
 
 channels:
   CreateRequest:
-    address: cryptellation.backtests.create
+    address: cryptellation.forwardtests.create
     messages:
       CreateRequest:
         $ref: "#/components/messages/CreateRequest"
@@ -16,6 +16,16 @@ channels:
       CreateResponse:
         $ref: "#/components/messages/CreateResponse"
 
+  OrdersCreateRequest:
+    address: cryptellation.forwardtests.orders.create
+    messages:
+      OrdersCreateRequest:
+        $ref: "#/components/messages/OrdersCreateRequest"
+  OrdersCreateResponse:
+    messages:
+      OrdersCreateResponse:
+        $ref: "#/components/messages/OrdersCreateResponse"
+  
   ServiceInfoRequest:
     address: cryptellation.forwardtests.info
     messages:
@@ -37,6 +47,16 @@ operations:
       channel:
         $ref: '#/channels/CreateResponse'
 
+  OrdersCreate:
+    action: receive
+    channel: 
+      $ref: "#/channels/OrdersCreateRequest"
+    reply:
+      address:
+        location: "$message.header#/replyTo"
+      channel:
+        $ref: '#/channels/OrdersCreateResponse'
+
   ServiceInfo:
     action: receive
     channel: 
@@ -46,7 +66,6 @@ operations:
         location: "$message.header#/replyTo"
       channel:
         $ref: '#/channels/ServiceInfoResponse'
-
 
 components:
   messageTraits:
@@ -93,10 +112,33 @@ components:
         - properties:
             id:
               type: string
-              description: Newly created backtest ID
+              description: Newly created forwardtest ID
         - properties:
             error:
               $ref: '#/components/schemas/Error'
+      traits:
+        - $ref: "#/components/messageTraits/withCorrelationID"
+
+    OrdersCreateRequest:
+      payload:
+        type: object
+        required:
+          - id
+          - order
+        properties:
+          id:
+            $ref: '#/components/schemas/ForwardTestID'
+          order:
+            $ref: '#/components/schemas/Order'
+      traits:
+        - $ref: "#/components/messageTraits/withReplyTo"
+        - $ref: "#/components/messageTraits/withCorrelationID"
+    OrdersCreateResponse:
+      payload:
+        type: object
+        properties:
+          error:
+            $ref: '#/components/schemas/Error'
       traits:
         - $ref: "#/components/messageTraits/withCorrelationID"
 
@@ -151,6 +193,18 @@ components:
         amount:
           type: number
           format: double
+    Date:
+      type: string
+      format: date-time
+      description: Date-Time format according to RFC3339
+      examples:
+        - "1985-04-12T23:20:50.52Z"
+        - "1937-01-01T12:00:27.87+00:20"
+    Exchange:
+      type: string
+      description: Exchange name
+      examples:
+        - Binance
     Error:
       type: object
       description: Response to a failed call
@@ -166,3 +220,73 @@ components:
           description: Main error reason
           examples:
             - "Invalid request: no time specified"
+    ForwardTestID:
+      type: string
+      description: Targeted forwardtest ID
+    Order:
+      type: object
+      description: Order sent to the market
+      required:
+        - type
+        - exchange
+        - pair
+        - side
+        - quantity
+      properties:
+        id:
+          type: string
+          description: Order ID set by the system
+        execution_time:
+          description: Effective time of order execution
+          $ref: '#/components/schemas/Date'
+        type:
+          $ref: '#/components/schemas/OrderType'
+        exchange:
+          $ref: '#/components/schemas/Exchange'
+        pair:
+          $ref: '#/components/schemas/Pair'
+        side: 
+          $ref: '#/components/schemas/OrderSide'
+        quantity:
+          type: number
+          format: double
+          description: Quantity of the asset that should be traded
+        price:
+          type: number
+          format: double
+          description: Price of the asset that where it should be traded
+    OrderSide:
+      type: string
+      description: Side used by an order
+      enum:
+        - buy
+        - sell
+    OrderType:
+      type: string
+      description: Type of an order
+      enum:
+        - market
+    Pair:
+      type: string
+      description: Pair symbol
+      examples:
+        - ETH-USDC
+    Period:
+      type: string
+      description: Period symbol
+      default: M1
+      enum:
+        - M1
+        - M3
+        - M5
+        - M15
+        - M30
+        - H1
+        - H2
+        - H4
+        - H6
+        - H8
+        - H12
+        - D1
+        - D3
+        - W1
