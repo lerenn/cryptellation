@@ -1,0 +1,76 @@
+asyncapi: 3.0.0
+info:
+  title: Cryptellation Forwardtests Service
+  version: 1.0.0
+  description: >
+    This service is providing simulations on live data.
+
+channels:
+  ServiceInfoRequest:
+    address: cryptellation.forwardtests.info
+    messages:
+      ServiceInfoRequest:
+        $ref: "#/components/messages/ServiceInfoRequest"
+  ServiceInfoResponse:
+    messages:
+      ServiceInfoResponse:
+        $ref: "#/components/messages/ServiceInfoResponse"
+
+operations:
+  ServiceInfo:
+    action: receive
+    channel: 
+      $ref: "#/channels/ServiceInfoRequest"
+    reply:
+      address:
+        location: "$message.header#/replyTo"
+      channel:
+        $ref: '#/channels/ServiceInfoResponse'
+
+
+components:
+  messageTraits:
+    withReplyTo:
+      headers:
+        type: object
+        required:
+          - replyTo
+        properties:
+          replyTo:
+            description: Channel used to respond to request
+            type: string
+    withCorrelationID:
+      headers:
+        type: object
+        properties:
+          correlationId:
+            description: Correlation ID set by client
+            type: string
+      correlationId:
+        description: Default Correlation ID
+        location: $message.header#/correlationId
+
+  messages:
+    ServiceInfoRequest:
+      payload:
+        type: object
+      traits:
+        - $ref: "#/components/messageTraits/withReplyTo"
+        - $ref: "#/components/messageTraits/withCorrelationID"
+    ServiceInfoResponse:
+      payload:
+        type: object
+        required:
+        - apiVersion
+        - binVersion
+        properties:
+          apiVersion:
+            description: Version of the API
+            type: string
+            example: 1.0.0
+          binVersion:
+            description: Version of the binary
+            type: string
+            example: 1.0.0
+      traits:
+        - $ref: "#/components/messageTraits/withCorrelationID"

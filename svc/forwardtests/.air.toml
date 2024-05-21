@@ -1,0 +1,6 @@
+root = "."
+
+[build]
+  cmd = "go install -buildvcs=false ./svc/forwardtests/cmd/*"
+  full_bin = "api serve"
+  include_dir = ["pkg", "svc/forwardtests"]

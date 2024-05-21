@@ -5,25 +5,20 @@ import (
 
 	"github.com/lerenn/cryptellation/pkg/adapters/telemetry"
 	"github.com/lerenn/cryptellation/pkg/version"
-	"github.com/lerenn/cryptellation/svc/ticks/api/asyncapi"
-	"github.com/lerenn/cryptellation/svc/ticks/internal/app"
+	asyncapi "github.com/lerenn/cryptellation/svc/forwardtests/api/asyncapi"
+	"github.com/lerenn/cryptellation/svc/forwardtests/internal/app"
 )
 
 type subscriber struct {
-	ticks      app.Ticks
-	controller *asyncapi.AppController
+	forwardtests app.Forwardtests
+	controller   *asyncapi.AppController
 }
 
-func newSubscriber(controller *asyncapi.AppController, app app.Ticks) subscriber {
+func newSubscriber(controller *asyncapi.AppController, app app.Forwardtests) subscriber {
 	return subscriber{
-		ticks:      app,
-		controller: controller,
+		forwardtests: app,
+		controller:   controller,
 	}
-}
-
-func (sub subscriber) ListeningOperationReceived(ctx context.Context, msg asyncapi.ListeningNotificationMessage) error {
-	sub.ticks.ListeningNotificationReceived(ctx, msg.ToModel())
-	return nil
 }
 
 func (s subscriber) ServiceInfoOperationReceived(ctx context.Context, msg asyncapi.ServiceInfoRequestMessage) error {

@@ -12,6 +12,7 @@ clean: local/down ## Clean the project
 	@$(MAKE) -C ./svc/backtests clean
 	@$(MAKE) -C ./svc/candlesticks clean
 	@$(MAKE) -C ./svc/exchanges clean
+	@$(MAKE) -C ./svc/forwardtests clean
 	@$(MAKE) -C ./svc/indicators clean
 	@$(MAKE) -C ./svc/ticks clean
 	@$(MAKE) -C ./tools/ci clean
@@ -33,6 +34,7 @@ go/generate: ## Generate the golang code
 	@$(MAKE) -C ./svc/backtests go/generate
 	@$(MAKE) -C ./svc/candlesticks go/generate
 	@$(MAKE) -C ./svc/exchanges go/generate
+	@$(MAKE) -C ./svc/forwardtests go/generate
 	@$(MAKE) -C ./svc/indicators go/generate
 	@$(MAKE) -C ./svc/ticks go/generate
 	@$(MAKE) -C ./tools/ci go/generate
@@ -49,6 +51,7 @@ go/lint: ## Lint the code
 	@$(MAKE) -C ./svc/backtests go/lint
 	@$(MAKE) -C ./svc/candlesticks go/lint
 	@$(MAKE) -C ./svc/exchanges go/lint
+	@$(MAKE) -C ./svc/forwardtests go/lint
 	@$(MAKE) -C ./svc/indicators go/lint
 	@$(MAKE) -C ./svc/ticks go/lint
 	@$(MAKE) -C ./tools/ci go/lint
@@ -65,6 +68,7 @@ go/test/unit: ## Launch golang unit tests
 	@$(MAKE) -C ./svc/backtests go/test/unit
 	@$(MAKE) -C ./svc/candlesticks go/test/unit
 	@$(MAKE) -C ./svc/exchanges go/test/unit
+	@$(MAKE) -C ./svc/forwardtests go/test/unit
 	@$(MAKE) -C ./svc/indicators go/test/unit
 	@$(MAKE) -C ./svc/ticks go/test/unit
 	@$(MAKE) -C ./tools/ci go/test/unit
@@ -77,6 +81,7 @@ go/test/integration: ## Launch golang integration tests
 	@$(MAKE) -C ./svc/backtests go/test/integration
 	@$(MAKE) -C ./svc/candlesticks go/test/integration
 	@$(MAKE) -C ./svc/exchanges go/test/integration
+	@$(MAKE) -C ./svc/forwardtests go/test/integration
 	@$(MAKE) -C ./svc/indicators go/test/integration
 	@$(MAKE) -C ./svc/ticks go/test/integration
 
@@ -88,6 +93,7 @@ go/test/end-to-end: ## Launch golang end-to-end tests
 	@$(MAKE) -C ./svc/backtests go/test/end-to-end
 	@$(MAKE) -C ./svc/candlesticks go/test/end-to-end
 	@$(MAKE) -C ./svc/exchanges go/test/end-to-end
+	@$(MAKE) -C ./svc/forwardtests go/test/end-to-end
 	@$(MAKE) -C ./svc/indicators go/test/end-to-end
 	@$(MAKE) -C ./svc/ticks go/test/end-to-end
 

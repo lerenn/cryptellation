@@ -4,6 +4,7 @@ import (
 	"context"
 	"net/http"
 
+	"github.com/lerenn/cryptellation/pkg/adapters/telemetry"
 	"github.com/lerenn/cryptellation/pkg/version"
 	asyncapi "github.com/lerenn/cryptellation/svc/candlesticks/api/asyncapi"
 	"github.com/lerenn/cryptellation/svc/candlesticks/internal/app"
@@ -58,5 +59,6 @@ func (s candlesticksSubscriber) ServiceInfoOperationReceived(ctx context.Context
 	return s.controller.ReplyToServiceInfoOperation(ctx, msg, func(replyMsg *asyncapi.ServiceInfoResponseMessage) {
 		replyMsg.Payload.ApiVersion = asyncapi.AsyncAPIVersion
 		replyMsg.Payload.BinVersion = version.Version()
+		telemetry.L(ctx).Debugf("Request for service info received, replying with %+v", replyMsg.Payload)
 	})
 }

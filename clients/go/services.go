@@ -13,6 +13,8 @@ import (
 	natscandlesticks "github.com/lerenn/cryptellation/svc/candlesticks/clients/go/nats"
 	exchanges "github.com/lerenn/cryptellation/svc/exchanges/clients/go"
 	natsexchanges "github.com/lerenn/cryptellation/svc/exchanges/clients/go/nats"
+	forwardtests "github.com/lerenn/cryptellation/svc/forwardtests/clients/go"
+	natsforwardtests "github.com/lerenn/cryptellation/svc/forwardtests/clients/go/nats"
 	indicators "github.com/lerenn/cryptellation/svc/indicators/clients/go"
 	natsindicators "github.com/lerenn/cryptellation/svc/indicators/clients/go/nats"
 	ticks "github.com/lerenn/cryptellation/svc/ticks/clients/go"
@@ -23,6 +25,7 @@ type Services struct {
 	backtests    backtests.Client
 	candlesticks candlesticks.Client
 	exchanges    exchanges.Client
+	forwardtests forwardtests.Client
 	indicators   indicators.Client
 	ticks        ticks.Client
 }
@@ -41,6 +44,12 @@ func NewServices(c config.NATS) (client Services, err error) {
 	}
 
 	client.exchanges, err = natsexchanges.NewClient(c)
+	if err != nil {
+		client.Close(context.TODO())
+		return
+	}
+
+	client.forwardtests, err = natsforwardtests.NewClient(c)
 	if err != nil {
 		client.Close(context.TODO())
 		return
@@ -73,6 +82,10 @@ func (c Services) Exchanges() exchanges.Client {
 	return c.exchanges
 }
 
+func (c Services) Forwardtests() forwardtests.Client {
+	return c.forwardtests
+}
+
 func (c Services) Indicators() indicators.Client {
 	return c.indicators
 }
@@ -103,10 +116,11 @@ func (c Services) ServicesInfo(ctx context.Context) (servicesInfo map[string]cli
 		}
 	}
 
-	wg.Add(5)
+	wg.Add(6)
 	go cb("backtests", c.backtests)
 	go cb("candlesticks", c.candlesticks)
 	go cb("exchanges", c.exchanges)
+	go cb("forwardtests", c.forwardtests)
 	go cb("indicators", c.indicators)
 	go cb("ticks", c.ticks)
 

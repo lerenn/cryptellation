@@ -1,0 +1,29 @@
+include:
+  - ../../../deployments/docker-compose/dependencies.docker-compose.yaml
+
+services:
+  forwardtests-api:
+    image: cosmtrek/air
+    depends_on:
+      - mongo
+      - nats
+      - uptrace-otelcollector
+    networks:
+      - cryptellation
+    working_dir: /go/src/github.com/lerenn/cryptellation
+    environment:
+      DEV_MODE: true
+      HEALTH_PORT: 9000
+      MONGO_CONNECTION_STRING: mongodb://mongo:27017
+      MONGO_DATABASE: cryptellation-forwardtests
+      NATS_HOST: nats
+      NATS_PORT: 4222
+      OPENTELEMETRY_GRPC_ENDPOINT: uptrace-otelcollector:4317
+    env_file:
+      - path: ../../../.credentials.env
+        required: true
+    command: [ "-c", "svc/forwardtests/.air.toml" ]
+    volumes:
+      - gocache:/go/pkg/mod
+      - gobuild:/root/.cache/go-build
+      - ../../../:/go/src/github.com/lerenn/cryptellation
