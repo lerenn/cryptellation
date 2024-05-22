@@ -113,7 +113,7 @@ components:
               $ref: '#/components/schemas/CandlestickList'
         - properties:
             error:
-              $ref: '#/components/schemas/Error'
+              $ref: '../../../../pkg/asyncapi/models.yaml#/components/schemas/Error'
       traits:
         - $ref: "#/components/messageTraits/withCorrelationID"
 

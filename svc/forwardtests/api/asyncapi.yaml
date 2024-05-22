@@ -6,6 +6,16 @@ info:
     This service is providing simulations on live data.
 
 channels:
+  AccountsListRequest:
+    address: cryptellation.forwardtests.accounts.list
+    messages:
+      AccountsListRequest:
+        $ref: "#/components/messages/AccountsListRequest"
+  AccountsListResponse:
+    messages:
+      AccountsListResponse:
+        $ref: "#/components/messages/AccountsListResponse"
+
   CreateRequest:
     address: cryptellation.forwardtests.create
     messages:
@@ -37,6 +47,16 @@ channels:
         $ref: "#/components/messages/ServiceInfoResponse"
 
 operations:
+  AccountsList:
+    action: receive
+    channel: 
+      $ref: "#/channels/AccountsListRequest"
+    reply:
+      address:
+        location: "$message.header#/replyTo"
+      channel:
+        $ref: '#/channels/AccountsListResponse'
+
   Create:
     action: receive
     channel: 
@@ -90,6 +110,34 @@ components:
         location: $message.header#/correlationId
 
   messages:
+    AccountsListRequest:
+      payload:
+        type: object
+        required:
+          - id
+        properties:
+          id:
+            $ref: '#/components/schemas/ForwardTestID'
+      traits:
+        - $ref: "#/components/messageTraits/withReplyTo"
+        - $ref: "#/components/messageTraits/withCorrelationID"
+    AccountsListResponse:
+      payload:
+        type: object
+        required:
+          - id
+        oneOf:
+        - properties:
+            accounts:
+              type: array
+              items:
+                $ref: '#/components/schemas/Account'
+        - properties:
+            error:
+              $ref: '../../../../pkg/asyncapi/models.yaml#/components/schemas/Error'
+      traits:
+        - $ref: "#/components/messageTraits/withCorrelationID"
+
     CreateRequest:
       payload:
         type: object
@@ -115,7 +163,7 @@ components:
               description: Newly created forwardtest ID
         - properties:
             error:
-              $ref: '#/components/schemas/Error'
+              $ref: '../../../../pkg/asyncapi/models.yaml#/components/schemas/Error'
       traits:
         - $ref: "#/components/messageTraits/withCorrelationID"
 
@@ -138,7 +186,7 @@ components:
         type: object
         properties:
           error:
-            $ref: '#/components/schemas/Error'
+            $ref: '../../../../pkg/asyncapi/models.yaml#/components/schemas/Error'
       traits:
         - $ref: "#/components/messageTraits/withCorrelationID"
 

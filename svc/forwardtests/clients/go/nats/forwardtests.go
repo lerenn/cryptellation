@@ -9,6 +9,7 @@ import (
 	helpers "github.com/lerenn/cryptellation/pkg/asyncapi"
 	clientPkg "github.com/lerenn/cryptellation/pkg/client"
 	"github.com/lerenn/cryptellation/pkg/config"
+	"github.com/lerenn/cryptellation/pkg/models/account"
 	asyncapi "github.com/lerenn/cryptellation/svc/forwardtests/api/asyncapi"
 	client "github.com/lerenn/cryptellation/svc/forwardtests/clients/go"
 	"github.com/lerenn/cryptellation/svc/forwardtests/pkg/forwardtest"
@@ -64,11 +65,17 @@ func WithLogger(logger extensions.Logger) ForwardTestsOption {
 func (cl Client) CreateForwardTest(ctx context.Context, payload forwardtest.NewPayload) (uuid.UUID, error) {
 	// Set message
 	reqMsg := asyncapi.NewCreateRequestMessage()
+	reqMsg.Headers.ReplyTo = helpers.AddReplyToSuffix(asyncapi.CreateRequestChannelPath)
 	reqMsg.Set(payload)
 
 	// Send request
 	respMsg, err := cl.ctrl.RequestToCreateOperation(ctx, reqMsg)
 	if err != nil {
+		return uuid.Nil, err
+	}
+
+	// Unwrap error from message
+	if err := helpers.UnwrapError(respMsg.Payload.Error); err != nil {
 		return uuid.Nil, err
 	}
 
@@ -79,15 +86,38 @@ func (cl Client) CreateForwardTest(ctx context.Context, payload forwardtest.NewP
 func (cl Client) CreateOrder(ctx context.Context, payload client.OrderCreationPayload) error {
 	// Set message
 	reqMsg := asyncapi.NewOrdersCreateRequestMessage()
+	reqMsg.Headers.ReplyTo = helpers.AddReplyToSuffix(asyncapi.OrdersCreateRequestChannelPath)
 	reqMsg.Set(payload)
 
 	// Send request
-	_, err := cl.ctrl.RequestToOrdersCreateOperation(ctx, reqMsg)
+	respMsg, err := cl.ctrl.RequestToOrdersCreateOperation(ctx, reqMsg)
 	if err != nil {
 		return err
 	}
 
-	return nil
+	// Unwrap error from message
+	return helpers.UnwrapError(respMsg.Payload.Error)
+}
+
+func (cl Client) GetAccounts(ctx context.Context, forwardTestID uuid.UUID) (map[string]account.Account, error) {
+	// Set message
+	reqMsg := asyncapi.NewAccountsListRequestMessage()
+	reqMsg.Headers.ReplyTo = helpers.AddReplyToSuffix(asyncapi.AccountsListRequestChannelPath)
+	reqMsg.Payload.Id = asyncapi.ForwardTestIDSchema(forwardTestID.String())
+
+	// Send request
+	respMsg, err := cl.ctrl.RequestToAccountsListOperation(ctx, reqMsg)
+	if err != nil {
+		return nil, err
+	}
+
+	// Unwrap error from message
+	if err := helpers.UnwrapError(respMsg.Payload.Error); err != nil {
+		return nil, err
+	}
+
+	// Convert response to model
+	return respMsg.ToModel(), nil
 }
 
 func (cl Client) ServiceInfo(ctx context.Context) (clientPkg.ServiceInfo, error) {

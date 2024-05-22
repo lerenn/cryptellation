@@ -1,0 +1,19 @@
+asyncapi: '3.0.0'
+
+components:
+  schemas:
+    Error:
+      type: object
+      description: Response to a failed call
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          description: Code to identify the error type, based on HTTP errors
+        message:
+          type: string
+          description: Main error reason
+          examples:
+            - "Invalid request: no time specified"

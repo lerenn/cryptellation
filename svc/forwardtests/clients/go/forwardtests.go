@@ -8,6 +8,7 @@ import (
 
 	"github.com/google/uuid"
 	client "github.com/lerenn/cryptellation/pkg/client"
+	"github.com/lerenn/cryptellation/pkg/models/account"
 	"github.com/lerenn/cryptellation/pkg/models/order"
 	"github.com/lerenn/cryptellation/svc/forwardtests/pkg/forwardtest"
 )
@@ -15,6 +16,7 @@ import (
 type Client interface {
 	CreateForwardTest(ctx context.Context, payload forwardtest.NewPayload) (uuid.UUID, error)
 	CreateOrder(ctx context.Context, payload OrderCreationPayload) error
+	GetAccounts(ctx context.Context, forwardTestID uuid.UUID) (map[string]account.Account, error)
 
 	ServiceInfo(ctx context.Context) (client.ServiceInfo, error)
 	Close(ctx context.Context)

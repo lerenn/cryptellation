@@ -2,7 +2,6 @@ package nats
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/lerenn/asyncapi-codegen/pkg/extensions"
 	"github.com/lerenn/asyncapi-codegen/pkg/extensions/brokers/nats"
@@ -73,9 +72,9 @@ func (ids Client) SMA(ctx context.Context, payload client.SMAPayload) (*timeseri
 		return nil, err
 	}
 
-	// Check error
-	if respMsg.Payload.Error != nil {
-		return nil, fmt.Errorf("%d Error: %s", respMsg.Payload.Error.Code, respMsg.Payload.Error.Message)
+	// Unwrap error from message
+	if err := helpers.UnwrapError(respMsg.Payload.Error); err != nil {
+		return nil, err
 	}
 
 	// To indicator list

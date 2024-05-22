@@ -23,6 +23,31 @@ func newSubscriber(controller *asyncapi.AppController, app app.ForwardTests) sub
 	}
 }
 
+func (s subscriber) AccountsListOperationReceived(ctx context.Context, msg asyncapi.AccountsListRequestMessage) error {
+	return s.controller.ReplyToAccountsListOperation(ctx, msg, func(replyMsg *asyncapi.AccountsListResponseMessage) {
+		// Parse forward test ID
+		id, err := uuid.Parse(string(msg.Payload.Id))
+		if err != nil {
+			replyMsg.Payload.Error = &asyncapi.ErrorSchema{
+				Code:    http.StatusBadRequest,
+				Message: err.Error(),
+			}
+			return
+		}
+
+		accounts, err := s.forwardtests.GetAccounts(ctx, id)
+		if err != nil {
+			replyMsg.Payload.Error = &asyncapi.ErrorSchema{
+				Code:    http.StatusInternalServerError,
+				Message: err.Error(),
+			}
+			return
+		}
+
+		replyMsg.Set(accounts)
+	})
+}
+
 func (s subscriber) CreateOperationReceived(ctx context.Context, msg asyncapi.CreateRequestMessage) error {
 	return s.controller.ReplyToCreateOperation(ctx, msg, func(replyMsg *asyncapi.CreateResponseMessage) {
 		// Get model request from message payload

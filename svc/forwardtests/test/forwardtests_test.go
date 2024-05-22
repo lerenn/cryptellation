@@ -10,7 +10,7 @@ import (
 	"github.com/lerenn/cryptellation/svc/forwardtests/pkg/forwardtest"
 )
 
-func (suite *EndToEndSuite) CreateForwardTest() {
+func (suite *EndToEndSuite) TestCreateForwardTest() {
 	// Create forwardtest
 	id, err := suite.client.CreateForwardTest(context.Background(), forwardtest.NewPayload{
 		Accounts: map[string]account.Account{
@@ -25,7 +25,7 @@ func (suite *EndToEndSuite) CreateForwardTest() {
 	suite.Require().NotEqual(uuid.Nil, id)
 }
 
-func (suite *EndToEndSuite) CreateOrder() {
+func (suite *EndToEndSuite) TestCreateOrder() {
 	// Create forwardtest
 	id, err := suite.client.CreateForwardTest(context.Background(), forwardtest.NewPayload{
 		Accounts: map[string]account.Account{
@@ -50,5 +50,8 @@ func (suite *EndToEndSuite) CreateOrder() {
 	suite.Require().NoError(err)
 
 	// Check balances
-	// TODO
+	accounts, err := suite.client.GetAccounts(context.Background(), id)
+	suite.Require().NoError(err)
+	suite.Require().Equal(1.0, accounts["binance"].Balances["BTC"])
+	suite.Require().NotEqual(1000000, accounts["binance"].Balances["USDT"])
 }

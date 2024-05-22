@@ -10,6 +10,7 @@ import (
 
 	uuid "github.com/google/uuid"
 	client "github.com/lerenn/cryptellation/pkg/client"
+	account "github.com/lerenn/cryptellation/pkg/models/account"
 	forwardtest "github.com/lerenn/cryptellation/svc/forwardtests/pkg/forwardtest"
 	gomock "go.uber.org/mock/gomock"
 )
@@ -76,6 +77,21 @@ func (m *MockClient) CreateOrder(ctx context.Context, payload OrderCreationPaylo
 func (mr *MockClientMockRecorder) CreateOrder(ctx, payload interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateOrder", reflect.TypeOf((*MockClient)(nil).CreateOrder), ctx, payload)
+}
+
+// GetAccounts mocks base method.
+func (m *MockClient) GetAccounts(ctx context.Context, forwardTestID uuid.UUID) (map[string]account.Account, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetAccounts", ctx, forwardTestID)
+	ret0, _ := ret[0].(map[string]account.Account)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetAccounts indicates an expected call of GetAccounts.
+func (mr *MockClientMockRecorder) GetAccounts(ctx, forwardTestID interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAccounts", reflect.TypeOf((*MockClient)(nil).GetAccounts), ctx, forwardTestID)
 }
 
 // ServiceInfo mocks base method.

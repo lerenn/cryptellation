@@ -124,9 +124,9 @@ func (b Client) Create(ctx context.Context, payload client.BacktestCreationPaylo
 		return uuid.Nil, err
 	}
 
-	// Check error
-	if respMsg.Payload.Error != nil {
-		return uuid.Nil, fmt.Errorf("%d Error: %s", respMsg.Payload.Error.Code, respMsg.Payload.Error.Message)
+	// Unwrap error from message
+	if err := helpers.UnwrapError(respMsg.Payload.Error); err != nil {
+		return uuid.Nil, err
 	}
 
 	return uuid.Parse(respMsg.Payload.Id)
@@ -144,12 +144,8 @@ func (b Client) Subscribe(ctx context.Context, backtestID uuid.UUID, exchange, p
 		return err
 	}
 
-	// Check error
-	if respMsg.Payload.Error != nil {
-		return fmt.Errorf("%d Error: %s", respMsg.Payload.Error.Code, respMsg.Payload.Error.Message)
-	}
-
-	return nil
+	// Unwrap error from message
+	return helpers.UnwrapError(respMsg.Payload.Error)
 }
 
 func (b Client) Advance(ctx context.Context, backtestID uuid.UUID) error {
@@ -164,12 +160,8 @@ func (b Client) Advance(ctx context.Context, backtestID uuid.UUID) error {
 		return err
 	}
 
-	// Check error
-	if respMsg.Payload.Error != nil {
-		return fmt.Errorf("%d Error: %s", respMsg.Payload.Error.Code, respMsg.Payload.Error.Message)
-	}
-
-	return nil
+	// Unwrap error from message
+	return helpers.UnwrapError(respMsg.Payload.Error)
 }
 
 func (b Client) CreateOrder(ctx context.Context, payload client.OrderCreationPayload) error {
@@ -184,12 +176,8 @@ func (b Client) CreateOrder(ctx context.Context, payload client.OrderCreationPay
 		return err
 	}
 
-	// Check error
-	if respMsg.Payload.Error != nil {
-		return fmt.Errorf("%d Error: %s", respMsg.Payload.Error.Code, respMsg.Payload.Error.Message)
-	}
-
-	return nil
+	// Unwrap error from message
+	return helpers.UnwrapError(respMsg.Payload.Error)
 }
 
 func (b Client) GetAccounts(ctx context.Context, backtestID uuid.UUID) (map[string]account.Account, error) {
@@ -204,11 +192,12 @@ func (b Client) GetAccounts(ctx context.Context, backtestID uuid.UUID) (map[stri
 		return nil, err
 	}
 
-	// Check error
-	if respMsg.Payload.Error != nil {
-		return nil, fmt.Errorf("%d Error: %s", respMsg.Payload.Error.Code, respMsg.Payload.Error.Message)
+	// Unwrap error from message
+	if err := helpers.UnwrapError(respMsg.Payload.Error); err != nil {
+		return nil, err
 	}
 
+	// Convert response to model
 	return respMsg.ToModel(), nil
 }
 
