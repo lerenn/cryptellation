@@ -57,7 +57,7 @@ func (b *Bot) OnTick(t tick.Tick) error {
 		return err
 	}
 
-	s.Loop(func(t time.Time, v float64) (bool, error) {
+	_ = s.Loop(func(t time.Time, v float64) (bool, error) {
 		telemetry.L(context.Background()).Debugf("SMA point at %s: %f", t, v)
 		return false, nil
 	})

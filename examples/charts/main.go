@@ -18,7 +18,7 @@ import (
 
 func main() {
 	http.HandleFunc("/", httpserver)
-	http.ListenAndServe(":8081", nil)
+	_ = http.ListenAndServe(":8081", nil)
 }
 
 func httpserver(w http.ResponseWriter, r *http.Request) {
@@ -88,5 +88,7 @@ func httpserver(w http.ResponseWriter, r *http.Request) {
 	}
 	c.Overlap(sma99)
 
-	c.Render(w)
+	if err := c.Render(w); err != nil {
+		panic(err)
+	}
 }

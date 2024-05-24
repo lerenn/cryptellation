@@ -31,41 +31,47 @@ type Services struct {
 }
 
 func NewServices(c config.NATS) (client Services, err error) {
-	client.backtests, err = natsbacktests.NewClient(c)
+	backtests, err := natsbacktests.NewClient(c)
 	if err != nil {
 		client.Close(context.TODO())
 		return
 	}
+	client.backtests = backtests
 
-	client.candlesticks, err = natscandlesticks.NewClient(c)
+	candlesticks, err := natscandlesticks.NewClient(c)
 	if err != nil {
 		client.Close(context.TODO())
 		return
 	}
+	client.candlesticks = candlesticks
 
-	client.exchanges, err = natsexchanges.NewClient(c)
+	exchanges, err := natsexchanges.NewClient(c)
 	if err != nil {
 		client.Close(context.TODO())
 		return
 	}
+	client.exchanges = exchanges
 
-	client.forwardtests, err = natsforwardtests.NewClient(c)
+	forwardtests, err := natsforwardtests.NewClient(c)
 	if err != nil {
 		client.Close(context.TODO())
 		return
 	}
+	client.forwardtests = forwardtests
 
-	client.indicators, err = natsindicators.NewClient(c)
+	indicators, err := natsindicators.NewClient(c)
 	if err != nil {
 		client.Close(context.TODO())
 		return
 	}
+	client.indicators = indicators
 
-	client.ticks, err = natsticks.NewClient(c)
+	ticks, err := natsticks.NewClient(c)
 	if err != nil {
 		client.Close(context.TODO())
 		return
 	}
+	client.ticks = ticks
 
 	return
 }
