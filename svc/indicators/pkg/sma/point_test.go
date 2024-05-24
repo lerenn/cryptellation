@@ -34,6 +34,17 @@ func (suite *PointSuite) TestPoint() {
 			},
 			ExpectedOutput: 1250,
 		},
+		// Calculation with missing price
+		{
+			Payload: PointPayload{
+				Candlesticks: timeserie.New[candlestick.Candlestick]().
+					Set(time.Unix(0, 0), candlestick.Candlestick{Close: 1000}).
+					Set(time.Unix(60, 0), candlestick.Candlestick{Close: 0}).
+					Set(time.Unix(120, 0), candlestick.Candlestick{Close: 1250}),
+				PriceType: candlestick.PriceTypeIsClose,
+			},
+			ExpectedOutput: 1125,
+		},
 		// No point
 		{
 			Payload: PointPayload{

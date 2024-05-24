@@ -3,7 +3,6 @@ package domain
 import (
 	"context"
 	"errors"
-	"fmt"
 	"time"
 
 	"github.com/lerenn/cryptellation/pkg/adapters/telemetry"
@@ -25,7 +24,6 @@ func (app Candlesticks) GetCached(ctx context.Context, payload app.GetCachedPayl
 	telemetry.L(ctx).Infof("Requests candlesticks from %s to %s (limit: %d)", payload.Start, payload.End, payload.Limit)
 
 	// Be sure that we do not try to get data in the future
-	fmt.Println("payload.End", payload.End)
 	if payload.End == nil || payload.End.After(time.Now()) {
 		payload.End = utils.ToReference(time.Now())
 	}
@@ -52,6 +50,7 @@ func (app Candlesticks) GetCached(ctx context.Context, payload app.GetCachedPayl
 	}
 	telemetry.L(ctx).Debugf("Candlesticks are missing from DB: %+v", timeserie.TimeRangesToString(ranges))
 
+	// Download missing candlesticks
 	downloadStart, downloadEnd := getDownloadStartEndTimes(ranges, payload.Period)
 	if err := app.download(ctx, cl, downloadStart, downloadEnd, payload.Limit); err != nil {
 		return nil, err
@@ -73,10 +72,16 @@ func getDownloadStartEndTimes(ranges []timeserie.TimeRange, p period.Symbol) (ti
 	start, end := ranges[0].Start, ranges[len(ranges)-1].End
 	count := end.Sub(start) / p.Duration()
 
+	// If there is less than MinimalRetrievedMissingCandlesticks candlesticks to retrieve
 	if count < MinimalRetrievedMissingCandlesticks {
 		difference := MinimalRetrievedMissingCandlesticks - count
 		start = start.Add(-p.Duration() * difference / 2)
 		end = end.Add(p.Duration() * difference / 2)
+	}
+
+	// Check that end is not in the future
+	if end.After(time.Now()) {
+		end = time.Now()
 	}
 
 	return p.RoundInterval(&start, &end)
@@ -137,8 +142,10 @@ func (app Candlesticks) upsert(ctx context.Context, cl *candlestick.List) error 
 	if err := cl.Loop(func(ts time.Time, cs candlestick.Candlestick) (bool, error) {
 		rcs, exists := rcl.Get(ts)
 		if !exists {
+			telemetry.L(ctx).Debugf("Inserting candlestick %s with %+v", ts, cs)
 			return false, csToInsert.Set(ts, cs)
 		} else if !rcs.Equal(cs) {
+			telemetry.L(ctx).Debugf("Updating candlestick %s with %+v", ts, cs)
 			return false, csToUpdate.Set(ts, cs)
 		}
 		return false, nil

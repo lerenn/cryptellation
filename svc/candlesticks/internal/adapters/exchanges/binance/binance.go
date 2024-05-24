@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/lerenn/cryptellation/pkg/adapters/exchanges/binance"
+	"github.com/lerenn/cryptellation/pkg/adapters/telemetry"
 	"github.com/lerenn/cryptellation/pkg/config"
 	"github.com/lerenn/cryptellation/svc/candlesticks/internal/adapters/exchanges/binance/entities"
 	"github.com/lerenn/cryptellation/svc/candlesticks/internal/app/ports/exchanges"
@@ -50,6 +51,9 @@ func (s *Service) GetCandlesticks(ctx context.Context, payload exchanges.GetCand
 	kl, err := service.Do(ctx)
 	if err != nil {
 		return nil, entities.WrapError(err)
+	}
+	for _, k := range kl {
+		telemetry.L(ctx).Debugf("Received Binance KLine: %+v", k)
 	}
 
 	// Change them to right format

@@ -49,8 +49,13 @@ func (ft *ForwardTest) AddOrder(o order.Order, cs candlestick.Candlestick) error
 		return fmt.Errorf("error with orders exchange %q: %w", o.Exchange, ErrInvalidExchange)
 	}
 
-	// Apply order
+	// Get price
 	price := cs.Close
+	if price == 0 {
+		return errors.New("price is 0, that should not happen")
+	}
+
+	// Apply order
 	if err := exchangeAccount.ApplyOrder(price, o); err != nil {
 		return err
 	}
