@@ -63,8 +63,8 @@ func (suite *ForwardTestSuite) TestListSuite() {
 	suite.Require().NoError(err)
 
 	suite.Require().Len(rp, 2)
-	suite.Require().Equal(rp[0].ID, ft1.ID)
-	suite.Require().Equal(rp[1].ID, ft2.ID)
+	suite.Require().Equal(rp[0].ID, ft2.ID) // Last created first
+	suite.Require().Equal(rp[1].ID, ft1.ID)
 }
 
 func (suite *ForwardTestSuite) TestUpdate() {

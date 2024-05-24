@@ -1,12 +1,16 @@
 package entities
 
 import (
+	"time"
+
 	"github.com/google/uuid"
 	"github.com/lerenn/cryptellation/svc/forwardtests/pkg/forwardtest"
 )
 
 type ForwardTest struct {
-	ID       string             `bson:"_id"`
+	ID        string    `bson:"_id"`
+	UpdatedAt time.Time `bson:"updated_at"`
+
 	Accounts map[string]Account `bson:"accounts"`
 	Orders   []Order            `bson:"orders"`
 }
@@ -31,8 +35,9 @@ func (ft ForwardTest) ToModel() (forwardtest.ForwardTest, error) {
 
 func FromForwardTestModel(ft forwardtest.ForwardTest) ForwardTest {
 	return ForwardTest{
-		ID:       ft.ID.String(),
-		Accounts: FromAccountModels(ft.Accounts),
-		Orders:   FromOrderModels(ft.Orders),
+		ID:        ft.ID.String(),
+		UpdatedAt: time.Now(),
+		Accounts:  FromAccountModels(ft.Accounts),
+		Orders:    FromOrderModels(ft.Orders),
 	}
 }

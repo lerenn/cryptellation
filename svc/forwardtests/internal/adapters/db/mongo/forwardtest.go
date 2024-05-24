@@ -7,6 +7,8 @@ import (
 	"github.com/lerenn/cryptellation/svc/forwardtests/internal/adapters/db/mongo/entities"
 	"github.com/lerenn/cryptellation/svc/forwardtests/internal/app/ports/db"
 	"github.com/lerenn/cryptellation/svc/forwardtests/pkg/forwardtest"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 const (
@@ -50,8 +52,12 @@ func (mongo *Adapter) ReadForwardTest(ctx context.Context, id uuid.UUID) (forwar
 func (mongo *Adapter) ListForwardTests(ctx context.Context, filters db.ListFilters) ([]forwardtest.ForwardTest, error) {
 	var models []forwardtest.ForwardTest
 
+	findOptions := options.Find()
+	// Sort by `price` field descending
+	findOptions.SetSort(bson.D{{Key: "updated_at", Value: -1}})
+
 	// Get objects from database
-	cursor, err := mongo.client.Collection(CollectionName).Find(ctx, map[string]any{})
+	cursor, err := mongo.client.Collection(CollectionName).Find(ctx, bson.D{}, findOptions)
 	if err != nil {
 		return nil, err
 	}
