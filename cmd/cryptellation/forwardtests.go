@@ -24,7 +24,25 @@ var forwardtestsInfoCmd = &cobra.Command{
 	},
 }
 
+var forwardtestsListCmd = &cobra.Command{
+	Use:     "list",
+	Aliases: []string{"list"},
+	Short:   "List forward tests",
+	RunE: func(cmd *cobra.Command, args []string) (err error) {
+		list, err := globalClient.ForwardTests().ListForwardTests(cmd.Context())
+		if err != nil {
+			return err
+		}
+
+		for _, l := range list {
+			cmd.Println(l)
+		}
+		return nil
+	},
+}
+
 func initForwardTests(rootCmd *cobra.Command) {
+	forwardtestsCmd.AddCommand(forwardtestsListCmd)
 	forwardtestsCmd.AddCommand(forwardtestsInfoCmd)
 	rootCmd.AddCommand(forwardtestsCmd)
 }

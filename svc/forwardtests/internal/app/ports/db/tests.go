@@ -35,6 +35,38 @@ func (suite *ForwardTestSuite) TestCreateRead() {
 	suite.Require().Equal(ft.Accounts["exchange"].Balances["DAI"], rp.Accounts["exchange"].Balances["DAI"])
 }
 
+func (suite *ForwardTestSuite) TestListSuite() {
+	ft1 := forwardtest.ForwardTest{
+		ID: uuid.New(),
+		Accounts: map[string]account.Account{
+			"exchange": {
+				Balances: map[string]float64{
+					"DAI": 1000,
+				},
+			},
+		},
+	}
+	suite.Require().NoError(suite.DB.CreateForwardTest(context.TODO(), ft1))
+	ft2 := forwardtest.ForwardTest{
+		ID: uuid.New(),
+		Accounts: map[string]account.Account{
+			"exchange": {
+				Balances: map[string]float64{
+					"DAI": 1500,
+				},
+			},
+		},
+	}
+	suite.Require().NoError(suite.DB.CreateForwardTest(context.TODO(), ft2))
+
+	rp, err := suite.DB.ListForwardTests(context.TODO(), ListFilters{})
+	suite.Require().NoError(err)
+
+	suite.Require().Len(rp, 2)
+	suite.Require().Equal(rp[0].ID, ft1.ID)
+	suite.Require().Equal(rp[1].ID, ft2.ID)
+}
+
 func (suite *ForwardTestSuite) TestUpdate() {
 	ft := forwardtest.ForwardTest{
 		ID: uuid.New(),

@@ -64,6 +64,21 @@ func (mr *MockPortMockRecorder) DeleteForwardTest(ctx, id interface{}) *gomock.C
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteForwardTest", reflect.TypeOf((*MockPort)(nil).DeleteForwardTest), ctx, id)
 }
 
+// ListForwardTests mocks base method.
+func (m *MockPort) ListForwardTests(ctx context.Context, filters ListFilters) ([]forwardtest.ForwardTest, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ListForwardTests", ctx, filters)
+	ret0, _ := ret[0].([]forwardtest.ForwardTest)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ListForwardTests indicates an expected call of ListForwardTests.
+func (mr *MockPortMockRecorder) ListForwardTests(ctx, filters interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListForwardTests", reflect.TypeOf((*MockPort)(nil).ListForwardTests), ctx, filters)
+}
+
 // ReadForwardTest mocks base method.
 func (m *MockPort) ReadForwardTest(ctx context.Context, id uuid.UUID) (forwardtest.ForwardTest, error) {
 	m.ctrl.T.Helper()

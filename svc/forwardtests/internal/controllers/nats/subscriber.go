@@ -73,6 +73,21 @@ func (s subscriber) CreateOperationReceived(ctx context.Context, msg asyncapi.Cr
 	})
 }
 
+func (s subscriber) ListOperationReceived(ctx context.Context, msg asyncapi.ListRequestMessage) error {
+	return s.controller.ReplyToListOperation(ctx, msg, func(replyMsg *asyncapi.ListResponseMessage) {
+		list, err := s.forwardtests.List(ctx, app.ListFilters{})
+		if err != nil {
+			replyMsg.Payload.Error = &asyncapi.ErrorSchema{
+				Code:    http.StatusInternalServerError,
+				Message: err.Error(),
+			}
+			return
+		}
+
+		replyMsg.Set(list)
+	})
+}
+
 func (s subscriber) OrdersCreateOperationReceived(ctx context.Context, msg asyncapi.OrdersCreateRequestMessage) error {
 	return s.controller.ReplyToOrdersCreateOperation(ctx, msg, func(replyMsg *asyncapi.OrdersCreateResponseMessage) {
 		// Get model request from message payload

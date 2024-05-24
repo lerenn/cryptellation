@@ -94,6 +94,21 @@ func (mr *MockClientMockRecorder) GetAccounts(ctx, forwardTestID interface{}) *g
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAccounts", reflect.TypeOf((*MockClient)(nil).GetAccounts), ctx, forwardTestID)
 }
 
+// ListForwardTests mocks base method.
+func (m *MockClient) ListForwardTests(ctx context.Context) ([]uuid.UUID, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ListForwardTests", ctx)
+	ret0, _ := ret[0].([]uuid.UUID)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ListForwardTests indicates an expected call of ListForwardTests.
+func (mr *MockClientMockRecorder) ListForwardTests(ctx interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListForwardTests", reflect.TypeOf((*MockClient)(nil).ListForwardTests), ctx)
+}
+
 // ServiceInfo mocks base method.
 func (m *MockClient) ServiceInfo(ctx context.Context) (client.ServiceInfo, error) {
 	m.ctrl.T.Helper()

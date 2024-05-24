@@ -25,5 +25,7 @@ func (suite *ForwardTestSuite) SetupTest() {
 		}),
 	)
 	suite.Require().NoError(err)
+	suite.Require().NoError(db.Reset(context.TODO()))
+
 	suite.DB = db
 }

@@ -5,6 +5,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/lerenn/cryptellation/svc/forwardtests/internal/adapters/db/mongo/entities"
+	"github.com/lerenn/cryptellation/svc/forwardtests/internal/app/ports/db"
 	"github.com/lerenn/cryptellation/svc/forwardtests/pkg/forwardtest"
 )
 
@@ -44,6 +45,35 @@ func (mongo *Adapter) ReadForwardTest(ctx context.Context, id uuid.UUID) (forwar
 
 	// Transform entity to model
 	return entity.ToModel()
+}
+
+func (mongo *Adapter) ListForwardTests(ctx context.Context, filters db.ListFilters) ([]forwardtest.ForwardTest, error) {
+	var models []forwardtest.ForwardTest
+
+	// Get objects from database
+	cursor, err := mongo.client.Collection(CollectionName).Find(ctx, map[string]any{})
+	if err != nil {
+		return nil, err
+	}
+	defer cursor.Close(ctx)
+
+	// Transform entities to models
+	for cursor.Next(ctx) {
+		var entity entities.ForwardTest
+		err := cursor.Decode(&entity)
+		if err != nil {
+			return nil, err
+		}
+
+		model, err := entity.ToModel()
+		if err != nil {
+			return nil, err
+		}
+
+		models = append(models, model)
+	}
+
+	return models, nil
 }
 
 func (mongo *Adapter) UpdateForwardTest(ctx context.Context, ft forwardtest.ForwardTest) error {

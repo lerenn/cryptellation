@@ -26,6 +26,16 @@ channels:
       CreateResponse:
         $ref: "#/components/messages/CreateResponse"
 
+  ListRequest:
+    address: cryptellation.forwardtests.list
+    messages:
+      ListRequest:
+        $ref: "#/components/messages/ListRequest"
+  ListResponse:
+    messages:
+      ListResponse:
+        $ref: "#/components/messages/ListResponse"
+
   OrdersCreateRequest:
     address: cryptellation.forwardtests.orders.create
     messages:
@@ -66,6 +76,16 @@ operations:
         location: "$message.header#/replyTo"
       channel:
         $ref: '#/channels/CreateResponse'
+
+  List:
+    action: receive
+    channel: 
+      $ref: "#/channels/ListRequest"
+    reply:
+      address:
+        location: "$message.header#/replyTo"
+      channel:
+        $ref: '#/channels/ListResponse'
 
   OrdersCreate:
     action: receive
@@ -124,8 +144,6 @@ components:
     AccountsListResponse:
       payload:
         type: object
-        required:
-          - id
         oneOf:
         - properties:
             accounts:
@@ -161,6 +179,27 @@ components:
             id:
               type: string
               description: Newly created forwardtest ID
+        - properties:
+            error:
+              $ref: '../../../../pkg/asyncapi/models.yaml#/components/schemas/Error'
+      traits:
+        - $ref: "#/components/messageTraits/withCorrelationID"
+
+    ListRequest:
+      payload:
+        type: object
+      traits:
+        - $ref: "#/components/messageTraits/withReplyTo"
+        - $ref: "#/components/messageTraits/withCorrelationID"
+    ListResponse:
+      payload:
+        type: object
+        oneOf:
+        - properties:
+            ids:
+              type: array
+              items:
+                $ref: '#/components/schemas/ForwardTestID'
         - properties:
             error:
               $ref: '../../../../pkg/asyncapi/models.yaml#/components/schemas/Error'

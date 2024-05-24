@@ -82,6 +82,26 @@ func (cl Client) CreateForwardTest(ctx context.Context, payload forwardtest.NewP
 
 }
 
+func (cl Client) ListForwardTests(ctx context.Context) ([]uuid.UUID, error) {
+	// Set message
+	reqMsg := asyncapi.NewListRequestMessage()
+	reqMsg.Headers.ReplyTo = helpers.AddReplyToSuffix(asyncapi.ListRequestChannelPath)
+
+	// Send request
+	respMsg, err := cl.ctrl.RequestToListOperation(ctx, reqMsg)
+	if err != nil {
+		return nil, err
+	}
+
+	// Unwrap error from message
+	if err := helpers.UnwrapError(respMsg.Payload.Error); err != nil {
+		return nil, err
+	}
+
+	// Convert response to model
+	return respMsg.ToModel()
+}
+
 func (cl Client) CreateOrder(ctx context.Context, payload common.OrderCreationPayload) error {
 	// Set message
 	reqMsg := asyncapi.NewOrdersCreateRequestMessage()

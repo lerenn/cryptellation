@@ -13,6 +13,10 @@ import (
 type Port interface {
 	CreateForwardTest(ctx context.Context, ft forwardtest.ForwardTest) error
 	ReadForwardTest(ctx context.Context, id uuid.UUID) (forwardtest.ForwardTest, error)
+	ListForwardTests(ctx context.Context, filters ListFilters) ([]forwardtest.ForwardTest, error)
 	UpdateForwardTest(ctx context.Context, ft forwardtest.ForwardTest) error
 	DeleteForwardTest(ctx context.Context, id uuid.UUID) error
+}
+
+type ListFilters struct {
 }

@@ -6,6 +6,7 @@
 package asyncapi
 
 import (
+	"github.com/google/uuid"
 	"github.com/lerenn/cryptellation/pkg/models/account"
 	"github.com/lerenn/cryptellation/svc/forwardtests/pkg/forwardtest"
 )
@@ -33,4 +34,30 @@ func (msg CreateRequestMessage) ToModel() (forwardtest.NewPayload, error) {
 	return forwardtest.NewPayload{
 		Accounts: accounts,
 	}, nil
+}
+
+func (msg *ListResponseMessage) Set(payload []forwardtest.ForwardTest) {
+	// Format forward tests
+	tests := make([]ForwardTestIDSchema, 0, len(payload))
+	for _, test := range payload {
+		tests = append(tests, ForwardTestIDSchema(test.ID.String()))
+	}
+
+	// Set forward tests
+	msg.Payload.Ids = tests
+}
+
+func (msg ListResponseMessage) ToModel() ([]uuid.UUID, error) {
+	// Format forward tests
+	tests := make([]uuid.UUID, 0, len(msg.Payload.Ids))
+	for _, id := range msg.Payload.Ids {
+		test, err := uuid.Parse(string(id))
+		if err != nil {
+			return nil, err
+		}
+		tests = append(tests, test)
+	}
+
+	// Return forward tests
+	return tests, nil
 }

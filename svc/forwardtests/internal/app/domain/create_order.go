@@ -40,7 +40,7 @@ func (f ForwardTests) CreateOrder(ctx context.Context, forwardTestID uuid.UUID, 
 		return fmt.Errorf("no data for order validation")
 	}
 
-	telemetry.L(ctx).Infof("Adding %+v order to %d forwardtest", order, forwardTestID)
+	telemetry.L(ctx).Infof("Adding %+v order to %q forwardtest", order, forwardTestID.String())
 	if err := ft.AddOrder(order, cs); err != nil {
 		return err
 	}
