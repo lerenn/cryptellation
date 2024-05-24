@@ -30,7 +30,7 @@ func (s *subscription) ListenTicks(ctx context.Context, ts event.TickSubscriptio
 	for {
 		select {
 		case <-ctx.Done():
-			telemetry.L(ctx).Infof("context done, closing subscription for %q", ts)
+			telemetry.L(ctx).Infof("context done, stop listening ticks for %q", ts)
 			return
 		case tick, ok := <-ticks:
 			if !ok {
@@ -83,26 +83,39 @@ func (l *listenings) UpdateLastNotificationSeen(ts event.TickSubscription) {
 }
 
 func (l *listenings) watchNoListener(ctx context.Context, sub *subscription) {
+	// Remove subscription at the end of the function
+	defer l.removeSubscription(sub.TickSubscription)
+
+	// Wait for cancellation or a timeout
 	for {
 		select {
 		case <-ctx.Done():
+			telemetry.L(ctx).Infof("context canceled for watching listener for %q", sub.TickSubscription)
 			return
 		case <-time.After(10 * time.Second):
-			if time.Since(sub.LastRequest) > 10*time.Second {
-				telemetry.L(ctx).Infof("no request for %q in the last 10 seconds, canceling context", sub.TickSubscription)
-				sub.Cancel()
-				return
+			if time.Since(sub.LastRequest) < 10*time.Second {
+				continue
 			}
+
+			telemetry.L(ctx).Infof("no request for %q in the last 10 seconds", sub.TickSubscription)
+			return
 		}
 	}
 }
 
-func (l *listenings) Close(ctx context.Context) {
+func (l *listenings) removeSubscription(ts event.TickSubscription) {
 	l.lock.Lock()
 	defer l.lock.Unlock()
 
-	for ts, sub := range l.subscriptions {
+	if sub, ok := l.subscriptions[ts]; ok {
+		telemetry.L(context.Background()).Infof("canceling and deleting subscription for %q", ts)
 		sub.Cancel()
 		delete(l.subscriptions, ts)
+	}
+}
+
+func (l *listenings) Close(ctx context.Context) {
+	for _, sub := range l.subscriptions {
+		l.removeSubscription(sub.TickSubscription)
 	}
 }
