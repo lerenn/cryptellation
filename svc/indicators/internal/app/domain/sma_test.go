@@ -76,14 +76,31 @@ func (suite *SMASuite) TestAllExistWithNoneInDB() {
 	})
 
 	// Run operation
-	_, err := suite.app.GetCachedSMA(context.Background(), app.GetCachedSMAPayload{
+	sma, err := suite.app.GetCachedSMA(context.Background(), app.GetCachedSMAPayload{
 		Exchange:     "exchange",
 		Pair:         "ETC-USDT",
 		Period:       period.M1,
-		Start:        time.Unix(180, 0),
-		End:          time.Unix(360, 0),
+		Start:        time.Unix(181, 0),
+		End:          time.Unix(365, 0),
 		PeriodNumber: 3,
 		PriceType:    candlestick.PriceTypeIsClose,
 	})
 	suite.Require().NoError(err)
+
+	suite.Require().Equal(4, sma.Len())
+	suite.Require().NoError(sma.Loop(func(t time.Time, v float64) (bool, error) {
+		switch t.Unix() {
+		case 180:
+			suite.Require().Equal(9.0, v)
+		case 240:
+			suite.Require().Equal(15.0, v)
+		case 300:
+			suite.Require().Equal(20.0, v)
+		case 360:
+			suite.Require().Equal(25.0, v)
+		default:
+			suite.Fail("Unexpected time", t)
+		}
+		return false, nil
+	}))
 }

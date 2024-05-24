@@ -22,3 +22,9 @@ type GetCachedSMAPayload struct {
 	PeriodNumber int
 	PriceType    candlestick.PriceType
 }
+
+func (payload *GetCachedSMAPayload) Process() {
+	// Round time
+	payload.Start = payload.Period.RoundTime(payload.Start)
+	payload.End = payload.Period.RoundTime(payload.End)
+}

@@ -3,6 +3,7 @@ package bot
 import (
 	"context"
 	"fmt"
+	"time"
 
 	cryptellation "github.com/lerenn/cryptellation/clients/go"
 	"github.com/lerenn/cryptellation/pkg/adapters/telemetry"
@@ -55,6 +56,11 @@ func (b *Bot) OnTick(t tick.Tick) error {
 	if err != nil {
 		return err
 	}
+
+	s.Loop(func(t time.Time, v float64) (bool, error) {
+		telemetry.L(context.Background()).Debugf("SMA point at %s: %f", t, v)
+		return false, nil
+	})
 
 	tLast, last, ok := s.Last()
 	if !ok {

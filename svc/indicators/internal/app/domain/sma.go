@@ -14,6 +14,9 @@ import (
 )
 
 func (ind indicators) GetCachedSMA(ctx context.Context, payload app.GetCachedSMAPayload) (*timeserie.TimeSerie[float64], error) {
+	// Process the payload
+	payload.Process()
+
 	telemetry.L(ctx).Infof(
 		"Got request for SMA from %s to %s on %q (%s) for %q",
 		payload.Start, payload.End, payload.Pair, payload.Exchange, payload.Period)
