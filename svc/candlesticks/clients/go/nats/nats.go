@@ -2,9 +2,11 @@ package nats
 
 import (
 	"context"
+	"time"
 
 	"github.com/lerenn/asyncapi-codegen/pkg/extensions"
 	"github.com/lerenn/asyncapi-codegen/pkg/extensions/brokers/nats"
+	"github.com/lerenn/cryptellation/pkg/adapters/telemetry"
 	helpers "github.com/lerenn/cryptellation/pkg/asyncapi"
 	common "github.com/lerenn/cryptellation/pkg/client"
 	"github.com/lerenn/cryptellation/pkg/config"
@@ -61,6 +63,8 @@ func WithLogger(logger extensions.Logger) ClientOption {
 }
 
 func (c Client) Read(ctx context.Context, payload client.ReadCandlesticksPayload) (*candlestick.List, error) {
+	telemetry.L(ctx).Debugf("Reading candlesticks with %+v parameters", payload)
+
 	// Set message
 	reqMsg := asyncapi.NewListRequestMessage()
 	reqMsg.Headers.ReplyTo = helpers.AddReplyToSuffix(asyncapi.ListRequestChannelPath)
@@ -78,7 +82,17 @@ func (c Client) Read(ctx context.Context, payload client.ReadCandlesticksPayload
 	}
 
 	// To candlestick list
-	return respMsg.ToModel(payload.Exchange, payload.Pair, payload.Period)
+	m, err := respMsg.ToModel(payload.Exchange, payload.Pair, payload.Period)
+	if err != nil {
+		return nil, err
+	}
+
+	_ = m.Loop(func(t time.Time, cs candlestick.Candlestick) (bool, error) {
+		telemetry.L(ctx).Debugf("Got candlestick %s: %+v", t.Format(time.RFC3339), cs)
+		return false, nil
+	})
+
+	return m, nil
 }
 
 func (c Client) ServiceInfo(ctx context.Context) (common.ServiceInfo, error) {

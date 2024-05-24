@@ -44,3 +44,15 @@ func TimeSerie(payload TimeSeriePayload) *timeserie.TimeSerie[float64] {
 
 	return ts
 }
+
+func InvalidValues(ts *timeserie.TimeSerie[float64]) bool {
+	invalidValuesDetected := false
+	_ = ts.Loop(func(t time.Time, v float64) (bool, error) {
+		if v == 0 {
+			invalidValuesDetected = true
+			return true, nil
+		}
+		return false, nil
+	})
+	return invalidValuesDetected
+}

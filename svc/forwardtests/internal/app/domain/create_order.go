@@ -17,6 +17,8 @@ func (f ForwardTests) CreateOrder(ctx context.Context, forwardTestID uuid.UUID, 
 		order.ID = uuid.New()
 	}
 
+	telemetry.L(ctx).Debugf("Creating order %+v on forward test %q", order, forwardTestID.String())
+
 	ft, err := f.db.ReadForwardTest(ctx, forwardTestID)
 	if err != nil {
 		return fmt.Errorf("could not get forward test from db: %w", err)

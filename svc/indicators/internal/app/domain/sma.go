@@ -46,11 +46,11 @@ func (ind indicators) GetCachedSMA(ctx context.Context, payload app.GetCachedSMA
 	missingPoints := ts.AreMissing(payload.Start, payload.End, payload.Period.Duration(), 0)
 
 	// Check if we can return or if we can return right now
-	if !missingPoints && !possiblyOutdatedSMA {
+	if !missingPoints && !possiblyOutdatedSMA && !sma.InvalidValues(ts) {
 		telemetry.L(ctx).Infof("SMA is up to date, returning")
 		return ts, nil
 	}
-	telemetry.L(ctx).Infof("SMA is outdated or missing points, recalculating")
+	telemetry.L(ctx).Infof("SMA is outdated, invalid or missing points, recalculating")
 
 	// Generate SMA points
 	ts, err = ind.generateSMA(ctx, payload)

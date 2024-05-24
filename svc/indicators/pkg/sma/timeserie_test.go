@@ -53,3 +53,31 @@ func (suite *TimeSerieSuite) TestTimeSerieSuite() {
 		})
 	}
 }
+
+func (suite *TimeSerieSuite) TestInvalidValues() {
+	cases := []struct {
+		Payload        *timeserie.TimeSerie[float64]
+		ExpectedOutput bool
+	}{
+		// No invalid values
+		{
+			Payload: timeserie.New[float64]().
+				Set(time.Unix(0, 0), 1).
+				Set(time.Unix(60, 0), 2).
+				Set(time.Unix(120, 0), 3),
+			ExpectedOutput: false,
+		},
+		// Invalid values
+		{
+			Payload: timeserie.New[float64]().
+				Set(time.Unix(0, 0), 1).
+				Set(time.Unix(60, 0), 0).
+				Set(time.Unix(120, 0), 3),
+			ExpectedOutput: true,
+		},
+	}
+
+	for i, c := range cases {
+		suite.Require().Equal(c.ExpectedOutput, InvalidValues(c.Payload), i)
+	}
+}
