@@ -4,14 +4,14 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	common "github.com/lerenn/cryptellation/pkg/client"
 	"github.com/lerenn/cryptellation/pkg/models/order"
 	"github.com/lerenn/cryptellation/pkg/utils"
-	client "github.com/lerenn/cryptellation/svc/forwardtests/clients/go"
 )
 
-func (msg *OrdersCreateRequestMessage) Set(payload client.OrderCreationPayload) {
+func (msg *OrdersCreateRequestMessage) Set(payload common.OrderCreationPayload) {
 	// Backtest
-	msg.Payload.Id = ForwardTestIDSchema(payload.ForwardTestID.String())
+	msg.Payload.Id = ForwardTestIDSchema(payload.RunID.String())
 
 	// Order
 	msg.Payload.Order.Exchange = ExchangeSchema(payload.Exchange)

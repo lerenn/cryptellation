@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 
+	common "github.com/lerenn/cryptellation/pkg/client"
 	"github.com/lerenn/cryptellation/pkg/models/account"
 	"github.com/lerenn/cryptellation/pkg/models/event"
 	"github.com/lerenn/cryptellation/pkg/models/order"
@@ -200,13 +201,13 @@ func (suite *EndToEndSuite) TestBacktestOrder() {
 	suite.Require().Equal(1.0, accounts["binance"].Balances["BTC"])
 
 	// Send order
-	err = suite.client.CreateOrder(context.Background(), client.OrderCreationPayload{
-		BacktestID: id,
-		Type:       order.TypeIsMarket,
-		Exchange:   "binance",
-		Pair:       "BTC-USDT",
-		Side:       order.SideIsSell,
-		Quantity:   1,
+	err = suite.client.CreateOrder(context.Background(), common.OrderCreationPayload{
+		RunID:    id,
+		Type:     order.TypeIsMarket,
+		Exchange: "binance",
+		Pair:     "BTC-USDT",
+		Side:     order.SideIsSell,
+		Quantity: 1,
 	})
 	suite.Require().NoError(err)
 
@@ -228,13 +229,13 @@ func (suite *EndToEndSuite) TestBacktestOrder() {
 	}
 
 	// Send order
-	err = suite.client.CreateOrder(context.Background(), client.OrderCreationPayload{
-		BacktestID: id,
-		Type:       order.TypeIsMarket,
-		Exchange:   "binance",
-		Pair:       "BTC-USDT",
-		Side:       order.SideIsBuy,
-		Quantity:   23253.40 / 23269.07, // BTC to buy => USDT Qty / Price
+	err = suite.client.CreateOrder(context.Background(), common.OrderCreationPayload{
+		RunID:    id,
+		Type:     order.TypeIsMarket,
+		Exchange: "binance",
+		Pair:     "BTC-USDT",
+		Side:     order.SideIsBuy,
+		Quantity: 23253.40 / 23269.07, // BTC to buy => USDT Qty / Price
 	})
 	suite.Require().NoError(err)
 

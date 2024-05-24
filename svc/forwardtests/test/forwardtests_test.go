@@ -4,9 +4,9 @@ import (
 	"context"
 
 	"github.com/google/uuid"
+	common "github.com/lerenn/cryptellation/pkg/client"
 	"github.com/lerenn/cryptellation/pkg/models/account"
 	"github.com/lerenn/cryptellation/pkg/models/order"
-	client "github.com/lerenn/cryptellation/svc/forwardtests/clients/go"
 	"github.com/lerenn/cryptellation/svc/forwardtests/pkg/forwardtest"
 )
 
@@ -39,13 +39,13 @@ func (suite *EndToEndSuite) TestCreateOrder() {
 	suite.Require().NoError(err)
 
 	// Create order
-	err = suite.client.CreateOrder(context.Background(), client.OrderCreationPayload{
-		ForwardTestID: id,
-		Type:          order.TypeIsMarket,
-		Exchange:      "binance",
-		Pair:          "BTC-USDT",
-		Side:          order.SideIsBuy,
-		Quantity:      1,
+	err = suite.client.CreateOrder(context.Background(), common.OrderCreationPayload{
+		RunID:    id,
+		Type:     order.TypeIsMarket,
+		Exchange: "binance",
+		Pair:     "BTC-USDT",
+		Side:     order.SideIsBuy,
+		Quantity: 1,
 	})
 	suite.Require().NoError(err)
 

@@ -11,13 +11,12 @@ import (
 	client "github.com/lerenn/cryptellation/pkg/client"
 	"github.com/lerenn/cryptellation/pkg/models/account"
 	"github.com/lerenn/cryptellation/pkg/models/event"
-	"github.com/lerenn/cryptellation/pkg/models/order"
 )
 
 type Client interface {
 	Advance(ctx context.Context, backtestID uuid.UUID) error
 	Create(ctx context.Context, payload BacktestCreationPayload) (uuid.UUID, error)
-	CreateOrder(ctx context.Context, payload OrderCreationPayload) error
+	CreateOrder(ctx context.Context, payload client.OrderCreationPayload) error
 	GetAccounts(ctx context.Context, backtestID uuid.UUID) (map[string]account.Account, error)
 	Subscribe(ctx context.Context, backtestID uuid.UUID, exchange, pair string) error
 	ListenEvents(ctx context.Context, backtestID uuid.UUID) (<-chan event.Event, error)
@@ -30,13 +29,4 @@ type BacktestCreationPayload struct {
 	Accounts  map[string]account.Account
 	StartTime time.Time
 	EndTime   *time.Time
-}
-
-type OrderCreationPayload struct {
-	BacktestID uuid.UUID
-	Type       order.Type
-	Exchange   string
-	Pair       string
-	Side       order.Side
-	Quantity   float64
 }

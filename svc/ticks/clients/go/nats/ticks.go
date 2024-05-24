@@ -7,7 +7,7 @@ import (
 	"github.com/lerenn/asyncapi-codegen/pkg/extensions"
 	"github.com/lerenn/asyncapi-codegen/pkg/extensions/brokers/nats"
 	helpers "github.com/lerenn/cryptellation/pkg/asyncapi"
-	clientPkg "github.com/lerenn/cryptellation/pkg/client"
+	common "github.com/lerenn/cryptellation/pkg/client"
 	"github.com/lerenn/cryptellation/pkg/config"
 	"github.com/lerenn/cryptellation/pkg/models/event"
 	asyncapi "github.com/lerenn/cryptellation/svc/ticks/api/asyncapi"
@@ -101,7 +101,7 @@ func (t Client) SubscribeToTicks(ctx context.Context, sub event.TickSubscription
 	return ch, nil
 }
 
-func (t Client) ServiceInfo(ctx context.Context) (clientPkg.ServiceInfo, error) {
+func (t Client) ServiceInfo(ctx context.Context) (common.ServiceInfo, error) {
 	// Set message
 	reqMsg := asyncapi.NewServiceInfoRequestMessage()
 	reqMsg.Headers.ReplyTo = helpers.AddReplyToSuffix(asyncapi.ServiceInfoRequestChannelPath)
@@ -109,7 +109,7 @@ func (t Client) ServiceInfo(ctx context.Context) (clientPkg.ServiceInfo, error) 
 	// Send request
 	respMsg, err := t.ctrl.RequestToServiceInfoOperation(ctx, reqMsg)
 	if err != nil {
-		return clientPkg.ServiceInfo{}, err
+		return common.ServiceInfo{}, err
 	}
 
 	return respMsg.ToModel(), nil

@@ -80,7 +80,7 @@ func (mr *MockClientMockRecorder) Create(ctx, payload interface{}) *gomock.Call 
 }
 
 // CreateOrder mocks base method.
-func (m *MockClient) CreateOrder(ctx context.Context, payload OrderCreationPayload) error {
+func (m *MockClient) CreateOrder(ctx context.Context, payload client.OrderCreationPayload) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreateOrder", ctx, payload)
 	ret0, _ := ret[0].(error)

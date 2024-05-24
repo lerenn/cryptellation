@@ -9,7 +9,7 @@ import (
 	"github.com/lerenn/asyncapi-codegen/pkg/extensions"
 	"github.com/lerenn/asyncapi-codegen/pkg/extensions/brokers/nats"
 	helpers "github.com/lerenn/cryptellation/pkg/asyncapi"
-	clientPkg "github.com/lerenn/cryptellation/pkg/client"
+	common "github.com/lerenn/cryptellation/pkg/client"
 	"github.com/lerenn/cryptellation/pkg/config"
 	"github.com/lerenn/cryptellation/pkg/models/account"
 	"github.com/lerenn/cryptellation/pkg/models/event"
@@ -164,7 +164,7 @@ func (b Client) Advance(ctx context.Context, backtestID uuid.UUID) error {
 	return helpers.UnwrapError(respMsg.Payload.Error)
 }
 
-func (b Client) CreateOrder(ctx context.Context, payload client.OrderCreationPayload) error {
+func (b Client) CreateOrder(ctx context.Context, payload common.OrderCreationPayload) error {
 	// Set message
 	reqMsg := asyncapi.NewOrdersCreateRequestMessage()
 	reqMsg.Headers.ReplyTo = helpers.AddReplyToSuffix(asyncapi.OrdersCreateRequestChannelPath)
@@ -201,7 +201,7 @@ func (b Client) GetAccounts(ctx context.Context, backtestID uuid.UUID) (map[stri
 	return respMsg.ToModel(), nil
 }
 
-func (b Client) ServiceInfo(ctx context.Context) (clientPkg.ServiceInfo, error) {
+func (b Client) ServiceInfo(ctx context.Context) (common.ServiceInfo, error) {
 	// Set message
 	reqMsg := asyncapi.NewServiceInfoRequestMessage()
 	reqMsg.Headers.ReplyTo = helpers.AddReplyToSuffix(asyncapi.ServiceInfoRequestChannelPath)
@@ -209,7 +209,7 @@ func (b Client) ServiceInfo(ctx context.Context) (clientPkg.ServiceInfo, error) 
 	// Send request
 	respMsg, err := b.ctrl.RequestToServiceInfoOperation(ctx, reqMsg)
 	if err != nil {
-		return clientPkg.ServiceInfo{}, err
+		return common.ServiceInfo{}, err
 	}
 
 	return respMsg.ToModel(), nil

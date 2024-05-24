@@ -9,9 +9,9 @@ var (
 type Mode string
 
 const (
-	ModeIsBacktest Mode = "backtest"
-	ModeIsForward  Mode = "forward"
-	ModeIsLive     Mode = "live"
+	ModeIsBacktest    Mode = "backtest"
+	ModeIsForwardTest Mode = "forwardtest"
+	ModeIsLive        Mode = "live"
 )
 
 func (m Mode) String() string {
@@ -20,7 +20,7 @@ func (m Mode) String() string {
 
 func (m Mode) IsValid() bool {
 	switch m {
-	case ModeIsBacktest, ModeIsForward, ModeIsLive:
+	case ModeIsBacktest, ModeIsForwardTest, ModeIsLive:
 		return true
 	}
 	return false

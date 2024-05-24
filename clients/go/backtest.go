@@ -3,8 +3,10 @@ package client
 import (
 	"context"
 
+	"github.com/lerenn/cryptellation/pkg/adapters/telemetry"
 	"github.com/lerenn/cryptellation/pkg/models/event"
 	backtests "github.com/lerenn/cryptellation/svc/backtests/clients/go"
+	"github.com/lerenn/cryptellation/svc/ticks/pkg/tick"
 )
 
 type Backtest struct {
@@ -55,30 +57,41 @@ func (b *Backtest) Run() error {
 		if err != nil {
 			return err
 		}
+		telemetry.L(context.Background()).Debug("Backtest advanced")
 
-		for {
-			// Receiving events
-			evt := <-events
-
-			// Update the time of the run
-			b.run.Time = evt.Time
-
-			// If status, then there is no more events
-			if evt.Type == event.TypeIsStatus {
-				status := evt.Content.(event.Status)
-				if status.Finished {
-					endBacktest = true
-				}
-
-				break
-			}
-
-			// Call the bot on other events
-			if err := b.bot.OnEvent(evt); err != nil {
-				return err
-			}
+		endBacktest, err = b.loopOnEvents(events)
+		if err != nil {
+			return err
 		}
 	}
 
 	return b.bot.OnExit()
+}
+
+func (b *Backtest) loopOnEvents(events <-chan event.Event) (bool, error) {
+	for {
+		// Receiving events
+		telemetry.L(context.Background()).Debug("Wait event")
+		evt := <-events
+
+		// Update the time of the run
+		b.run.Time = evt.Time
+
+		telemetry.L(context.Background()).Debugf("Event %q received", evt.Type.String())
+		switch evt.Type {
+		case event.TypeIsStatus:
+			status := evt.Content.(event.Status)
+			return status.Finished, nil // Exit loop event with indication wether the backtest is finished
+		case event.TypeIsTick:
+			t, ok := evt.Content.(tick.Tick)
+			if !ok {
+				telemetry.L(context.Background()).Error("tick event received but content is not a tick")
+				continue
+			}
+
+			if err := b.bot.OnTick(t); err != nil {
+				return false, err
+			}
+		}
+	}
 }
