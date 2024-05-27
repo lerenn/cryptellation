@@ -3,17 +3,13 @@ package asyncapi
 import (
 	"encoding/json"
 	"fmt"
-	"math/rand/v2"
-)
 
-const (
-	// RandomSuffixSize is the suffix size used to generate a random replyTo channel
-	RandomSuffixSize = 1024
+	"github.com/google/uuid"
 )
 
 // AddReplyToSuffix adds a random suffix to the replyTo channel name.
 func AddReplyToSuffix(address string) string {
-	return fmt.Sprintf("%s.%d", address, rand.IntN(RandomSuffixSize))
+	return fmt.Sprintf("%s.%s", address, uuid.New().String())
 }
 
 func UnwrapError(errAny any) error {
