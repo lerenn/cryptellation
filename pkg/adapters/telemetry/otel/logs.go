@@ -57,7 +57,7 @@ func newLogs(ctx context.Context, serviceName, url string) (logs, error) {
 			return lvl >= zapcore.ErrorLevel
 		})
 		lowPriority := zap.LevelEnablerFunc(func(lvl zapcore.Level) bool {
-			return lvl < zapcore.ErrorLevel
+			return lvl < zapcore.ErrorLevel && lvl >= logLevelFromEnv()
 		})
 
 		cores = append(cores,
@@ -76,6 +76,18 @@ func newLogs(ctx context.Context, serviceName, url string) (logs, error) {
 		provider:      provider,
 		logger:        logger,
 	}, nil
+}
+
+func logLevelFromEnv() zapcore.Level {
+	envLogLevel := os.Getenv("LOG_LEVEL")
+	if envLogLevel == "DEBUG" {
+		return zapcore.DebugLevel
+	} else if envLogLevel == "INFO" {
+		return zapcore.InfoLevel
+	} else if envLogLevel == "WARN" {
+		return zapcore.WarnLevel
+	}
+	return zapcore.InfoLevel
 }
 
 func (l logs) close(ctx context.Context) {
