@@ -184,3 +184,27 @@ func OrderTimeRanges(tr []TimeRange) []TimeRange {
 
 	return mergeTimeRangesWithoutOrdering(tr, tr)
 }
+
+func TimeRangesFromMissingTimes(times []time.Time) []TimeRange {
+	if len(times) == 0 {
+		return []TimeRange{}
+	}
+
+	tr := make([]TimeRange, 0, len(times))
+	current := TimeRange{
+		Start: times[0],
+		End:   times[0],
+	}
+
+	for _, t := range times[1:] {
+		if current.End.Add(1).Equal(t) {
+			current.End = t
+			continue
+		}
+
+		tr = append(tr, current)
+		current.Start, current.End = t, t
+	}
+
+	return append(tr, current)
+}

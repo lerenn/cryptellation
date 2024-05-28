@@ -7,6 +7,7 @@ require (
 	github.com/adshao/go-binance/v2 v2.5.0
 	github.com/agoda-com/opentelemetry-logs-go v0.5.0
 	github.com/agoda-com/otelzap v0.1.1
+	github.com/bluele/gcache v0.0.2
 	github.com/charmbracelet/bubbles v0.18.0
 	github.com/charmbracelet/bubbletea v0.26.2
 	github.com/dsnet/golib/unitconv v1.0.2

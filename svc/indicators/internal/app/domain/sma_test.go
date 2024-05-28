@@ -7,7 +7,7 @@ import (
 
 	"github.com/lerenn/cryptellation/pkg/models/timeserie"
 	"github.com/lerenn/cryptellation/pkg/utils"
-	client "github.com/lerenn/cryptellation/svc/candlesticks/clients/go"
+	candlesticks "github.com/lerenn/cryptellation/svc/candlesticks/clients/go"
 	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/candlestick"
 	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/period"
 	"github.com/lerenn/cryptellation/svc/indicators/internal/app"
@@ -24,12 +24,12 @@ type SMASuite struct {
 	suite.Suite
 	app          app.Indicators
 	db           *db.MockPort
-	candlesticks *client.MockClient
+	candlesticks *candlesticks.MockClient
 }
 
 func (suite *SMASuite) SetupTest() {
 	suite.db = db.NewMockPort(gomock.NewController(suite.T()))
-	suite.candlesticks = client.NewMockClient(gomock.NewController(suite.T()))
+	suite.candlesticks = candlesticks.NewMockClient(gomock.NewController(suite.T()))
 	suite.app = New(suite.db, suite.candlesticks)
 }
 
@@ -54,7 +54,7 @@ func (suite *SMASuite) TestAllExistWithNoneInDB() {
 		PriceType:    candlestick.PriceTypeIsClose,
 	}).Return(timeserie.New[float64](), nil)
 
-	suite.candlesticks.EXPECT().Read(context.Background(), client.ReadCandlesticksPayload{
+	suite.candlesticks.EXPECT().Read(context.Background(), candlesticks.ReadCandlesticksPayload{
 		Exchange: "exchange",
 		Pair:     "ETC-USDT",
 		Period:   period.M1,
