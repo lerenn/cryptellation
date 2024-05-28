@@ -12,8 +12,8 @@ import (
 	"github.com/lerenn/cryptellation/cmd/cryptellation-tui/charts/candlesticks"
 	"github.com/lerenn/cryptellation/pkg/config"
 	"github.com/lerenn/cryptellation/pkg/utils"
-	client "github.com/lerenn/cryptellation/svc/candlesticks/clients/go"
-	candlesticksclient "github.com/lerenn/cryptellation/svc/candlesticks/clients/go/nats"
+	cdsclient "github.com/lerenn/cryptellation/svc/candlesticks/clients/go"
+	cdsnats "github.com/lerenn/cryptellation/svc/candlesticks/clients/go/nats"
 	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/candlestick"
 	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/period"
 )
@@ -21,7 +21,7 @@ import (
 type candlesticksDataUpdate struct{}
 
 type CandlesticksView struct {
-	client           candlesticksclient.Client
+	client           cdsclient.Client
 	updateInProgress bool
 	canvas           *charts.Canvas
 	chart            *candlesticks.Chart
@@ -35,10 +35,11 @@ type CandlesticksView struct {
 }
 
 func NewCandlesticksView(program *tea.Program, exchange, pair, periodSymbol string) *CandlesticksView {
-	candlesticksClient, err := candlesticksclient.NewClient(config.LoadNATS())
+	cdsClient, err := cdsnats.NewClient(config.LoadNATS())
 	if err != nil {
 		log.Fatal(err)
 	}
+	cachedCdsClient := cdsclient.NewCachedClient(cdsClient, cdsclient.DefaultCacheParameters())
 
 	per := period.Symbol(strings.ToUpper(periodSymbol))
 	if err := per.Validate(); err != nil {
@@ -46,7 +47,7 @@ func NewCandlesticksView(program *tea.Program, exchange, pair, periodSymbol stri
 	}
 
 	cv := &CandlesticksView{
-		client:   candlesticksClient,
+		client:   cachedCdsClient,
 		program:  program,
 		exchange: strings.ToLower(exchange),
 		pair:     strings.ToUpper(pair),
@@ -100,7 +101,7 @@ func (cv *CandlesticksView) updateMissingCandlesticks() {
 			first = utils.ToReference(first.Add(-cv.period.Duration() * delta))
 			last = utils.ToReference(last.Add(cv.period.Duration() * delta))
 
-			list, err := cv.client.Read(context.TODO(), client.ReadCandlesticksPayload{
+			list, err := cv.client.Read(context.TODO(), cdsclient.ReadCandlesticksPayload{
 				Exchange: cv.exchange,
 				Pair:     cv.pair,
 				Period:   cv.period,

@@ -24,15 +24,16 @@ func newAdapters(ctx context.Context) (adapters, error) {
 	}
 
 	// Init candlesticks client
-	candlesticks, err := candlesticksNats.NewClient(
+	cdsClient, err := candlesticksNats.NewClient(
 		config.LoadNATS(), candlesticksNats.WithLogger(asyncapipkg.LoggerWrapper{}))
 	if err != nil {
 		return adapters{}, err
 	}
+	cachedCdsClient := candlesticks.NewCachedClient(cdsClient, candlesticks.DefaultCacheParameters())
 
 	return adapters{
 		db:           db,
-		candlesticks: candlesticks,
+		candlesticks: cachedCdsClient,
 	}, nil
 }
 

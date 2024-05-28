@@ -38,12 +38,12 @@ func NewServices(c config.NATS) (client Services, err error) {
 	}
 	client.backtests = backtests
 
-	candlesticks, err := natscandlesticks.NewClient(c)
+	cds, err := natscandlesticks.NewClient(c)
 	if err != nil {
 		client.Close(context.TODO())
 		return
 	}
-	client.candlesticks = candlesticks
+	client.candlesticks = candlesticks.NewCachedClient(cds, candlesticks.DefaultCacheParameters())
 
 	exchanges, err := natsexchanges.NewClient(c)
 	if err != nil {

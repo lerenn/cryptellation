@@ -3,6 +3,7 @@ package daemon
 import (
 	"context"
 
+	asyncapipkg "github.com/lerenn/cryptellation/pkg/asyncapi"
 	"github.com/lerenn/cryptellation/pkg/config"
 	candlesticks "github.com/lerenn/cryptellation/svc/candlesticks/clients/go"
 	candlesticksNats "github.com/lerenn/cryptellation/svc/candlesticks/clients/go/nats"
@@ -23,14 +24,16 @@ func newAdapters(ctx context.Context) (adapters, error) {
 	}
 
 	// Init candlesticks client
-	candlesticks, err := candlesticksNats.NewClient(config.LoadNATS())
+	cdsClient, err := candlesticksNats.NewClient(
+		config.LoadNATS(), candlesticksNats.WithLogger(asyncapipkg.LoggerWrapper{}))
 	if err != nil {
 		return adapters{}, err
 	}
+	cachedCdsClient := candlesticks.NewCachedClient(cdsClient, candlesticks.DefaultCacheParameters())
 
 	return adapters{
 		db:           db,
-		candlesticks: candlesticks,
+		candlesticks: cachedCdsClient,
 	}, nil
 }
 
