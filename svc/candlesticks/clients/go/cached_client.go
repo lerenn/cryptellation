@@ -84,11 +84,22 @@ func (client *CachedClient) Read(ctx context.Context, payload ReadCandlesticksPa
 			Timestamp: current.Unix(),
 		}
 		c, err := client.cache.Get(key)
-		if errors.Is(err, gcache.KeyNotFoundError) {
+		if errors.Is(err, gcache.KeyNotFoundError) { // If not present in cache
 			missingTimes = append(missingTimes, current)
-		} else if err != nil {
+			continue
+		} else if err != nil { // If there is an error
 			return nil, err
-		} else if err := list.Set(current, c.(candlestick.Candlestick)); err != nil {
+		}
+
+		// Check if uncomplete
+		cd := c.(candlestick.Candlestick)
+		if cd.Uncomplete {
+			missingTimes = append(missingTimes, current)
+			continue
+		}
+
+		// Add to list
+		if err := list.Set(current, cd); err != nil {
 			return nil, err
 		}
 	}
@@ -137,5 +148,6 @@ func (client *CachedClient) ServiceInfo(ctx context.Context) (client.ServiceInfo
 }
 
 func (client *CachedClient) Close(ctx context.Context) {
+	client.cache.Purge()
 	client.controller.Close(ctx)
 }

@@ -12,22 +12,22 @@ import (
 	gomock "go.uber.org/mock/gomock"
 )
 
-func TestTimeRangeSuite(t *testing.T) {
-	suite.Run(t, new(TimeRangeSuite))
+func TestCachedClientSuite(t *testing.T) {
+	suite.Run(t, new(CachedClientSuite))
 }
 
-type TimeRangeSuite struct {
+type CachedClientSuite struct {
 	candlesticks *MockClient
 	cachedClient *CachedClient
 	suite.Suite
 }
 
-func (suite *TimeRangeSuite) SetupTest() {
+func (suite *CachedClientSuite) SetupTest() {
 	suite.candlesticks = NewMockClient(gomock.NewController(suite.T()))
 	suite.cachedClient = NewCachedClient(suite.candlesticks, DefaultCacheParameters())
 }
 
-func (suite *TimeRangeSuite) TestRead() {
+func (suite *CachedClientSuite) TestRead() {
 	start := utils.Must(time.Parse(time.RFC3339, "2021-01-01T00:00:00Z"))
 	expectedRequestedStart := start.Add(-period.M1.Duration() * DefaultPreLoadingBeforeSize)
 	end := utils.Must(time.Parse(time.RFC3339, "2021-01-01T00:03:00Z"))
