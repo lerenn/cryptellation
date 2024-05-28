@@ -59,12 +59,12 @@ func NewServices(c config.NATS) (client Services, err error) {
 	}
 	client.forwardtests = forwardtests
 
-	indicators, err := natsindicators.NewClient(c)
+	idts, err := natsindicators.NewClient(c)
 	if err != nil {
 		client.Close(context.TODO())
 		return
 	}
-	client.indicators = indicators
+	client.indicators = indicators.NewCachedClient(idts, indicators.DefaultCacheParameters())
 
 	ticks, err := natsticks.NewClient(c)
 	if err != nil {

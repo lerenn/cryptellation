@@ -1,5 +1,5 @@
 // Generate code for mock
-//go:generate go run go.uber.org/mock/mockgen@v0.2.0 -source=indicators.go -destination=mock.gen.go -package client
+//go:generate go run go.uber.org/mock/mockgen@v0.2.0 -source=client.go -destination=mock.gen.go -package client
 
 package client
 
@@ -15,7 +15,6 @@ import (
 
 type Client interface {
 	SMA(ctx context.Context, payload SMAPayload) (*timeserie.TimeSerie[float64], error)
-
 	ServiceInfo(ctx context.Context) (client.ServiceInfo, error)
 	Close(ctx context.Context)
 }
