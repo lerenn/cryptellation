@@ -45,12 +45,12 @@ func NewServices(c config.NATS) (client Services, err error) {
 	}
 	client.candlesticks = candlesticks.NewCachedClient(cds, candlesticks.DefaultCacheParameters())
 
-	exchanges, err := natsexchanges.NewClient(c)
+	exchgs, err := natsexchanges.NewClient(c)
 	if err != nil {
 		client.Close(context.TODO())
 		return
 	}
-	client.exchanges = exchanges
+	client.exchanges = exchanges.NewCachedClient(exchgs, exchanges.DefaultCacheParameters())
 
 	forwardtests, err := natsforwardtests.NewClient(c)
 	if err != nil {
