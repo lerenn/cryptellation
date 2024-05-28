@@ -22,6 +22,7 @@ type Client struct {
 	broker *nats.Controller
 	ctrl   *asyncapi.UserController
 
+	name   string
 	logger extensions.Logger
 }
 
@@ -63,6 +64,12 @@ func NewClient(c config.NATS, options ...BacktestsOption) (Client, error) {
 func WithLogger(logger extensions.Logger) BacktestsOption {
 	return func(b *Client) {
 		b.logger = logger
+	}
+}
+
+func WithName(name string) BacktestsOption {
+	return func(b *Client) {
+		b.name = name
 	}
 }
 
@@ -115,7 +122,7 @@ func (b Client) ListenEvents(ctx context.Context, backtestID uuid.UUID) (<-chan 
 func (b Client) Create(ctx context.Context, payload client.BacktestCreationPayload) (uuid.UUID, error) {
 	// Set message
 	reqMsg := asyncapi.NewCreateRequestMessage()
-	reqMsg.Headers.ReplyTo = helpers.AddReplyToSuffix(asyncapi.CreateRequestChannelPath)
+	reqMsg.Headers.ReplyTo = helpers.AddReplyToSuffix(asyncapi.CreateRequestChannelPath, b.name)
 	reqMsg.Set(payload)
 
 	// Send request
@@ -135,7 +142,7 @@ func (b Client) Create(ctx context.Context, payload client.BacktestCreationPaylo
 func (b Client) Subscribe(ctx context.Context, backtestID uuid.UUID, exchange, pair string) error {
 	// Set message
 	reqMsg := asyncapi.NewSubscribeRequestMessage()
-	reqMsg.Headers.ReplyTo = helpers.AddReplyToSuffix(asyncapi.SubscribeRequestChannelPath)
+	reqMsg.Headers.ReplyTo = helpers.AddReplyToSuffix(asyncapi.SubscribeRequestChannelPath, b.name)
 	reqMsg.Set(backtestID, exchange, pair)
 
 	// Send request
@@ -151,7 +158,7 @@ func (b Client) Subscribe(ctx context.Context, backtestID uuid.UUID, exchange, p
 func (b Client) Advance(ctx context.Context, backtestID uuid.UUID) error {
 	// Set message
 	reqMsg := asyncapi.NewAdvanceRequestMessage()
-	reqMsg.Headers.ReplyTo = helpers.AddReplyToSuffix(asyncapi.AdvanceRequestChannelPath)
+	reqMsg.Headers.ReplyTo = helpers.AddReplyToSuffix(asyncapi.AdvanceRequestChannelPath, b.name)
 	reqMsg.Set(backtestID)
 
 	// Send request
@@ -167,7 +174,7 @@ func (b Client) Advance(ctx context.Context, backtestID uuid.UUID) error {
 func (b Client) CreateOrder(ctx context.Context, payload common.OrderCreationPayload) error {
 	// Set message
 	reqMsg := asyncapi.NewOrdersCreateRequestMessage()
-	reqMsg.Headers.ReplyTo = helpers.AddReplyToSuffix(asyncapi.OrdersCreateRequestChannelPath)
+	reqMsg.Headers.ReplyTo = helpers.AddReplyToSuffix(asyncapi.OrdersCreateRequestChannelPath, b.name)
 	reqMsg.Set(payload)
 
 	// Send request
@@ -183,7 +190,7 @@ func (b Client) CreateOrder(ctx context.Context, payload common.OrderCreationPay
 func (b Client) GetAccounts(ctx context.Context, backtestID uuid.UUID) (map[string]account.Account, error) {
 	// Set message
 	reqMsg := asyncapi.NewAccountsListRequestMessage()
-	reqMsg.Headers.ReplyTo = helpers.AddReplyToSuffix(asyncapi.AccountsListRequestChannelPath)
+	reqMsg.Headers.ReplyTo = helpers.AddReplyToSuffix(asyncapi.AccountsListRequestChannelPath, b.name)
 	reqMsg.Set(backtestID)
 
 	// Send request
@@ -204,7 +211,7 @@ func (b Client) GetAccounts(ctx context.Context, backtestID uuid.UUID) (map[stri
 func (b Client) ServiceInfo(ctx context.Context) (common.ServiceInfo, error) {
 	// Set message
 	reqMsg := asyncapi.NewServiceInfoRequestMessage()
-	reqMsg.Headers.ReplyTo = helpers.AddReplyToSuffix(asyncapi.ServiceInfoRequestChannelPath)
+	reqMsg.Headers.ReplyTo = helpers.AddReplyToSuffix(asyncapi.ServiceInfoRequestChannelPath, b.name)
 
 	// Send request
 	respMsg, err := b.ctrl.RequestToServiceInfoOperation(ctx, reqMsg)

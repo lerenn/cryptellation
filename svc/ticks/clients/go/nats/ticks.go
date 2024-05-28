@@ -18,6 +18,7 @@ type Client struct {
 	broker *nats.Controller
 	ctrl   *asyncapi.UserController
 	logger extensions.Logger
+	name   string
 }
 
 type ClientOption func(t *Client)
@@ -58,6 +59,12 @@ func NewClient(c config.NATS, options ...ClientOption) (Client, error) {
 func WithLogger(logger extensions.Logger) ClientOption {
 	return func(c *Client) {
 		c.logger = logger
+	}
+}
+
+func WithName(name string) ClientOption {
+	return func(c *Client) {
+		c.name = name
 	}
 }
 
@@ -104,7 +111,7 @@ func (t Client) SubscribeToTicks(ctx context.Context, sub event.TickSubscription
 func (t Client) ServiceInfo(ctx context.Context) (common.ServiceInfo, error) {
 	// Set message
 	reqMsg := asyncapi.NewServiceInfoRequestMessage()
-	reqMsg.Headers.ReplyTo = helpers.AddReplyToSuffix(asyncapi.ServiceInfoRequestChannelPath)
+	reqMsg.Headers.ReplyTo = helpers.AddReplyToSuffix(asyncapi.ServiceInfoRequestChannelPath, t.name)
 
 	// Send request
 	respMsg, err := t.ctrl.RequestToServiceInfoOperation(ctx, reqMsg)

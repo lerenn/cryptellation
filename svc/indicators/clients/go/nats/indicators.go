@@ -17,6 +17,7 @@ type Client struct {
 	broker *nats.Controller
 	ctrl   *asyncapi.UserController
 	logger extensions.Logger
+	name   string
 }
 
 type IndicatorsOption func(i *Client)
@@ -54,16 +55,22 @@ func NewClient(c config.NATS, options ...IndicatorsOption) (Client, error) {
 	return i, nil
 }
 
-func WithIndicatorsLogger(logger extensions.Logger) IndicatorsOption {
+func WithLogger(logger extensions.Logger) IndicatorsOption {
 	return func(c *Client) {
 		c.logger = logger
+	}
+}
+
+func WithName(name string) IndicatorsOption {
+	return func(c *Client) {
+		c.name = name
 	}
 }
 
 func (ids Client) SMA(ctx context.Context, payload client.SMAPayload) (*timeserie.TimeSerie[float64], error) {
 	// Set message
 	reqMsg := asyncapi.NewSMARequestMessage()
-	reqMsg.Headers.ReplyTo = helpers.AddReplyToSuffix(asyncapi.SMARequestChannelPath)
+	reqMsg.Headers.ReplyTo = helpers.AddReplyToSuffix(asyncapi.SMARequestChannelPath, ids.name)
 	reqMsg.Set(payload)
 
 	// Send request
@@ -84,7 +91,7 @@ func (ids Client) SMA(ctx context.Context, payload client.SMAPayload) (*timeseri
 func (ids Client) ServiceInfo(ctx context.Context) (common.ServiceInfo, error) {
 	// Set message
 	reqMsg := asyncapi.NewServiceInfoRequestMessage()
-	reqMsg.Headers.ReplyTo = helpers.AddReplyToSuffix(asyncapi.ServiceInfoRequestChannelPath)
+	reqMsg.Headers.ReplyTo = helpers.AddReplyToSuffix(asyncapi.ServiceInfoRequestChannelPath, ids.name)
 
 	// Send request
 	respMsg, err := ids.ctrl.RequestToServiceInfoOperation(ctx, reqMsg)

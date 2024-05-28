@@ -25,7 +25,9 @@ func newAdapters(ctx context.Context) (adapters, error) {
 
 	// Init candlesticks client
 	cdsClient, err := candlesticksNats.NewClient(
-		config.LoadNATS(), candlesticksNats.WithLogger(asyncapipkg.LoggerWrapper{}))
+		config.LoadNATS(),
+		candlesticksNats.WithLogger(asyncapipkg.LoggerWrapper{}),
+		candlesticksNats.WithName("backtests"))
 	if err != nil {
 		return adapters{}, err
 	}

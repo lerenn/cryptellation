@@ -18,6 +18,7 @@ type Client struct {
 	broker *nats.Controller
 	ctrl   *asyncapi.UserController
 	logger extensions.Logger
+	name   string
 }
 
 type ClientOption func(e *Client)
@@ -61,10 +62,16 @@ func WithLogger(logger extensions.Logger) ClientOption {
 	}
 }
 
+func WithName(name string) ClientOption {
+	return func(c *Client) {
+		c.name = name
+	}
+}
+
 func (c Client) Read(ctx context.Context, names ...string) ([]exchange.Exchange, error) {
 	// Set message
 	reqMsg := asyncapi.NewListRequestMessage()
-	reqMsg.Headers.ReplyTo = helpers.AddReplyToSuffix(asyncapi.ListRequestChannelPath)
+	reqMsg.Headers.ReplyTo = helpers.AddReplyToSuffix(asyncapi.ListRequestChannelPath, c.name)
 	reqMsg.Set(names...)
 
 	// Send request
@@ -85,7 +92,7 @@ func (c Client) Read(ctx context.Context, names ...string) ([]exchange.Exchange,
 func (c Client) ServiceInfo(ctx context.Context) (client.ServiceInfo, error) {
 	// Set message
 	reqMsg := asyncapi.NewServiceInfoRequestMessage()
-	reqMsg.Headers.ReplyTo = helpers.AddReplyToSuffix(asyncapi.ServiceInfoRequestChannelPath)
+	reqMsg.Headers.ReplyTo = helpers.AddReplyToSuffix(asyncapi.ServiceInfoRequestChannelPath, c.name)
 
 	// Send request
 	respMsg, err := c.ctrl.RequestToServiceInfoOperation(ctx, reqMsg)

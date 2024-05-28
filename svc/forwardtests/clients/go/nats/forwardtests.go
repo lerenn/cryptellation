@@ -18,6 +18,7 @@ type Client struct {
 	broker *nats.Controller
 	ctrl   *asyncapi.UserController
 	logger extensions.Logger
+	name   string
 }
 
 type ForwardTestsOption func(b *Client)
@@ -61,10 +62,16 @@ func WithLogger(logger extensions.Logger) ForwardTestsOption {
 	}
 }
 
+func WithName(name string) ForwardTestsOption {
+	return func(b *Client) {
+		b.name = name
+	}
+}
+
 func (cl Client) CreateForwardTest(ctx context.Context, payload forwardtest.NewPayload) (uuid.UUID, error) {
 	// Set message
 	reqMsg := asyncapi.NewCreateRequestMessage()
-	reqMsg.Headers.ReplyTo = helpers.AddReplyToSuffix(asyncapi.CreateRequestChannelPath)
+	reqMsg.Headers.ReplyTo = helpers.AddReplyToSuffix(asyncapi.CreateRequestChannelPath, cl.name)
 	reqMsg.Set(payload)
 
 	// Send request
@@ -85,7 +92,7 @@ func (cl Client) CreateForwardTest(ctx context.Context, payload forwardtest.NewP
 func (cl Client) ListForwardTests(ctx context.Context) ([]uuid.UUID, error) {
 	// Set message
 	reqMsg := asyncapi.NewListRequestMessage()
-	reqMsg.Headers.ReplyTo = helpers.AddReplyToSuffix(asyncapi.ListRequestChannelPath)
+	reqMsg.Headers.ReplyTo = helpers.AddReplyToSuffix(asyncapi.ListRequestChannelPath, cl.name)
 
 	// Send request
 	respMsg, err := cl.ctrl.RequestToListOperation(ctx, reqMsg)
@@ -105,7 +112,7 @@ func (cl Client) ListForwardTests(ctx context.Context) ([]uuid.UUID, error) {
 func (cl Client) CreateOrder(ctx context.Context, payload common.OrderCreationPayload) error {
 	// Set message
 	reqMsg := asyncapi.NewOrdersCreateRequestMessage()
-	reqMsg.Headers.ReplyTo = helpers.AddReplyToSuffix(asyncapi.OrdersCreateRequestChannelPath)
+	reqMsg.Headers.ReplyTo = helpers.AddReplyToSuffix(asyncapi.OrdersCreateRequestChannelPath, cl.name)
 	reqMsg.Set(payload)
 
 	// Send request
@@ -121,7 +128,7 @@ func (cl Client) CreateOrder(ctx context.Context, payload common.OrderCreationPa
 func (cl Client) GetAccounts(ctx context.Context, forwardTestID uuid.UUID) (map[string]account.Account, error) {
 	// Set message
 	reqMsg := asyncapi.NewAccountsListRequestMessage()
-	reqMsg.Headers.ReplyTo = helpers.AddReplyToSuffix(asyncapi.AccountsListRequestChannelPath)
+	reqMsg.Headers.ReplyTo = helpers.AddReplyToSuffix(asyncapi.AccountsListRequestChannelPath, cl.name)
 	reqMsg.Payload.Id = asyncapi.ForwardTestIDSchema(forwardTestID.String())
 
 	// Send request
@@ -142,7 +149,7 @@ func (cl Client) GetAccounts(ctx context.Context, forwardTestID uuid.UUID) (map[
 func (cl Client) ServiceInfo(ctx context.Context) (common.ServiceInfo, error) {
 	// Set message
 	reqMsg := asyncapi.NewServiceInfoRequestMessage()
-	reqMsg.Headers.ReplyTo = helpers.AddReplyToSuffix(asyncapi.ServiceInfoRequestChannelPath)
+	reqMsg.Headers.ReplyTo = helpers.AddReplyToSuffix(asyncapi.ServiceInfoRequestChannelPath, cl.name)
 
 	// Send request
 	respMsg, err := cl.ctrl.RequestToServiceInfoOperation(ctx, reqMsg)

@@ -8,8 +8,12 @@ import (
 )
 
 // AddReplyToSuffix adds a random suffix to the replyTo channel name.
-func AddReplyToSuffix(address string) string {
-	return fmt.Sprintf("%s.%s", address, uuid.New().String())
+func AddReplyToSuffix(address, caller string) string {
+	suffix := address + "."
+	if caller != "" {
+		suffix += caller + "-"
+	}
+	return suffix + uuid.New().String()
 }
 
 func UnwrapError(errAny any) error {
