@@ -26,26 +26,26 @@ type cacheKey struct {
 type CachedClient struct {
 	controller Client
 	cache      gcache.Cache
-	parameters CacheParameters
+	params     CacheParameters
 }
 
 type CacheParameters struct {
-	MaxSize              int
-	PreLoadingAfterSize  int
-	PreLoadingBeforeSize int
+	MaxSize                       int
+	PreLoadingSize                int
+	PreemptiveAsyncLoadingEnabled bool
 }
 
 const (
-	DefaultMaxSize              = 10000
+	DefaultMaxSize              = 100000
 	DefaultPreLoadingAfterSize  = 200
 	DefaultPreLoadingBeforeSize = 0
 )
 
 func DefaultCacheParameters() CacheParameters {
 	return CacheParameters{
-		MaxSize:              DefaultMaxSize,
-		PreLoadingAfterSize:  DefaultPreLoadingAfterSize,
-		PreLoadingBeforeSize: DefaultPreLoadingBeforeSize,
+		MaxSize:                       DefaultMaxSize,
+		PreLoadingSize:                DefaultPreLoadingAfterSize,
+		PreemptiveAsyncLoadingEnabled: true,
 	}
 }
 
@@ -53,7 +53,7 @@ func NewCachedClient(controller Client, params CacheParameters) *CachedClient {
 	return &CachedClient{
 		controller: controller,
 		cache:      gcache.New(params.MaxSize).LRU().Build(),
-		parameters: params,
+		params:     params,
 	}
 }
 
@@ -67,20 +67,55 @@ type ReadCandlesticksPayload struct {
 }
 
 func (client *CachedClient) Read(ctx context.Context, payload ReadCandlesticksPayload) (*candlestick.List, error) {
-	list := candlestick.NewList(payload.Exchange, payload.Pair, payload.Period)
-
 	// Check required fields for caching
 	if payload.End == nil {
 		payload.End = utils.ToReference(time.Now())
 	}
 	if payload.Start == nil {
-		start := payload.End.Add(-payload.Period.Duration() * time.Duration(client.parameters.PreLoadingBeforeSize))
+		start := payload.End.Add(-payload.Period.Duration() * time.Duration(client.params.PreLoadingSize))
 		payload.Start = &start
 	}
 
 	// Round down payload start and end
 	payload.Start = utils.ToReference(payload.Period.RoundTime(*payload.Start))
 	payload.End = utils.ToReference(payload.Period.RoundTime(*payload.End))
+
+	// Get present and missing times
+	list, tr, err := client.presentAndmissingTimes(payload)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(tr) == 0 {
+		telemetry.L(ctx).Debug("No missing times in cache")
+		return list, nil
+	}
+	telemetry.L(ctx).Debugf("Missing times in cache: %v", tr)
+
+	// Download missing times
+	missing, err := client.downloadMissing(ctx, payload, tr)
+	if err != nil {
+		return nil, err
+	}
+
+	// Merge missing times
+	if err := list.Merge(missing, &timeserie.MergeOptions{}); err != nil {
+		return nil, err
+	}
+
+	// Exctract only requested
+	extract := list.Extract(*payload.Start, *payload.End, payload.Limit)
+	telemetry.L(ctx).Debugf("Returning %d candlesticks from %s to %s", extract.Len(), *payload.Start, *payload.End)
+
+	if client.params.PreemptiveAsyncLoadingEnabled && missing.Len() == 0 {
+		go client.preemptiveAsyncLoading(ctx, payload)
+	}
+
+	return extract, nil
+}
+
+func (client *CachedClient) presentAndmissingTimes(payload ReadCandlesticksPayload) (present *candlestick.List, missing []timeserie.TimeRange, err error) {
+	list := candlestick.NewList(payload.Exchange, payload.Pair, payload.Period)
 
 	// Generate missing times slice
 	max := payload.Period.CountBetweenTimes(*payload.Start, *payload.End)
@@ -102,7 +137,7 @@ func (client *CachedClient) Read(ctx context.Context, payload ReadCandlesticksPa
 			missingTimes = append(missingTimes, current)
 			continue
 		} else if err != nil { // If there is an error
-			return nil, err
+			return nil, nil, err
 		}
 
 		// Check if uncomplete
@@ -114,29 +149,51 @@ func (client *CachedClient) Read(ctx context.Context, payload ReadCandlesticksPa
 
 		// Add to list
 		if err := list.Set(current, cd); err != nil {
-			return nil, err
+			return nil, nil, err
 		}
 	}
 
 	// Change to time ranges and return if none
-	tr := timeserie.TimeRangesFromMissingTimes(payload.Period.Duration(), missingTimes)
-	if len(tr) == 0 {
-		telemetry.L(ctx).Debug("No missing times in cache")
-		return list, nil
-	}
-	telemetry.L(ctx).Debugf("Missing times in cache: %v", tr)
+	return list, timeserie.TimeRangesFromMissingTimes(payload.Period.Duration(), missingTimes), nil
+}
 
+func (client *CachedClient) preemptiveAsyncLoading(ctx context.Context, payload ReadCandlesticksPayload) {
+	// Round down payload start and end
+	payload.Start = payload.End
+	payload.End = utils.ToReference(payload.End.Add(payload.Period.Duration() * time.Duration(client.params.PreLoadingSize)))
+	payload.Limit = 0
+
+	// Get present and missing times
+	_, missingTimeRanges, err := client.presentAndmissingTimes(payload)
+	if err != nil {
+		telemetry.L(ctx).Errorf("Error while counting missing in preemptive loading: %v", err)
+		return
+	}
+
+	// Return if there is no need to load
+	if len(missingTimeRanges) < client.params.PreLoadingSize/2 {
+		return
+	}
+
+	telemetry.L(ctx).Debug("Preemptive loading activated")
+
+	// Download missing times
+	if _, err = client.downloadMissing(ctx, payload, missingTimeRanges); err != nil {
+		telemetry.L(ctx).Errorf("Error while downloading missing in preemptive loading: %v", err)
+	}
+}
+
+func (client *CachedClient) downloadMissing(ctx context.Context, payload ReadCandlesticksPayload, missingTimeRanges []timeserie.TimeRange) (*candlestick.List, error) {
 	// Generate new payload with extended time ranges and limit
-	newPayload := payload
-	newPayload.Start = utils.ToReference(tr[0].Start.Add(-payload.Period.Duration() * time.Duration(client.parameters.PreLoadingBeforeSize)))
-	newPayload.End = utils.ToReference(tr[len(tr)-1].End.Add(payload.Period.Duration() * time.Duration(client.parameters.PreLoadingAfterSize)))
+	payload.Start = utils.ToReference(missingTimeRanges[0].Start)
+	payload.End = utils.ToReference(missingTimeRanges[len(missingTimeRanges)-1].End.Add(payload.Period.Duration() * time.Duration(client.params.PreLoadingSize)))
 	if payload.Limit > 0 {
-		newPayload.Limit += uint(client.parameters.PreLoadingAfterSize) + uint(client.parameters.PreLoadingBeforeSize)
+		payload.Limit += uint(client.params.PreLoadingSize)
 	}
 
 	// Get missing times
-	telemetry.L(ctx).Debugf("Requesting from %s to %s", *newPayload.Start, *newPayload.End)
-	missing, err := client.controller.Read(ctx, newPayload)
+	telemetry.L(ctx).Debugf("Requesting from %s to %s", *payload.Start, *payload.End)
+	missing, err := client.controller.Read(ctx, payload)
 	if err != nil {
 		return nil, err
 	}
@@ -155,16 +212,7 @@ func (client *CachedClient) Read(ctx context.Context, payload ReadCandlesticksPa
 		return nil, err
 	}
 
-	// Merge missing times
-	if err := list.Merge(missing, &timeserie.MergeOptions{}); err != nil {
-		return nil, err
-	}
-
-	// Exctract only requested
-	extract := list.Extract(*payload.Start, *payload.End, payload.Limit)
-	telemetry.L(ctx).Debugf("Returning %d candlesticks from %s to %s", extract.Len(), *payload.Start, *payload.End)
-
-	return extract, nil
+	return missing, nil
 }
 
 func (client *CachedClient) ServiceInfo(ctx context.Context) (client.ServiceInfo, error) {

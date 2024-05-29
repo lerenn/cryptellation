@@ -28,6 +28,10 @@ func (suite *CachedClientSuite) SetupTest() {
 }
 
 func (suite *CachedClientSuite) TestRead() {
+	// Disabling async preemptive loading
+	suite.cachedClient.params.PreemptiveAsyncLoadingEnabled = false
+
+	// Setting the period mock expectations
 	start := utils.Must(time.Parse(time.RFC3339, "2021-01-01T00:00:00Z"))
 	expectedRequestedStart := start.Add(-period.M1.Duration() * DefaultPreLoadingBeforeSize)
 	end := utils.Must(time.Parse(time.RFC3339, "2021-01-01T00:03:00Z"))
