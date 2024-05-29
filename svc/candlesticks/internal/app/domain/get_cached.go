@@ -21,24 +21,36 @@ const (
 )
 
 func (app Candlesticks) GetCached(ctx context.Context, payload app.GetCachedPayload) (*candlestick.List, error) {
-	// Round down payload start and end
-	start, end := payload.Period.RoundInterval(payload.Start, payload.End)
 	cl := candlestick.NewList(payload.Exchange, payload.Pair, payload.Period)
+	telemetry.L(ctx).Infof(
+		"Requests candlesticks from %s to %s (limit: %d)",
+		payload.Start, payload.End, payload.Limit)
 
-	telemetry.L(ctx).Infof("Requests candlesticks from %s to %s (limit: %d)", payload.Start, payload.End, payload.Limit)
-
-	// Be sure that we do not try to get data in the future
+	// Check there is an end and that is not in the future
 	if payload.End == nil || payload.End.After(time.Now()) {
+		telemetry.L(ctx).Debug("End is not set or is in the future, setting it to now()")
 		payload.End = utils.ToReference(time.Now())
 	}
 
+	// Check there is a start and that is before end
+	if payload.Start == nil || payload.Start.After(*payload.End) {
+		telemetry.L(ctx).Debug("Start is not set or is after end, setting it to end - period * MinimalRetrievedMissingCandlesticks")
+		payload.Start = utils.ToReference(payload.End.Add(-payload.Period.Duration() * MinimalRetrievedMissingCandlesticks))
+	}
+
+	// Round down payload start and end
+	payload.Start = utils.ToReference(payload.Period.RoundTime(*payload.Start))
+	payload.End = utils.ToReference(payload.Period.RoundTime(*payload.End))
+
 	// Read candlesticks from database
-	if err := app.db.ReadCandlesticks(ctx, cl, start, end, payload.Limit); err != nil {
+	if err := app.db.ReadCandlesticks(ctx, cl, *payload.Start, *payload.End, payload.Limit); err != nil {
 		return nil, err
 	}
-	telemetry.L(ctx).Debugf("Read DB for %d candlesticks from %s to %s (limit: %d)", cl.Len(), start, end, payload.Limit)
+	telemetry.L(ctx).Debugf(
+		"Read DB for %d candlesticks from %s to %s (limit: %d)",
+		cl.Len(), *payload.Start, *payload.End, payload.Limit)
 
-	missingRanges := cl.GetMissingRange(start, end, payload.Limit)
+	missingRanges := cl.GetMissingRange(*payload.Start, *payload.End, payload.Limit)
 	uncompleteRanges := cl.GetUncompleteRange()
 	ranges, err := timeserie.MergeTimeRanges(missingRanges, uncompleteRanges)
 	if err != nil {
@@ -62,7 +74,9 @@ func (app Candlesticks) GetCached(ctx context.Context, payload app.GetCachedPayl
 		return nil, err
 	}
 
-	rl := cl.Extract(start, end, payload.Limit)
+	// Only return the requested candlesticks
+	rl := cl.Extract(*payload.Start, *payload.End, payload.Limit)
+	telemetry.L(ctx).Debugf("Returning %d candlesticks from %s to %s", rl.Len(), *payload.Start, *payload.End)
 
 	return rl, nil
 }

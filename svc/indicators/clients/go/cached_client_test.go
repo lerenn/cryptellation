@@ -66,8 +66,8 @@ func (suite *CachedClientSuite) TestSMA() {
 			Exchange:     "binance",
 			Pair:         "BTC-USDT",
 			Period:       period.M1,
-			Start:        start,
-			End:          end,
+			Start:        start.Add(time.Nanosecond), // Check nanosecond is not a problem
+			End:          end.Add(time.Nanosecond),   // Check nanosecond is not a problem
 			PeriodNumber: 14,
 			PriceType:    candlestick.PriceTypeIsClose,
 		})

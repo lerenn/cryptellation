@@ -94,6 +94,7 @@ func (c Client) Read(ctx context.Context, payload client.ReadCandlesticksPayload
 		return nil, err
 	}
 
+	// Debug content
 	_ = m.Loop(func(t time.Time, cs candlestick.Candlestick) (bool, error) {
 		telemetry.L(ctx).Debugf("Got candlestick %s: %+v", t.Format(time.RFC3339), cs)
 		return false, nil

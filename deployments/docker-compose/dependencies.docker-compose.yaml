@@ -5,15 +5,21 @@ services:
   mongo:
     image: mongo:7-jammy
     ports:
-      - '27017:27017'
+      - 127.0.0.1:27017:27017
     expose:
-      - '27017'
+      - 27017
     networks:
       - cryptellation
   nats:
     image: nats
     ports:
-      - 4222:4222
+      - 127.0.0.1:4222:4222
+      - 127.0.0.1:6222:6222
+      - 127.0.0.1:8222:8222
+    expose:
+      - 4222
+      - 6222
+      - 8222
     networks:
       - cryptellation
 

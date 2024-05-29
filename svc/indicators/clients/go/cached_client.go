@@ -60,6 +60,9 @@ func NewCachedClient(controller Client, params CacheParameters) *CachedClient {
 func (client *CachedClient) SMA(ctx context.Context, payload SMAPayload) (*timeserie.TimeSerie[float64], error) {
 	list := timeserie.New[float64]()
 
+	// Round down payload start and end
+	payload.Start, payload.End = payload.Period.RoundInterval(&payload.Start, &payload.End)
+
 	// Get missing times
 	missingTimes := make([]time.Time, 0, payload.Period.CountBetweenTimes(payload.Start, payload.End))
 	for current := payload.Start; !current.After(payload.End); current = current.Add(payload.Period.Duration()) {
@@ -90,7 +93,7 @@ func (client *CachedClient) SMA(ctx context.Context, payload SMAPayload) (*times
 	}
 
 	// Change to time ranges and return if none
-	tr := timeserie.TimeRangesFromMissingTimes(missingTimes)
+	tr := timeserie.TimeRangesFromMissingTimes(payload.Period.Duration(), missingTimes)
 	if len(tr) == 0 {
 		return list, nil
 	}

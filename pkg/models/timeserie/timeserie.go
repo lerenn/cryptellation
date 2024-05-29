@@ -216,5 +216,5 @@ func (ts TimeSerie[T]) GetMissingTimes(start, end time.Time, interval time.Durat
 
 func (ts TimeSerie[T]) GetMissingRanges(start, end time.Time, interval time.Duration, limit uint) []TimeRange {
 	missing := ts.GetMissingTimes(start, end, interval, limit)
-	return TimeRangesFromMissingTimes(missing)
+	return TimeRangesFromMissingTimes(interval, missing)
 }

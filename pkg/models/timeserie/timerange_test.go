@@ -75,3 +75,54 @@ func (suite *TimeRangeSuite) TestMergeTimeRanges() {
 		suite.Require().Equal(c.expected, res, i)
 	}
 }
+
+func (suite *TimeRangeSuite) TestTimeRangesFromMissingTimes() {
+	cases := []struct {
+		interval time.Duration
+		times    []time.Time
+		expected []TimeRange
+	}{
+		// Empty
+		{
+			interval: time.Minute,
+			times:    []time.Time{},
+			expected: []TimeRange{},
+		},
+		// Single
+		{
+			interval: time.Minute,
+			times:    []time.Time{time.Unix(60, 0)},
+			expected: []TimeRange{{Start: time.Unix(60, 0), End: time.Unix(60, 0)}},
+		},
+		// Multiple only consecutive
+		{
+			interval: time.Minute,
+			times: []time.Time{
+				time.Unix(60, 0),
+				time.Unix(120, 0),
+				time.Unix(180, 0),
+			},
+			expected: []TimeRange{
+				{Start: time.Unix(60, 0), End: time.Unix(180, 0)},
+			},
+		},
+		// Multiple with non-consecutive
+		{
+			interval: time.Minute,
+			times: []time.Time{
+				time.Unix(60, 0),
+				time.Unix(120, 0),
+				time.Unix(240, 0),
+			},
+			expected: []TimeRange{
+				{Start: time.Unix(60, 0), End: time.Unix(120, 0)},
+				{Start: time.Unix(240, 0), End: time.Unix(240, 0)},
+			},
+		},
+	}
+
+	for i, c := range cases {
+		res := TimeRangesFromMissingTimes(c.interval, c.times)
+		suite.Require().Equal(c.expected, res, i)
+	}
+}

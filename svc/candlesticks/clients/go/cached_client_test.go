@@ -39,6 +39,7 @@ func (suite *CachedClientSuite) TestRead() {
 			suite.Require().Equal("binance", payload.Exchange)
 			suite.Require().Equal("BTC-USDT", payload.Pair)
 			suite.Require().Equal(period.M1, payload.Period)
+			suite.Require().Equal(uint(50+DefaultPreLoadingAfterSize+DefaultPreLoadingBeforeSize), payload.Limit)
 			suite.Require().WithinDuration(expectedRequestedStart, *payload.Start, time.Second)
 			suite.Require().WithinDuration(expectedRequestedEnd, *payload.End, time.Second)
 
@@ -71,8 +72,9 @@ func (suite *CachedClientSuite) TestRead() {
 			Exchange: "binance",
 			Pair:     "BTC-USDT",
 			Period:   period.M1,
-			Start:    &start,
-			End:      &end,
+			Start:    utils.ToReference(start.Add(time.Nanosecond)), // Check nanosecond is not a problem
+			End:      utils.ToReference(end.Add(time.Nanosecond)),   // Check nanosecond is not a problem
+			Limit:    50,                                            // Check limit is not a problem
 		})
 		suite.Require().NoError(err)
 

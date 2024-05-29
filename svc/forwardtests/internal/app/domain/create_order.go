@@ -37,8 +37,8 @@ func (f ForwardTests) CreateOrder(ctx context.Context, forwardTestID uuid.UUID, 
 		return fmt.Errorf("could not get candlesticks from service: %w", err)
 	}
 
-	_, cs, notEmpty := list.First()
-	if !notEmpty {
+	_, cs, ok := list.First()
+	if !ok {
 		return fmt.Errorf("no data for order validation")
 	}
 
