@@ -21,15 +21,16 @@ const (
 )
 
 func (app Candlesticks) GetCached(ctx context.Context, payload app.GetCachedPayload) (*candlestick.List, error) {
+	// Round down payload start and end
+	start, end := payload.Period.RoundInterval(payload.Start, payload.End)
+	cl := candlestick.NewList(payload.Exchange, payload.Pair, payload.Period)
+
 	telemetry.L(ctx).Infof("Requests candlesticks from %s to %s (limit: %d)", payload.Start, payload.End, payload.Limit)
 
 	// Be sure that we do not try to get data in the future
 	if payload.End == nil || payload.End.After(time.Now()) {
 		payload.End = utils.ToReference(time.Now())
 	}
-
-	start, end := payload.Period.RoundInterval(payload.Start, payload.End)
-	cl := candlestick.NewList(payload.Exchange, payload.Pair, payload.Period)
 
 	// Read candlesticks from database
 	if err := app.db.ReadCandlesticks(ctx, cl, start, end, payload.Limit); err != nil {
