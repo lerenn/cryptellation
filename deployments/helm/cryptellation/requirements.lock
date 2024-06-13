@@ -1,9 +1,9 @@
 dependencies:
-- name: cockroachdb
-  repository: https://charts.cockroachdb.com/
-  version: 10.0.8
+- name: mongodb
+  repository: https://charts.bitnami.com/bitnami
+  version: 13.12.0
 - name: nats
   repository: https://nats-io.github.io/k8s/helm/charts/
   version: 0.19.13
-digest: sha256:ede9238e073a307602e5594e81f9541c85dbe0509bbb36e82fbe907e6a0c048f
-generated: "2023-05-10T16:54:30.706793661+02:00"
+digest: sha256:e5d8b38ed7cbd98013d8ec3d09c3376c8ffcaa7193c07a0e665f547ddebe9636
+generated: "2024-06-12T16:44:52.153434+02:00"

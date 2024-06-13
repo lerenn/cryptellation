@@ -17,8 +17,6 @@ spec:
       labels:
         app: candlesticks
     spec:
-      initContainers:
-      {{- include "dependencies.cockroachdb.init-container" . | indent 6 }}
       containers:
       - name: candlesticks
         image: {{ ((.Values.services).candlesticks).image.repository | default "lerenn/cryptellation-candlesticks" }}:{{ ((.Values.services).candlesticks).image.tag | default "latest" }}
@@ -44,6 +42,4 @@ spec:
               name: cryptellation-credentials
         {{- include "common.env" "candlesticks" | indent 8 }}
         resources: {}
-      volumes:
-        {{- include "dependencies.cockroachdb.volumes" . | indent 8 }}
 status: {}

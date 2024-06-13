@@ -17,8 +17,6 @@ spec:
       labels:
         app: exchanges
     spec:
-      initContainers:
-      {{- include "dependencies.cockroachdb.init-container" . | indent 6 }}
       containers:
       - name: exchanges
         image: {{ ((.Values.services).exchanges).image.repository | default "lerenn/cryptellation-exchanges" }}:{{ ((.Values.services).exchanges).image.tag | default "latest" }}
@@ -44,6 +42,4 @@ spec:
               name: cryptellation-credentials
         {{- include "common.env" "exchanges" | indent 8 }}
         resources: {}
-      volumes:
-        {{- include "dependencies.cockroachdb.volumes" . | indent 8 }}
 status: {}

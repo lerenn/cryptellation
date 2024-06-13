@@ -1,29 +1,22 @@
-# Specific section for dependencies
-cockroachdb:
+################################################################################
+# Dependencies
+################################################################################
+
+mongodb:
   enabled: true
-  statefulset:
-    resources:
-      limits:
-        cpu: 100m
-        memory: 512Mi
-      requests:
-        cpu: 100m
-        memory: 512Mi
-    securityContext:
-      enabled: false
-  init:
-    provisioning:
-      enabled: true
-    securityContext:
-      enabled: false
-  securityContext:
+  image:
+    repository: zcube/bitnami-compat-mongodb
+    tag: latest
+  auth:
     enabled: false
-  tls:
-    enabled: false
+
 nats:
   enabled: true
 
-# Specific section for credentials
+################################################################################
+# Credentials
+################################################################################
+
 credentials:
   exchanges:
     binance:
@@ -33,3 +26,39 @@ credentials:
     grpc:
       endpoint: lgtm-opentelemetry-collector.telemetry:4317
 
+################################################################################
+# Services
+################################################################################
+
+services:
+  backtests:
+    image:
+      tag: devel
+      pullPolicy: Never
+  candlesticks:
+    image:
+      tag: devel
+      pullPolicy: Never
+  exchanges:
+    image:
+      tag: devel
+      pullPolicy: Never
+  forwardtests:
+    image:
+      tag: devel
+      pullPolicy: Never
+  indicators:
+    image:
+      tag: devel
+      pullPolicy: Never
+  ticks:
+    image:
+      tag: devel
+      pullPolicy: Never
+
+################################################################################
+# Debug
+################################################################################
+
+debug:
+  forceDeployment: true

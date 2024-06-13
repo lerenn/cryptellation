@@ -1,7 +1,0 @@
-{{- define "dependencies.cockroachdb.volumes" }}
-{{- if .Values.cockroachdb.enabled }}
-- name: cockroachdb-init-scripts-volume
-  configMap:
-    name: cockroachdb-init-scripts
-{{- end}}
-{{- end}}

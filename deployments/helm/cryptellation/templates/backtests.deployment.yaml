@@ -17,8 +17,6 @@ spec:
       labels:
         app: backtests
     spec:
-      initContainers:
-      {{- include "dependencies.cockroachdb.init-container" . | indent 6 }}
       containers:
       - name: backtests
         image: {{ ((.Values.services).backtests).image.repository | default "lerenn/cryptellation-backtests" }}:{{ ((.Values.services).backtests).image.tag | default "latest" }}
@@ -34,6 +32,4 @@ spec:
         env:
         {{- include "common.env" "backtests" | indent 8 }}
         resources: {}
-      volumes:
-        {{- include "dependencies.cockroachdb.volumes" . | indent 8 }}
 status: {}

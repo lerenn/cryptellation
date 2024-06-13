@@ -1,24 +1,11 @@
 # Specific section for dependencies
-cockroachdb:
+
+mongodb:
   enabled: true
-  statefulset:
-    resources:
-      limits:
-        cpu: 100m
-        memory: 512Mi
-      requests:
-        cpu: 100m
-        memory: 512Mi
-    securityContext:
-      enabled: false
-  init:
-    provisioning:
-      enabled: true
-    securityContext:
-      enabled: false
-  securityContext:
-    enabled: false
-  tls:
+  image:
+    repository: zcube/bitnami-compat-mongodb
+    tag: latest
+  auth:
     enabled: false
 nats:
   enabled: true
@@ -34,11 +21,8 @@ credentials:
       host: "{{ .Release.Name }}-nats.{{ .Release.Namespace }}.svc.cluster.local"
       port: 4222
   datastores:
-    sqldb:
-      host: "{{ .Release.Name }}-cockroachdb-public.{{ .Release.Namespace }}.svc.cluster.local"
-      port: 26257
-      user: root
-      password:
+    mongodb:
+      connection_string: "mongodb://{{ .Release.Name }}-mongodb.{{ .Release.Namespace }}.svc.cluster.local:27017"
   opentelemetry:
     grpc:
       endpoint:
@@ -50,7 +34,7 @@ services:
       repository: lerenn/cryptellation-backtests
       tag: latest
       pullPolicy: Always
-    sqldb:
+    mongodb:
       database: backtests
     health:
       port: 9000
@@ -59,7 +43,7 @@ services:
       repository: lerenn/cryptellation-candlesticks
       tag: latest
       pullPolicy: Always
-    sqldb:
+    mongodb:
       database: candlesticks
     health:
       port: 9000
@@ -68,8 +52,17 @@ services:
       repository: lerenn/cryptellation-exchanges
       tag: latest
       pullPolicy: Always
-    sqldb:
+    mongodb:
       database: exchanges
+    health:
+      port: 9000
+  forwardtests:
+    image:
+      repository: lerenn/cryptellation-forwardtests
+      tag: latest
+      pullPolicy: Always
+    mongodb:
+      database: forwardtests
     health:
       port: 9000
   indicators:
@@ -77,7 +70,7 @@ services:
       repository: lerenn/cryptellation-indicators
       tag: latest
       pullPolicy: Always
-    sqldb:
+    mongodb:
       database: indicators
     health:
       port: 9000
@@ -86,7 +79,7 @@ services:
       repository: lerenn/cryptellation-ticks
       tag: latest
       pullPolicy: Always
-    sqldb:
+    mongodb:
       database: ticks
     health:
       port: 9000

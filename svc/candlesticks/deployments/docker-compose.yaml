@@ -14,7 +14,7 @@ services:
     environment:
       DEV_MODE: true
       HEALTH_PORT: 9000
-      LOG_LEVEL: DEBUG
+      LOG_LEVEL: WARNING
       MONGO_CONNECTION_STRING: mongodb://mongo:27017
       MONGO_DATABASE: cryptellation-candlesticks
       NATS_HOST: nats

@@ -1,5 +1,10 @@
 # Building image
-FROM golang:alpine AS build
+FROM --platform=${BUILDPLATFORM:-linux/amd64} golang:alpine AS build
+
+ARG TARGETPLATFORM
+ARG BUILDPLATFORM
+ARG TARGETOS
+ARG TARGETARCH
 
 # Disable CGO
 ENV CGO_ENABLED 0
@@ -12,10 +17,12 @@ COPY ./ /go/src/github.com/lerenn/cryptellation
 WORKDIR /go/src/github.com/lerenn/cryptellation/svc/exchanges
 
 # Build everything in cmd/
-RUN --mount=type=cache,target=/root/.cache/go-build --mount=type=cache,target=/go/pkg/mod go install ./cmd/*
+RUN --mount=type=cache,target=/root/.cache/go-build \
+    --mount=type=cache,target=/go/pkg/mod \
+    CGO_ENABLED=0 GOOS=${TARGETOS} GOARCH=${TARGETARCH} go install ./cmd/*
 
 # Get final base image
-FROM alpine
+FROM --platform=${TARGETPLATFORM:-linux/amd64} alpine
 
 # Set environment variables
 ENV HEALTH_PORT 9000

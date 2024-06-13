@@ -17,8 +17,6 @@ spec:
       labels:
         app: ticks
     spec:
-      initContainers:
-      {{- include "dependencies.cockroachdb.init-container" . | indent 6 }}
       containers:
       - name: ticks
         image: {{ ((.Values.services).ticks).image.repository | default "lerenn/cryptellation-ticks" }}:{{ ((.Values.services).ticks).image.tag | default "latest" }}
@@ -44,6 +42,4 @@ spec:
               name: cryptellation-credentials
         {{- include "common.env" "ticks" | indent 8 }}
         resources: {}
-      volumes:
-        {{- include "dependencies.cockroachdb.volumes" . | indent 8 }}
 status: {}

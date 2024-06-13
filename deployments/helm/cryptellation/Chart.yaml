@@ -24,10 +24,10 @@ version: 1.0.2
 appVersion: "0.8.2"
 
 dependencies:
-  - name: cockroachdb
-    version: 10.0.8
-    repository: https://charts.cockroachdb.com/
-    condition: cockroachdb.enabled
+  - name: mongodb
+    version: 13.12.0
+    repository: https://charts.bitnami.com/bitnami
+    condition: mongodb.enabled
   - name: nats
     version: 0.19.13
     repository: https://nats-io.github.io/k8s/helm/charts/

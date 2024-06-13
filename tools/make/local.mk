@@ -1,5 +1,14 @@
 DOCKER_COMPOSE_CMD := docker compose -f ./deployments/docker-compose.yaml 
 
+.PHONY: build
+build: docker/build ## Build the project
+
+.PHONY: clean
+clean: local/down ## Clean the project
+
+.PHONY: generate
+generate: go/generate ## Generate the code
+
 .PHONY: local/down
 local/down: ## Stop the local environment
 	@$(DOCKER_COMPOSE_CMD) down
@@ -7,12 +16,6 @@ local/down: ## Stop the local environment
 .PHONY: local/up
 local/up: ## Start the local environment
 	@$(DOCKER_COMPOSE_CMD) up -d
-
-.PHONY: clean
-clean: local/down ## Clean the project
-
-.PHONY: generate
-generate: go/generate ## Generate the code
 
 .PHONY: lint
 lint: go/lint ## Lint the golang code

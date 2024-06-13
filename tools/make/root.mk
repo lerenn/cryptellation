@@ -18,6 +18,27 @@ clean: local/down ## Clean the project
 	@$(MAKE) -C ./svc/ticks clean
 	@$(MAKE) -C ./tools/ci clean
 
+.PHONY: build
+build: docker/build ## Build the project
+
+.PHONY: docker/build
+docker/build: ## Build the docker images
+	@$(MAKE) -C ./svc/backtests docker/build
+	@$(MAKE) -C ./svc/candlesticks docker/build
+	@$(MAKE) -C ./svc/exchanges docker/build
+	@$(MAKE) -C ./svc/forwardtests docker/build
+	@$(MAKE) -C ./svc/indicators docker/build
+	@$(MAKE) -C ./svc/ticks docker/build
+
+.PHONY: docker/publish
+docker/publish: ## Publish the docker images
+	@$(MAKE) -C ./svc/backtests docker/publish
+	@$(MAKE) -C ./svc/candlesticks docker/publish
+	@$(MAKE) -C ./svc/exchanges docker/publish
+	@$(MAKE) -C ./svc/forwardtests docker/publish
+	@$(MAKE) -C ./svc/indicators docker/publish
+	@$(MAKE) -C ./svc/ticks docker/publish
+
 .PHONY: local/down
 local/down: ## Stop the local environment
 	@$(DOCKER_COMPOSE_CMD) down

@@ -4,6 +4,10 @@ DOCKER_IMAGE_PREFIX := lerenn/cryptellation
 clean: ## Clean everything
 	@rm *.tgz || true
 
+.PHONE: deploy/custom
+deploy/custom: ## Deploy cryptellation helm chart on custom environment
+	@helm upgrade --install cryptellation ./cryptellation -f ./custom.yml
+
 .PHONE: deploy/local
 deploy/local: ## Deploy cryptellation helm chart locally
 	@helm upgrade --install cryptellation ./cryptellation -f ./local.yml
