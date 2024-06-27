@@ -6,7 +6,8 @@ clean: ## Clean everything
 
 .PHONE: deploy/custom
 deploy/custom: ## Deploy cryptellation helm chart on custom environment
-	@helm upgrade --install cryptellation ./cryptellation -f ./custom.yml
+	@helm upgrade --install cryptellation ./cryptellation -f ./custom.yml \
+		-n cryptellation --create-namespace
 
 .PHONE: deploy/local
 deploy/local: ## Deploy cryptellation helm chart locally

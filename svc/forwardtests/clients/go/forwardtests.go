@@ -15,10 +15,9 @@ import (
 type Client interface {
 	CreateForwardTest(ctx context.Context, payload forwardtest.NewPayload) (uuid.UUID, error)
 	ListForwardTests(ctx context.Context) ([]uuid.UUID, error)
-
 	CreateOrder(ctx context.Context, payload client.OrderCreationPayload) error
-
 	GetAccounts(ctx context.Context, forwardTestID uuid.UUID) (map[string]account.Account, error)
+	GetStatus(ctx context.Context, forwardTestID uuid.UUID) (forwardtest.Status, error)
 
 	ServiceInfo(ctx context.Context) (client.ServiceInfo, error)
 	Close(ctx context.Context)

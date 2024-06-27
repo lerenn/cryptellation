@@ -68,3 +68,17 @@ func (ft *ForwardTest) AddOrder(o order.Order, cs candlestick.Candlestick) error
 
 	return nil
 }
+
+func (ft ForwardTest) GetAccountsSymbols() []string {
+	symbols := make(map[string]string, 0)
+
+	for _, account := range ft.Accounts {
+		for symbol := range account.Balances {
+			if _, ok := symbols[symbol]; !ok {
+				symbols[symbol] = symbol
+			}
+		}
+	}
+
+	return utils.MapToList(symbols)
+}

@@ -121,6 +121,16 @@ func (e *Error) Error() string {
 // If you encounter this message, feel free to open an issue on this subject
 // to let know that you need this functionnality.
 
+// Message 'StatusRequestMessageFromStatusRequestChannel' reference another one at '#/components/messages/StatusRequest'.
+// This should be fixed in a future version to allow message override.
+// If you encounter this message, feel free to open an issue on this subject
+// to let know that you need this functionnality.
+
+// Message 'StatusResponseMessageFromStatusResponseChannel' reference another one at '#/components/messages/StatusResponse'.
+// This should be fixed in a future version to allow message override.
+// If you encounter this message, feel free to open an issue on this subject
+// to let know that you need this functionnality.
+
 // HeadersFromAccountsListRequestMessage is a schema from the AsyncAPI specification required in messages
 type HeadersFromAccountsListRequestMessage struct {
 	// Description: Correlation ID set by client
@@ -1186,6 +1196,221 @@ func (msg *ServiceInfoResponseMessage) SetAsResponseFrom(req MessageWithCorrelat
 	msg.Headers.CorrelationId = &id
 }
 
+// HeadersFromStatusRequestMessage is a schema from the AsyncAPI specification required in messages
+type HeadersFromStatusRequestMessage struct {
+	// Description: Correlation ID set by client
+	CorrelationId *string `json:"correlationId"`
+
+	// Description: Channel used to respond to request
+	ReplyTo string `json:"replyTo"`
+}
+
+// StatusRequestMessagePayload is a schema from the AsyncAPI specification required in messages
+type StatusRequestMessagePayload struct {
+	// Description: Targeted forwardtest ID
+	Id ForwardTestIDSchema `json:"id"`
+}
+
+// StatusRequestMessage is the message expected for 'StatusRequestMessage' channel.
+type StatusRequestMessage struct {
+	// Headers will be used to fill the message headers
+	Headers HeadersFromStatusRequestMessage
+
+	// Payload will be inserted in the message payload
+	Payload StatusRequestMessagePayload
+}
+
+func NewStatusRequestMessage() StatusRequestMessage {
+	var msg StatusRequestMessage
+
+	// Set correlation ID
+	u := uuid.New().String()
+	msg.Headers.CorrelationId = &u
+
+	return msg
+}
+
+// brokerMessageToStatusRequestMessage will fill a new StatusRequestMessage with data from generic broker message
+func brokerMessageToStatusRequestMessage(bMsg extensions.BrokerMessage) (StatusRequestMessage, error) {
+	var msg StatusRequestMessage
+
+	// Unmarshal payload to expected message payload format
+	err := json.Unmarshal(bMsg.Payload, &msg.Payload)
+	if err != nil {
+		return msg, err
+	}
+
+	// Get each headers from broker message
+	for k, v := range bMsg.Headers {
+		switch {
+		case k == "correlationId": // Retrieving CorrelationId header
+			h := string(v)
+			msg.Headers.CorrelationId = &h
+		case k == "replyTo": // Retrieving ReplyTo header
+			msg.Headers.ReplyTo = string(v)
+		default:
+			// TODO: log unknown error
+		}
+	}
+
+	// TODO: run checks on msg type
+
+	return msg, nil
+}
+
+// toBrokerMessage will generate a generic broker message from StatusRequestMessage data
+func (msg StatusRequestMessage) toBrokerMessage() (extensions.BrokerMessage, error) {
+	// TODO: implement checks on message
+
+	// Marshal payload to JSON
+	payload, err := json.Marshal(msg.Payload)
+	if err != nil {
+		return extensions.BrokerMessage{}, err
+	}
+
+	// Add each headers to broker message
+	headers := make(map[string][]byte, 2)
+
+	// Adding CorrelationId header
+	if msg.Headers.CorrelationId != nil {
+		headers["correlationId"] = []byte(*msg.Headers.CorrelationId)
+	} // Adding ReplyTo header
+	headers["replyTo"] = []byte(msg.Headers.ReplyTo)
+
+	return extensions.BrokerMessage{
+		Headers: headers,
+		Payload: payload,
+	}, nil
+}
+
+// CorrelationID will give the correlation ID of the message, based on AsyncAPI spec
+func (msg StatusRequestMessage) CorrelationID() string {
+	if msg.Headers.CorrelationId != nil {
+		return *msg.Headers.CorrelationId
+	}
+
+	return ""
+}
+
+// SetCorrelationID will set the correlation ID of the message, based on AsyncAPI spec
+func (msg *StatusRequestMessage) SetCorrelationID(id string) {
+	msg.Headers.CorrelationId = &id
+}
+
+// SetAsResponseFrom will correlate the message with the one passed in parameter.
+// It will assign the 'req' message correlation ID to the message correlation ID,
+// both specified in AsyncAPI spec.
+func (msg *StatusRequestMessage) SetAsResponseFrom(req MessageWithCorrelationID) {
+	id := req.CorrelationID()
+	msg.Headers.CorrelationId = &id
+}
+
+// HeadersFromStatusResponseMessage is a schema from the AsyncAPI specification required in messages
+type HeadersFromStatusResponseMessage struct {
+	// Description: Correlation ID set by client
+	CorrelationId *string `json:"correlationId"`
+}
+
+// StatusResponseMessagePayload is a schema from the AsyncAPI specification required in messages
+type StatusResponseMessagePayload struct {
+	// Description: Response to a failed call
+	Error *ErrorSchema `json:"error"`
+
+	// Description: Status of a forwardtest
+	Status *ForwardTestStatusSchema `json:"status"`
+}
+
+// StatusResponseMessage is the message expected for 'StatusResponseMessage' channel.
+type StatusResponseMessage struct {
+	// Headers will be used to fill the message headers
+	Headers HeadersFromStatusResponseMessage
+
+	// Payload will be inserted in the message payload
+	Payload StatusResponseMessagePayload
+}
+
+func NewStatusResponseMessage() StatusResponseMessage {
+	var msg StatusResponseMessage
+
+	// Set correlation ID
+	u := uuid.New().String()
+	msg.Headers.CorrelationId = &u
+
+	return msg
+}
+
+// brokerMessageToStatusResponseMessage will fill a new StatusResponseMessage with data from generic broker message
+func brokerMessageToStatusResponseMessage(bMsg extensions.BrokerMessage) (StatusResponseMessage, error) {
+	var msg StatusResponseMessage
+
+	// Unmarshal payload to expected message payload format
+	err := json.Unmarshal(bMsg.Payload, &msg.Payload)
+	if err != nil {
+		return msg, err
+	}
+
+	// Get each headers from broker message
+	for k, v := range bMsg.Headers {
+		switch {
+		case k == "correlationId": // Retrieving CorrelationId header
+			h := string(v)
+			msg.Headers.CorrelationId = &h
+		default:
+			// TODO: log unknown error
+		}
+	}
+
+	// TODO: run checks on msg type
+
+	return msg, nil
+}
+
+// toBrokerMessage will generate a generic broker message from StatusResponseMessage data
+func (msg StatusResponseMessage) toBrokerMessage() (extensions.BrokerMessage, error) {
+	// TODO: implement checks on message
+
+	// Marshal payload to JSON
+	payload, err := json.Marshal(msg.Payload)
+	if err != nil {
+		return extensions.BrokerMessage{}, err
+	}
+
+	// Add each headers to broker message
+	headers := make(map[string][]byte, 1)
+
+	// Adding CorrelationId header
+	if msg.Headers.CorrelationId != nil {
+		headers["correlationId"] = []byte(*msg.Headers.CorrelationId)
+	}
+
+	return extensions.BrokerMessage{
+		Headers: headers,
+		Payload: payload,
+	}, nil
+}
+
+// CorrelationID will give the correlation ID of the message, based on AsyncAPI spec
+func (msg StatusResponseMessage) CorrelationID() string {
+	if msg.Headers.CorrelationId != nil {
+		return *msg.Headers.CorrelationId
+	}
+
+	return ""
+}
+
+// SetCorrelationID will set the correlation ID of the message, based on AsyncAPI spec
+func (msg *StatusResponseMessage) SetCorrelationID(id string) {
+	msg.Headers.CorrelationId = &id
+}
+
+// SetAsResponseFrom will correlate the message with the one passed in parameter.
+// It will assign the 'req' message correlation ID to the message correlation ID,
+// both specified in AsyncAPI spec.
+func (msg *StatusResponseMessage) SetAsResponseFrom(req MessageWithCorrelationID) {
+	id := req.CorrelationID()
+	msg.Headers.CorrelationId = &id
+}
+
 // AccountSchema is a schema from the AsyncAPI specification required in messages
 type AccountSchema struct {
 	// Description: Account's assets
@@ -1239,6 +1464,13 @@ type ExchangeSchema string
 // ForwardTestIDSchema is a schema from the AsyncAPI specification required in messages
 // Description: Targeted forwardtest ID
 type ForwardTestIDSchema string
+
+// ForwardTestStatusSchema is a schema from the AsyncAPI specification required in messages
+// Description: Status of a forwardtest
+type ForwardTestStatusSchema struct {
+	// Description: Current balance of the forwardtest
+	Balance float64 `json:"balance"`
+}
 
 // OrderSchema is a schema from the AsyncAPI specification required in messages
 // Description: Order sent to the market
@@ -1305,6 +1537,10 @@ const (
 	ServiceInfoRequestChannelPath = "cryptellation.forwardtests.info"
 	// ServiceInfoResponseChannelPath is the constant representing the 'ServiceInfoResponseChannel' channel path.
 	ServiceInfoResponseChannelPath = ""
+	// StatusRequestChannelPath is the constant representing the 'StatusRequestChannel' channel path.
+	StatusRequestChannelPath = "cryptellation.forwardtests.status"
+	// StatusResponseChannelPath is the constant representing the 'StatusResponseChannel' channel path.
+	StatusResponseChannelPath = ""
 )
 
 // ChannelsPaths is an array of all channels paths
@@ -1319,4 +1555,6 @@ var ChannelsPaths = []string{
 	OrdersCreateResponseChannelPath,
 	ServiceInfoRequestChannelPath,
 	ServiceInfoResponseChannelPath,
+	StatusRequestChannelPath,
+	StatusResponseChannelPath,
 }

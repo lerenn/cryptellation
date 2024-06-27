@@ -146,6 +146,26 @@ func (cl Client) GetAccounts(ctx context.Context, forwardTestID uuid.UUID) (map[
 	return respMsg.ToModel(), nil
 }
 
+func (cl Client) GetStatus(ctx context.Context, forwardTestID uuid.UUID) (forwardtest.Status, error) {
+	// Set message
+	reqMsg := asyncapi.NewStatusRequestMessage()
+	reqMsg.Headers.ReplyTo = helpers.AddReplyToSuffix(asyncapi.StatusRequestChannelPath, cl.name)
+	reqMsg.Payload.Id = asyncapi.ForwardTestIDSchema(forwardTestID.String())
+
+	// Send request
+	respMsg, err := cl.ctrl.RequestToGetStatusOperation(ctx, reqMsg)
+	if err != nil {
+		return forwardtest.Status{}, err
+	}
+
+	// Unwrap error from message
+	if err := helpers.UnwrapError(respMsg.Payload.Error); err != nil {
+		return forwardtest.Status{}, err
+	}
+
+	return respMsg.ToModel(), nil
+}
+
 func (cl Client) ServiceInfo(ctx context.Context) (common.ServiceInfo, error) {
 	// Set message
 	reqMsg := asyncapi.NewServiceInfoRequestMessage()

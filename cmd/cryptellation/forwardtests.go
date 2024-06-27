@@ -1,6 +1,11 @@
 package main
 
-import "github.com/spf13/cobra"
+import (
+	"fmt"
+
+	"github.com/google/uuid"
+	"github.com/spf13/cobra"
+)
 
 var forwardtestsCmd = &cobra.Command{
 	Use:     "forwardtests",
@@ -16,8 +21,8 @@ var forwardtestsCmd = &cobra.Command{
 }
 
 var forwardtestsInfoCmd = &cobra.Command{
-	Use:     "info",
-	Aliases: []string{"info"},
+	Use:     "service",
+	Aliases: []string{"service"},
 	Short:   "Read info from forwardtests service",
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		return displayServiceInfo(globalClient.ForwardTests())
@@ -41,8 +46,30 @@ var forwardtestsListCmd = &cobra.Command{
 	},
 }
 
+var forwardtestsStatusCmd = &cobra.Command{
+	Use:     "status <id>",
+	Aliases: []string{"status"},
+	Args:    cobra.ExactArgs(1),
+	Short:   "Get forward test status",
+	RunE: func(cmd *cobra.Command, args []string) error {
+		id, err := uuid.Parse(args[0])
+		if err != nil {
+			return err
+		}
+
+		status, err := globalClient.ForwardTests().GetStatus(cmd.Context(), id)
+		if err != nil {
+			return err
+		}
+
+		fmt.Printf("%+v\n", status)
+		return nil
+	},
+}
+
 func initForwardTests(rootCmd *cobra.Command) {
 	forwardtestsCmd.AddCommand(forwardtestsListCmd)
 	forwardtestsCmd.AddCommand(forwardtestsInfoCmd)
+	forwardtestsCmd.AddCommand(forwardtestsStatusCmd)
 	rootCmd.AddCommand(forwardtestsCmd)
 }

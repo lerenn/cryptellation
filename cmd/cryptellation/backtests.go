@@ -18,8 +18,8 @@ var backtestsCmd = &cobra.Command{
 }
 
 var backtestsInfoCmd = &cobra.Command{
-	Use:     "info",
-	Aliases: []string{"info"},
+	Use:     "service",
+	Aliases: []string{"service"},
 	Short:   "Read info from backtests service",
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		return displayServiceInfo(globalClient.Backtests())

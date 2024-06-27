@@ -94,6 +94,21 @@ func (mr *MockClientMockRecorder) GetAccounts(ctx, forwardTestID interface{}) *g
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAccounts", reflect.TypeOf((*MockClient)(nil).GetAccounts), ctx, forwardTestID)
 }
 
+// GetStatus mocks base method.
+func (m *MockClient) GetStatus(ctx context.Context, forwardTestID uuid.UUID) (forwardtest.Status, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetStatus", ctx, forwardTestID)
+	ret0, _ := ret[0].(forwardtest.Status)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetStatus indicates an expected call of GetStatus.
+func (mr *MockClientMockRecorder) GetStatus(ctx, forwardTestID interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetStatus", reflect.TypeOf((*MockClient)(nil).GetStatus), ctx, forwardTestID)
+}
+
 // ListForwardTests mocks base method.
 func (m *MockClient) ListForwardTests(ctx context.Context) ([]uuid.UUID, error) {
 	m.ctrl.T.Helper()

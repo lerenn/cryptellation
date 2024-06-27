@@ -9,8 +9,8 @@ import (
 )
 
 var statusCmd = &cobra.Command{
-	Use:     "status",
-	Aliases: []string{"status"},
+	Use:     "services",
+	Aliases: []string{"services"},
 	Short:   "Read info from services",
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		// Get services info

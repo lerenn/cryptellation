@@ -43,6 +43,10 @@ docker/publish: ## Publish the docker images
 local/down: ## Stop the local environment
 	@$(DOCKER_COMPOSE_CMD) down
 
+.PHONY: local/pull
+local/pull: ## Pull the local environment images
+	@$(DOCKER_COMPOSE_CMD) pull
+
 .PHONY: local/up
 local/up: ## Start the local environment
 	@$(DOCKER_COMPOSE_CMD) up -d

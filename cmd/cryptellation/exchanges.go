@@ -36,8 +36,8 @@ var exchangesReadCmd = &cobra.Command{
 }
 
 var exchangesInfoCmd = &cobra.Command{
-	Use:     "info",
-	Aliases: []string{"info"},
+	Use:     "service",
+	Aliases: []string{"service"},
 	Short:   "Read info from exchanges service",
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		return displayServiceInfo(globalClient.Exchanges())

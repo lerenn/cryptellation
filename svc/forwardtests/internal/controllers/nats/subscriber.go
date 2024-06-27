@@ -119,6 +119,31 @@ func (s subscriber) OrdersCreateOperationReceived(ctx context.Context, msg async
 	})
 }
 
+func (s subscriber) GetStatusOperationReceived(ctx context.Context, msg asyncapi.StatusRequestMessage) error {
+	return s.controller.ReplyToGetStatusOperation(ctx, msg, func(replyMsg *asyncapi.StatusResponseMessage) {
+		id, err := uuid.Parse(string(msg.Payload.Id))
+		if err != nil {
+			replyMsg.Payload.Error = &asyncapi.ErrorSchema{
+				Code:    http.StatusBadRequest,
+				Message: err.Error(),
+			}
+			return
+		}
+
+		status, err := s.forwardtests.GetStatus(ctx, id)
+		if err != nil {
+			replyMsg.Payload.Error = &asyncapi.ErrorSchema{
+				Code:    http.StatusInternalServerError,
+				Message: err.Error(),
+			}
+			return
+		}
+
+		replyMsg.Set(status)
+	})
+
+}
+
 func (s subscriber) ServiceInfoOperationReceived(ctx context.Context, msg asyncapi.ServiceInfoRequestMessage) error {
 	return s.controller.ReplyToServiceInfoOperation(ctx, msg, func(replyMsg *asyncapi.ServiceInfoResponseMessage) {
 		replyMsg.Payload.ApiVersion = asyncapi.AsyncAPIVersion

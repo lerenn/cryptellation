@@ -372,6 +372,137 @@ func (c *UserController) RequestToCreateOperation(
 	}
 }
 
+// SendToGetStatusOperation will send a StatusRequest message on StatusRequest channel.
+//
+// NOTE: this won't wait for reply, use the normal version to get the reply or do the catching reply manually.
+// NOTE: for now, this only support the first message from AsyncAPI list.
+// If you need support for other messages, please raise an issue.
+func (c *UserController) SendToGetStatusOperation(
+	ctx context.Context,
+	msg StatusRequestMessage,
+) error {
+	// Set channel address
+	addr := "cryptellation.forwardtests.status"
+
+	// Set correlation ID if it does not exist
+	if id := msg.CorrelationID(); id == "" {
+		msg.SetCorrelationID(uuid.New().String())
+	}
+
+	// Set context
+	ctx = addUserContextValues(ctx, addr)
+	ctx = context.WithValue(ctx, extensions.ContextKeyIsDirection, "publication")
+	ctx = context.WithValue(ctx, extensions.ContextKeyIsCorrelationID, msg.CorrelationID())
+
+	// Convert to BrokerMessage
+	brokerMsg, err := msg.toBrokerMessage()
+	if err != nil {
+		return err
+	}
+
+	// Set broker message to context
+	ctx = context.WithValue(ctx, extensions.ContextKeyIsBrokerMessage, brokerMsg.String())
+
+	// Send the message on event-broker through middlewares
+	return c.executeMiddlewares(ctx, &brokerMsg, func(ctx context.Context) error {
+		return c.broker.Publish(ctx, addr, brokerMsg)
+	})
+}
+
+// RequestToGetStatusOperation will send a StatusRequest message on StatusRequest channel
+// and wait for a StatusResponse message from StatusResponse channel.
+//
+// If a correlation ID is set in the AsyncAPI, then this will wait for the
+// reply with the same correlation ID. Otherwise, it will returns the first
+// message on the reply channel.
+//
+// A timeout can be set in context to avoid blocking operation, if needed.
+
+func (c *UserController) RequestToGetStatusOperation(
+	ctx context.Context,
+	msg StatusRequestMessage,
+) (StatusResponseMessage, error) {
+	// Get receiving channel address
+	addr := msg.Headers.ReplyTo
+
+	// Set context
+	ctx = addUserContextValues(ctx, addr)
+
+	// Subscribe to broker channel
+	sub, err := c.broker.Subscribe(ctx, addr)
+	if err != nil {
+		c.logger.Error(ctx, err.Error())
+		return StatusResponseMessage{}, err
+	}
+	c.logger.Info(ctx, "Subscribed to channel")
+
+	// Close receiver on leave
+	defer func() {
+		// Stop the subscription
+		sub.Cancel(ctx)
+
+		// Logging unsubscribing
+		c.logger.Info(ctx, "Unsubscribed from channel")
+	}()
+
+	// Set correlation ID if it does not exist
+	if id := msg.CorrelationID(); id == "" {
+		msg.SetCorrelationID(uuid.New().String())
+	}
+
+	// Send the message
+	if err := c.SendToGetStatusOperation(ctx, msg); err != nil {
+		c.logger.Error(ctx, "error happened when sending message", extensions.LogInfo{Key: "error", Value: err.Error()})
+		return StatusResponseMessage{}, fmt.Errorf("error happened when sending message: %w", err)
+	}
+
+	// Wait for corresponding response
+	for {
+		select {
+		case acknowledgeableBrokerMessage, open := <-sub.MessagesChannel():
+			// If subscription is closed and there is no more message
+			// (i.e. uninitialized message), then the subscription ended before
+			// receiving the expected message
+			if !open && acknowledgeableBrokerMessage.IsUninitialized() {
+				c.logger.Error(ctx, "Channel closed before getting message")
+				return StatusResponseMessage{}, extensions.ErrSubscriptionCanceled
+			}
+
+			// Get new message
+			rmsg, err := brokerMessageToStatusResponseMessage(acknowledgeableBrokerMessage.BrokerMessage)
+			if err != nil {
+				c.logger.Error(ctx, err.Error())
+			}
+
+			acknowledgeableBrokerMessage.Ack()
+
+			// If message doesn't have corresponding correlation ID, then ingore and continue
+			if msg.CorrelationID() != rmsg.CorrelationID() {
+				continue
+			}
+
+			// Set context with received values as it is the expected message
+			msgCtx := context.WithValue(ctx, extensions.ContextKeyIsBrokerMessage, acknowledgeableBrokerMessage.String())
+			msgCtx = context.WithValue(msgCtx, extensions.ContextKeyIsDirection, "reception")
+			msgCtx = context.WithValue(msgCtx, extensions.ContextKeyIsCorrelationID, msg.CorrelationID())
+
+			// Execute middlewares before returning
+			if err := c.executeMiddlewares(msgCtx, &acknowledgeableBrokerMessage.BrokerMessage, nil); err != nil {
+				return StatusResponseMessage{}, err
+			}
+
+			// Return the message to the caller
+			//
+			// NOTE: it is transformed from the broker again, as it could have
+			// been modified by middlewares
+			return brokerMessageToStatusResponseMessage(acknowledgeableBrokerMessage.BrokerMessage)
+		case <-ctx.Done(): // Set corrsponding error if context is done
+			c.logger.Error(ctx, "Context done before getting message")
+			return StatusResponseMessage{}, extensions.ErrContextCanceled
+		}
+	}
+}
+
 // SendToListOperation will send a ListRequest message on ListRequest channel.
 //
 // NOTE: this won't wait for reply, use the normal version to get the reply or do the catching reply manually.

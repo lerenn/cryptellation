@@ -45,7 +45,17 @@ channels:
     messages:
       OrdersCreateResponse:
         $ref: "#/components/messages/OrdersCreateResponse"
-  
+
+  StatusRequest:
+    address: cryptellation.forwardtests.status
+    messages:
+      StatusRequest:
+        $ref: "#/components/messages/StatusRequest"
+  StatusResponse:
+    messages:
+      StatusResponse:
+        $ref: "#/components/messages/StatusResponse"
+
   ServiceInfoRequest:
     address: cryptellation.forwardtests.info
     messages:
@@ -96,6 +106,16 @@ operations:
         location: "$message.header#/replyTo"
       channel:
         $ref: '#/channels/OrdersCreateResponse'
+
+  GetStatus:
+    action: receive
+    channel:
+      $ref: "#/channels/StatusRequest"
+    reply:
+      address:
+        location: "$message.header#/replyTo"
+      channel:
+        $ref: '#/channels/StatusResponse'
 
   ServiceInfo:
     action: receive
@@ -229,6 +249,30 @@ components:
       traits:
         - $ref: "#/components/messageTraits/withCorrelationID"
 
+    StatusRequest:
+      payload:
+        type: object
+        required:
+          - id
+        properties:
+          id:
+            $ref: '#/components/schemas/ForwardTestID'
+      traits:
+        - $ref: "#/components/messageTraits/withReplyTo"
+        - $ref: "#/components/messageTraits/withCorrelationID"
+    StatusResponse:
+      payload:
+        type: object
+        oneOf:
+        - properties:
+            status:
+              $ref: '#/components/schemas/ForwardTestStatus'
+        - properties:
+            error:
+              $ref: '../../../../pkg/asyncapi/models.yaml#/components/schemas/Error'
+      traits:
+        - $ref: "#/components/messageTraits/withCorrelationID"
+
     ServiceInfoRequest:
       payload:
         type: object
@@ -342,6 +386,16 @@ components:
           type: number
           format: double
           description: Price of the asset that where it should be traded
+    ForwardTestStatus:
+      type: object
+      description: Status of a forwardtest
+      required:
+        - balance
+      properties:
+        balance:
+          type: number
+          format: double
+          description: Current balance of the forwardtest
     OrderSide:
       type: string
       description: Side used by an order
