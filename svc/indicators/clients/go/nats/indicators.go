@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/lerenn/asyncapi-codegen/pkg/extensions"
-	"github.com/lerenn/asyncapi-codegen/pkg/extensions/brokers/nats"
+	natsextension "github.com/lerenn/asyncapi-codegen/pkg/extensions/brokers/nats"
 	helpers "github.com/lerenn/cryptellation/pkg/asyncapi"
 	common "github.com/lerenn/cryptellation/pkg/client"
 	"github.com/lerenn/cryptellation/pkg/config"
@@ -13,17 +13,15 @@ import (
 	client "github.com/lerenn/cryptellation/svc/indicators/clients/go"
 )
 
-type Client struct {
-	broker *nats.Controller
+type nats struct {
+	broker *natsextension.Controller
 	ctrl   *asyncapi.UserController
 	logger extensions.Logger
 	name   string
 }
 
-type IndicatorsOption func(i *Client)
-
-func NewClient(c config.NATS, options ...IndicatorsOption) (Client, error) {
-	var i Client
+func New(c config.NATS, options ...option) (client.Client, error) {
+	var i nats
 	var err error
 
 	// Execute options
@@ -32,9 +30,9 @@ func NewClient(c config.NATS, options ...IndicatorsOption) (Client, error) {
 	}
 
 	// Create a NATS Controller
-	i.broker, err = nats.NewController(c.URL())
+	i.broker, err = natsextension.NewController(c.URL())
 	if err != nil {
-		return Client{}, err
+		return nats{}, err
 	}
 
 	// Create a logger if asked
@@ -48,26 +46,14 @@ func NewClient(c config.NATS, options ...IndicatorsOption) (Client, error) {
 	// Create a new user controller
 	ctrl, err := asyncapi.NewUserController(i.broker, ctrlOpts...)
 	if err != nil {
-		return Client{}, err
+		return nats{}, err
 	}
 	i.ctrl = ctrl
 
 	return i, nil
 }
 
-func WithLogger(logger extensions.Logger) IndicatorsOption {
-	return func(c *Client) {
-		c.logger = logger
-	}
-}
-
-func WithName(name string) IndicatorsOption {
-	return func(c *Client) {
-		c.name = name
-	}
-}
-
-func (ids Client) SMA(ctx context.Context, payload client.SMAPayload) (*timeserie.TimeSerie[float64], error) {
+func (ids nats) SMA(ctx context.Context, payload client.SMAPayload) (*timeserie.TimeSerie[float64], error) {
 	// Set message
 	reqMsg := asyncapi.NewSMARequestMessage()
 	reqMsg.Headers.ReplyTo = helpers.AddReplyToSuffix(asyncapi.SMARequestChannelPath, ids.name)
@@ -88,7 +74,7 @@ func (ids Client) SMA(ctx context.Context, payload client.SMAPayload) (*timeseri
 	return respMsg.ToModel(), nil
 }
 
-func (ids Client) ServiceInfo(ctx context.Context) (common.ServiceInfo, error) {
+func (ids nats) ServiceInfo(ctx context.Context) (common.ServiceInfo, error) {
 	// Set message
 	reqMsg := asyncapi.NewServiceInfoRequestMessage()
 	reqMsg.Headers.ReplyTo = helpers.AddReplyToSuffix(asyncapi.ServiceInfoRequestChannelPath, ids.name)
@@ -102,7 +88,7 @@ func (ids Client) ServiceInfo(ctx context.Context) (common.ServiceInfo, error) {
 	return respMsg.ToModel(), nil
 }
 
-func (ids Client) Close(ctx context.Context) {
+func (ids nats) Close(ctx context.Context) {
 	ids.ctrl.Close(ctx)
 	ids.broker.Close()
 }

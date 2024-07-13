@@ -4,27 +4,26 @@ import (
 	"context"
 
 	"github.com/lerenn/asyncapi-codegen/pkg/extensions"
-	"github.com/lerenn/asyncapi-codegen/pkg/extensions/brokers/nats"
+	natsextension "github.com/lerenn/asyncapi-codegen/pkg/extensions/brokers/nats"
 	helpers "github.com/lerenn/cryptellation/pkg/asyncapi"
 	asyncapi "github.com/lerenn/cryptellation/svc/exchanges/api/asyncapi"
+	client "github.com/lerenn/cryptellation/svc/exchanges/clients/go"
 
-	"github.com/lerenn/cryptellation/pkg/client"
+	common "github.com/lerenn/cryptellation/pkg/client"
 	"github.com/lerenn/cryptellation/pkg/config"
 
 	"github.com/lerenn/cryptellation/svc/exchanges/pkg/exchange"
 )
 
-type Client struct {
-	broker *nats.Controller
+type nats struct {
+	broker *natsextension.Controller
 	ctrl   *asyncapi.UserController
 	logger extensions.Logger
 	name   string
 }
 
-type ClientOption func(e *Client)
-
-func NewClient(c config.NATS, options ...ClientOption) (Client, error) {
-	var e Client
+func New(c config.NATS, options ...option) (client.Client, error) {
+	var e nats
 
 	// Execute options
 	for _, option := range options {
@@ -33,9 +32,9 @@ func NewClient(c config.NATS, options ...ClientOption) (Client, error) {
 
 	// Create a NATS Controller
 	var err error
-	e.broker, err = nats.NewController(c.URL())
+	e.broker, err = natsextension.NewController(c.URL())
 	if err != nil {
-		return Client{}, err
+		return nats{}, err
 	}
 
 	// Create a logger if asked
@@ -49,26 +48,14 @@ func NewClient(c config.NATS, options ...ClientOption) (Client, error) {
 	// Create a new user controller
 	ctrl, err := asyncapi.NewUserController(e.broker, ctrlOpts...)
 	if err != nil {
-		return Client{}, err
+		return nats{}, err
 	}
 	e.ctrl = ctrl
 
 	return e, nil
 }
 
-func WithLogger(logger extensions.Logger) ClientOption {
-	return func(c *Client) {
-		c.logger = logger
-	}
-}
-
-func WithName(name string) ClientOption {
-	return func(c *Client) {
-		c.name = name
-	}
-}
-
-func (c Client) Read(ctx context.Context, names ...string) ([]exchange.Exchange, error) {
+func (c nats) Read(ctx context.Context, names ...string) ([]exchange.Exchange, error) {
 	// Set message
 	reqMsg := asyncapi.NewListRequestMessage()
 	reqMsg.Headers.ReplyTo = helpers.AddReplyToSuffix(asyncapi.ListRequestChannelPath, c.name)
@@ -89,7 +76,7 @@ func (c Client) Read(ctx context.Context, names ...string) ([]exchange.Exchange,
 	return respMsg.ToModel(), nil
 }
 
-func (c Client) ServiceInfo(ctx context.Context) (client.ServiceInfo, error) {
+func (c nats) ServiceInfo(ctx context.Context) (common.ServiceInfo, error) {
 	// Set message
 	reqMsg := asyncapi.NewServiceInfoRequestMessage()
 	reqMsg.Headers.ReplyTo = helpers.AddReplyToSuffix(asyncapi.ServiceInfoRequestChannelPath, c.name)
@@ -97,13 +84,13 @@ func (c Client) ServiceInfo(ctx context.Context) (client.ServiceInfo, error) {
 	// Send request
 	respMsg, err := c.ctrl.RequestToServiceInfoOperation(ctx, reqMsg)
 	if err != nil {
-		return client.ServiceInfo{}, err
+		return common.ServiceInfo{}, err
 	}
 
 	return respMsg.ToModel(), nil
 }
 
-func (c Client) Close(ctx context.Context) {
+func (c nats) Close(ctx context.Context) {
 	c.ctrl.Close(ctx)
 	c.broker.Close()
 }

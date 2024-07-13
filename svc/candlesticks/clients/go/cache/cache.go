@@ -1,4 +1,4 @@
-package client
+package cache
 
 import (
 	"context"
@@ -7,14 +7,13 @@ import (
 
 	"github.com/bluele/gcache"
 	"github.com/lerenn/cryptellation/pkg/adapters/telemetry"
-	client "github.com/lerenn/cryptellation/pkg/client"
+	common "github.com/lerenn/cryptellation/pkg/client"
 	"github.com/lerenn/cryptellation/pkg/models/timeserie"
 	"github.com/lerenn/cryptellation/pkg/utils"
+	client "github.com/lerenn/cryptellation/svc/candlesticks/clients/go"
 	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/candlestick"
 	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/period"
 )
-
-var _ Client = (*CachedClient)(nil)
 
 type cacheKey struct {
 	Exchange  string
@@ -23,16 +22,14 @@ type cacheKey struct {
 	Timestamp int64
 }
 
-type CachedClient struct {
-	controller Client
-	cache      gcache.Cache
-	params     CacheParameters
-}
-
-type CacheParameters struct {
-	MaxSize                       int
-	PreLoadingSize                int
-	PreemptiveAsyncLoadingEnabled bool
+type cache struct {
+	client   client.Client
+	cache    gcache.Cache
+	settings struct {
+		maxSize                       int
+		preLoadingSize                int
+		preemptiveAsyncLoadingEnabled bool
+	}
 }
 
 const (
@@ -41,38 +38,33 @@ const (
 	DefaultPreLoadingBeforeSize = 0
 )
 
-func DefaultCacheParameters() CacheParameters {
-	return CacheParameters{
-		MaxSize:                       DefaultMaxSize,
-		PreLoadingSize:                DefaultPreLoadingAfterSize,
-		PreemptiveAsyncLoadingEnabled: true,
+func New(client client.Client, options ...option) client.Client {
+	var c cache
+
+	// Set client and default params
+	c.client = client
+	c.settings.maxSize = DefaultMaxSize
+	c.settings.preLoadingSize = DefaultPreLoadingAfterSize
+	c.settings.preemptiveAsyncLoadingEnabled = true
+
+	// Execute options
+	for _, option := range options {
+		option(&c)
 	}
+
+	// Set cache
+	c.cache = gcache.New(c.settings.maxSize).LRU().Build()
+
+	return &c
 }
 
-func NewCachedClient(controller Client, params CacheParameters) *CachedClient {
-	return &CachedClient{
-		controller: controller,
-		cache:      gcache.New(params.MaxSize).LRU().Build(),
-		params:     params,
-	}
-}
-
-type ReadCandlesticksPayload struct {
-	Exchange string
-	Pair     string
-	Period   period.Symbol
-	Start    *time.Time
-	End      *time.Time
-	Limit    uint
-}
-
-func (client *CachedClient) Read(ctx context.Context, payload ReadCandlesticksPayload) (*candlestick.List, error) {
+func (cache *cache) Read(ctx context.Context, payload client.ReadCandlesticksPayload) (*candlestick.List, error) {
 	// Check required fields for caching
 	if payload.End == nil {
 		payload.End = utils.ToReference(time.Now())
 	}
 	if payload.Start == nil {
-		start := payload.End.Add(-payload.Period.Duration() * time.Duration(client.params.PreLoadingSize))
+		start := payload.End.Add(-payload.Period.Duration() * time.Duration(cache.settings.preLoadingSize))
 		payload.Start = &start
 	}
 
@@ -81,7 +73,7 @@ func (client *CachedClient) Read(ctx context.Context, payload ReadCandlesticksPa
 	payload.End = utils.ToReference(payload.Period.RoundTime(*payload.End))
 
 	// Get present and missing times
-	list, tr, err := client.presentAndmissingTimes(payload)
+	list, tr, err := cache.presentAndmissingTimes(payload)
 	if err != nil {
 		return nil, err
 	}
@@ -93,7 +85,7 @@ func (client *CachedClient) Read(ctx context.Context, payload ReadCandlesticksPa
 	telemetry.L(ctx).Debugf("Missing times in cache: %v", tr)
 
 	// Download missing times
-	missing, err := client.downloadMissing(ctx, payload, tr)
+	missing, err := cache.downloadMissing(ctx, payload, tr)
 	if err != nil {
 		return nil, err
 	}
@@ -107,14 +99,14 @@ func (client *CachedClient) Read(ctx context.Context, payload ReadCandlesticksPa
 	extract := list.Extract(*payload.Start, *payload.End, payload.Limit)
 	telemetry.L(ctx).Debugf("Returning %d candlesticks from %s to %s", extract.Len(), *payload.Start, *payload.End)
 
-	if client.params.PreemptiveAsyncLoadingEnabled && missing.Len() == 0 {
-		go client.preemptiveAsyncLoading(ctx, payload)
+	if cache.settings.preemptiveAsyncLoadingEnabled && missing.Len() == 0 {
+		go cache.preemptiveAsyncLoading(ctx, payload)
 	}
 
 	return extract, nil
 }
 
-func (client *CachedClient) presentAndmissingTimes(payload ReadCandlesticksPayload) (present *candlestick.List, missing []timeserie.TimeRange, err error) {
+func (cache *cache) presentAndmissingTimes(payload client.ReadCandlesticksPayload) (present *candlestick.List, missing []timeserie.TimeRange, err error) {
 	list := candlestick.NewList(payload.Exchange, payload.Pair, payload.Period)
 
 	// Generate missing times slice
@@ -132,7 +124,7 @@ func (client *CachedClient) presentAndmissingTimes(payload ReadCandlesticksPaylo
 			Period:    payload.Period,
 			Timestamp: current.Unix(),
 		}
-		c, err := client.cache.Get(key)
+		c, err := cache.cache.Get(key)
 		if errors.Is(err, gcache.KeyNotFoundError) { // If not present in cache
 			missingTimes = append(missingTimes, current)
 			continue
@@ -157,43 +149,43 @@ func (client *CachedClient) presentAndmissingTimes(payload ReadCandlesticksPaylo
 	return list, timeserie.TimeRangesFromMissingTimes(payload.Period.Duration(), missingTimes), nil
 }
 
-func (client *CachedClient) preemptiveAsyncLoading(ctx context.Context, payload ReadCandlesticksPayload) {
+func (cache *cache) preemptiveAsyncLoading(ctx context.Context, payload client.ReadCandlesticksPayload) {
 	// Round down payload start and end
 	payload.Start = payload.End
-	payload.End = utils.ToReference(payload.End.Add(payload.Period.Duration() * time.Duration(client.params.PreLoadingSize)))
+	payload.End = utils.ToReference(payload.End.Add(payload.Period.Duration() * time.Duration(cache.settings.preLoadingSize)))
 	payload.Limit = 0
 
 	// Get present and missing times
-	_, missingTimeRanges, err := client.presentAndmissingTimes(payload)
+	_, missingTimeRanges, err := cache.presentAndmissingTimes(payload)
 	if err != nil {
 		telemetry.L(ctx).Errorf("Error while counting missing in preemptive loading: %v", err)
 		return
 	}
 
 	// Return if there is no need to load
-	if len(missingTimeRanges) < client.params.PreLoadingSize/2 {
+	if len(missingTimeRanges) < cache.settings.preLoadingSize/2 {
 		return
 	}
 
 	telemetry.L(ctx).Debug("Preemptive loading activated")
 
 	// Download missing times
-	if _, err = client.downloadMissing(ctx, payload, missingTimeRanges); err != nil {
+	if _, err = cache.downloadMissing(ctx, payload, missingTimeRanges); err != nil {
 		telemetry.L(ctx).Errorf("Error while downloading missing in preemptive loading: %v", err)
 	}
 }
 
-func (client *CachedClient) downloadMissing(ctx context.Context, payload ReadCandlesticksPayload, missingTimeRanges []timeserie.TimeRange) (*candlestick.List, error) {
+func (cache *cache) downloadMissing(ctx context.Context, payload client.ReadCandlesticksPayload, missingTimeRanges []timeserie.TimeRange) (*candlestick.List, error) {
 	// Generate new payload with extended time ranges and limit
 	payload.Start = utils.ToReference(missingTimeRanges[0].Start)
-	payload.End = utils.ToReference(missingTimeRanges[len(missingTimeRanges)-1].End.Add(payload.Period.Duration() * time.Duration(client.params.PreLoadingSize)))
+	payload.End = utils.ToReference(missingTimeRanges[len(missingTimeRanges)-1].End.Add(payload.Period.Duration() * time.Duration(cache.settings.preLoadingSize)))
 	if payload.Limit > 0 {
-		payload.Limit += uint(client.params.PreLoadingSize)
+		payload.Limit += uint(cache.settings.preLoadingSize)
 	}
 
 	// Get missing times
 	telemetry.L(ctx).Debugf("Requesting from %s to %s", *payload.Start, *payload.End)
-	missing, err := client.controller.Read(ctx, payload)
+	missing, err := cache.client.Read(ctx, payload)
 	if err != nil {
 		return nil, err
 	}
@@ -207,7 +199,7 @@ func (client *CachedClient) downloadMissing(ctx context.Context, payload ReadCan
 			Period:    payload.Period,
 			Timestamp: t.Unix(),
 		}
-		return false, client.cache.Set(key, c)
+		return false, cache.cache.Set(key, c)
 	}); err != nil {
 		return nil, err
 	}
@@ -215,11 +207,11 @@ func (client *CachedClient) downloadMissing(ctx context.Context, payload ReadCan
 	return missing, nil
 }
 
-func (client *CachedClient) ServiceInfo(ctx context.Context) (client.ServiceInfo, error) {
-	return client.controller.ServiceInfo(ctx)
+func (cache *cache) ServiceInfo(ctx context.Context) (common.ServiceInfo, error) {
+	return cache.client.ServiceInfo(ctx)
 }
 
-func (client *CachedClient) Close(ctx context.Context) {
-	client.cache.Purge()
-	client.controller.Close(ctx)
+func (cache *cache) Close(ctx context.Context) {
+	cache.cache.Purge()
+	cache.client.Close(ctx)
 }

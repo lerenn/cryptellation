@@ -1,4 +1,4 @@
-package client
+package cache
 
 import (
 	"context"
@@ -6,30 +6,32 @@ import (
 	"time"
 
 	"github.com/lerenn/cryptellation/pkg/utils"
+	client "github.com/lerenn/cryptellation/svc/candlesticks/clients/go"
 	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/candlestick"
 	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/period"
 	"github.com/stretchr/testify/suite"
 	gomock "go.uber.org/mock/gomock"
 )
 
-func TestCachedClientSuite(t *testing.T) {
-	suite.Run(t, new(CachedClientSuite))
+func TestCacheSuite(t *testing.T) {
+	suite.Run(t, new(CacheSuite))
 }
 
-type CachedClientSuite struct {
-	candlesticks *MockClient
-	cachedClient *CachedClient
+type CacheSuite struct {
+	candlesticks *client.MockClient
+	cachedClient client.Client
 	suite.Suite
 }
 
-func (suite *CachedClientSuite) SetupTest() {
-	suite.candlesticks = NewMockClient(gomock.NewController(suite.T()))
-	suite.cachedClient = NewCachedClient(suite.candlesticks, DefaultCacheParameters())
+func (suite *CacheSuite) SetupTest() {
+	suite.candlesticks = client.NewMockClient(gomock.NewController(suite.T()))
+	suite.cachedClient = New(suite.candlesticks)
 }
 
-func (suite *CachedClientSuite) TestRead() {
+func (suite *CacheSuite) TestRead() {
 	// Disabling async preemptive loading
-	suite.cachedClient.params.PreemptiveAsyncLoadingEnabled = false
+	cache := suite.cachedClient.(*cache)
+	cache.settings.preemptiveAsyncLoadingEnabled = false
 
 	// Setting the period mock expectations
 	start := utils.Must(time.Parse(time.RFC3339, "2021-01-01T00:00:00Z"))
@@ -39,7 +41,7 @@ func (suite *CachedClientSuite) TestRead() {
 
 	// Setting candlesticks mock expectations
 	suite.candlesticks.EXPECT().Read(gomock.Any(), gomock.Any()).
-		DoAndReturn(func(ctx context.Context, payload ReadCandlesticksPayload) (*candlestick.List, error) {
+		DoAndReturn(func(ctx context.Context, payload client.ReadCandlesticksPayload) (*candlestick.List, error) {
 			suite.Require().Equal("binance", payload.Exchange)
 			suite.Require().Equal("BTC-USDT", payload.Pair)
 			suite.Require().Equal(period.M1, payload.Period)
@@ -72,7 +74,7 @@ func (suite *CachedClientSuite) TestRead() {
 
 	for i := 0; i < 2; i++ {
 		// Call the cached client
-		cl, err := suite.cachedClient.Read(context.Background(), ReadCandlesticksPayload{
+		cl, err := suite.cachedClient.Read(context.Background(), client.ReadCandlesticksPayload{
 			Exchange: "binance",
 			Pair:     "BTC-USDT",
 			Period:   period.M1,

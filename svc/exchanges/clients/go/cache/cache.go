@@ -1,4 +1,4 @@
-package client
+package cache
 
 import (
 	"context"
@@ -6,44 +6,45 @@ import (
 	"time"
 
 	"github.com/bluele/gcache"
-	"github.com/lerenn/cryptellation/pkg/client"
+	common "github.com/lerenn/cryptellation/pkg/client"
+	client "github.com/lerenn/cryptellation/svc/exchanges/clients/go"
 	"github.com/lerenn/cryptellation/svc/exchanges/pkg/exchange"
 )
-
-var _ Client = (*CachedClient)(nil)
-
-type CachedClient struct {
-	controller Client
-	cache      gcache.Cache
-	parameters CacheParameters
-}
-
-type CacheParameters struct {
-	MaxSize        int
-	ExpirationTime time.Duration
-}
 
 const (
 	DefaultMaxSize        = 10000
 	DefaultExpirationTime = time.Hour
 )
 
-func DefaultCacheParameters() CacheParameters {
-	return CacheParameters{
-		MaxSize:        DefaultMaxSize,
-		ExpirationTime: DefaultExpirationTime,
+type cache struct {
+	client   client.Client
+	cache    gcache.Cache
+	settings struct {
+		maxSize        int
+		expirationTime time.Duration
 	}
 }
 
-func NewCachedClient(controller Client, params CacheParameters) *CachedClient {
-	return &CachedClient{
-		controller: controller,
-		cache:      gcache.New(params.MaxSize).LRU().Build(),
-		parameters: params,
+func New(client client.Client, options ...option) *cache {
+	var c cache
+
+	// Set client and default params
+	c.client = client
+	c.settings.maxSize = DefaultMaxSize
+	c.settings.expirationTime = DefaultExpirationTime
+
+	// Execute options
+	for _, option := range options {
+		option(&c)
 	}
+
+	// Set cache
+	c.cache = gcache.New(c.settings.maxSize).LRU().Build()
+
+	return &c
 }
 
-func (client *CachedClient) Read(ctx context.Context, names ...string) ([]exchange.Exchange, error) {
+func (client *cache) Read(ctx context.Context, names ...string) ([]exchange.Exchange, error) {
 	list := make([]exchange.Exchange, 0, len(names))
 
 	missingExchanges := make([]string, 0, len(names))
@@ -58,7 +59,7 @@ func (client *CachedClient) Read(ctx context.Context, names ...string) ([]exchan
 
 		// Check if uncomplete
 		exch := e.(exchange.Exchange)
-		if exch.LastSyncTime.Before(time.Now().Add(-client.parameters.ExpirationTime)) {
+		if exch.LastSyncTime.Before(time.Now().Add(-client.settings.expirationTime)) {
 			missingExchanges = append(missingExchanges, name)
 			continue
 		}
@@ -73,7 +74,7 @@ func (client *CachedClient) Read(ctx context.Context, names ...string) ([]exchan
 	}
 
 	// Get missing exchanges
-	exchanges, err := client.controller.Read(ctx, missingExchanges...)
+	exchanges, err := client.client.Read(ctx, missingExchanges...)
 	if err != nil {
 		return nil, err
 	}
@@ -89,11 +90,11 @@ func (client *CachedClient) Read(ctx context.Context, names ...string) ([]exchan
 	return append(list, exchanges...), nil
 }
 
-func (client *CachedClient) ServiceInfo(ctx context.Context) (client.ServiceInfo, error) {
-	return client.controller.ServiceInfo(ctx)
+func (client *cache) ServiceInfo(ctx context.Context) (common.ServiceInfo, error) {
+	return client.client.ServiceInfo(ctx)
 }
 
-func (client *CachedClient) Close(ctx context.Context) {
+func (client *cache) Close(ctx context.Context) {
 	client.cache.Purge()
-	client.controller.Close(ctx)
+	client.client.Close(ctx)
 }

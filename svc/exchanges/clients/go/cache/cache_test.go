@@ -1,10 +1,11 @@
-package client
+package cache
 
 import (
 	"context"
 	"testing"
 	"time"
 
+	client "github.com/lerenn/cryptellation/svc/exchanges/clients/go"
 	"github.com/lerenn/cryptellation/svc/exchanges/pkg/exchange"
 	"github.com/stretchr/testify/suite"
 	gomock "go.uber.org/mock/gomock"
@@ -15,14 +16,14 @@ func TestCachedClient(t *testing.T) {
 }
 
 type CachedClientSuite struct {
-	exchanges    *MockClient
-	cachedClient *CachedClient
+	exchanges    *client.MockClient
+	cachedClient *cache
 	suite.Suite
 }
 
 func (suite *CachedClientSuite) SetupTest() {
-	suite.exchanges = NewMockClient(gomock.NewController(suite.T()))
-	suite.cachedClient = NewCachedClient(suite.exchanges, DefaultCacheParameters())
+	suite.exchanges = client.NewMockClient(gomock.NewController(suite.T()))
+	suite.cachedClient = New(suite.exchanges)
 }
 
 func (suite *CachedClientSuite) TestRead() {

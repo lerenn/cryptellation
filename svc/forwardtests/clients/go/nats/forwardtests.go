@@ -5,26 +5,25 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/lerenn/asyncapi-codegen/pkg/extensions"
-	"github.com/lerenn/asyncapi-codegen/pkg/extensions/brokers/nats"
+	natsextension "github.com/lerenn/asyncapi-codegen/pkg/extensions/brokers/nats"
 	helpers "github.com/lerenn/cryptellation/pkg/asyncapi"
 	common "github.com/lerenn/cryptellation/pkg/client"
 	"github.com/lerenn/cryptellation/pkg/config"
 	"github.com/lerenn/cryptellation/pkg/models/account"
 	asyncapi "github.com/lerenn/cryptellation/svc/forwardtests/api/asyncapi"
+	client "github.com/lerenn/cryptellation/svc/forwardtests/clients/go"
 	"github.com/lerenn/cryptellation/svc/forwardtests/pkg/forwardtest"
 )
 
-type Client struct {
-	broker *nats.Controller
+type nats struct {
+	broker *natsextension.Controller
 	ctrl   *asyncapi.UserController
 	logger extensions.Logger
 	name   string
 }
 
-type ForwardTestsOption func(b *Client)
-
-func NewClient(c config.NATS, options ...ForwardTestsOption) (Client, error) {
-	var cl Client
+func New(c config.NATS, options ...option) (client.Client, error) {
+	var cl nats
 	var err error
 
 	// Execute options
@@ -33,9 +32,9 @@ func NewClient(c config.NATS, options ...ForwardTestsOption) (Client, error) {
 	}
 
 	// Create a NATS Controller
-	cl.broker, err = nats.NewController(c.URL())
+	cl.broker, err = natsextension.NewController(c.URL())
 	if err != nil {
-		return Client{}, err
+		return nats{}, err
 	}
 
 	// Create a logger if asked
@@ -49,26 +48,14 @@ func NewClient(c config.NATS, options ...ForwardTestsOption) (Client, error) {
 	// Create a new user controller
 	ctrl, err := asyncapi.NewUserController(cl.broker, ctrlOpts...)
 	if err != nil {
-		return Client{}, err
+		return nats{}, err
 	}
 	cl.ctrl = ctrl
 
 	return cl, nil
 }
 
-func WithLogger(logger extensions.Logger) ForwardTestsOption {
-	return func(b *Client) {
-		b.logger = logger
-	}
-}
-
-func WithName(name string) ForwardTestsOption {
-	return func(b *Client) {
-		b.name = name
-	}
-}
-
-func (cl Client) CreateForwardTest(ctx context.Context, payload forwardtest.NewPayload) (uuid.UUID, error) {
+func (cl nats) CreateForwardTest(ctx context.Context, payload forwardtest.NewPayload) (uuid.UUID, error) {
 	// Set message
 	reqMsg := asyncapi.NewCreateRequestMessage()
 	reqMsg.Headers.ReplyTo = helpers.AddReplyToSuffix(asyncapi.CreateRequestChannelPath, cl.name)
@@ -89,7 +76,7 @@ func (cl Client) CreateForwardTest(ctx context.Context, payload forwardtest.NewP
 
 }
 
-func (cl Client) ListForwardTests(ctx context.Context) ([]uuid.UUID, error) {
+func (cl nats) ListForwardTests(ctx context.Context) ([]uuid.UUID, error) {
 	// Set message
 	reqMsg := asyncapi.NewListRequestMessage()
 	reqMsg.Headers.ReplyTo = helpers.AddReplyToSuffix(asyncapi.ListRequestChannelPath, cl.name)
@@ -109,7 +96,7 @@ func (cl Client) ListForwardTests(ctx context.Context) ([]uuid.UUID, error) {
 	return respMsg.ToModel()
 }
 
-func (cl Client) CreateOrder(ctx context.Context, payload common.OrderCreationPayload) error {
+func (cl nats) CreateOrder(ctx context.Context, payload common.OrderCreationPayload) error {
 	// Set message
 	reqMsg := asyncapi.NewOrdersCreateRequestMessage()
 	reqMsg.Headers.ReplyTo = helpers.AddReplyToSuffix(asyncapi.OrdersCreateRequestChannelPath, cl.name)
@@ -125,7 +112,7 @@ func (cl Client) CreateOrder(ctx context.Context, payload common.OrderCreationPa
 	return helpers.UnwrapError(respMsg.Payload.Error)
 }
 
-func (cl Client) GetAccounts(ctx context.Context, forwardTestID uuid.UUID) (map[string]account.Account, error) {
+func (cl nats) GetAccounts(ctx context.Context, forwardTestID uuid.UUID) (map[string]account.Account, error) {
 	// Set message
 	reqMsg := asyncapi.NewAccountsListRequestMessage()
 	reqMsg.Headers.ReplyTo = helpers.AddReplyToSuffix(asyncapi.AccountsListRequestChannelPath, cl.name)
@@ -146,7 +133,7 @@ func (cl Client) GetAccounts(ctx context.Context, forwardTestID uuid.UUID) (map[
 	return respMsg.ToModel(), nil
 }
 
-func (cl Client) GetStatus(ctx context.Context, forwardTestID uuid.UUID) (forwardtest.Status, error) {
+func (cl nats) GetStatus(ctx context.Context, forwardTestID uuid.UUID) (forwardtest.Status, error) {
 	// Set message
 	reqMsg := asyncapi.NewStatusRequestMessage()
 	reqMsg.Headers.ReplyTo = helpers.AddReplyToSuffix(asyncapi.StatusRequestChannelPath, cl.name)
@@ -166,7 +153,7 @@ func (cl Client) GetStatus(ctx context.Context, forwardTestID uuid.UUID) (forwar
 	return respMsg.ToModel(), nil
 }
 
-func (cl Client) ServiceInfo(ctx context.Context) (common.ServiceInfo, error) {
+func (cl nats) ServiceInfo(ctx context.Context) (common.ServiceInfo, error) {
 	// Set message
 	reqMsg := asyncapi.NewServiceInfoRequestMessage()
 	reqMsg.Headers.ReplyTo = helpers.AddReplyToSuffix(asyncapi.ServiceInfoRequestChannelPath, cl.name)
@@ -180,7 +167,7 @@ func (cl Client) ServiceInfo(ctx context.Context) (common.ServiceInfo, error) {
 	return respMsg.ToModel(), nil
 }
 
-func (cl Client) Close(ctx context.Context) {
+func (cl nats) Close(ctx context.Context) {
 	cl.ctrl.Close(ctx)
 	cl.broker.Close()
 }

@@ -10,7 +10,9 @@ import (
 	"github.com/lerenn/cryptellation/svc/backtests/internal/app/ports/db"
 	"github.com/lerenn/cryptellation/svc/backtests/internal/app/ports/events"
 	candlesticks "github.com/lerenn/cryptellation/svc/candlesticks/clients/go"
-	candlesticksNats "github.com/lerenn/cryptellation/svc/candlesticks/clients/go/nats"
+	candlestickscache "github.com/lerenn/cryptellation/svc/candlesticks/clients/go/cache"
+	candlesticksnats "github.com/lerenn/cryptellation/svc/candlesticks/clients/go/nats"
+	candlesticksretry "github.com/lerenn/cryptellation/svc/candlesticks/clients/go/retry"
 )
 
 type adapters struct {
@@ -33,19 +35,20 @@ func newAdapters(ctx context.Context) (adapters, error) {
 	}
 
 	// Init candlesticks client
-	cdsClient, err := candlesticksNats.NewClient(
+	candlesticks, err := candlesticksnats.New(
 		config.LoadNATS(),
-		candlesticksNats.WithLogger(asyncapipkg.LoggerWrapper{}),
-		candlesticksNats.WithName("backtests"))
+		candlesticksnats.WithLogger(asyncapipkg.LoggerWrapper{}),
+		candlesticksnats.WithName("backtests"))
 	if err != nil {
 		return adapters{}, err
 	}
-	cachedCdsClient := candlesticks.NewCachedClient(cdsClient, candlesticks.DefaultCacheParameters())
+	candlesticks = candlestickscache.New(candlesticks)
+	candlesticks = candlesticksretry.New(candlesticks)
 
 	return adapters{
 		db:           db,
 		events:       events,
-		candlesticks: cachedCdsClient,
+		candlesticks: candlesticks,
 	}, nil
 }
 

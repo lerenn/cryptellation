@@ -7,18 +7,33 @@ import (
 
 	"github.com/lerenn/cryptellation/pkg/client"
 	"github.com/lerenn/cryptellation/pkg/config"
+
 	backtests "github.com/lerenn/cryptellation/svc/backtests/clients/go"
-	natsbacktests "github.com/lerenn/cryptellation/svc/backtests/clients/go/nats"
+	backtestsnats "github.com/lerenn/cryptellation/svc/backtests/clients/go/nats"
+	backtestsretry "github.com/lerenn/cryptellation/svc/backtests/clients/go/retry"
+
 	candlesticks "github.com/lerenn/cryptellation/svc/candlesticks/clients/go"
-	natscandlesticks "github.com/lerenn/cryptellation/svc/candlesticks/clients/go/nats"
+	candlestickscache "github.com/lerenn/cryptellation/svc/candlesticks/clients/go/cache"
+	candlesticksnats "github.com/lerenn/cryptellation/svc/candlesticks/clients/go/nats"
+	candlesticksretry "github.com/lerenn/cryptellation/svc/candlesticks/clients/go/retry"
+
 	exchanges "github.com/lerenn/cryptellation/svc/exchanges/clients/go"
-	natsexchanges "github.com/lerenn/cryptellation/svc/exchanges/clients/go/nats"
+	exchangescache "github.com/lerenn/cryptellation/svc/exchanges/clients/go/cache"
+	exchangesnats "github.com/lerenn/cryptellation/svc/exchanges/clients/go/nats"
+	exchangesretry "github.com/lerenn/cryptellation/svc/exchanges/clients/go/retry"
+
 	forwardtests "github.com/lerenn/cryptellation/svc/forwardtests/clients/go"
-	natsforwardtests "github.com/lerenn/cryptellation/svc/forwardtests/clients/go/nats"
+	forwardtestsnats "github.com/lerenn/cryptellation/svc/forwardtests/clients/go/nats"
+	forwardtestsretry "github.com/lerenn/cryptellation/svc/forwardtests/clients/go/retry"
+
 	indicators "github.com/lerenn/cryptellation/svc/indicators/clients/go"
-	natsindicators "github.com/lerenn/cryptellation/svc/indicators/clients/go/nats"
+	indicatorscache "github.com/lerenn/cryptellation/svc/indicators/clients/go/cache"
+	indicatorsnats "github.com/lerenn/cryptellation/svc/indicators/clients/go/nats"
+	indicatorsretry "github.com/lerenn/cryptellation/svc/indicators/clients/go/retry"
+
 	ticks "github.com/lerenn/cryptellation/svc/ticks/clients/go"
-	natsticks "github.com/lerenn/cryptellation/svc/ticks/clients/go/nats"
+	ticksnats "github.com/lerenn/cryptellation/svc/ticks/clients/go/nats"
+	ticksretry "github.com/lerenn/cryptellation/svc/ticks/clients/go/retry"
 )
 
 type Services struct {
@@ -30,48 +45,63 @@ type Services struct {
 	ticks        ticks.Client
 }
 
-func NewServices(c config.NATS) (client Services, err error) {
-	backtests, err := natsbacktests.NewClient(c)
+func NewServices(c config.NATS) (svc Services, err error) {
+	// Set backtests
+	backtests, err := backtestsnats.New(c)
 	if err != nil {
-		client.Close(context.TODO())
+		svc.Close(context.TODO())
 		return
 	}
-	client.backtests = backtests
+	backtests = backtestsretry.New(backtests)
+	svc.backtests = backtests
 
-	cds, err := natscandlesticks.NewClient(c)
+	// Set candlesticks
+	candlesticks, err := candlesticksnats.New(c)
 	if err != nil {
-		client.Close(context.TODO())
+		svc.Close(context.TODO())
 		return
 	}
-	client.candlesticks = candlesticks.NewCachedClient(cds, candlesticks.DefaultCacheParameters())
+	candlesticks = candlesticksretry.New(candlesticks)
+	candlesticks = candlestickscache.New(candlesticks)
+	svc.candlesticks = candlesticks
 
-	exchgs, err := natsexchanges.NewClient(c)
+	// Set exchanges
+	exchanges, err := exchangesnats.New(c)
 	if err != nil {
-		client.Close(context.TODO())
+		svc.Close(context.TODO())
 		return
 	}
-	client.exchanges = exchanges.NewCachedClient(exchgs, exchanges.DefaultCacheParameters())
+	exchanges = exchangesretry.New(exchanges)
+	exchanges = exchangescache.New(exchanges)
+	svc.exchanges = exchanges
 
-	forwardtests, err := natsforwardtests.NewClient(c)
+	// Set forward tests
+	forwardtests, err := forwardtestsnats.New(c)
 	if err != nil {
-		client.Close(context.TODO())
+		svc.Close(context.TODO())
 		return
 	}
-	client.forwardtests = forwardtests
+	forwardtests = forwardtestsretry.New(forwardtests)
+	svc.forwardtests = forwardtests
 
-	idts, err := natsindicators.NewClient(c)
+	// Set indicators
+	indicators, err := indicatorsnats.New(c)
 	if err != nil {
-		client.Close(context.TODO())
+		svc.Close(context.TODO())
 		return
 	}
-	client.indicators = indicators.NewCachedClient(idts, indicators.DefaultCacheParameters())
+	indicators = indicatorscache.New(indicators)
+	indicators = indicatorsretry.New(indicators)
+	svc.indicators = indicators
 
-	ticks, err := natsticks.NewClient(c)
+	// Set ticks
+	ticks, err := ticksnats.New(c)
 	if err != nil {
-		client.Close(context.TODO())
+		svc.Close(context.TODO())
 		return
 	}
-	client.ticks = ticks
+	ticks = ticksretry.New(ticks)
+	svc.ticks = ticks
 
 	return
 }

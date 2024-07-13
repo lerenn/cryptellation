@@ -13,7 +13,9 @@ import (
 	"github.com/lerenn/cryptellation/pkg/config"
 	"github.com/lerenn/cryptellation/pkg/utils"
 	cdsclient "github.com/lerenn/cryptellation/svc/candlesticks/clients/go"
-	cdsnats "github.com/lerenn/cryptellation/svc/candlesticks/clients/go/nats"
+	candlestickscache "github.com/lerenn/cryptellation/svc/candlesticks/clients/go/cache"
+	candlesticksnats "github.com/lerenn/cryptellation/svc/candlesticks/clients/go/nats"
+	candlesticksretry "github.com/lerenn/cryptellation/svc/candlesticks/clients/go/retry"
 	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/candlestick"
 	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/period"
 )
@@ -35,11 +37,12 @@ type CandlesticksView struct {
 }
 
 func NewCandlesticksView(program *tea.Program, exchange, pair, periodSymbol string) *CandlesticksView {
-	cdsClient, err := cdsnats.NewClient(config.LoadNATS())
+	client, err := candlesticksnats.New(config.LoadNATS())
 	if err != nil {
 		log.Fatal(err)
 	}
-	cachedCdsClient := cdsclient.NewCachedClient(cdsClient, cdsclient.DefaultCacheParameters())
+	client = candlestickscache.New(client)
+	client = candlesticksretry.New(client)
 
 	per := period.Symbol(strings.ToUpper(periodSymbol))
 	if err := per.Validate(); err != nil {
@@ -47,7 +50,7 @@ func NewCandlesticksView(program *tea.Program, exchange, pair, periodSymbol stri
 	}
 
 	cv := &CandlesticksView{
-		client:   cachedCdsClient,
+		client:   client,
 		program:  program,
 		exchange: strings.ToLower(exchange),
 		pair:     strings.ToUpper(pair),

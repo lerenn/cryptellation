@@ -90,7 +90,7 @@ func (b *Backtest) loopOnEvents(events <-chan event.Event) (bool, error) {
 			}
 
 			if err := b.bot.OnTick(t); err != nil {
-				return false, err
+				telemetry.L(context.Background()).Errorf("error on tick event: %w", err)
 			}
 		}
 	}

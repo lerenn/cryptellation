@@ -5,26 +5,25 @@ import (
 	"time"
 
 	"github.com/lerenn/asyncapi-codegen/pkg/extensions"
-	"github.com/lerenn/asyncapi-codegen/pkg/extensions/brokers/nats"
+	natsextension "github.com/lerenn/asyncapi-codegen/pkg/extensions/brokers/nats"
 	helpers "github.com/lerenn/cryptellation/pkg/asyncapi"
 	common "github.com/lerenn/cryptellation/pkg/client"
 	"github.com/lerenn/cryptellation/pkg/config"
 	"github.com/lerenn/cryptellation/pkg/models/event"
 	asyncapi "github.com/lerenn/cryptellation/svc/ticks/api/asyncapi"
+	client "github.com/lerenn/cryptellation/svc/ticks/clients/go"
 	"github.com/lerenn/cryptellation/svc/ticks/pkg/tick"
 )
 
-type Client struct {
-	broker *nats.Controller
+type nats struct {
+	broker *natsextension.Controller
 	ctrl   *asyncapi.UserController
 	logger extensions.Logger
 	name   string
 }
 
-type ClientOption func(t *Client)
-
-func NewClient(c config.NATS, options ...ClientOption) (Client, error) {
-	var t Client
+func New(c config.NATS, options ...option) (client.Client, error) {
+	var t nats
 	var err error
 
 	// Execute options
@@ -33,9 +32,9 @@ func NewClient(c config.NATS, options ...ClientOption) (Client, error) {
 	}
 
 	// Create a NATS Controller
-	t.broker, err = nats.NewController(c.URL())
+	t.broker, err = natsextension.NewController(c.URL())
 	if err != nil {
-		return Client{}, err
+		return nats{}, err
 	}
 
 	// Create a logger if asked
@@ -49,26 +48,14 @@ func NewClient(c config.NATS, options ...ClientOption) (Client, error) {
 	// Create a new user controller
 	ctrl, err := asyncapi.NewUserController(t.broker, ctrlOpts...)
 	if err != nil {
-		return Client{}, err
+		return nats{}, err
 	}
 	t.ctrl = ctrl
 
 	return t, nil
 }
 
-func WithLogger(logger extensions.Logger) ClientOption {
-	return func(c *Client) {
-		c.logger = logger
-	}
-}
-
-func WithName(name string) ClientOption {
-	return func(c *Client) {
-		c.name = name
-	}
-}
-
-func (t Client) sendSubscriptionRequest(ctx context.Context, sub event.TickSubscription) error {
+func (t nats) sendSubscriptionRequest(ctx context.Context, sub event.TickSubscription) error {
 	// Create message
 	msg := asyncapi.NewListeningNotificationMessage()
 	msg.FromModel(sub)
@@ -77,7 +64,7 @@ func (t Client) sendSubscriptionRequest(ctx context.Context, sub event.TickSubsc
 	return t.ctrl.SendToListeningOperation(ctx, msg)
 }
 
-func (t Client) SubscribeToTicks(ctx context.Context, sub event.TickSubscription) (<-chan tick.Tick, error) {
+func (t nats) SubscribeToTicks(ctx context.Context, sub event.TickSubscription) (<-chan tick.Tick, error) {
 	// Send subscription request periodically
 	go func() {
 		for {
@@ -108,7 +95,7 @@ func (t Client) SubscribeToTicks(ctx context.Context, sub event.TickSubscription
 	return ch, nil
 }
 
-func (t Client) ServiceInfo(ctx context.Context) (common.ServiceInfo, error) {
+func (t nats) ServiceInfo(ctx context.Context) (common.ServiceInfo, error) {
 	// Set message
 	reqMsg := asyncapi.NewServiceInfoRequestMessage()
 	reqMsg.Headers.ReplyTo = helpers.AddReplyToSuffix(asyncapi.ServiceInfoRequestChannelPath, t.name)
@@ -122,7 +109,7 @@ func (t Client) ServiceInfo(ctx context.Context) (common.ServiceInfo, error) {
 	return respMsg.ToModel(), nil
 }
 
-func (t Client) Close(ctx context.Context) {
+func (t nats) Close(ctx context.Context) {
 	t.ctrl.Close(ctx)
 	t.broker.Close()
 }

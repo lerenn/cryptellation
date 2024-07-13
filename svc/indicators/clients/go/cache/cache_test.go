@@ -1,4 +1,4 @@
-package client
+package cache
 
 import (
 	"context"
@@ -9,6 +9,7 @@ import (
 	"github.com/lerenn/cryptellation/pkg/utils"
 	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/candlestick"
 	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/period"
+	client "github.com/lerenn/cryptellation/svc/indicators/clients/go"
 	"github.com/stretchr/testify/suite"
 	gomock "go.uber.org/mock/gomock"
 )
@@ -18,14 +19,14 @@ func TestCachedClientSuite(t *testing.T) {
 }
 
 type CachedClientSuite struct {
-	indicators   *MockClient
-	cachedClient *CachedClient
+	indicators   *client.MockClient
+	cachedClient client.Client
 	suite.Suite
 }
 
 func (suite *CachedClientSuite) SetupTest() {
-	suite.indicators = NewMockClient(gomock.NewController(suite.T()))
-	suite.cachedClient = NewCachedClient(suite.indicators, DefaultCacheParameters())
+	suite.indicators = client.NewMockClient(gomock.NewController(suite.T()))
+	suite.cachedClient = New(suite.indicators)
 }
 
 func (suite *CachedClientSuite) TeardownTest() {
@@ -41,7 +42,7 @@ func (suite *CachedClientSuite) TestSMA() {
 
 	// Setting indicators mock expectations
 	suite.indicators.EXPECT().SMA(gomock.Any(), gomock.Any()).
-		DoAndReturn(func(ctx context.Context, payload SMAPayload) (*timeserie.TimeSerie[float64], error) {
+		DoAndReturn(func(ctx context.Context, payload client.SMAPayload) (*timeserie.TimeSerie[float64], error) {
 			suite.Require().Equal("binance", payload.Exchange)
 			suite.Require().Equal("BTC-USDT", payload.Pair)
 			suite.Require().Equal(period.M1, payload.Period)
@@ -62,7 +63,7 @@ func (suite *CachedClientSuite) TestSMA() {
 
 	// Testing SMA twice
 	for i := 0; i < 2; i++ {
-		ts, err := suite.cachedClient.SMA(context.Background(), SMAPayload{
+		ts, err := suite.cachedClient.SMA(context.Background(), client.SMAPayload{
 			Exchange:     "binance",
 			Pair:         "BTC-USDT",
 			Period:       period.M1,

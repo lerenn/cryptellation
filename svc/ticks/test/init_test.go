@@ -25,7 +25,7 @@ func (suite *EndToEndSuite) SetupSuite() {
 	suite.Require().NoError(cfg.Validate())
 
 	// Init client
-	client, err := nats.NewClient(cfg)
+	client, err := nats.New(cfg)
 	suite.Require().NoError(err)
 	suite.client = client
 }

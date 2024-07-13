@@ -7,7 +7,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/lerenn/asyncapi-codegen/pkg/extensions"
-	"github.com/lerenn/asyncapi-codegen/pkg/extensions/brokers/nats"
+	natsextension "github.com/lerenn/asyncapi-codegen/pkg/extensions/brokers/nats"
 	helpers "github.com/lerenn/cryptellation/pkg/asyncapi"
 	common "github.com/lerenn/cryptellation/pkg/client"
 	"github.com/lerenn/cryptellation/pkg/config"
@@ -18,18 +18,16 @@ import (
 	"github.com/lerenn/cryptellation/svc/ticks/pkg/tick"
 )
 
-type Client struct {
-	broker *nats.Controller
+type nats struct {
+	broker *natsextension.Controller
 	ctrl   *asyncapi.UserController
 
 	name   string
 	logger extensions.Logger
 }
 
-type BacktestsOption func(b *Client)
-
-func NewClient(c config.NATS, options ...BacktestsOption) (Client, error) {
-	var b Client
+func New(c config.NATS, options ...option) (client.Client, error) {
+	var b nats
 	var err error
 
 	// Execute options
@@ -38,9 +36,9 @@ func NewClient(c config.NATS, options ...BacktestsOption) (Client, error) {
 	}
 
 	// Create a NATS Controller
-	b.broker, err = nats.NewController(c.URL())
+	b.broker, err = natsextension.NewController(c.URL())
 	if err != nil {
-		return Client{}, err
+		return nil, err
 	}
 
 	// Create a logger if asked
@@ -54,26 +52,14 @@ func NewClient(c config.NATS, options ...BacktestsOption) (Client, error) {
 	// Create a new user controller
 	ctrl, err := asyncapi.NewUserController(b.broker, ctrlOpts...)
 	if err != nil {
-		return Client{}, err
+		return nil, err
 	}
 	b.ctrl = ctrl
 
-	return b, nil
+	return &b, nil
 }
 
-func WithLogger(logger extensions.Logger) BacktestsOption {
-	return func(b *Client) {
-		b.logger = logger
-	}
-}
-
-func WithName(name string) BacktestsOption {
-	return func(b *Client) {
-		b.name = name
-	}
-}
-
-func (b Client) ListenEvents(ctx context.Context, backtestID uuid.UUID) (<-chan event.Event, error) {
+func (b nats) ListenEvents(ctx context.Context, backtestID uuid.UUID) (<-chan event.Event, error) {
 	ch := make(chan event.Event, 256)
 
 	// Create callback when a tick appears
@@ -119,7 +105,7 @@ func (b Client) ListenEvents(ctx context.Context, backtestID uuid.UUID) (<-chan 
 	}, callback)
 }
 
-func (b Client) Create(ctx context.Context, payload client.BacktestCreationPayload) (uuid.UUID, error) {
+func (b nats) Create(ctx context.Context, payload client.BacktestCreationPayload) (uuid.UUID, error) {
 	// Set message
 	reqMsg := asyncapi.NewCreateRequestMessage()
 	reqMsg.Headers.ReplyTo = helpers.AddReplyToSuffix(asyncapi.CreateRequestChannelPath, b.name)
@@ -139,7 +125,7 @@ func (b Client) Create(ctx context.Context, payload client.BacktestCreationPaylo
 	return uuid.Parse(respMsg.Payload.Id)
 }
 
-func (b Client) Subscribe(ctx context.Context, backtestID uuid.UUID, exchange, pair string) error {
+func (b nats) Subscribe(ctx context.Context, backtestID uuid.UUID, exchange, pair string) error {
 	// Set message
 	reqMsg := asyncapi.NewSubscribeRequestMessage()
 	reqMsg.Headers.ReplyTo = helpers.AddReplyToSuffix(asyncapi.SubscribeRequestChannelPath, b.name)
@@ -155,7 +141,7 @@ func (b Client) Subscribe(ctx context.Context, backtestID uuid.UUID, exchange, p
 	return helpers.UnwrapError(respMsg.Payload.Error)
 }
 
-func (b Client) Advance(ctx context.Context, backtestID uuid.UUID) error {
+func (b nats) Advance(ctx context.Context, backtestID uuid.UUID) error {
 	// Set message
 	reqMsg := asyncapi.NewAdvanceRequestMessage()
 	reqMsg.Headers.ReplyTo = helpers.AddReplyToSuffix(asyncapi.AdvanceRequestChannelPath, b.name)
@@ -171,7 +157,7 @@ func (b Client) Advance(ctx context.Context, backtestID uuid.UUID) error {
 	return helpers.UnwrapError(respMsg.Payload.Error)
 }
 
-func (b Client) CreateOrder(ctx context.Context, payload common.OrderCreationPayload) error {
+func (b nats) CreateOrder(ctx context.Context, payload common.OrderCreationPayload) error {
 	// Set message
 	reqMsg := asyncapi.NewOrdersCreateRequestMessage()
 	reqMsg.Headers.ReplyTo = helpers.AddReplyToSuffix(asyncapi.OrdersCreateRequestChannelPath, b.name)
@@ -187,7 +173,7 @@ func (b Client) CreateOrder(ctx context.Context, payload common.OrderCreationPay
 	return helpers.UnwrapError(respMsg.Payload.Error)
 }
 
-func (b Client) GetAccounts(ctx context.Context, backtestID uuid.UUID) (map[string]account.Account, error) {
+func (b nats) GetAccounts(ctx context.Context, backtestID uuid.UUID) (map[string]account.Account, error) {
 	// Set message
 	reqMsg := asyncapi.NewAccountsListRequestMessage()
 	reqMsg.Headers.ReplyTo = helpers.AddReplyToSuffix(asyncapi.AccountsListRequestChannelPath, b.name)
@@ -208,7 +194,7 @@ func (b Client) GetAccounts(ctx context.Context, backtestID uuid.UUID) (map[stri
 	return respMsg.ToModel(), nil
 }
 
-func (b Client) ServiceInfo(ctx context.Context) (common.ServiceInfo, error) {
+func (b nats) ServiceInfo(ctx context.Context) (common.ServiceInfo, error) {
 	// Set message
 	reqMsg := asyncapi.NewServiceInfoRequestMessage()
 	reqMsg.Headers.ReplyTo = helpers.AddReplyToSuffix(asyncapi.ServiceInfoRequestChannelPath, b.name)
@@ -222,7 +208,7 @@ func (b Client) ServiceInfo(ctx context.Context) (common.ServiceInfo, error) {
 	return respMsg.ToModel(), nil
 }
 
-func (b Client) Close(ctx context.Context) {
+func (b nats) Close(ctx context.Context) {
 	b.ctrl.Close(ctx)
 	b.broker.Close()
 }

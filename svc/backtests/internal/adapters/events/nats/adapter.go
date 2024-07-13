@@ -6,7 +6,7 @@ import (
 	"github.com/lerenn/cryptellation/pkg/config"
 	asyncapi "github.com/lerenn/cryptellation/svc/backtests/api/asyncapi"
 	client "github.com/lerenn/cryptellation/svc/backtests/clients/go"
-	natsClient "github.com/lerenn/cryptellation/svc/backtests/clients/go/nats"
+	backtestsnats "github.com/lerenn/cryptellation/svc/backtests/clients/go/nats"
 )
 
 type Adapter struct {
@@ -29,7 +29,7 @@ func New(c config.NATS) (*Adapter, error) {
 	}
 
 	// Create a new client
-	client, err := natsClient.NewClient(c, natsClient.WithLogger(pkg.LoggerWrapper{}))
+	client, err := backtestsnats.New(c, backtestsnats.WithLogger(pkg.LoggerWrapper{}))
 	if err != nil {
 		return nil, err
 	}

@@ -1,4 +1,4 @@
-package client
+package cache
 
 import (
 	"context"
@@ -6,13 +6,12 @@ import (
 	"time"
 
 	"github.com/bluele/gcache"
-	client "github.com/lerenn/cryptellation/pkg/client"
+	common "github.com/lerenn/cryptellation/pkg/client"
 	"github.com/lerenn/cryptellation/pkg/models/timeserie"
 	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/candlestick"
 	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/period"
+	client "github.com/lerenn/cryptellation/svc/indicators/clients/go"
 )
-
-var _ Client = (*CachedClient)(nil)
 
 type cacheKey struct {
 	Exchange     string
@@ -23,16 +22,14 @@ type cacheKey struct {
 	Timestamp    int64
 }
 
-type CachedClient struct {
-	controller Client
+type cache struct {
+	controller client.Client
 	smaCache   gcache.Cache
-	parameters CacheParameters
-}
-
-type CacheParameters struct {
-	MaxSize              int
-	PreLoadingAfterSize  int
-	PreLoadingBeforeSize int
+	settings   struct {
+		maxSize              int
+		preLoadingAfterSize  int
+		preLoadingBeforeSize int
+	}
 }
 
 const (
@@ -41,23 +38,28 @@ const (
 	DefaultPreLoadingBeforeSize = 0
 )
 
-func DefaultCacheParameters() CacheParameters {
-	return CacheParameters{
-		MaxSize:              DefaultMaxSize,
-		PreLoadingAfterSize:  DefaultPreLoadingAfterSize,
-		PreLoadingBeforeSize: DefaultPreLoadingBeforeSize,
+func New(controller client.Client, options ...option) client.Client {
+	var c cache
+
+	// Set client and default settings
+	c.controller = controller
+	c.settings.maxSize = DefaultMaxSize
+	c.settings.preLoadingAfterSize = DefaultPreLoadingAfterSize
+	c.settings.preLoadingBeforeSize = DefaultPreLoadingBeforeSize
+
+	// Execute options
+	for _, option := range options {
+		option(&c)
 	}
+
+	// Set cache
+	c.smaCache = gcache.New(c.settings.maxSize).LRU().Build()
+
+	return &c
+
 }
 
-func NewCachedClient(controller Client, params CacheParameters) *CachedClient {
-	return &CachedClient{
-		controller: controller,
-		smaCache:   gcache.New(params.MaxSize).LRU().Build(),
-		parameters: params,
-	}
-}
-
-func (client *CachedClient) SMA(ctx context.Context, payload SMAPayload) (*timeserie.TimeSerie[float64], error) {
+func (client *cache) SMA(ctx context.Context, payload client.SMAPayload) (*timeserie.TimeSerie[float64], error) {
 	list := timeserie.New[float64]()
 
 	// Round down payload start and end
@@ -100,8 +102,8 @@ func (client *CachedClient) SMA(ctx context.Context, payload SMAPayload) (*times
 
 	// Generate new payload with extended time ranges
 	newPayload := payload
-	newPayload.Start = tr[0].Start.Add(-payload.Period.Duration() * time.Duration(client.parameters.PreLoadingBeforeSize))
-	newPayload.End = tr[len(tr)-1].End.Add(payload.Period.Duration() * time.Duration(client.parameters.PreLoadingAfterSize))
+	newPayload.Start = tr[0].Start.Add(-payload.Period.Duration() * time.Duration(client.settings.preLoadingBeforeSize))
+	newPayload.End = tr[len(tr)-1].End.Add(payload.Period.Duration() * time.Duration(client.settings.preLoadingAfterSize))
 
 	// Get missing times
 	missing, err := client.controller.SMA(ctx, newPayload)
@@ -133,11 +135,11 @@ func (client *CachedClient) SMA(ctx context.Context, payload SMAPayload) (*times
 	return list.Extract(payload.Start, payload.End, 0), nil
 }
 
-func (client *CachedClient) ServiceInfo(ctx context.Context) (client.ServiceInfo, error) {
+func (client *cache) ServiceInfo(ctx context.Context) (common.ServiceInfo, error) {
 	return client.controller.ServiceInfo(ctx)
 }
 
-func (client *CachedClient) Close(ctx context.Context) {
+func (client *cache) Close(ctx context.Context) {
 	client.smaCache.Purge()
 	client.controller.Close(ctx)
 }
