@@ -1,5 +1,7 @@
 DOCKER_IMAGE_PREFIX := lerenn/cryptellation
 
+.DEFAULT_GOAL       := help
+
 .PHONY: clean
 clean: ## Clean everything
 	@rm *.tgz || true

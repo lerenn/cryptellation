@@ -7,7 +7,7 @@ ARG TARGETOS
 ARG TARGETARCH
 
 # Disable CGO
-ENV CGO_ENABLED 0
+ENV CGO_ENABLED=0
 
 # Get all remaining code
 RUN mkdir -p /go/src/github.com/lerenn/cryptellation
@@ -22,10 +22,10 @@ RUN --mount=type=cache,target=/root/.cache/go-build \
     CGO_ENABLED=0 GOOS=${TARGETOS} GOARCH=${TARGETARCH} go install ./cmd/*
 
 # Get final base image
-FROM --platform=${TARGETPLATFORM:-linux/amd64} alpine
+FROM alpine
 
 # Set environment variables
-ENV HEALTH_PORT 9000
+ENV HEALTH_PORT=9000
 
 # Expose ports
 EXPOSE 9000
