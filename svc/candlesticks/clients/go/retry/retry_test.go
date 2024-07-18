@@ -3,6 +3,7 @@ package retry
 import (
 	"context"
 	"testing"
+	"time"
 
 	common "github.com/lerenn/cryptellation/pkg/client"
 	client "github.com/lerenn/cryptellation/svc/candlesticks/clients/go"
@@ -24,7 +25,10 @@ type RetrySuite struct {
 
 func (suite *RetrySuite) SetupTest() {
 	suite.candlesticks = client.NewMockClient(gomock.NewController(suite.T()))
-	suite.Retry = New(suite.candlesticks)
+	suite.Retry = New(suite.candlesticks,
+		WithMaxRetry(3),
+		WithTimeout(time.Millisecond*100),
+	)
 }
 
 func (suite *RetrySuite) TestReadUntilExpiration() {

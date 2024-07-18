@@ -15,7 +15,8 @@ type retry struct {
 
 func New(client client.Client, options ...option) client.Client {
 	r := retry{
-		client: client,
+		client:    client,
+		Retryable: common.DefaultRetryable,
 	}
 
 	// Execute options
