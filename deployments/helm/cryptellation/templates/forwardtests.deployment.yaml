@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
       - name: forwardtests
-        image: {{ ((.Values.services).forwardtests).image.repository | default "lerenn/cryptellation-forwardtests" }}:{{ ((.Values.services).forwardtests).image.tag | default "latest" }}
+        image: {{ ((.Values.services).forwardtests).image.repository | default "lerenn/cryptellation-forwardtests" }}:{{ ((.Values.services).forwardtests).image.tag | default "v1.12.0" }}
         imagePullPolicy: {{ ((.Values.services).forwardtests).image.pullPolicy | default "Always" }}
         livenessProbe:
           httpGet:

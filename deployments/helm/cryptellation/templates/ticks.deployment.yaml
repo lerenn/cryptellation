@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
       - name: ticks
-        image: {{ ((.Values.services).ticks).image.repository | default "lerenn/cryptellation-ticks" }}:{{ ((.Values.services).ticks).image.tag | default "latest" }}
+        image: {{ ((.Values.services).ticks).image.repository | default "lerenn/cryptellation-ticks" }}:{{ ((.Values.services).ticks).image.tag | default "v1.12.0" }}
         imagePullPolicy: {{ ((.Values.services).ticks).image.pullPolicy | default "Always" }}
         livenessProbe:
           httpGet:
