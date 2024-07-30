@@ -4,8 +4,9 @@ import (
 	"fmt"
 	"strings"
 
+	"cryptellation/cmd/cryptellation-tui/views"
+
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/lerenn/cryptellation/cmd/cryptellation-tui/views"
 )
 
 type App struct {

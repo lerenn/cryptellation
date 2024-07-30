@@ -3,7 +3,8 @@ package account
 import (
 	"testing"
 
-	"github.com/lerenn/cryptellation/pkg/models/order"
+	"cryptellation/pkg/models/order"
+
 	"github.com/stretchr/testify/suite"
 )
 

@@ -8,14 +8,18 @@ package asyncapi
 import (
 	"time"
 
+	"cryptellation/pkg/models/account"
+	"cryptellation/pkg/models/event"
+	"cryptellation/pkg/utils"
+
+	client "cryptellation/svc/backtests/clients/go"
+	"cryptellation/svc/backtests/pkg/backtest"
+
+	"cryptellation/svc/candlesticks/pkg/period"
+
+	"cryptellation/svc/ticks/pkg/tick"
+
 	"github.com/google/uuid"
-	"github.com/lerenn/cryptellation/pkg/models/account"
-	"github.com/lerenn/cryptellation/pkg/models/event"
-	"github.com/lerenn/cryptellation/pkg/utils"
-	client "github.com/lerenn/cryptellation/svc/backtests/clients/go"
-	"github.com/lerenn/cryptellation/svc/backtests/pkg/backtest"
-	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/period"
-	"github.com/lerenn/cryptellation/svc/ticks/pkg/tick"
 )
 
 func (msg *CreateRequestMessage) Set(payload client.BacktestCreationPayload) {

@@ -3,10 +3,11 @@ package asyncapi
 import (
 	"time"
 
+	common "cryptellation/pkg/client"
+	"cryptellation/pkg/models/order"
+	"cryptellation/pkg/utils"
+
 	"github.com/google/uuid"
-	common "github.com/lerenn/cryptellation/pkg/client"
-	"github.com/lerenn/cryptellation/pkg/models/order"
-	"github.com/lerenn/cryptellation/pkg/utils"
 )
 
 func (msg *OrdersCreateRequestMessage) Set(payload common.OrderCreationPayload) {

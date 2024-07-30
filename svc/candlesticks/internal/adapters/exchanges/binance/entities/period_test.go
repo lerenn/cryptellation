@@ -3,7 +3,7 @@ package entities
 import (
 	"testing"
 
-	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/period"
+	"cryptellation/svc/candlesticks/pkg/period"
 )
 
 var possibleIntervals = map[period.Symbol]string{

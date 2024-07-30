@@ -1,6 +1,6 @@
 package asyncapi
 
-import client "github.com/lerenn/cryptellation/pkg/client"
+import client "cryptellation/pkg/client"
 
 func (m ServiceInfoResponseMessage) ToModel() client.ServiceInfo {
 	return client.ServiceInfo{

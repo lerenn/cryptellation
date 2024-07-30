@@ -4,8 +4,9 @@ import (
 	"context"
 	"time"
 
-	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/candlestick"
-	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/period"
+	"cryptellation/svc/candlesticks/pkg/candlestick"
+	"cryptellation/svc/candlesticks/pkg/period"
+
 	"github.com/stretchr/testify/suite"
 )
 

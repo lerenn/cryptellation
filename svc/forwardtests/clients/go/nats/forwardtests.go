@@ -3,16 +3,18 @@ package nats
 import (
 	"context"
 
+	helpers "cryptellation/pkg/asyncapi"
+	common "cryptellation/pkg/client"
+	"cryptellation/pkg/config"
+	"cryptellation/pkg/models/account"
+
+	asyncapi "cryptellation/svc/forwardtests/api/asyncapi"
+	client "cryptellation/svc/forwardtests/clients/go"
+	"cryptellation/svc/forwardtests/pkg/forwardtest"
+
 	"github.com/google/uuid"
 	"github.com/lerenn/asyncapi-codegen/pkg/extensions"
 	natsextension "github.com/lerenn/asyncapi-codegen/pkg/extensions/brokers/nats"
-	helpers "github.com/lerenn/cryptellation/pkg/asyncapi"
-	common "github.com/lerenn/cryptellation/pkg/client"
-	"github.com/lerenn/cryptellation/pkg/config"
-	"github.com/lerenn/cryptellation/pkg/models/account"
-	asyncapi "github.com/lerenn/cryptellation/svc/forwardtests/api/asyncapi"
-	client "github.com/lerenn/cryptellation/svc/forwardtests/clients/go"
-	"github.com/lerenn/cryptellation/svc/forwardtests/pkg/forwardtest"
 )
 
 type nats struct {

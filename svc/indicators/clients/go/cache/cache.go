@@ -5,12 +5,15 @@ import (
 	"errors"
 	"time"
 
+	common "cryptellation/pkg/client"
+	"cryptellation/pkg/models/timeserie"
+
+	"cryptellation/svc/candlesticks/pkg/candlestick"
+	"cryptellation/svc/candlesticks/pkg/period"
+
+	client "cryptellation/svc/indicators/clients/go"
+
 	"github.com/bluele/gcache"
-	common "github.com/lerenn/cryptellation/pkg/client"
-	"github.com/lerenn/cryptellation/pkg/models/timeserie"
-	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/candlestick"
-	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/period"
-	client "github.com/lerenn/cryptellation/svc/indicators/clients/go"
 )
 
 type cacheKey struct {

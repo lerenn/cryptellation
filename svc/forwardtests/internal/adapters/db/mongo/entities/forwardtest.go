@@ -3,8 +3,9 @@ package entities
 import (
 	"time"
 
+	"cryptellation/svc/forwardtests/pkg/forwardtest"
+
 	"github.com/google/uuid"
-	"github.com/lerenn/cryptellation/svc/forwardtests/pkg/forwardtest"
 )
 
 type ForwardTest struct {

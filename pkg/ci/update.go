@@ -3,8 +3,9 @@ package ci
 import (
 	"context"
 
+	"cryptellation/pkg/utils"
+
 	"dagger.io/dagger"
-	"github.com/lerenn/cryptellation/pkg/utils"
 )
 
 // UpdateGoMod returns a container that generates code.

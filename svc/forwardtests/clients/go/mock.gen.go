@@ -9,9 +9,9 @@ import (
 	reflect "reflect"
 
 	uuid "github.com/google/uuid"
-	client "github.com/lerenn/cryptellation/pkg/client"
-	account "github.com/lerenn/cryptellation/pkg/models/account"
-	forwardtest "github.com/lerenn/cryptellation/svc/forwardtests/pkg/forwardtest"
+	client "cryptellation/pkg/client"
+	account "cryptellation/pkg/models/account"
+	forwardtest "cryptellation/svc/forwardtests/pkg/forwardtest"
 	gomock "go.uber.org/mock/gomock"
 )
 

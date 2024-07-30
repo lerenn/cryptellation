@@ -3,8 +3,9 @@ package domain
 import (
 	"context"
 
+	"cryptellation/svc/forwardtests/pkg/forwardtest"
+
 	"github.com/google/uuid"
-	"github.com/lerenn/cryptellation/svc/forwardtests/pkg/forwardtest"
 )
 
 func (f ForwardTests) Create(ctx context.Context, payload forwardtest.NewPayload) (uuid.UUID, error) {

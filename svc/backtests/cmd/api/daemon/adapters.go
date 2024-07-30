@@ -3,16 +3,18 @@ package daemon
 import (
 	"context"
 
-	asyncapipkg "github.com/lerenn/cryptellation/pkg/asyncapi"
-	"github.com/lerenn/cryptellation/pkg/config"
-	mongo "github.com/lerenn/cryptellation/svc/backtests/internal/adapters/db/mongo"
-	natsBacktests "github.com/lerenn/cryptellation/svc/backtests/internal/adapters/events/nats"
-	"github.com/lerenn/cryptellation/svc/backtests/internal/app/ports/db"
-	"github.com/lerenn/cryptellation/svc/backtests/internal/app/ports/events"
-	candlesticks "github.com/lerenn/cryptellation/svc/candlesticks/clients/go"
-	candlestickscache "github.com/lerenn/cryptellation/svc/candlesticks/clients/go/cache"
-	candlesticksnats "github.com/lerenn/cryptellation/svc/candlesticks/clients/go/nats"
-	candlesticksretry "github.com/lerenn/cryptellation/svc/candlesticks/clients/go/retry"
+	asyncapipkg "cryptellation/pkg/asyncapi"
+	"cryptellation/pkg/config"
+
+	mongo "cryptellation/svc/backtests/internal/adapters/db/mongo"
+	natsBacktests "cryptellation/svc/backtests/internal/adapters/events/nats"
+	"cryptellation/svc/backtests/internal/app/ports/db"
+	"cryptellation/svc/backtests/internal/app/ports/events"
+
+	candlesticks "cryptellation/svc/candlesticks/clients/go"
+	candlestickscache "cryptellation/svc/candlesticks/clients/go/cache"
+	candlesticksnats "cryptellation/svc/candlesticks/clients/go/nats"
+	candlesticksretry "cryptellation/svc/candlesticks/clients/go/retry"
 )
 
 type adapters struct {

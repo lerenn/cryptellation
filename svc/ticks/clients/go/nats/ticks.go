@@ -4,15 +4,17 @@ import (
 	"context"
 	"time"
 
+	helpers "cryptellation/pkg/asyncapi"
+	common "cryptellation/pkg/client"
+	"cryptellation/pkg/config"
+	"cryptellation/pkg/models/event"
+
+	asyncapi "cryptellation/svc/ticks/api/asyncapi"
+	client "cryptellation/svc/ticks/clients/go"
+	"cryptellation/svc/ticks/pkg/tick"
+
 	"github.com/lerenn/asyncapi-codegen/pkg/extensions"
 	natsextension "github.com/lerenn/asyncapi-codegen/pkg/extensions/brokers/nats"
-	helpers "github.com/lerenn/cryptellation/pkg/asyncapi"
-	common "github.com/lerenn/cryptellation/pkg/client"
-	"github.com/lerenn/cryptellation/pkg/config"
-	"github.com/lerenn/cryptellation/pkg/models/event"
-	asyncapi "github.com/lerenn/cryptellation/svc/ticks/api/asyncapi"
-	client "github.com/lerenn/cryptellation/svc/ticks/clients/go"
-	"github.com/lerenn/cryptellation/svc/ticks/pkg/tick"
 )
 
 type nats struct {

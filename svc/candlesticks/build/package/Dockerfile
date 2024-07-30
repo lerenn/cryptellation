@@ -10,11 +10,11 @@ ARG TARGETARCH
 ENV CGO_ENABLED=0
 
 # Get all remaining code
-RUN mkdir -p /go/src/github.com/lerenn/cryptellation
-COPY ./ /go/src/github.com/lerenn/cryptellation
+RUN mkdir -p /go/src/cryptellation
+COPY ./ /go/src/cryptellation
 
 # Set the workdir
-WORKDIR /go/src/github.com/lerenn/cryptellation/svc/candlesticks
+WORKDIR /go/src/cryptellation/svc/candlesticks
 
 # Build everything in cmd/
 RUN --mount=type=cache,target=/root/.cache/go-build \

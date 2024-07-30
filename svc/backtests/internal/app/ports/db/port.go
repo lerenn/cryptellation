@@ -7,8 +7,9 @@ import (
 	"context"
 	"time"
 
+	"cryptellation/svc/backtests/pkg/backtest"
+
 	"github.com/google/uuid"
-	"github.com/lerenn/cryptellation/svc/backtests/pkg/backtest"
 )
 
 const (

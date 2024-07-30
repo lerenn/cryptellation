@@ -1,9 +1,10 @@
 package nats
 
 import (
-	adapter "github.com/lerenn/cryptellation/pkg/adapters/events/nats"
-	"github.com/lerenn/cryptellation/pkg/config"
-	asyncapi "github.com/lerenn/cryptellation/svc/ticks/api/asyncapi"
+	adapter "cryptellation/pkg/adapters/events/nats"
+	"cryptellation/pkg/config"
+
+	asyncapi "cryptellation/svc/ticks/api/asyncapi"
 )
 
 type Adapter struct {

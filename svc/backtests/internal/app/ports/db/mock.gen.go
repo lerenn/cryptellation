@@ -9,7 +9,7 @@ import (
 	reflect "reflect"
 
 	uuid "github.com/google/uuid"
-	backtest "github.com/lerenn/cryptellation/svc/backtests/pkg/backtest"
+	backtest "cryptellation/svc/backtests/pkg/backtest"
 	gomock "go.uber.org/mock/gomock"
 )
 

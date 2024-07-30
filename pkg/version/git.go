@@ -1,7 +1,7 @@
 package version
 
 import (
-	git "github.com/lerenn/cryptellation/pkg/version/git"
+	git "cryptellation/pkg/version/git"
 )
 
 // SetFromGit sets the commit hash and the version from the last git

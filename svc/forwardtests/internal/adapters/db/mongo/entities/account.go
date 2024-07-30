@@ -1,6 +1,6 @@
 package entities
 
-import "github.com/lerenn/cryptellation/pkg/models/account"
+import "cryptellation/pkg/models/account"
 
 type Account struct {
 	Balances map[string]float64 `bson:"balances"`

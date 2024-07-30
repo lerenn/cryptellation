@@ -1,0 +1,14 @@
+go 1.22.5
+
+use (
+	./clients/go
+	./cmd/cryptellation
+	./cmd/cryptellation-tui
+	./pkg
+	./svc/backtests
+	./svc/candlesticks
+	./svc/exchanges
+	./svc/forwardtests
+	./svc/indicators
+	./svc/ticks
+)

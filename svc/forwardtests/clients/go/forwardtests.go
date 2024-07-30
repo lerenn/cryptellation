@@ -6,10 +6,12 @@ package client
 import (
 	"context"
 
+	"cryptellation/pkg/client"
+	"cryptellation/pkg/models/account"
+
+	"cryptellation/svc/forwardtests/pkg/forwardtest"
+
 	"github.com/google/uuid"
-	"github.com/lerenn/cryptellation/pkg/client"
-	"github.com/lerenn/cryptellation/pkg/models/account"
-	"github.com/lerenn/cryptellation/svc/forwardtests/pkg/forwardtest"
 )
 
 type Client interface {

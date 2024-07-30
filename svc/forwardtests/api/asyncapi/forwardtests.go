@@ -6,9 +6,11 @@
 package asyncapi
 
 import (
+	"cryptellation/pkg/models/account"
+
+	"cryptellation/svc/forwardtests/pkg/forwardtest"
+
 	"github.com/google/uuid"
-	"github.com/lerenn/cryptellation/pkg/models/account"
-	"github.com/lerenn/cryptellation/svc/forwardtests/pkg/forwardtest"
 )
 
 func (msg *CreateRequestMessage) Set(payload forwardtest.NewPayload) {

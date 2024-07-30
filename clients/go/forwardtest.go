@@ -3,8 +3,9 @@ package client
 import (
 	"context"
 
-	"github.com/lerenn/cryptellation/svc/forwardtests/pkg/forwardtest"
-	"github.com/lerenn/cryptellation/svc/ticks/pkg/tick"
+	"cryptellation/svc/forwardtests/pkg/forwardtest"
+
+	"cryptellation/svc/ticks/pkg/tick"
 )
 
 type ForwardTest struct {

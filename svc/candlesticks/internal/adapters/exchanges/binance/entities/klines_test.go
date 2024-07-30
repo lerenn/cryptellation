@@ -4,10 +4,12 @@ import (
 	"testing"
 	"time"
 
+	adapter "cryptellation/pkg/adapters/exchanges/binance"
+
+	"cryptellation/svc/candlesticks/pkg/candlestick"
+	"cryptellation/svc/candlesticks/pkg/period"
+
 	binance "github.com/adshao/go-binance/v2"
-	adapter "github.com/lerenn/cryptellation/pkg/adapters/exchanges/binance"
-	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/candlestick"
-	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/period"
 )
 
 var testCasesKLineToCandlestick = []struct {

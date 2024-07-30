@@ -3,10 +3,12 @@ package app
 import (
 	"context"
 
+	"cryptellation/pkg/models/account"
+	"cryptellation/pkg/models/order"
+
+	"cryptellation/svc/backtests/pkg/backtest"
+
 	"github.com/google/uuid"
-	"github.com/lerenn/cryptellation/pkg/models/account"
-	"github.com/lerenn/cryptellation/pkg/models/order"
-	"github.com/lerenn/cryptellation/svc/backtests/pkg/backtest"
 )
 
 type Backtests interface {

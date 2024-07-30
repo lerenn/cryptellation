@@ -4,11 +4,14 @@ import (
 	"context"
 	"fmt"
 
+	"cryptellation/pkg/adapters/telemetry"
+	"cryptellation/pkg/models/event"
+
+	"cryptellation/svc/backtests/pkg/backtest"
+
+	candlesticks "cryptellation/svc/candlesticks/clients/go"
+
 	"github.com/google/uuid"
-	"github.com/lerenn/cryptellation/pkg/adapters/telemetry"
-	"github.com/lerenn/cryptellation/pkg/models/event"
-	"github.com/lerenn/cryptellation/svc/backtests/pkg/backtest"
-	candlesticks "github.com/lerenn/cryptellation/svc/candlesticks/clients/go"
 )
 
 func (b Backtests) Advance(ctx context.Context, backtestId uuid.UUID) error {

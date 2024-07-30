@@ -4,9 +4,11 @@ import (
 	"fmt"
 	"os"
 
-	client "github.com/lerenn/cryptellation/clients/go"
-	"github.com/lerenn/cryptellation/pkg/config"
-	"github.com/lerenn/cryptellation/pkg/version"
+	client "cryptellation/client"
+
+	"cryptellation/pkg/config"
+	"cryptellation/pkg/version"
+
 	"github.com/spf13/cobra"
 )
 

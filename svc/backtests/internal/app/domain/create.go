@@ -4,8 +4,9 @@ import (
 	"context"
 	"fmt"
 
+	"cryptellation/svc/backtests/pkg/backtest"
+
 	"github.com/google/uuid"
-	"github.com/lerenn/cryptellation/svc/backtests/pkg/backtest"
 )
 
 func (b Backtests) Create(ctx context.Context, req backtest.NewPayload) (id uuid.UUID, err error) {

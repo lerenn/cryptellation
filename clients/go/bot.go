@@ -1,8 +1,9 @@
 package client
 
 import (
-	"github.com/lerenn/cryptellation/pkg/models/event"
-	"github.com/lerenn/cryptellation/svc/ticks/pkg/tick"
+	"cryptellation/pkg/models/event"
+
+	"cryptellation/svc/ticks/pkg/tick"
 )
 
 type Bot interface {

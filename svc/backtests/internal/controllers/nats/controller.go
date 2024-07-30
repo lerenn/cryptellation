@@ -3,12 +3,14 @@ package nats
 import (
 	"context"
 
+	asyncapipkg "cryptellation/pkg/asyncapi"
+	"cryptellation/pkg/config"
+
+	asyncapi "cryptellation/svc/backtests/api/asyncapi"
+	"cryptellation/svc/backtests/internal/app"
+
 	"github.com/lerenn/asyncapi-codegen/pkg/extensions"
 	"github.com/lerenn/asyncapi-codegen/pkg/extensions/brokers/nats"
-	asyncapipkg "github.com/lerenn/cryptellation/pkg/asyncapi"
-	"github.com/lerenn/cryptellation/pkg/config"
-	asyncapi "github.com/lerenn/cryptellation/svc/backtests/api/asyncapi"
-	"github.com/lerenn/cryptellation/svc/backtests/internal/app"
 )
 
 type Controller struct {

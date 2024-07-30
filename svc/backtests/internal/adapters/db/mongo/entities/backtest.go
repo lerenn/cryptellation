@@ -3,10 +3,12 @@ package entities
 import (
 	"time"
 
+	"cryptellation/svc/backtests/pkg/backtest"
+
+	"cryptellation/svc/candlesticks/pkg/candlestick"
+	"cryptellation/svc/candlesticks/pkg/period"
+
 	"github.com/google/uuid"
-	"github.com/lerenn/cryptellation/svc/backtests/pkg/backtest"
-	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/candlestick"
-	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/period"
 )
 
 type Backtest struct {

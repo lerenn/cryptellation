@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/lerenn/cryptellation/pkg/models/event"
+	"cryptellation/pkg/models/event"
 )
 
 func (suite *EndToEndSuite) TestListenTicks() {

@@ -3,7 +3,7 @@ package entities
 import (
 	"time"
 
-	"github.com/lerenn/cryptellation/svc/exchanges/pkg/exchange"
+	"cryptellation/svc/exchanges/pkg/exchange"
 )
 
 type Exchange struct {

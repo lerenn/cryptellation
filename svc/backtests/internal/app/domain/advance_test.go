@@ -5,16 +5,19 @@ import (
 	"testing"
 	"time"
 
+	"cryptellation/pkg/models/event"
+	"cryptellation/pkg/utils"
+
+	"cryptellation/svc/backtests/internal/app"
+	"cryptellation/svc/backtests/internal/app/ports/db"
+	"cryptellation/svc/backtests/internal/app/ports/events"
+	"cryptellation/svc/backtests/pkg/backtest"
+
+	candlesticks "cryptellation/svc/candlesticks/clients/go"
+	"cryptellation/svc/candlesticks/pkg/candlestick"
+	"cryptellation/svc/candlesticks/pkg/period"
+
 	"github.com/google/uuid"
-	"github.com/lerenn/cryptellation/pkg/models/event"
-	"github.com/lerenn/cryptellation/pkg/utils"
-	"github.com/lerenn/cryptellation/svc/backtests/internal/app"
-	"github.com/lerenn/cryptellation/svc/backtests/internal/app/ports/db"
-	"github.com/lerenn/cryptellation/svc/backtests/internal/app/ports/events"
-	"github.com/lerenn/cryptellation/svc/backtests/pkg/backtest"
-	candlesticks "github.com/lerenn/cryptellation/svc/candlesticks/clients/go"
-	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/candlestick"
-	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/period"
 	"github.com/stretchr/testify/suite"
 	"go.uber.org/mock/gomock"
 )

@@ -6,8 +6,9 @@ package events
 import (
 	"context"
 
+	"cryptellation/pkg/models/event"
+
 	"github.com/google/uuid"
-	"github.com/lerenn/cryptellation/pkg/models/event"
 )
 
 type Port interface {

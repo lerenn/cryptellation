@@ -4,8 +4,10 @@ import (
 	context "context"
 	"time"
 
-	event "github.com/lerenn/cryptellation/pkg/models/event"
-	tick "github.com/lerenn/cryptellation/svc/ticks/pkg/tick"
+	event "cryptellation/pkg/models/event"
+
+	tick "cryptellation/svc/ticks/pkg/tick"
+
 	"github.com/stretchr/testify/suite"
 )
 

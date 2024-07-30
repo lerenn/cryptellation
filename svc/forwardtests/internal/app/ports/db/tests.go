@@ -3,9 +3,11 @@ package db
 import (
 	"context"
 
+	"cryptellation/pkg/models/account"
+
+	"cryptellation/svc/forwardtests/pkg/forwardtest"
+
 	"github.com/google/uuid"
-	"github.com/lerenn/cryptellation/pkg/models/account"
-	"github.com/lerenn/cryptellation/svc/forwardtests/pkg/forwardtest"
 	"github.com/stretchr/testify/suite"
 )
 

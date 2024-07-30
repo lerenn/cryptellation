@@ -4,7 +4,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/lerenn/cryptellation/pkg/models/account"
+	"cryptellation/pkg/models/account"
+
 	"github.com/stretchr/testify/suite"
 )
 

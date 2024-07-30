@@ -5,10 +5,12 @@ import (
 	"testing"
 	"time"
 
-	common "github.com/lerenn/cryptellation/pkg/client"
-	client "github.com/lerenn/cryptellation/svc/candlesticks/clients/go"
-	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/candlestick"
-	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/period"
+	common "cryptellation/pkg/client"
+
+	client "cryptellation/svc/candlesticks/clients/go"
+	"cryptellation/svc/candlesticks/pkg/candlestick"
+	"cryptellation/svc/candlesticks/pkg/period"
+
 	"github.com/stretchr/testify/suite"
 	gomock "go.uber.org/mock/gomock"
 )

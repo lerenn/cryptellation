@@ -4,7 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/lerenn/cryptellation/pkg/config"
+	"cryptellation/pkg/config"
+
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"

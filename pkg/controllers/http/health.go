@@ -8,7 +8,7 @@ import (
 	"strconv"
 	"sync/atomic"
 
-	"github.com/lerenn/cryptellation/pkg/adapters/telemetry"
+	"cryptellation/pkg/adapters/telemetry"
 )
 
 const (

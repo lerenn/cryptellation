@@ -1,8 +1,9 @@
 package ci
 
 import (
+	"cryptellation/pkg/ci"
+
 	"dagger.io/dagger"
-	"github.com/lerenn/cryptellation/pkg/ci"
 )
 
 const (

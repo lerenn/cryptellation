@@ -3,9 +3,10 @@ package nats
 import (
 	"context"
 
-	"github.com/lerenn/cryptellation/pkg/models/event"
-	asyncapi "github.com/lerenn/cryptellation/svc/ticks/api/asyncapi"
-	"github.com/lerenn/cryptellation/svc/ticks/pkg/tick"
+	"cryptellation/pkg/models/event"
+
+	asyncapi "cryptellation/svc/ticks/api/asyncapi"
+	"cryptellation/svc/ticks/pkg/tick"
 )
 
 func (a *Adapter) PublishTick(ctx context.Context, tick tick.Tick) error {

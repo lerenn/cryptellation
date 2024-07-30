@@ -3,9 +3,10 @@ package domain
 import (
 	"context"
 
-	"github.com/lerenn/cryptellation/pkg/models/event"
-	"github.com/lerenn/cryptellation/svc/ticks/internal/app/ports/events"
-	"github.com/lerenn/cryptellation/svc/ticks/internal/app/ports/exchanges"
+	"cryptellation/pkg/models/event"
+
+	"cryptellation/svc/ticks/internal/app/ports/events"
+	"cryptellation/svc/ticks/internal/app/ports/exchanges"
 )
 
 type Ticks struct {

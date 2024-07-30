@@ -4,8 +4,9 @@ import (
 	"context"
 	"fmt"
 
+	"cryptellation/svc/backtests/pkg/backtest"
+
 	"github.com/google/uuid"
-	"github.com/lerenn/cryptellation/svc/backtests/pkg/backtest"
 )
 
 func (b Backtests) SubscribeToEvents(ctx context.Context, backtestId uuid.UUID, exchange, pair string) error {

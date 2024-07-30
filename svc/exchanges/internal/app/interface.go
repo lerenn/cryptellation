@@ -3,7 +3,7 @@ package app
 import (
 	"context"
 
-	"github.com/lerenn/cryptellation/svc/exchanges/pkg/exchange"
+	"cryptellation/svc/exchanges/pkg/exchange"
 )
 
 type Exchanges interface {

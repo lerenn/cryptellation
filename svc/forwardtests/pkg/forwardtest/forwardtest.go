@@ -5,11 +5,13 @@ import (
 	"fmt"
 	"time"
 
+	"cryptellation/pkg/models/account"
+	"cryptellation/pkg/models/order"
+	"cryptellation/pkg/utils"
+
+	"cryptellation/svc/candlesticks/pkg/candlestick"
+
 	"github.com/google/uuid"
-	"github.com/lerenn/cryptellation/pkg/models/account"
-	"github.com/lerenn/cryptellation/pkg/models/order"
-	"github.com/lerenn/cryptellation/pkg/utils"
-	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/candlestick"
 )
 
 var (

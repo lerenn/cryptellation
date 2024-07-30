@@ -5,11 +5,14 @@ import (
 	"fmt"
 	"time"
 
+	"cryptellation/pkg/utils"
+
+	client "cryptellation/svc/candlesticks/clients/go"
+	"cryptellation/svc/candlesticks/pkg/period"
+
+	"cryptellation/svc/forwardtests/pkg/forwardtest"
+
 	"github.com/google/uuid"
-	"github.com/lerenn/cryptellation/pkg/utils"
-	client "github.com/lerenn/cryptellation/svc/candlesticks/clients/go"
-	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/period"
-	"github.com/lerenn/cryptellation/svc/forwardtests/pkg/forwardtest"
 )
 
 var (

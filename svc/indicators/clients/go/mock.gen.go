@@ -8,8 +8,8 @@ import (
 	context "context"
 	reflect "reflect"
 
-	client "github.com/lerenn/cryptellation/pkg/client"
-	timeserie "github.com/lerenn/cryptellation/pkg/models/timeserie"
+	client "cryptellation/pkg/client"
+	timeserie "cryptellation/pkg/models/timeserie"
 	gomock "go.uber.org/mock/gomock"
 )
 

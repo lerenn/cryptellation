@@ -1,8 +1,8 @@
 package daemon
 
 import (
-	"github.com/lerenn/cryptellation/svc/indicators/internal/app"
-	"github.com/lerenn/cryptellation/svc/indicators/internal/app/domain"
+	"cryptellation/svc/indicators/internal/app"
+	"cryptellation/svc/indicators/internal/app/domain"
 )
 
 type components struct {

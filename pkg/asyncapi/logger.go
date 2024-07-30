@@ -4,8 +4,9 @@ import (
 	"context"
 	"fmt"
 
+	"cryptellation/pkg/adapters/telemetry"
+
 	"github.com/lerenn/asyncapi-codegen/pkg/extensions"
-	"github.com/lerenn/cryptellation/pkg/adapters/telemetry"
 )
 
 var _ extensions.Logger = (*LoggerWrapper)(nil)

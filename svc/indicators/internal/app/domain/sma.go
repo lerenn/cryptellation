@@ -4,13 +4,15 @@ import (
 	"context"
 	"time"
 
-	"github.com/lerenn/cryptellation/pkg/adapters/telemetry"
-	"github.com/lerenn/cryptellation/pkg/models/timeserie"
-	"github.com/lerenn/cryptellation/pkg/utils"
-	client "github.com/lerenn/cryptellation/svc/candlesticks/clients/go"
-	"github.com/lerenn/cryptellation/svc/indicators/internal/app"
-	"github.com/lerenn/cryptellation/svc/indicators/internal/app/ports/db"
-	"github.com/lerenn/cryptellation/svc/indicators/pkg/sma"
+	"cryptellation/pkg/adapters/telemetry"
+	"cryptellation/pkg/models/timeserie"
+	"cryptellation/pkg/utils"
+
+	client "cryptellation/svc/candlesticks/clients/go"
+
+	"cryptellation/svc/indicators/internal/app"
+	"cryptellation/svc/indicators/internal/app/ports/db"
+	"cryptellation/svc/indicators/pkg/sma"
 )
 
 func (ind indicators) GetCachedSMA(ctx context.Context, payload app.GetCachedSMAPayload) (*timeserie.TimeSerie[float64], error) {

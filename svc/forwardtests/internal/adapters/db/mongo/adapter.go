@@ -3,9 +3,11 @@ package mongo
 import (
 	"context"
 
-	mongoutil "github.com/lerenn/cryptellation/pkg/adapters/db/mongo"
-	"github.com/lerenn/cryptellation/pkg/config"
-	port "github.com/lerenn/cryptellation/svc/forwardtests/internal/app/ports/db"
+	mongoutil "cryptellation/pkg/adapters/db/mongo"
+	"cryptellation/pkg/config"
+
+	port "cryptellation/svc/forwardtests/internal/app/ports/db"
+
 	"go.mongodb.org/mongo-driver/mongo"
 )
 

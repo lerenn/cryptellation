@@ -4,11 +4,12 @@ import (
 	"context"
 	"fmt"
 
-	binancePkg "github.com/lerenn/cryptellation/pkg/adapters/exchanges/binance"
-	"github.com/lerenn/cryptellation/pkg/config"
-	"github.com/lerenn/cryptellation/svc/candlesticks/internal/adapters/exchanges/binance"
-	"github.com/lerenn/cryptellation/svc/candlesticks/internal/app/ports/exchanges"
-	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/candlestick"
+	binancePkg "cryptellation/pkg/adapters/exchanges/binance"
+	"cryptellation/pkg/config"
+
+	"cryptellation/svc/candlesticks/internal/adapters/exchanges/binance"
+	"cryptellation/svc/candlesticks/internal/app/ports/exchanges"
+	"cryptellation/svc/candlesticks/pkg/candlestick"
 )
 
 type Exchanges struct {

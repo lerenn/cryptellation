@@ -3,14 +3,16 @@ package nats
 import (
 	"context"
 
+	helpers "cryptellation/pkg/asyncapi"
+	common "cryptellation/pkg/client"
+	"cryptellation/pkg/config"
+	"cryptellation/pkg/models/timeserie"
+
+	asyncapi "cryptellation/svc/indicators/api/asyncapi"
+	client "cryptellation/svc/indicators/clients/go"
+
 	"github.com/lerenn/asyncapi-codegen/pkg/extensions"
 	natsextension "github.com/lerenn/asyncapi-codegen/pkg/extensions/brokers/nats"
-	helpers "github.com/lerenn/cryptellation/pkg/asyncapi"
-	common "github.com/lerenn/cryptellation/pkg/client"
-	"github.com/lerenn/cryptellation/pkg/config"
-	"github.com/lerenn/cryptellation/pkg/models/timeserie"
-	asyncapi "github.com/lerenn/cryptellation/svc/indicators/api/asyncapi"
-	client "github.com/lerenn/cryptellation/svc/indicators/clients/go"
 )
 
 type nats struct {

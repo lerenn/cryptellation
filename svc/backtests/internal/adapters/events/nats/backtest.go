@@ -3,9 +3,11 @@ package backtests
 import (
 	"context"
 
+	"cryptellation/pkg/models/event"
+
+	asyncapi "cryptellation/svc/backtests/api/asyncapi"
+
 	"github.com/google/uuid"
-	"github.com/lerenn/cryptellation/pkg/models/event"
-	asyncapi "github.com/lerenn/cryptellation/svc/backtests/api/asyncapi"
 )
 
 func (a *Adapter) Publish(ctx context.Context, backtestID uuid.UUID, evt event.Event) error {

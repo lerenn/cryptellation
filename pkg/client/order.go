@@ -1,8 +1,9 @@
 package client
 
 import (
+	"cryptellation/pkg/models/order"
+
 	"github.com/google/uuid"
-	"github.com/lerenn/cryptellation/pkg/models/order"
 )
 
 type OrderCreationPayload struct {

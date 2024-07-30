@@ -4,13 +4,15 @@ import (
 	"context"
 	"time"
 
-	common "github.com/lerenn/cryptellation/pkg/client"
-	"github.com/lerenn/cryptellation/pkg/models/account"
-	"github.com/lerenn/cryptellation/pkg/models/event"
-	"github.com/lerenn/cryptellation/pkg/models/order"
-	"github.com/lerenn/cryptellation/pkg/utils"
-	client "github.com/lerenn/cryptellation/svc/backtests/clients/go"
-	"github.com/lerenn/cryptellation/svc/ticks/pkg/tick"
+	common "cryptellation/pkg/client"
+	"cryptellation/pkg/models/account"
+	"cryptellation/pkg/models/event"
+	"cryptellation/pkg/models/order"
+	"cryptellation/pkg/utils"
+
+	client "cryptellation/svc/backtests/clients/go"
+
+	"cryptellation/svc/ticks/pkg/tick"
 )
 
 func (suite *EndToEndSuite) TestBacktestAdvance() {

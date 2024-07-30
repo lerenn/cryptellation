@@ -6,12 +6,15 @@ import (
 	"strconv"
 	"time"
 
+	"cryptellation/pkg/adapters/exchanges/binance"
+	"cryptellation/pkg/adapters/telemetry"
+	"cryptellation/pkg/config"
+
+	"cryptellation/svc/candlesticks/pkg/pair"
+
+	"cryptellation/svc/ticks/pkg/tick"
+
 	client "github.com/adshao/go-binance/v2"
-	"github.com/lerenn/cryptellation/pkg/adapters/exchanges/binance"
-	"github.com/lerenn/cryptellation/pkg/adapters/telemetry"
-	"github.com/lerenn/cryptellation/pkg/config"
-	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/pair"
-	"github.com/lerenn/cryptellation/svc/ticks/pkg/tick"
 )
 
 type Service struct {

@@ -4,12 +4,14 @@ import (
 	"math"
 	"time"
 
-	"github.com/lerenn/cryptellation/pkg/models/timeserie"
-	"github.com/lerenn/cryptellation/pkg/utils"
-	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/candlestick"
-	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/period"
-	client "github.com/lerenn/cryptellation/svc/indicators/clients/go"
-	"github.com/lerenn/cryptellation/svc/indicators/internal/app"
+	"cryptellation/pkg/models/timeserie"
+	"cryptellation/pkg/utils"
+
+	"cryptellation/svc/candlesticks/pkg/candlestick"
+	"cryptellation/svc/candlesticks/pkg/period"
+
+	client "cryptellation/svc/indicators/clients/go"
+	"cryptellation/svc/indicators/internal/app"
 )
 
 func (msg *SMARequestMessage) Set(payload client.SMAPayload) {

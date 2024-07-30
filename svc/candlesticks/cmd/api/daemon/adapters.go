@@ -3,11 +3,12 @@ package daemon
 import (
 	"context"
 
-	"github.com/lerenn/cryptellation/pkg/config"
-	"github.com/lerenn/cryptellation/svc/candlesticks/internal/adapters/db/mongo"
-	"github.com/lerenn/cryptellation/svc/candlesticks/internal/adapters/exchanges"
-	"github.com/lerenn/cryptellation/svc/candlesticks/internal/app/ports/db"
-	exchangesPort "github.com/lerenn/cryptellation/svc/candlesticks/internal/app/ports/exchanges"
+	"cryptellation/pkg/config"
+
+	"cryptellation/svc/candlesticks/internal/adapters/db/mongo"
+	"cryptellation/svc/candlesticks/internal/adapters/exchanges"
+	"cryptellation/svc/candlesticks/internal/app/ports/db"
+	exchangesPort "cryptellation/svc/candlesticks/internal/app/ports/exchanges"
 )
 
 type adapters struct {

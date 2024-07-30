@@ -4,11 +4,13 @@ import (
 	"context"
 	"testing"
 
+	candlesticks "cryptellation/svc/candlesticks/clients/go"
+
+	"cryptellation/svc/forwardtests/internal/app"
+	"cryptellation/svc/forwardtests/internal/app/ports/db"
+	"cryptellation/svc/forwardtests/pkg/forwardtest"
+
 	"github.com/google/uuid"
-	candlesticks "github.com/lerenn/cryptellation/svc/candlesticks/clients/go"
-	"github.com/lerenn/cryptellation/svc/forwardtests/internal/app"
-	"github.com/lerenn/cryptellation/svc/forwardtests/internal/app/ports/db"
-	"github.com/lerenn/cryptellation/svc/forwardtests/pkg/forwardtest"
 	"github.com/stretchr/testify/suite"
 	"go.uber.org/mock/gomock"
 )

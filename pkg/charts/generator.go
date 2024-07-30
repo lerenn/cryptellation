@@ -4,12 +4,16 @@ import (
 	"context"
 	"time"
 
+	client "cryptellation/client"
+	"cryptellation/pkg/utils"
+
+	cdksclient "cryptellation/svc/candlesticks/clients/go"
+	"cryptellation/svc/candlesticks/pkg/candlestick"
+
+	indclient "cryptellation/svc/indicators/clients/go"
+
 	"github.com/go-echarts/go-echarts/v2/charts"
 	"github.com/go-echarts/go-echarts/v2/opts"
-	client "github.com/lerenn/cryptellation/clients/go"
-	cdksclient "github.com/lerenn/cryptellation/svc/candlesticks/clients/go"
-	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/candlestick"
-	indclient "github.com/lerenn/cryptellation/svc/indicators/clients/go"
 )
 
 type Generator struct {
@@ -59,7 +63,7 @@ func (c Generator) Candlesticks(ctx context.Context, payload CandlesticksPayload
 			SplitNumber: 20,
 		}),
 		charts.WithYAxisOpts(opts.YAxis{
-			Scale: true,
+			Scale: utils.ToReference(true),
 		}),
 		charts.WithDataZoomOpts(opts.DataZoom{
 			Type:       "inside",
@@ -104,14 +108,14 @@ func (c Generator) SMA(ctx context.Context, payload SMAPayload) (*charts.Line, e
 	chart := charts.NewLine()
 	chart.SetXAxis(x).AddSeries("SMA", y).SetSeriesOptions(
 		charts.WithLineChartOpts(opts.LineChart{
-			Color: payload.Color,
+			ColorBy: payload.Color,
 		}))
 	chart.SetGlobalOptions(
 		charts.WithXAxisOpts(opts.XAxis{
 			SplitNumber: 20,
 		}),
 		charts.WithYAxisOpts(opts.YAxis{
-			Scale: true,
+			Scale: utils.ToReference(true),
 		}),
 		charts.WithDataZoomOpts(opts.DataZoom{
 			Type:       "inside",

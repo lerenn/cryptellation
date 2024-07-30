@@ -3,11 +3,13 @@ package retry
 import (
 	"context"
 
+	common "cryptellation/pkg/client"
+	"cryptellation/pkg/models/account"
+
+	client "cryptellation/svc/forwardtests/clients/go"
+	"cryptellation/svc/forwardtests/pkg/forwardtest"
+
 	"github.com/google/uuid"
-	common "github.com/lerenn/cryptellation/pkg/client"
-	"github.com/lerenn/cryptellation/pkg/models/account"
-	client "github.com/lerenn/cryptellation/svc/forwardtests/clients/go"
-	"github.com/lerenn/cryptellation/svc/forwardtests/pkg/forwardtest"
 )
 
 type retry struct {

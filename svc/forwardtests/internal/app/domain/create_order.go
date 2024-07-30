@@ -5,11 +5,13 @@ import (
 	"fmt"
 	"time"
 
+	"cryptellation/pkg/adapters/telemetry"
+	"cryptellation/pkg/models/order"
+
+	candlesticks "cryptellation/svc/candlesticks/clients/go"
+	"cryptellation/svc/candlesticks/pkg/period"
+
 	"github.com/google/uuid"
-	"github.com/lerenn/cryptellation/pkg/adapters/telemetry"
-	"github.com/lerenn/cryptellation/pkg/models/order"
-	candlesticks "github.com/lerenn/cryptellation/svc/candlesticks/clients/go"
-	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/period"
 )
 
 func (f ForwardTests) CreateOrder(ctx context.Context, forwardTestID uuid.UUID, order order.Order) error {

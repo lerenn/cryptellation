@@ -23,11 +23,11 @@ func SourceAsWorkdir(client *dagger.Client, path string) func(r *dagger.Containe
 
 			// Add source code
 			WithMountedDirectory(
-				"/go/src/github.com/lerenn/cryptellation",
+				"/go/src/cryptellation",
 				client.Host().Directory(".", dagger.HostDirectoryOpts{Exclude: []string{"tmp", "website"}})).
 
 			// Add workdir
-			WithWorkdir("/go/src/github.com/lerenn/cryptellation" + path)
+			WithWorkdir("/go/src/cryptellation" + path)
 	}
 }
 

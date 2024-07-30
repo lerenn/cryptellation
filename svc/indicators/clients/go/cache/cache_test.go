@@ -5,11 +5,14 @@ import (
 	"testing"
 	"time"
 
-	"github.com/lerenn/cryptellation/pkg/models/timeserie"
-	"github.com/lerenn/cryptellation/pkg/utils"
-	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/candlestick"
-	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/period"
-	client "github.com/lerenn/cryptellation/svc/indicators/clients/go"
+	"cryptellation/pkg/models/timeserie"
+	"cryptellation/pkg/utils"
+
+	"cryptellation/svc/candlesticks/pkg/candlestick"
+	"cryptellation/svc/candlesticks/pkg/period"
+
+	client "cryptellation/svc/indicators/clients/go"
+
 	"github.com/stretchr/testify/suite"
 	gomock "go.uber.org/mock/gomock"
 )

@@ -5,9 +5,10 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/lerenn/cryptellation/pkg/adapters/exchanges/binance"
-	"github.com/lerenn/cryptellation/pkg/config"
-	"github.com/lerenn/cryptellation/svc/exchanges/pkg/exchange"
+	"cryptellation/pkg/adapters/exchanges/binance"
+	"cryptellation/pkg/config"
+
+	"cryptellation/svc/exchanges/pkg/exchange"
 )
 
 type Service struct {

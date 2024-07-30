@@ -1,8 +1,9 @@
 package asyncapi
 
 import (
+	"cryptellation/pkg/models/account"
+
 	"github.com/google/uuid"
-	"github.com/lerenn/cryptellation/pkg/models/account"
 )
 
 func accountModelsToAPI(accounts map[string]account.Account) []AccountSchema {

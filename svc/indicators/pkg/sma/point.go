@@ -3,8 +3,9 @@ package sma
 import (
 	"time"
 
-	"github.com/lerenn/cryptellation/pkg/models/timeserie"
-	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/candlestick"
+	"cryptellation/pkg/models/timeserie"
+
+	"cryptellation/svc/candlesticks/pkg/candlestick"
 )
 
 type PointPayload struct {

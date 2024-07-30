@@ -3,9 +3,10 @@ package publish
 import (
 	"context"
 
+	"cryptellation/pkg/version"
+	"cryptellation/pkg/version/git"
+
 	"dagger.io/dagger"
-	"github.com/lerenn/cryptellation/pkg/version"
-	"github.com/lerenn/cryptellation/pkg/version/git"
 )
 
 func PublishDockerImage(

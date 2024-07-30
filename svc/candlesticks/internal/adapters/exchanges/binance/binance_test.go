@@ -5,10 +5,12 @@ import (
 	"testing"
 	"time"
 
-	"github.com/lerenn/cryptellation/pkg/config"
-	"github.com/lerenn/cryptellation/svc/candlesticks/internal/app/ports/exchanges"
-	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/candlestick"
-	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/period"
+	"cryptellation/pkg/config"
+
+	"cryptellation/svc/candlesticks/internal/app/ports/exchanges"
+	"cryptellation/svc/candlesticks/pkg/candlestick"
+	"cryptellation/svc/candlesticks/pkg/period"
+
 	"github.com/stretchr/testify/suite"
 )
 

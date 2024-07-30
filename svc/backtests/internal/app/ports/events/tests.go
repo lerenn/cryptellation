@@ -5,9 +5,11 @@ import (
 	"testing"
 	"time"
 
+	"cryptellation/pkg/models/event"
+
+	"cryptellation/svc/ticks/pkg/tick"
+
 	"github.com/google/uuid"
-	"github.com/lerenn/cryptellation/pkg/models/event"
-	"github.com/lerenn/cryptellation/svc/ticks/pkg/tick"
 	"github.com/stretchr/testify/suite"
 )
 

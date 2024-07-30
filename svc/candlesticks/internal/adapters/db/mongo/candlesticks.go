@@ -4,9 +4,11 @@ import (
 	"context"
 	"time"
 
-	mongoutil "github.com/lerenn/cryptellation/pkg/adapters/db/mongo"
-	"github.com/lerenn/cryptellation/svc/candlesticks/internal/adapters/db/mongo/entities"
-	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/candlestick"
+	mongoutil "cryptellation/pkg/adapters/db/mongo"
+
+	"cryptellation/svc/candlesticks/internal/adapters/db/mongo/entities"
+	"cryptellation/svc/candlesticks/pkg/candlestick"
+
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )

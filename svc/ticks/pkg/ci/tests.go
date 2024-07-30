@@ -1,9 +1,10 @@
 package ci
 
 import (
+	"cryptellation/pkg/ci"
+	"cryptellation/pkg/utils"
+
 	"dagger.io/dagger"
-	"github.com/lerenn/cryptellation/pkg/ci"
-	"github.com/lerenn/cryptellation/pkg/utils"
 )
 
 func UnitTests(client *dagger.Client) *dagger.Container {

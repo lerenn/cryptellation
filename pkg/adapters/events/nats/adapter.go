@@ -1,9 +1,10 @@
 package nats
 
 import (
+	"cryptellation/pkg/config"
+
 	"github.com/lerenn/asyncapi-codegen/pkg/extensions"
 	"github.com/lerenn/asyncapi-codegen/pkg/extensions/brokers/nats"
-	"github.com/lerenn/cryptellation/pkg/config"
 )
 
 type Adapter struct {

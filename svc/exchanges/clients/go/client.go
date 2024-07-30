@@ -6,9 +6,9 @@ package client
 import (
 	"context"
 
-	"github.com/lerenn/cryptellation/pkg/client"
+	"cryptellation/pkg/client"
 
-	"github.com/lerenn/cryptellation/svc/exchanges/pkg/exchange"
+	"cryptellation/svc/exchanges/pkg/exchange"
 )
 
 type Client interface {

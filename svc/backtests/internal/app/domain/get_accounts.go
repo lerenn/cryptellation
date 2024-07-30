@@ -3,8 +3,9 @@ package domain
 import (
 	"context"
 
+	"cryptellation/pkg/models/account"
+
 	"github.com/google/uuid"
-	"github.com/lerenn/cryptellation/pkg/models/account"
 )
 
 func (b Backtests) GetAccounts(ctx context.Context, backtestId uuid.UUID) (map[string]account.Account, error) {

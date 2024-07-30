@@ -3,9 +3,10 @@ package retry
 import (
 	"context"
 
-	common "github.com/lerenn/cryptellation/pkg/client"
-	"github.com/lerenn/cryptellation/pkg/models/timeserie"
-	client "github.com/lerenn/cryptellation/svc/indicators/clients/go"
+	common "cryptellation/pkg/client"
+	"cryptellation/pkg/models/timeserie"
+
+	client "cryptellation/svc/indicators/clients/go"
 )
 
 type retry struct {

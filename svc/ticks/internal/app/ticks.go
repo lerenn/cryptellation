@@ -3,7 +3,7 @@ package app
 import (
 	"context"
 
-	"github.com/lerenn/cryptellation/pkg/models/event"
+	"cryptellation/pkg/models/event"
 )
 
 type Ticks interface {

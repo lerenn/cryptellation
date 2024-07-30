@@ -5,8 +5,8 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/lerenn/cryptellation/pkg/client"
-	"github.com/lerenn/cryptellation/pkg/utils"
+	"cryptellation/pkg/client"
+	"cryptellation/pkg/utils"
 )
 
 type serviceInformator interface {

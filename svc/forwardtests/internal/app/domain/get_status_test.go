@@ -4,14 +4,17 @@ import (
 	"context"
 	"time"
 
+	"cryptellation/pkg/models/account"
+
+	client "cryptellation/svc/candlesticks/clients/go"
+	"cryptellation/svc/candlesticks/pkg/candlestick"
+	"cryptellation/svc/candlesticks/pkg/period"
+
+	"cryptellation/svc/forwardtests/internal/app"
+	"cryptellation/svc/forwardtests/internal/app/ports/db"
+	"cryptellation/svc/forwardtests/pkg/forwardtest"
+
 	"github.com/google/uuid"
-	"github.com/lerenn/cryptellation/pkg/models/account"
-	client "github.com/lerenn/cryptellation/svc/candlesticks/clients/go"
-	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/candlestick"
-	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/period"
-	"github.com/lerenn/cryptellation/svc/forwardtests/internal/app"
-	"github.com/lerenn/cryptellation/svc/forwardtests/internal/app/ports/db"
-	"github.com/lerenn/cryptellation/svc/forwardtests/pkg/forwardtest"
 	"github.com/stretchr/testify/suite"
 	"go.uber.org/mock/gomock"
 )

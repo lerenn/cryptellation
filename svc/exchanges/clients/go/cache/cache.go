@@ -5,10 +5,12 @@ import (
 	"errors"
 	"time"
 
+	common "cryptellation/pkg/client"
+
+	client "cryptellation/svc/exchanges/clients/go"
+	"cryptellation/svc/exchanges/pkg/exchange"
+
 	"github.com/bluele/gcache"
-	common "github.com/lerenn/cryptellation/pkg/client"
-	client "github.com/lerenn/cryptellation/svc/exchanges/clients/go"
-	"github.com/lerenn/cryptellation/svc/exchanges/pkg/exchange"
 )
 
 const (

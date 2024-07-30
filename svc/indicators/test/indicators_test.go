@@ -4,10 +4,12 @@ import (
 	"context"
 	"time"
 
-	"github.com/lerenn/cryptellation/pkg/utils"
-	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/candlestick"
-	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/period"
-	client "github.com/lerenn/cryptellation/svc/indicators/clients/go"
+	"cryptellation/pkg/utils"
+
+	"cryptellation/svc/candlesticks/pkg/candlestick"
+	"cryptellation/svc/candlesticks/pkg/period"
+
+	client "cryptellation/svc/indicators/clients/go"
 )
 
 func (suite *EndToEndSuite) TestGetSMA() {

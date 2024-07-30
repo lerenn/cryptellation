@@ -5,15 +5,19 @@ import (
 	"fmt"
 	"time"
 
-	cryptellation "github.com/lerenn/cryptellation/clients/go"
-	"github.com/lerenn/cryptellation/pkg/adapters/telemetry"
-	common "github.com/lerenn/cryptellation/pkg/client"
-	"github.com/lerenn/cryptellation/pkg/models/event"
-	"github.com/lerenn/cryptellation/pkg/models/order"
-	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/candlestick"
-	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/period"
-	indicators "github.com/lerenn/cryptellation/svc/indicators/clients/go"
-	"github.com/lerenn/cryptellation/svc/ticks/pkg/tick"
+	cryptellation "cryptellation/client"
+
+	"cryptellation/pkg/adapters/telemetry"
+	common "cryptellation/pkg/client"
+	"cryptellation/pkg/models/event"
+	"cryptellation/pkg/models/order"
+
+	"cryptellation/svc/candlesticks/pkg/candlestick"
+	"cryptellation/svc/candlesticks/pkg/period"
+
+	indicators "cryptellation/svc/indicators/clients/go"
+
+	"cryptellation/svc/ticks/pkg/tick"
 )
 
 type Bot struct {

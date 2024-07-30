@@ -4,11 +4,12 @@ import (
 	"context"
 	"fmt"
 
-	binancePkg "github.com/lerenn/cryptellation/pkg/adapters/exchanges/binance"
-	"github.com/lerenn/cryptellation/pkg/models/event"
-	"github.com/lerenn/cryptellation/svc/ticks/internal/adapters/exchanges/binance"
-	"github.com/lerenn/cryptellation/svc/ticks/internal/app/ports/exchanges"
-	"github.com/lerenn/cryptellation/svc/ticks/pkg/tick"
+	binancePkg "cryptellation/pkg/adapters/exchanges/binance"
+	"cryptellation/pkg/models/event"
+
+	"cryptellation/svc/ticks/internal/adapters/exchanges/binance"
+	"cryptellation/svc/ticks/internal/app/ports/exchanges"
+	"cryptellation/svc/ticks/pkg/tick"
 )
 
 type Exchanges struct {

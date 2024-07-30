@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/lerenn/cryptellation/pkg/utils"
+	"cryptellation/pkg/utils"
 )
 
 var (

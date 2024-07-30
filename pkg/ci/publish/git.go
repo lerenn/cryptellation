@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/lerenn/cryptellation/pkg/version/git"
+	"cryptellation/pkg/version/git"
 )
 
 func toModuleVersion(modules, tags []string) ([]moduleVersionBump, error) {

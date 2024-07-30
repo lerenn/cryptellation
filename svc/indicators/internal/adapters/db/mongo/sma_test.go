@@ -4,8 +4,10 @@ import (
 	"context"
 	"testing"
 
-	"github.com/lerenn/cryptellation/pkg/config"
-	"github.com/lerenn/cryptellation/svc/indicators/internal/app/ports/db"
+	"cryptellation/pkg/config"
+
+	"cryptellation/svc/indicators/internal/app/ports/db"
+
 	"github.com/stretchr/testify/suite"
 )
 

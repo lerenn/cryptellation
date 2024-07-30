@@ -4,12 +4,13 @@ import (
 	"context"
 	"time"
 
-	"github.com/lerenn/cryptellation/pkg/adapters/exchanges/binance"
-	"github.com/lerenn/cryptellation/pkg/adapters/telemetry"
-	"github.com/lerenn/cryptellation/pkg/config"
-	"github.com/lerenn/cryptellation/svc/candlesticks/internal/adapters/exchanges/binance/entities"
-	"github.com/lerenn/cryptellation/svc/candlesticks/internal/app/ports/exchanges"
-	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/candlestick"
+	"cryptellation/pkg/adapters/exchanges/binance"
+	"cryptellation/pkg/adapters/telemetry"
+	"cryptellation/pkg/config"
+
+	"cryptellation/svc/candlesticks/internal/adapters/exchanges/binance/entities"
+	"cryptellation/svc/candlesticks/internal/app/ports/exchanges"
+	"cryptellation/svc/candlesticks/pkg/candlestick"
 )
 
 type Service struct {
