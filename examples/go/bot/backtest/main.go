@@ -15,7 +15,7 @@ import (
 
 	backtests "cryptellation/svc/backtests/clients/go"
 
-	"cryptellation/examples/bot"
+	"cryptellation/examples/go/bot"
 )
 
 func main() {

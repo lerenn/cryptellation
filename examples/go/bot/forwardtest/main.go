@@ -13,7 +13,7 @@ import (
 
 	"cryptellation/svc/forwardtests/pkg/forwardtest"
 
-	"cryptellation/examples/bot"
+	"cryptellation/examples/go/bot"
 )
 
 func main() {

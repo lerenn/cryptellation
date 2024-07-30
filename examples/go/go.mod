@@ -22,7 +22,6 @@ require (
 	cryptellation/svc/forwardtests v0.0.0-00010101000000-000000000000
 	cryptellation/svc/indicators v0.0.0-00010101000000-000000000000
 	cryptellation/svc/ticks v0.0.0-00010101000000-000000000000
-	cryptellation v1.12.0
 )
 
 require (

@@ -1,0 +1,36 @@
+{
+  "name": "cryptellation-ci",
+  "sdk": "go",
+  "dependencies": [
+    {
+      "name": "cryptellation-backtests-ci",
+      "source": "../../svc/backtests/build/ci"
+    },
+    {
+      "name": "cryptellation-candlesticks-ci",
+      "source": "../../svc/candlesticks/build/ci"
+    },
+    {
+      "name": "cryptellation-exchanges-ci",
+      "source": "../../svc/exchanges/build/ci"
+    },
+    {
+      "name": "cryptellation-forwardtests-ci",
+      "source": "../../svc/forwardtests/build/ci"
+    },
+    {
+      "name": "cryptellation-indicators-ci",
+      "source": "../../svc/indicators/build/ci"
+    },
+    {
+      "name": "cryptellation-pkg",
+      "source": "../../pkg"
+    },
+    {
+      "name": "cryptellation-ticks-ci",
+      "source": "../../svc/ticks/build/ci"
+    }
+  ],
+  "source": "dagger",
+  "engineVersion": "v0.12.1"
+}

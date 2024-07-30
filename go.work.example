@@ -1,14 +1,29 @@
 go 1.22.5
 
 use (
+	./build/ci/dagger
 	./clients/go
 	./cmd/cryptellation
 	./cmd/cryptellation-tui
+	./examples/go
 	./pkg
+	./pkg/dagger
 	./svc/backtests
+	./svc/backtests/build/ci/dagger
+	./svc/backtests/pkg/dagger
 	./svc/candlesticks
+	./svc/candlesticks/build/ci/dagger
+	./svc/candlesticks/pkg/dagger
 	./svc/exchanges
+	./svc/exchanges/build/ci/dagger
+	./svc/exchanges/pkg/dagger
 	./svc/forwardtests
+	./svc/forwardtests/build/ci/dagger
+	./svc/forwardtests/pkg/dagger
 	./svc/indicators
+	./svc/indicators/build/ci/dagger
+	./svc/indicators/pkg/dagger
 	./svc/ticks
+	./svc/ticks/build/ci/dagger
+	./svc/ticks/pkg/dagger
 )

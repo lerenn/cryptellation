@@ -27,8 +27,6 @@ github.com/klauspost/compress v1.17.0 h1:Rnbp4K9EjcDuVuHtd0dgA4qNuv9yKDYKK1ulpJw
 github.com/klauspost/compress v1.17.0/go.mod h1:ntbaceVETuRiXiv4DpjP66DpAtAGkEQskQzEyD//IeE=
 github.com/lerenn/asyncapi-codegen v0.43.0 h1:q50GhgPJZ6tlGLQNtIkA1+dvDbfjvPT9LHKUiTkYRZs=
 github.com/lerenn/asyncapi-codegen v0.43.0/go.mod h1:Ue4GIK1vR9XMCdA3fPbvXcGD/wjLAiVonatVm5nv5ew=
-cryptellation v1.12.0 h1:LpZduukWP2pmwFNZDaRrgQxRgipk8VgWMQExk+5C8mI=
-cryptellation v1.12.0/go.mod h1:TWQXb25zAE65OlUU5/KuLa5W0vTgb84zudJwLoZ0OWs=
 github.com/nats-io/nats.go v1.31.0 h1:/WFBHEc/dOKBF6qf1TZhrdEfTmOZ5JzdJ+Y3m6Y/p7E=
 github.com/nats-io/nats.go v1.31.0/go.mod h1:di3Bm5MLsoB4Bx61CBTsxuarI36WbhAwOm8QrW39+i8=
 github.com/nats-io/nkeys v0.4.6 h1:IzVe95ru2CT6ta874rt9saQRkWfe2nFj1NtvYSLqMzY=

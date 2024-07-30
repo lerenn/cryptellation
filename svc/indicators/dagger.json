@@ -1,0 +1,6 @@
+{
+  "name": "cryptellation-indicators",
+  "sdk": "go",
+  "source": "pkg/dagger",
+  "engineVersion": "v0.12.1"
+}
