@@ -33,7 +33,6 @@
   ],
   "source": "dagger",
   "engineVersion": "v0.12.1",
-
   "views": [
     {
       "name": "source-only",
