@@ -32,5 +32,21 @@
     }
   ],
   "source": "dagger",
-  "engineVersion": "v0.12.1"
+  "engineVersion": "v0.12.1",
+
+  "views": [
+    {
+      "name": "source-only",
+      "patterns": [
+        "build/ci/",
+        "clients/",
+        "cmd/",
+        "examples/",
+        "pkg/",
+        "svc/",
+        "go.work",
+        "go.sum"
+      ]
+    }
+  ]
 }
