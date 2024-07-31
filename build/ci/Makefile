@@ -1,5 +1,9 @@
 include ../../tools/make/help.mk
 
+.PHONY: check
+check:
+	@dagger call check --source-dir=../.. stdout
+
 .PHONY: lint
 lint:
 	@dagger call lint --source-dir=../..:source-only stdout

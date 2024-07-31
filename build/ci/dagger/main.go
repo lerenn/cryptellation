@@ -20,6 +20,14 @@ import (
 
 type CryptellationCi struct{}
 
+func (m *CryptellationCi) Check(sourceDir *dagger.Directory) []*dagger.Container {
+	containers := make([]*dagger.Container, 0)
+	containers = append(containers, m.Lint(sourceDir)...)
+	containers = append(containers, m.CheckGeneration(sourceDir)...)
+	containers = append(containers, m.UnitTests(sourceDir)...)
+	return containers
+}
+
 func (m *CryptellationCi) Lint(sourceDir *dagger.Directory) []*dagger.Container {
 	return []*dagger.Container{
 		// Client
