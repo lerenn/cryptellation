@@ -1,5 +1,4 @@
 dagger/develop:
-	@dagger develop -m ./build/ci/dagger
 	@dagger develop -m ./pkg/dagger
 	@dagger develop -m ./svc/backtests/build/ci/dagger
 	@dagger develop -m ./svc/backtests/pkg/dagger
@@ -13,3 +12,4 @@ dagger/develop:
 	@dagger develop -m ./svc/indicators/pkg/dagger
 	@dagger develop -m ./svc/ticks/build/ci/dagger
 	@dagger develop -m ./svc/ticks/pkg/dagger
+	@dagger develop -m ./build/ci/dagger

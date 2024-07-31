@@ -6,9 +6,9 @@ package exchanges
 
 import (
 	context "context"
+	candlestick "cryptellation/svc/candlesticks/pkg/candlestick"
 	reflect "reflect"
 
-	candlestick "cryptellation/svc/candlesticks/pkg/candlestick"
 	gomock "go.uber.org/mock/gomock"
 )
 

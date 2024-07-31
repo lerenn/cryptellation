@@ -16,8 +16,16 @@ package main
 
 import "cryptellation/svc/candlesticks/build/ci/dagger/internal/dagger"
 
+const (
+	path = "svc/candlesticks"
+)
+
 type CryptellationCandlesticksCi struct{}
 
 func (mod *CryptellationCandlesticksCi) Linter(sourceDir *dagger.Directory) *dagger.Container {
-	return dag.CryptellationPkg().Linter(sourceDir, "./svc/candlesticks")
+	return dag.CryptellationPkg().Linter(sourceDir, path)
+}
+
+func (mod *CryptellationCandlesticksCi) CheckGeneration(rootDir *dagger.Directory) *dagger.Container {
+	return dag.CryptellationPkg().CheckGeneration(rootDir, path)
 }

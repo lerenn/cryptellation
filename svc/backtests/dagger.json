@@ -2,5 +2,5 @@
   "name": "cryptellation-backtests",
   "sdk": "go",
   "source": "pkg/dagger",
-  "engineVersion": "v0.12.1"
+  "engineVersion": "v0.12.3"
 }

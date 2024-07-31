@@ -18,8 +18,16 @@ import (
 	"cryptellation/svc/forwardtests/build/ci/dagger/internal/dagger"
 )
 
+const (
+	path = "svc/forwardtests"
+)
+
 type CryptellationForwardtestsCi struct{}
 
 func (mod *CryptellationForwardtestsCi) Linter(sourceDir *dagger.Directory) *dagger.Container {
-	return dag.CryptellationPkg().Linter(sourceDir, "./svc/forwardtests")
+	return dag.CryptellationPkg().Linter(sourceDir, path)
+}
+
+func (mod *CryptellationForwardtestsCi) CheckGeneration(rootDir *dagger.Directory) *dagger.Container {
+	return dag.CryptellationPkg().CheckGeneration(rootDir, path)
 }

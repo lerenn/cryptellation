@@ -6,10 +6,10 @@ package events
 
 import (
 	context "context"
+	event "cryptellation/pkg/models/event"
 	reflect "reflect"
 
 	uuid "github.com/google/uuid"
-	event "cryptellation/pkg/models/event"
 	gomock "go.uber.org/mock/gomock"
 )
 

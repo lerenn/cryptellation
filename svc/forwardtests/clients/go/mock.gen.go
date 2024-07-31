@@ -6,12 +6,12 @@ package client
 
 import (
 	context "context"
-	reflect "reflect"
-
-	uuid "github.com/google/uuid"
 	client "cryptellation/pkg/client"
 	account "cryptellation/pkg/models/account"
 	forwardtest "cryptellation/svc/forwardtests/pkg/forwardtest"
+	reflect "reflect"
+
+	uuid "github.com/google/uuid"
 	gomock "go.uber.org/mock/gomock"
 )
 

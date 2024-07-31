@@ -6,9 +6,9 @@ package db
 
 import (
 	context "context"
+	exchange "cryptellation/svc/exchanges/pkg/exchange"
 	reflect "reflect"
 
-	exchange "cryptellation/svc/exchanges/pkg/exchange"
 	gomock "go.uber.org/mock/gomock"
 )
 

@@ -6,10 +6,10 @@ package client
 
 import (
 	context "context"
-	reflect "reflect"
-
 	client "cryptellation/pkg/client"
 	timeserie "cryptellation/pkg/models/timeserie"
+	reflect "reflect"
+
 	gomock "go.uber.org/mock/gomock"
 )
 

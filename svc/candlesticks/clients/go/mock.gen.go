@@ -6,10 +6,10 @@ package client
 
 import (
 	context "context"
-	reflect "reflect"
-
 	client "cryptellation/pkg/client"
 	candlestick "cryptellation/svc/candlesticks/pkg/candlestick"
+	reflect "reflect"
+
 	gomock "go.uber.org/mock/gomock"
 )
 

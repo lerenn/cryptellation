@@ -6,9 +6,9 @@ package db
 
 import (
 	context "context"
+	timeserie "cryptellation/pkg/models/timeserie"
 	reflect "reflect"
 
-	timeserie "cryptellation/pkg/models/timeserie"
 	gomock "go.uber.org/mock/gomock"
 )
 

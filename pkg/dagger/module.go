@@ -14,4 +14,40 @@
 
 package main
 
+import (
+	"context"
+	"cryptellation/pkg/dagger/internal/dagger"
+)
+
+const (
+	// linterImage is the image used for linter.
+	linterImage = "golangci/golangci-lint:v1.59.1"
+	// golangImage is the image used as base for golang operations.
+	golangImage = "golang:1.22.5-alpine"
+)
+
 type CryptellationPkg struct{}
+
+// Linter returns a container that runs the linter.
+func (mod *CryptellationPkg) Linter(sourceDir *dagger.Directory, path string) *dagger.Container {
+	c := dag.Container().
+		From(linterImage).
+		WithMountedCache("/root/.cache/golangci-lint", dag.CacheVolume("golangci-lint"))
+
+	c = mod.WithGoCodeAndCacheAsWorkDirectory(c, sourceDir, path)
+
+	return c.WithExec([]string{"golangci-lint", "run", "--timeout", "10m"})
+}
+
+func (mod *CryptellationPkg) CheckGeneration(
+	ctx context.Context,
+	sourceDir *dagger.Directory,
+	path string,
+) *dagger.Container {
+	c := dag.Container().
+		From(golangImage)
+
+	c = mod.WithGoCodeAndCacheAsWorkDirectory(c, sourceDir, path)
+
+	return c.WithExec([]string{"sh", "/go/src/cryptellation/scripts/check-generation.sh"})
+}

@@ -6,11 +6,11 @@ package client
 
 import (
 	context "context"
-	reflect "reflect"
-
 	client "cryptellation/pkg/client"
 	event "cryptellation/pkg/models/event"
 	tick "cryptellation/svc/ticks/pkg/tick"
+	reflect "reflect"
+
 	gomock "go.uber.org/mock/gomock"
 )
 

@@ -6,10 +6,10 @@ package exchanges
 
 import (
 	context "context"
-	reflect "reflect"
-
 	event "cryptellation/pkg/models/event"
 	tick "cryptellation/svc/ticks/pkg/tick"
+	reflect "reflect"
+
 	gomock "go.uber.org/mock/gomock"
 )
 
