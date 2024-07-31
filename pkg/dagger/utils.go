@@ -20,3 +20,11 @@ func (mod *CryptellationPkg) WithGoCodeAndCacheAsWorkDirectory(
 		// Add workdir
 		WithWorkdir("/go/src/cryptellation/" + path)
 }
+
+func (mod *CryptellationPkg) CryptellationGoCodeContainer(
+	sourceDir *dagger.Directory,
+	path string,
+) *dagger.Container {
+	c := dag.Container().From(golangImage)
+	return mod.WithGoCodeAndCacheAsWorkDirectory(c, sourceDir, path)
+}

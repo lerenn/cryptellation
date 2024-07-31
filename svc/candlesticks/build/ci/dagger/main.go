@@ -29,3 +29,11 @@ func (mod *CryptellationCandlesticksCi) Linter(sourceDir *dagger.Directory) *dag
 func (mod *CryptellationCandlesticksCi) CheckGeneration(rootDir *dagger.Directory) *dagger.Container {
 	return dag.CryptellationPkg().CheckGeneration(rootDir, path)
 }
+
+func (mod *CryptellationCandlesticksCi) UnitTests(rootDir *dagger.Directory) *dagger.Container {
+	return dag.CryptellationPkg().
+		CryptellationGoCodeContainer(rootDir, path).
+		WithExec([]string{"sh", "-c",
+			"go test $(go list ./... | grep -v -e ./internal/adapters -e ./test)",
+		})
+}

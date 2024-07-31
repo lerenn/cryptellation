@@ -44,10 +44,11 @@ func (mod *CryptellationPkg) CheckGeneration(
 	sourceDir *dagger.Directory,
 	path string,
 ) *dagger.Container {
-	c := dag.Container().
-		From(golangImage)
+	return mod.CryptellationGoCodeContainer(sourceDir, path).
+		WithExec([]string{"sh", "/go/src/cryptellation/scripts/check-generation.sh"})
+}
 
-	c = mod.WithGoCodeAndCacheAsWorkDirectory(c, sourceDir, path)
-
-	return c.WithExec([]string{"sh", "/go/src/cryptellation/scripts/check-generation.sh"})
+func (mod *CryptellationPkg) UnitTests(sourceDir *dagger.Directory, path string) *dagger.Container {
+	return mod.CryptellationGoCodeContainer(sourceDir, path).
+		WithExec([]string{"go", "test", "./..."})
 }

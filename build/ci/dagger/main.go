@@ -69,3 +69,28 @@ func (m *CryptellationCi) CheckGeneration(sourceDir *dagger.Directory) []*dagger
 		dag.CryptellationTicksCi().CheckGeneration(sourceDir),
 	}
 }
+
+func (m *CryptellationCi) UnitTests(sourceDir *dagger.Directory) []*dagger.Container {
+	return []*dagger.Container{
+		// Client
+		dag.CryptellationPkg().UnitTests(sourceDir, "./clients/go"),
+
+		// Commands
+		dag.CryptellationPkg().UnitTests(sourceDir, "./cmd/cryptellation"),
+		dag.CryptellationPkg().UnitTests(sourceDir, "./cmd/cryptellation-tui"),
+
+		// Examples
+		dag.CryptellationPkg().UnitTests(sourceDir, "./examples/go"),
+
+		// Package
+		dag.CryptellationPkg().UnitTests(sourceDir, "./pkg"),
+
+		// Services
+		dag.CryptellationCandlesticksCi().UnitTests(sourceDir),
+		dag.CryptellationBacktestsCi().UnitTests(sourceDir),
+		dag.CryptellationExchangesCi().UnitTests(sourceDir),
+		dag.CryptellationForwardtestsCi().UnitTests(sourceDir),
+		dag.CryptellationIndicatorsCi().UnitTests(sourceDir),
+		dag.CryptellationTicksCi().UnitTests(sourceDir),
+	}
+}

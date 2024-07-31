@@ -7,3 +7,7 @@ lint:
 .PHONY: check-generation
 check-generation:
 	@dagger call check-generation --source-dir=../.. stdout
+
+.PHONY: unit-tests
+unit-tests:
+	@dagger call unit-tests --source-dir=../.. stdout
