@@ -1,24 +1,5 @@
-include ../../tools/make/help.mk
+PROJECT_ROOT_PATH := ../..
 
-.PHONY: check
-check:
-	@dagger call check --source-dir=../.. stdout
+DAGGER_MODULE_PATH := .
 
-.PHONY: lint
-lint:
-	@dagger call lint --source-dir=../..:source-only stdout
-
-.PHONY: check-generation
-check-generation:
-	@dagger call check-generation --source-dir=../.. stdout
-
-.PHONY: unit-tests
-unit-tests:
-	@dagger call unit-tests --source-dir=../.. stdout
-
-.PHONY: integration-tests
-integration-tests:
-	@dagger call integration-tests \
-		--source-dir=../.. \
-		--secrets-file=file:../../.credentials.env \
-		stdout
+include ../../tools/make/dagger.mk

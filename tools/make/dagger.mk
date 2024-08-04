@@ -1,15 +1,22 @@
-dagger/develop:
-	@dagger develop -m ./pkg/dagger
-	@dagger develop -m ./svc/backtests/build/ci/dagger
-	@dagger develop -m ./svc/backtests/pkg/dagger
-	@dagger develop -m ./svc/candlesticks/build/ci/dagger
-	@dagger develop -m ./svc/candlesticks/pkg/dagger
-	@dagger develop -m ./svc/exchanges/build/ci/dagger
-	@dagger develop -m ./svc/exchanges/pkg/dagger
-	@dagger develop -m ./svc/forwardtests/build/ci/dagger
-	@dagger develop -m ./svc/forwardtests/pkg/dagger
-	@dagger develop -m ./svc/indicators/build/ci/dagger
-	@dagger develop -m ./svc/indicators/pkg/dagger
-	@dagger develop -m ./svc/ticks/build/ci/dagger
-	@dagger develop -m ./svc/ticks/pkg/dagger
-	@dagger develop -m ./build/ci/dagger
+.PHONY: dagger/check
+dagger/check: ## Run all checks through Dagger
+	@dagger call -m $(DAGGER_MODULE_PATH) check --source-dir=$(PROJECT_ROOT_PATH) stdout
+
+.PHONY: dagger/lint
+dagger/lint: ## Run all linters through Dagger
+	@dagger call -m $(DAGGER_MODULE_PATH) lint --source-dir=$(PROJECT_ROOT_PATH):source-only stdout
+
+.PHONY: dagger/check-generation
+dagger/check-generation: ## Run all checks for generated code through Dagger
+	@dagger call -m $(DAGGER_MODULE_PATH) check-generation --source-dir=$(PROJECT_ROOT_PATH) stdout
+
+.PHONY: dagger/unit-tests
+dagger/unit-tests: ## Run all unit tests through Dagger
+	@dagger call -m $(DAGGER_MODULE_PATH) unit-tests --source-dir=$(PROJECT_ROOT_PATH) stdout
+
+.PHONY: dagger/integration-tests
+dagger/integration-tests: ## Run all integration tests through Dagger
+	@dagger call -m $(DAGGER_MODULE_PATH) integration-tests \
+		--source-dir=$(PROJECT_ROOT_PATH) \
+		--secrets-file=file:$(PROJECT_ROOT_PATH)/.credentials.env \
+		stdout
