@@ -14,7 +14,10 @@
 
 package main
 
-import "cryptellation/svc/candlesticks/build/ci/dagger/internal/dagger"
+import (
+	"context"
+	"cryptellation/svc/candlesticks/build/ci/dagger/internal/dagger"
+)
 
 const (
 	path = "svc/candlesticks"
@@ -36,4 +39,17 @@ func (mod *CryptellationCandlesticksCi) UnitTests(rootDir *dagger.Directory) *da
 		WithExec([]string{"sh", "-c",
 			"go test $(go list ./... | grep -v -e ./internal/adapters -e ./test)",
 		})
+}
+
+func (mod *CryptellationCandlesticksCi) IntegrationTests(
+	ctx context.Context,
+	rootDir *dagger.Directory,
+	secretsFile *dagger.Secret,
+) *dagger.Container {
+	c := dag.CryptellationPkg().CryptellationGoCodeContainer(rootDir, path)
+	c = dag.CryptellationPkg().AttachMongo(c, dag.CryptellationPkg().Mongo().AsService())
+	c = dag.CryptellationPkg().AttachBinance(c, secretsFile)
+	return c.WithExec([]string{"sh", "-c",
+		"go test ./internal/adapters/...",
+	})
 }

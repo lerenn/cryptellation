@@ -15,3 +15,10 @@ check-generation:
 .PHONY: unit-tests
 unit-tests:
 	@dagger call unit-tests --source-dir=../.. stdout
+
+.PHONY: integration-tests
+integration-tests:
+	@dagger call integration-tests \
+		--source-dir=../.. \
+		--secrets-file=file:../../.credentials.env \
+		stdout

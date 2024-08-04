@@ -102,3 +102,14 @@ func (m *CryptellationCi) UnitTests(sourceDir *dagger.Directory) []*dagger.Conta
 		dag.CryptellationTicksCi().UnitTests(sourceDir),
 	}
 }
+
+func (m *CryptellationCi) IntegrationTests(sourceDir *dagger.Directory, secretsFile *dagger.Secret) []*dagger.Container {
+	return []*dagger.Container{
+		dag.CryptellationBacktestsCi().IntegrationTests(sourceDir),
+		dag.CryptellationCandlesticksCi().IntegrationTests(sourceDir, secretsFile),
+		dag.CryptellationExchangesCi().IntegrationTests(sourceDir, secretsFile),
+		dag.CryptellationForwardtestsCi().IntegrationTests(sourceDir),
+		dag.CryptellationIndicatorsCi().IntegrationTests(sourceDir),
+		dag.CryptellationTicksCi().IntegrationTests(sourceDir, secretsFile),
+	}
+}

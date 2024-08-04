@@ -15,6 +15,7 @@
 package main
 
 import (
+	"context"
 	"cryptellation/svc/exchanges/build/ci/dagger/internal/dagger"
 )
 
@@ -38,4 +39,17 @@ func (mod *CryptellationExchangesCi) UnitTests(rootDir *dagger.Directory) *dagge
 		WithExec([]string{"sh", "-c",
 			"go test $(go list ./... | grep -v -e ./internal/adapters -e ./test)",
 		})
+}
+
+func (mod *CryptellationExchangesCi) IntegrationTests(
+	ctx context.Context,
+	rootDir *dagger.Directory,
+	secretsFile *dagger.Secret,
+) *dagger.Container {
+	c := dag.CryptellationPkg().CryptellationGoCodeContainer(rootDir, path)
+	c = dag.CryptellationPkg().AttachMongo(c, dag.CryptellationPkg().Mongo().AsService())
+	c = dag.CryptellationPkg().AttachBinance(c, secretsFile)
+	return c.WithExec([]string{"sh", "-c",
+		"go test ./internal/adapters/...",
+	})
 }
