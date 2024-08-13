@@ -34,8 +34,8 @@ func (m *CryptellationIndicators) RunnerWithDependencies(
 ) *dagger.Container {
 	c := m.Runner(sourceDir)
 
-	c = dag.CryptellationPkg().AttachMongo(c, mongo)
-	c = dag.CryptellationPkg().AttachNats(c, nats)
+	c = dag.CryptellationInternal().AttachMongo(c, mongo)
+	c = dag.CryptellationInternal().AttachNats(c, nats)
 	c = c.WithServiceBinding("cryptellation-candlesticks", candlesticks)
 
 	return c.WithExposedPort(9000, dagger.ContainerWithExposedPortOpts{

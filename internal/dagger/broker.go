@@ -5,7 +5,7 @@ import (
 )
 
 // NATS creates a new NATS service.
-func (mod *CryptellationPkg) NATS() *dagger.Container {
+func (mod *CryptellationInternal) NATS() *dagger.Container {
 	return dag.Container().
 		// Add base image
 		From("nats:2.10").
@@ -14,7 +14,7 @@ func (mod *CryptellationPkg) NATS() *dagger.Container {
 }
 
 // AttachNATS attaches the NATS service to the container.
-func (mod *CryptellationPkg) AttachNATS(c *dagger.Container, nats *dagger.Service) *dagger.Container {
+func (mod *CryptellationInternal) AttachNATS(c *dagger.Container, nats *dagger.Service) *dagger.Container {
 	return c.
 		// Add service
 		WithServiceBinding("nats", nats).

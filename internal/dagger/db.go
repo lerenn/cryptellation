@@ -2,7 +2,7 @@ package main
 
 import "cryptellation/pkg/dagger/internal/dagger"
 
-func (mod *CryptellationPkg) Mongo() *dagger.Container {
+func (mod *CryptellationInternal) Mongo() *dagger.Container {
 	return dag.Container().
 		// Add base image
 		From("mongo:7-jammy").
@@ -10,7 +10,7 @@ func (mod *CryptellationPkg) Mongo() *dagger.Container {
 		WithExposedPort(27017)
 }
 
-func (mod *CryptellationPkg) AttachMongo(c *dagger.Container, mongo *dagger.Service) *dagger.Container {
+func (mod *CryptellationInternal) AttachMongo(c *dagger.Container, mongo *dagger.Service) *dagger.Container {
 	return c.
 		// Add service
 		WithServiceBinding("mongo", mongo).

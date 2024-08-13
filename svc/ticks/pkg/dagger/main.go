@@ -32,9 +32,9 @@ func (m *CryptellationTicks) RunnerWithDependencies(
 ) *dagger.Container {
 	c := m.Runner(sourceDir)
 
-	c = dag.CryptellationPkg().AttachMongo(c, mongoService)
-	c = dag.CryptellationPkg().AttachBinance(c, binanceSecretsFile)
-	c = dag.CryptellationPkg().AttachNats(c, natsService)
+	c = dag.CryptellationInternal().AttachMongo(c, mongoService)
+	c = dag.CryptellationInternal().AttachBinance(c, binanceSecretsFile)
+	c = dag.CryptellationInternal().AttachNats(c, natsService)
 
 	return c.WithExposedPort(9000, dagger.ContainerWithExposedPortOpts{
 		Protocol:    dagger.Tcp,

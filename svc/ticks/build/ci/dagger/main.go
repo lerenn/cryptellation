@@ -26,15 +26,15 @@ const (
 type CryptellationTicksCi struct{}
 
 func (mod *CryptellationTicksCi) Linter(sourceDir *dagger.Directory) *dagger.Container {
-	return dag.CryptellationPkg().Linter(sourceDir, path)
+	return dag.CryptellationInternal().Linter(sourceDir, path)
 }
 
 func (mod *CryptellationTicksCi) CheckGeneration(sourceDir *dagger.Directory) *dagger.Container {
-	return dag.CryptellationPkg().CheckGeneration(sourceDir, path)
+	return dag.CryptellationInternal().CheckGeneration(sourceDir, path)
 }
 
 func (mod *CryptellationTicksCi) UnitTests(sourceDir *dagger.Directory) *dagger.Container {
-	return dag.CryptellationPkg().
+	return dag.CryptellationInternal().
 		CryptellationGoCodeContainer(sourceDir, path).
 		WithExec([]string{"sh", "-c",
 			"go test $(go list ./... | grep -v -e ./internal/adapters -e ./test)",
@@ -46,10 +46,10 @@ func (mod *CryptellationTicksCi) IntegrationTests(
 	sourceDir *dagger.Directory,
 	secretsFile *dagger.Secret,
 ) *dagger.Container {
-	c := dag.CryptellationPkg().CryptellationGoCodeContainer(sourceDir, path)
-	c = dag.CryptellationPkg().AttachMongo(c, dag.CryptellationPkg().Mongo().AsService())
-	c = dag.CryptellationPkg().AttachNats(c, dag.CryptellationPkg().Nats().AsService())
-	c = dag.CryptellationPkg().AttachBinance(c, secretsFile)
+	c := dag.CryptellationInternal().CryptellationGoCodeContainer(sourceDir, path)
+	c = dag.CryptellationInternal().AttachMongo(c, dag.CryptellationInternal().Mongo().AsService())
+	c = dag.CryptellationInternal().AttachNats(c, dag.CryptellationInternal().Nats().AsService())
+	c = dag.CryptellationInternal().AttachBinance(c, secretsFile)
 	return c.WithExec([]string{"sh", "-c",
 		"go test ./internal/adapters/...",
 	})
@@ -60,8 +60,8 @@ func (mod *CryptellationTicksCi) EndToEndTests(
 	secretsFile *dagger.Secret,
 ) *dagger.Container {
 	// Dependencies
-	mongo := dag.CryptellationPkg().Mongo().AsService()
-	nats := dag.CryptellationPkg().Nats().AsService()
+	mongo := dag.CryptellationInternal().Mongo().AsService()
+	nats := dag.CryptellationInternal().Nats().AsService()
 
 	// Service
 	ticks := dag.CryptellationTicks().RunnerWithDependencies(
@@ -72,8 +72,8 @@ func (mod *CryptellationTicksCi) EndToEndTests(
 	).AsService()
 
 	// Tester
-	c := dag.CryptellationPkg().CryptellationGoCodeContainer(sourceDir, path)
-	c = dag.CryptellationPkg().AttachNats(c, nats)
+	c := dag.CryptellationInternal().CryptellationGoCodeContainer(sourceDir, path)
+	c = dag.CryptellationInternal().AttachNats(c, nats)
 	c = c.WithServiceBinding("cryptellation-ticks", ticks)
 	return c.WithExec([]string{
 		"go", "test", "./test/...",

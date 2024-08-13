@@ -9,7 +9,7 @@ include $(PROJECT_ROOT_PATH)/tools/make/root.mk
 
 .PHONY: dagger/develop
 dagger/develop: ## Run Dagger develop on all Dagger modules
-	@dagger develop -m ./pkg/dagger
+	@dagger develop -m ./internal/dagger
 	@dagger develop -m ./svc/candlesticks/pkg/dagger
 	@dagger develop -m ./svc/candlesticks/build/ci/dagger
 	@dagger develop -m ./svc/ticks/pkg/dagger

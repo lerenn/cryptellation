@@ -9,7 +9,7 @@ import (
 	"github.com/joho/godotenv"
 )
 
-func (mod *CryptellationPkg) WithGoCodeAndCacheAsWorkDirectory(
+func (mod *CryptellationInternal) WithGoCodeAndCacheAsWorkDirectory(
 	c *dagger.Container,
 	sourceDir *dagger.Directory,
 	path string,
@@ -26,7 +26,7 @@ func (mod *CryptellationPkg) WithGoCodeAndCacheAsWorkDirectory(
 		WithWorkdir("/go/src/cryptellation/" + path)
 }
 
-func (mod *CryptellationPkg) CryptellationGoCodeContainer(
+func (mod *CryptellationInternal) CryptellationGoCodeContainer(
 	sourceDir *dagger.Directory,
 	path string,
 ) *dagger.Container {
@@ -34,7 +34,7 @@ func (mod *CryptellationPkg) CryptellationGoCodeContainer(
 	return mod.WithGoCodeAndCacheAsWorkDirectory(c, sourceDir, path)
 }
 
-func (mod *CryptellationPkg) LoadSecretFromEnvFile(
+func (mod *CryptellationInternal) LoadSecretFromEnvFile(
 	ctx context.Context,
 	secretFile *dagger.Secret,
 	name string,
@@ -61,7 +61,7 @@ func (mod *CryptellationPkg) LoadSecretFromEnvFile(
 	return dag.SetSecret(name, content), nil
 }
 
-func (mod *CryptellationPkg) AttachSecretFromEnvFile(
+func (mod *CryptellationInternal) AttachSecretFromEnvFile(
 	ctx context.Context,
 	c *dagger.Container,
 	secretFile *dagger.Secret,

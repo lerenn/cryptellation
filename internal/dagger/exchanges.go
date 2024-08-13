@@ -5,7 +5,7 @@ import (
 	"cryptellation/pkg/dagger/internal/dagger"
 )
 
-func (mod *CryptellationPkg) AttachBinance(
+func (mod *CryptellationInternal) AttachBinance(
 	ctx context.Context,
 	c *dagger.Container,
 	secretsFile *dagger.Secret,

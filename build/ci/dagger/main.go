@@ -33,17 +33,17 @@ func (m *CryptellationCi) Check(sourceDir *dagger.Directory, secretsFile *dagger
 func (m *CryptellationCi) Lint(sourceDir *dagger.Directory) []*dagger.Container {
 	return []*dagger.Container{
 		// Client
-		dag.CryptellationPkg().Linter(sourceDir, "./clients/go"),
+		dag.CryptellationInternal().Linter(sourceDir, "./clients/go"),
 
 		// Commands
-		dag.CryptellationPkg().Linter(sourceDir, "./cmd/cryptellation"),
-		dag.CryptellationPkg().Linter(sourceDir, "./cmd/cryptellation-tui"),
+		dag.CryptellationInternal().Linter(sourceDir, "./cmd/cryptellation"),
+		dag.CryptellationInternal().Linter(sourceDir, "./cmd/cryptellation-tui"),
 
 		// Examples
-		dag.CryptellationPkg().Linter(sourceDir, "./examples/go"),
+		dag.CryptellationInternal().Linter(sourceDir, "./examples/go"),
 
 		// Package
-		dag.CryptellationPkg().Linter(sourceDir, "./pkg"),
+		dag.CryptellationInternal().Linter(sourceDir, "./pkg"),
 
 		// Services
 		dag.CryptellationCandlesticksCi().Linter(sourceDir),
@@ -58,17 +58,17 @@ func (m *CryptellationCi) Lint(sourceDir *dagger.Directory) []*dagger.Container 
 func (m *CryptellationCi) CheckGeneration(sourceDir *dagger.Directory) []*dagger.Container {
 	return []*dagger.Container{
 		// Client
-		dag.CryptellationPkg().CheckGeneration(sourceDir, "./clients/go"),
+		dag.CryptellationInternal().CheckGeneration(sourceDir, "./clients/go"),
 
 		// Commands
-		dag.CryptellationPkg().CheckGeneration(sourceDir, "./cmd/cryptellation"),
-		dag.CryptellationPkg().CheckGeneration(sourceDir, "./cmd/cryptellation-tui"),
+		dag.CryptellationInternal().CheckGeneration(sourceDir, "./cmd/cryptellation"),
+		dag.CryptellationInternal().CheckGeneration(sourceDir, "./cmd/cryptellation-tui"),
 
 		// Examples
-		dag.CryptellationPkg().CheckGeneration(sourceDir, "./examples/go"),
+		dag.CryptellationInternal().CheckGeneration(sourceDir, "./examples/go"),
 
 		// Package
-		dag.CryptellationPkg().CheckGeneration(sourceDir, "./pkg"),
+		dag.CryptellationInternal().CheckGeneration(sourceDir, "./pkg"),
 
 		// Services
 		dag.CryptellationCandlesticksCi().CheckGeneration(sourceDir),
@@ -83,17 +83,17 @@ func (m *CryptellationCi) CheckGeneration(sourceDir *dagger.Directory) []*dagger
 func (m *CryptellationCi) UnitTests(sourceDir *dagger.Directory) []*dagger.Container {
 	return []*dagger.Container{
 		// Client
-		dag.CryptellationPkg().UnitTests(sourceDir, "./clients/go"),
+		dag.CryptellationInternal().UnitTests(sourceDir, "./clients/go"),
 
 		// Commands
-		dag.CryptellationPkg().UnitTests(sourceDir, "./cmd/cryptellation"),
-		dag.CryptellationPkg().UnitTests(sourceDir, "./cmd/cryptellation-tui"),
+		dag.CryptellationInternal().UnitTests(sourceDir, "./cmd/cryptellation"),
+		dag.CryptellationInternal().UnitTests(sourceDir, "./cmd/cryptellation-tui"),
 
 		// Examples
-		dag.CryptellationPkg().UnitTests(sourceDir, "./examples/go"),
+		dag.CryptellationInternal().UnitTests(sourceDir, "./examples/go"),
 
 		// Package
-		dag.CryptellationPkg().UnitTests(sourceDir, "./pkg"),
+		dag.CryptellationInternal().UnitTests(sourceDir, "./pkg"),
 
 		// Services
 		dag.CryptellationCandlesticksCi().UnitTests(sourceDir),

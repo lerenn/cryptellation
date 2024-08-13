@@ -23,8 +23,8 @@
       "source": "../../svc/indicators/build/ci"
     },
     {
-      "name": "cryptellation-pkg",
-      "source": "../../pkg"
+      "name": "cryptellation-internal",
+      "source": "../../internal"
     },
     {
       "name": "cryptellation-ticks-ci",

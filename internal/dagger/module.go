@@ -1,4 +1,4 @@
-// A generated module for CryptellationPkg functions
+// A generated module for CryptellationInternal functions
 //
 // This module has been generated via dagger init and serves as a reference to
 // basic module structure as you get started with Dagger.
@@ -26,10 +26,10 @@ const (
 	golangImage = "golang:1.22.5-alpine"
 )
 
-type CryptellationPkg struct{}
+type CryptellationInternal struct{}
 
 // Linter returns a container that runs the linter.
-func (mod *CryptellationPkg) Linter(sourceDir *dagger.Directory, path string) *dagger.Container {
+func (mod *CryptellationInternal) Linter(sourceDir *dagger.Directory, path string) *dagger.Container {
 	c := dag.Container().
 		From(linterImage).
 		WithMountedCache("/root/.cache/golangci-lint", dag.CacheVolume("golangci-lint"))
@@ -39,7 +39,7 @@ func (mod *CryptellationPkg) Linter(sourceDir *dagger.Directory, path string) *d
 	return c.WithExec([]string{"golangci-lint", "run", "--timeout", "10m"})
 }
 
-func (mod *CryptellationPkg) CheckGeneration(
+func (mod *CryptellationInternal) CheckGeneration(
 	ctx context.Context,
 	sourceDir *dagger.Directory,
 	path string,
@@ -48,7 +48,7 @@ func (mod *CryptellationPkg) CheckGeneration(
 		WithExec([]string{"sh", "/go/src/cryptellation/scripts/check-generation.sh"})
 }
 
-func (mod *CryptellationPkg) UnitTests(sourceDir *dagger.Directory, path string) *dagger.Container {
+func (mod *CryptellationInternal) UnitTests(sourceDir *dagger.Directory, path string) *dagger.Container {
 	return mod.CryptellationGoCodeContainer(sourceDir, path).
 		WithExec([]string{"go", "test", "./..."})
 }

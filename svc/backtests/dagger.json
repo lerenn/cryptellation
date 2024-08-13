@@ -7,8 +7,8 @@
       "source": "../candlesticks"
     },
     {
-      "name": "cryptellation-pkg",
-      "source": "../../pkg"
+      "name": "cryptellation-internal",
+      "source": "../../internal"
     }
   ],
   "source": "pkg/dagger",
