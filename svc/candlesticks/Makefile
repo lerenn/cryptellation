@@ -1,6 +1,11 @@
 DOCKER_IMAGE := lerenn/cryptellation-candlesticks
 
-include ../../tools/make/docker.mk
-include ../../tools/make/go.mk
-include ../../tools/make/help.mk
-include ../../tools/make/local.mk
+PROJECT_ROOT_PATH := ../..
+
+DAGGER_MODULE_PATH := .
+
+include $(PROJECT_ROOT_PATH)/tools/make/dagger.mk
+include $(PROJECT_ROOT_PATH)/tools/make/docker.mk
+include $(PROJECT_ROOT_PATH)/tools/make/go.mk
+include $(PROJECT_ROOT_PATH)/tools/make/help.mk
+include $(PROJECT_ROOT_PATH)/tools/make/service.mk

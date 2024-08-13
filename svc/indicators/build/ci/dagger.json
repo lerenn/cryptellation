@@ -3,12 +3,12 @@
   "sdk": "go",
   "dependencies": [
     {
-      "name": "cryptellation-indicators",
-      "source": "../.."
-    },
-    {
       "name": "cryptellation-candlesticks",
       "source": "../../../candlesticks"
+    },
+    {
+      "name": "cryptellation-indicators",
+      "source": "../.."
     },
     {
       "name": "cryptellation-pkg",
