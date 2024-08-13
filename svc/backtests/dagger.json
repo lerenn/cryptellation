@@ -1,6 +1,16 @@
 {
   "name": "cryptellation-backtests",
   "sdk": "go",
+  "dependencies": [
+    {
+      "name": "cryptellation-candlesticks",
+      "source": "../candlesticks"
+    },
+    {
+      "name": "cryptellation-pkg",
+      "source": "../../pkg"
+    }
+  ],
   "source": "pkg/dagger",
   "engineVersion": "v0.12.4"
 }

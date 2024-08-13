@@ -29,13 +29,13 @@ func (mod *CryptellationIndicatorsCi) Linter(sourceDir *dagger.Directory) *dagge
 	return dag.CryptellationPkg().Linter(sourceDir, path)
 }
 
-func (mod *CryptellationIndicatorsCi) CheckGeneration(rootDir *dagger.Directory) *dagger.Container {
-	return dag.CryptellationPkg().CheckGeneration(rootDir, path)
+func (mod *CryptellationIndicatorsCi) CheckGeneration(sourceDir *dagger.Directory) *dagger.Container {
+	return dag.CryptellationPkg().CheckGeneration(sourceDir, path)
 }
 
-func (mod *CryptellationIndicatorsCi) UnitTests(rootDir *dagger.Directory) *dagger.Container {
+func (mod *CryptellationIndicatorsCi) UnitTests(sourceDir *dagger.Directory) *dagger.Container {
 	return dag.CryptellationPkg().
-		CryptellationGoCodeContainer(rootDir, path).
+		CryptellationGoCodeContainer(sourceDir, path).
 		WithExec([]string{"sh", "-c",
 			"go test $(go list ./... | grep -v -e ./internal/adapters -e ./test)",
 		})
@@ -43,11 +43,34 @@ func (mod *CryptellationIndicatorsCi) UnitTests(rootDir *dagger.Directory) *dagg
 
 func (mod *CryptellationIndicatorsCi) IntegrationTests(
 	ctx context.Context,
-	rootDir *dagger.Directory,
+	sourceDir *dagger.Directory,
 ) *dagger.Container {
-	c := dag.CryptellationPkg().CryptellationGoCodeContainer(rootDir, path)
+	c := dag.CryptellationPkg().CryptellationGoCodeContainer(sourceDir, path)
 	c = dag.CryptellationPkg().AttachMongo(c, dag.CryptellationPkg().Mongo().AsService())
 	return c.WithExec([]string{"sh", "-c",
 		"go test ./internal/adapters/...",
+	})
+}
+
+func (mod *CryptellationIndicatorsCi) EndToEndTests(
+	sourceDir *dagger.Directory,
+	secretsFile *dagger.Secret,
+) *dagger.Container {
+	// Dependencies
+	mongo := dag.CryptellationPkg().Mongo().AsService()
+	nats := dag.CryptellationPkg().Nats().AsService()
+	candlesticks := dag.CryptellationCandlesticks().
+		RunnerWithDependencies(sourceDir, secretsFile, mongo, nats).AsService()
+
+	// Service
+	indicatorsService := dag.CryptellationIndicators().
+		RunnerWithDependencies(sourceDir, candlesticks, mongo, nats).AsService()
+
+	// Tester
+	c := dag.CryptellationPkg().CryptellationGoCodeContainer(sourceDir, path)
+	c = dag.CryptellationPkg().AttachNats(c, nats)
+	c = c.WithServiceBinding("cryptellation-indicators", indicatorsService)
+	return c.WithExec([]string{
+		"go", "test", "./test/...",
 	})
 }

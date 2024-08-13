@@ -5,6 +5,10 @@
     {
       "name": "cryptellation-pkg",
       "source": "../../../../pkg"
+    },
+    {
+      "name": "cryptellation-ticks",
+      "source": "../.."
     }
   ],
   "source": "dagger",

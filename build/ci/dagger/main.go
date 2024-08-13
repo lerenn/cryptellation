@@ -20,11 +20,13 @@ import (
 
 type CryptellationCi struct{}
 
-func (m *CryptellationCi) Check(sourceDir *dagger.Directory) []*dagger.Container {
+func (m *CryptellationCi) Check(sourceDir *dagger.Directory, secretsFile *dagger.Secret) []*dagger.Container {
 	containers := make([]*dagger.Container, 0)
 	containers = append(containers, m.Lint(sourceDir)...)
 	containers = append(containers, m.CheckGeneration(sourceDir)...)
 	containers = append(containers, m.UnitTests(sourceDir)...)
+	containers = append(containers, m.IntegrationTests(sourceDir, secretsFile)...)
+	containers = append(containers, m.EndToEndTests(sourceDir, secretsFile)...)
 	return containers
 }
 
@@ -111,5 +113,16 @@ func (m *CryptellationCi) IntegrationTests(sourceDir *dagger.Directory, secretsF
 		dag.CryptellationForwardtestsCi().IntegrationTests(sourceDir),
 		dag.CryptellationIndicatorsCi().IntegrationTests(sourceDir),
 		dag.CryptellationTicksCi().IntegrationTests(sourceDir, secretsFile),
+	}
+}
+
+func (m *CryptellationCi) EndToEndTests(sourceDir *dagger.Directory, secretsFile *dagger.Secret) []*dagger.Container {
+	return []*dagger.Container{
+		dag.CryptellationBacktestsCi().EndToEndTests(sourceDir, secretsFile),
+		dag.CryptellationCandlesticksCi().EndToEndTests(sourceDir, secretsFile),
+		dag.CryptellationExchangesCi().EndToEndTests(sourceDir, secretsFile),
+		dag.CryptellationForwardtestsCi().EndToEndTests(sourceDir, secretsFile),
+		dag.CryptellationIndicatorsCi().EndToEndTests(sourceDir, secretsFile),
+		dag.CryptellationTicksCi().EndToEndTests(sourceDir, secretsFile),
 	}
 }

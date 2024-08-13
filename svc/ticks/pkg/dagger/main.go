@@ -14,8 +14,30 @@
 
 package main
 
+import "cryptellation/svc/ticks/pkg/dagger/internal/dagger"
+
 type CryptellationTicks struct{}
 
-func (m *CryptellationTicks) Echo(stringArg string) string {
-	return stringArg
+func (m *CryptellationTicks) Runner(sourceDir *dagger.Directory) *dagger.Container {
+	return sourceDir.DockerBuild(dagger.DirectoryDockerBuildOpts{
+		Dockerfile: "/svc/ticks/build/package/Dockerfile",
+	})
+}
+
+func (m *CryptellationTicks) RunnerWithDependencies(
+	sourceDir *dagger.Directory,
+	binanceSecretsFile *dagger.Secret,
+	mongoService *dagger.Service,
+	natsService *dagger.Service,
+) *dagger.Container {
+	c := m.Runner(sourceDir)
+
+	c = dag.CryptellationPkg().AttachMongo(c, mongoService)
+	c = dag.CryptellationPkg().AttachBinance(c, binanceSecretsFile)
+	c = dag.CryptellationPkg().AttachNats(c, natsService)
+
+	return c.WithExposedPort(9000, dagger.ContainerWithExposedPortOpts{
+		Protocol:    dagger.Tcp,
+		Description: "Healthcheck",
+	}).WithExec([]string{"api", "serve"})
 }

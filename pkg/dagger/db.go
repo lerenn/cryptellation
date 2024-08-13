@@ -15,5 +15,6 @@ func (mod *CryptellationPkg) AttachMongo(c *dagger.Container, mongo *dagger.Serv
 		// Add service
 		WithServiceBinding("mongo", mongo).
 		// Add environment variables linked to service
-		WithEnvVariable("MONGO_CONNECTION_STRING", "mongodb://mongo:27017")
+		WithEnvVariable("MONGO_CONNECTION_STRING", "mongodb://mongo:27017").
+		WithEnvVariable("MONGO_DATABASE", "cryptellation")
 }

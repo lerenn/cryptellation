@@ -3,6 +3,14 @@
   "sdk": "go",
   "dependencies": [
     {
+      "name": "cryptellation-candlesticks",
+      "source": "../../../candlesticks"
+    },
+    {
+      "name": "cryptellation-forwardtests",
+      "source": "../.."
+    },
+    {
       "name": "cryptellation-pkg",
       "source": "../../../../pkg"
     }

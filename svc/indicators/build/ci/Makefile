@@ -1,4 +1,4 @@
-PROJECT_ROOT_PATH := ../..
+PROJECT_ROOT_PATH := ../../../..
 
 DAGGER_MODULE_PATH := .
 

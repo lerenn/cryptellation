@@ -14,8 +14,30 @@
 
 package main
 
+import "cryptellation/svc/exchanges/pkg/dagger/internal/dagger"
+
 type CryptellationExchanges struct{}
 
-func (m *CryptellationExchanges) Echo(stringArg string) string {
-	return stringArg
+func (m *CryptellationExchanges) Runner(sourceDir *dagger.Directory) *dagger.Container {
+	return sourceDir.DockerBuild(dagger.DirectoryDockerBuildOpts{
+		Dockerfile: "/svc/exchanges/build/package/Dockerfile",
+	})
+}
+
+func (m *CryptellationExchanges) RunnerWithDependencies(
+	sourceDir *dagger.Directory,
+	secretsFile *dagger.Secret,
+	mongo *dagger.Service,
+	nats *dagger.Service,
+) *dagger.Container {
+	c := m.Runner(sourceDir)
+
+	c = dag.CryptellationPkg().AttachMongo(c, mongo)
+	c = dag.CryptellationPkg().AttachBinance(c, secretsFile)
+	c = dag.CryptellationPkg().AttachNats(c, nats)
+
+	return c.WithExposedPort(9000, dagger.ContainerWithExposedPortOpts{
+		Protocol:    dagger.Tcp,
+		Description: "Healthcheck",
+	}).WithExec([]string{"api", "serve"})
 }

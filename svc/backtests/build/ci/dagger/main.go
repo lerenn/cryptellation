@@ -25,17 +25,17 @@ const (
 
 type CryptellationBacktestsCi struct{}
 
-func (mod *CryptellationBacktestsCi) Linter(rootDir *dagger.Directory) *dagger.Container {
-	return dag.CryptellationPkg().Linter(rootDir, path)
+func (mod *CryptellationBacktestsCi) Linter(sourceDir *dagger.Directory) *dagger.Container {
+	return dag.CryptellationPkg().Linter(sourceDir, path)
 }
 
-func (mod *CryptellationBacktestsCi) CheckGeneration(rootDir *dagger.Directory) *dagger.Container {
-	return dag.CryptellationPkg().CheckGeneration(rootDir, path)
+func (mod *CryptellationBacktestsCi) CheckGeneration(sourceDir *dagger.Directory) *dagger.Container {
+	return dag.CryptellationPkg().CheckGeneration(sourceDir, path)
 }
 
-func (mod *CryptellationBacktestsCi) UnitTests(rootDir *dagger.Directory) *dagger.Container {
+func (mod *CryptellationBacktestsCi) UnitTests(sourceDir *dagger.Directory) *dagger.Container {
 	return dag.CryptellationPkg().
-		CryptellationGoCodeContainer(rootDir, path).
+		CryptellationGoCodeContainer(sourceDir, path).
 		WithExec([]string{"sh", "-c",
 			"go test $(go list ./... | grep -v -e ./internal/adapters -e ./test)",
 		})
@@ -43,12 +43,35 @@ func (mod *CryptellationBacktestsCi) UnitTests(rootDir *dagger.Directory) *dagge
 
 func (mod *CryptellationBacktestsCi) IntegrationTests(
 	ctx context.Context,
-	rootDir *dagger.Directory,
+	sourceDir *dagger.Directory,
 ) *dagger.Container {
-	c := dag.CryptellationPkg().CryptellationGoCodeContainer(rootDir, path)
+	c := dag.CryptellationPkg().CryptellationGoCodeContainer(sourceDir, path)
 	c = dag.CryptellationPkg().AttachMongo(c, dag.CryptellationPkg().Mongo().AsService())
 	c = dag.CryptellationPkg().AttachNats(c, dag.CryptellationPkg().Nats().AsService())
 	return c.WithExec([]string{"sh", "-c",
 		"go test ./internal/adapters/...",
+	})
+}
+
+func (mod *CryptellationBacktestsCi) EndToEndTests(
+	sourceDir *dagger.Directory,
+	secretsFile *dagger.Secret,
+) *dagger.Container {
+	// Dependencies
+	mongo := dag.CryptellationPkg().Mongo().AsService()
+	nats := dag.CryptellationPkg().Nats().AsService()
+	candlesticks := dag.CryptellationCandlesticks().
+		RunnerWithDependencies(sourceDir, secretsFile, mongo, nats).AsService()
+
+	// Service
+	backtestsService := dag.CryptellationBacktests().
+		RunnerWithDependencies(sourceDir, candlesticks, mongo, nats).AsService()
+
+	// Tester
+	c := dag.CryptellationPkg().CryptellationGoCodeContainer(sourceDir, path)
+	c = dag.CryptellationPkg().AttachNats(c, nats)
+	c = c.WithServiceBinding("cryptellation-backtests", backtestsService)
+	return c.WithExec([]string{
+		"go", "test", "./test/...",
 	})
 }

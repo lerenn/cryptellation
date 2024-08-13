@@ -15,27 +15,31 @@
 package main
 
 import (
-	"context"
 	"cryptellation/svc/candlesticks/dagger/internal/dagger"
 )
 
 type CryptellationCandlesticks struct{}
 
-func (m *CryptellationCandlesticks) Echo(stringArg string) string {
-	return stringArg
+func (m *CryptellationCandlesticks) Runner(sourceDir *dagger.Directory) *dagger.Container {
+	return sourceDir.DockerBuild(dagger.DirectoryDockerBuildOpts{
+		Dockerfile: "/svc/candlesticks/build/package/Dockerfile",
+	})
 }
 
-// Returns a container that echoes whatever string argument is provided
-func (m *CryptellationCandlesticks) ContainerEcho(stringArg string) *dagger.Container {
-	return dag.Container().From("alpine:latest").WithExec([]string{"echo", stringArg})
-}
+func (m *CryptellationCandlesticks) RunnerWithDependencies(
+	sourceDir *dagger.Directory,
+	secretsFile *dagger.Secret,
+	mongo *dagger.Service,
+	nats *dagger.Service,
+) *dagger.Container {
+	c := m.Runner(sourceDir)
 
-// Returns lines that match a pattern in the files of the provided Directory
-func (m *CryptellationCandlesticks) GrepDir(ctx context.Context, directoryArg *dagger.Directory, pattern string) (string, error) {
-	return dag.Container().
-		From("alpine:latest").
-		WithMountedDirectory("/mnt", directoryArg).
-		WithWorkdir("/mnt").
-		WithExec([]string{"grep", "-R", pattern, "."}).
-		Stdout(ctx)
+	c = dag.CryptellationPkg().AttachMongo(c, mongo)
+	c = dag.CryptellationPkg().AttachBinance(c, secretsFile)
+	c = dag.CryptellationPkg().AttachNats(c, nats)
+
+	return c.WithExposedPort(9000, dagger.ContainerWithExposedPortOpts{
+		Protocol:    dagger.Tcp,
+		Description: "Healthcheck",
+	}).WithExec([]string{"api", "serve"})
 }

@@ -11,7 +11,7 @@ import (
 
 func (mod *CryptellationPkg) WithGoCodeAndCacheAsWorkDirectory(
 	c *dagger.Container,
-	rootDir *dagger.Directory,
+	sourceDir *dagger.Directory,
 	path string,
 ) *dagger.Container {
 	return c.
@@ -20,7 +20,7 @@ func (mod *CryptellationPkg) WithGoCodeAndCacheAsWorkDirectory(
 		WithMountedCache("/go/pkg/mod", dag.CacheVolume("gocache")).
 
 		// Add source code
-		WithMountedDirectory("/go/src/cryptellation", rootDir).
+		WithMountedDirectory("/go/src/cryptellation", sourceDir).
 
 		// Add workdir
 		WithWorkdir("/go/src/cryptellation/" + path)

@@ -14,4 +14,30 @@
 
 package main
 
+import "cryptellation/svc/backtests/pkg/dagger/internal/dagger"
+
 type CryptellationBacktests struct{}
+
+func (m *CryptellationBacktests) Runner(sourceDir *dagger.Directory) *dagger.Container {
+	return sourceDir.DockerBuild(dagger.DirectoryDockerBuildOpts{
+		Dockerfile: "/svc/backtests/build/package/Dockerfile",
+	})
+}
+
+func (m *CryptellationBacktests) RunnerWithDependencies(
+	sourceDir *dagger.Directory,
+	candlesticks *dagger.Service,
+	mongo *dagger.Service,
+	nats *dagger.Service,
+) *dagger.Container {
+	c := m.Runner(sourceDir)
+
+	c = dag.CryptellationPkg().AttachMongo(c, mongo)
+	c = dag.CryptellationPkg().AttachNats(c, nats)
+	c = c.WithServiceBinding("cryptellation-candlesticks", candlesticks)
+
+	return c.WithExposedPort(9000, dagger.ContainerWithExposedPortOpts{
+		Protocol:    dagger.Tcp,
+		Description: "Healthcheck",
+	}).WithExec([]string{"api", "serve"})
+}

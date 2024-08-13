@@ -30,11 +30,8 @@ ENV HEALTH_PORT=9000
 # Expose ports
 EXPOSE 9000
 
-# Copy files
-COPY ./svc/forwardtests/build/package/entrypoint.sh /entrypoint.sh
-
 # Get binary
 COPY --from=build /go/bin/* /usr/local/bin
 
-# Set entrypoint
-ENTRYPOINT ["sh", "/entrypoint.sh"]
+# Set command
+CMD ["api", "serve"]
