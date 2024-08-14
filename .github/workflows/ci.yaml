@@ -65,4 +65,4 @@ jobs:
       - uses: dagger/dagger-for-github@v5
         with:
           verb: call
-          args: -m build/ci unit-tests --source-dir=. --secrets-file=file:./.credentials.env stdout 
+          args: -m build/ci integration-tests --source-dir=. --secrets-file=file:./.credentials.env stdout 
