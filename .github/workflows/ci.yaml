@@ -15,9 +15,11 @@ jobs:
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4.1.1
+      - name: Create a go.work file
+        run: cp go.work.example go.work
       # - uses: actions/setup-go@v5.0.0
       #   with:
-      #     go-version-file: go.work.example
+      #     go-version-file: go.work
       #     cache: true
       - uses: dagger/dagger-for-github@v5
         with:
