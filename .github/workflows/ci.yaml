@@ -60,8 +60,8 @@ jobs:
         run: cp go.work.example go.work
       - name: Create a credentials file
         run: |
-          echo "BINANCE_API_KEY=${{ secrets.BINANCE_API_KEY }}" > ./.credentials.yaml
-          echo "BINANCE_SECRET_KEY=${{ secrets.BINANCE_SECRET_KEY }}" >> ./.credentials.yaml
+          echo "BINANCE_API_KEY=${{ secrets.BINANCE_API_KEY }}" > ./.credentials.env
+          echo "BINANCE_SECRET_KEY=${{ secrets.BINANCE_SECRET_KEY }}" >> ./.credentials.env
       - uses: dagger/dagger-for-github@v5
         with:
           verb: call
