@@ -7,7 +7,7 @@ dagger/check: ## Run all checks through Dagger
 
 .PHONY: dagger/lint
 dagger/lint: ## Run all linters through Dagger
-	@dagger call -m $(DAGGER_MODULE_PATH) lint --source-dir=$(PROJECT_ROOT_PATH):source-only stdout
+	@dagger call -m $(DAGGER_MODULE_PATH) lint --source-dir=$(PROJECT_ROOT_PATH) stdout
 
 .PHONY: dagger/check-generation
 dagger/check-generation: ## Run all checks for generated code through Dagger

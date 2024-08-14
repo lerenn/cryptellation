@@ -42,6 +42,9 @@ func (m *CryptellationCi) Lint(sourceDir *dagger.Directory) []*dagger.Container 
 		// Examples
 		dag.CryptellationInternal().Linter(sourceDir, "./examples/go"),
 
+		// Internal
+		dag.CryptellationInternal().Linter(sourceDir, "./internal"),
+
 		// Package
 		dag.CryptellationInternal().Linter(sourceDir, "./pkg"),
 
@@ -67,6 +70,9 @@ func (m *CryptellationCi) CheckGeneration(sourceDir *dagger.Directory) []*dagger
 		// Examples
 		dag.CryptellationInternal().CheckGeneration(sourceDir, "./examples/go"),
 
+		// Internal
+		dag.CryptellationInternal().CheckGeneration(sourceDir, "./internal"),
+
 		// Package
 		dag.CryptellationInternal().CheckGeneration(sourceDir, "./pkg"),
 
@@ -91,6 +97,9 @@ func (m *CryptellationCi) UnitTests(sourceDir *dagger.Directory) []*dagger.Conta
 
 		// Examples
 		dag.CryptellationInternal().UnitTests(sourceDir, "./examples/go"),
+
+		// Internal
+		dag.CryptellationInternal().UnitTests(sourceDir, "./internal"),
 
 		// Package
 		dag.CryptellationInternal().UnitTests(sourceDir, "./pkg"),

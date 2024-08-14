@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"cryptellation/internal/dagger/internal/dagger"
+	"cryptellation/pkg/utils"
 	"fmt"
 	"strings"
 
@@ -30,7 +31,7 @@ func (mod *CryptellationInternal) CryptellationGoCodeContainer(
 	sourceDir *dagger.Directory,
 	path string,
 ) *dagger.Container {
-	c := dag.Container().From(golangImage)
+	c := dag.Container().From("golang:" + utils.GoVersion() + "-alpine")
 	return mod.WithGoCodeAndCacheAsWorkDirectory(c, sourceDir, path)
 }
 
