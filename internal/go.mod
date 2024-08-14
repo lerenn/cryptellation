@@ -2,11 +2,27 @@ module cryptellation/internal
 
 go 1.22.4
 
+replace (
+	cryptellation/client => ../clients/go
+	cryptellation/pkg => ../pkg
+
+	cryptellation/svc/backtests => ../svc/backtests
+	cryptellation/svc/candlesticks => ../svc/candlesticks
+	cryptellation/svc/exchanges => ../svc/exchanges
+	cryptellation/svc/forwardtests => ../svc/forwardtests
+	cryptellation/svc/indicators => ../svc/indicators
+	cryptellation/svc/ticks => ../svc/ticks
+)
+
 require (
+	cryptellation/svc/exchanges v0.0.0-00010101000000-000000000000
 	github.com/adshao/go-binance/v2 v2.6.0
 	github.com/agoda-com/opentelemetry-logs-go v0.5.1
 	github.com/agoda-com/otelzap v0.1.1
+	github.com/google/uuid v1.6.0
+	github.com/joho/godotenv v1.5.1
 	github.com/lerenn/asyncapi-codegen v0.43.0
+	github.com/stretchr/testify v1.9.0
 	go.mongodb.org/mongo-driver v1.16.1
 	go.opentelemetry.io/otel v1.28.0
 	go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc v1.28.0
@@ -22,10 +38,10 @@ require (
 require (
 	github.com/bitly/go-simplejson v0.5.0 // indirect
 	github.com/cenkalti/backoff/v4 v4.3.0 // indirect
+	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/go-logr/logr v1.4.2 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/golang/snappy v0.0.4 // indirect
-	github.com/google/uuid v1.6.0 // indirect
 	github.com/gorilla/websocket v1.5.0 // indirect
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.21.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
@@ -36,7 +52,7 @@ require (
 	github.com/nats-io/nats.go v1.37.0 // indirect
 	github.com/nats-io/nkeys v0.4.7 // indirect
 	github.com/nats-io/nuid v1.0.1 // indirect
-	github.com/stretchr/objx v0.5.2 // indirect
+	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/xdg-go/pbkdf2 v1.0.0 // indirect
 	github.com/xdg-go/scram v1.1.2 // indirect
 	github.com/xdg-go/stringprep v1.0.4 // indirect
@@ -52,4 +68,5 @@ require (
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20240812133136-8ffd90a71988 // indirect
 	google.golang.org/grpc v1.65.0 // indirect
 	google.golang.org/protobuf v1.34.2 // indirect
+	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
