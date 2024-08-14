@@ -1,0 +1,25 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  lint:
+    name: Run linter
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4.1.1
+      - uses: actions/setup-go@v5.0.0
+        with:
+          go-version-file: go.mod
+          cache: true
+      - uses: dagger/dagger-for-github@v5
+        with:
+          verb: call
+          args: -m build/ci lint --source-dir=. stdout 
