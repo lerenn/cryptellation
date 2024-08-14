@@ -1,9 +1,9 @@
 package backtests
 
 import (
-	adapter "cryptellation/pkg/adapters/events/nats"
-	pkg "cryptellation/pkg/asyncapi"
-	"cryptellation/pkg/config"
+	adapter "cryptellation/internal/adapters/events/nats"
+	pkg "cryptellation/internal/asyncapi"
+	"cryptellation/internal/config"
 
 	asyncapi "cryptellation/svc/backtests/api/asyncapi"
 	client "cryptellation/svc/backtests/clients/go"

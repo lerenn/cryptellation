@@ -5,7 +5,7 @@ import (
 	"sync"
 	"time"
 
-	"cryptellation/pkg/adapters/telemetry"
+	"cryptellation/internal/adapters/telemetry"
 	"cryptellation/pkg/models/event"
 )
 

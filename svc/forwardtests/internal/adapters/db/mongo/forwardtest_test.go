@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	"cryptellation/pkg/config"
+	"cryptellation/internal/config"
 
 	"cryptellation/svc/forwardtests/internal/app/ports/db"
 

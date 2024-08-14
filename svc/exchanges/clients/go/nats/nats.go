@@ -3,7 +3,7 @@ package nats
 import (
 	"context"
 
-	helpers "cryptellation/pkg/asyncapi"
+	helpers "cryptellation/internal/asyncapi"
 
 	asyncapi "cryptellation/svc/exchanges/api/asyncapi"
 	client "cryptellation/svc/exchanges/clients/go"
@@ -11,8 +11,8 @@ import (
 	"github.com/lerenn/asyncapi-codegen/pkg/extensions"
 	natsextension "github.com/lerenn/asyncapi-codegen/pkg/extensions/brokers/nats"
 
+	"cryptellation/internal/config"
 	common "cryptellation/pkg/client"
-	"cryptellation/pkg/config"
 
 	"cryptellation/svc/exchanges/pkg/exchange"
 )

@@ -3,7 +3,7 @@ package daemon
 import (
 	"context"
 
-	"cryptellation/pkg/config"
+	"cryptellation/internal/config"
 
 	"cryptellation/svc/candlesticks/internal/adapters/db/mongo"
 	"cryptellation/svc/candlesticks/internal/adapters/exchanges"

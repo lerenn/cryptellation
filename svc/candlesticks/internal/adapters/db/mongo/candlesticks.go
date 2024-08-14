@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	mongoutil "cryptellation/pkg/adapters/db/mongo"
+	mongoutil "cryptellation/internal/adapters/db/mongo"
 
 	"cryptellation/svc/candlesticks/internal/adapters/db/mongo/entities"
 	"cryptellation/svc/candlesticks/pkg/candlestick"

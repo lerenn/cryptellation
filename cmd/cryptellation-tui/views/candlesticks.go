@@ -6,7 +6,7 @@ import (
 	"strings"
 	"time"
 
-	"cryptellation/pkg/config"
+	"cryptellation/internal/config"
 	"cryptellation/pkg/utils"
 
 	cdsclient "cryptellation/svc/candlesticks/clients/go"

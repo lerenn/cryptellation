@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	binancePkg "cryptellation/pkg/adapters/exchanges/binance"
+	binancePkg "cryptellation/internal/adapters/exchanges/binance"
 
 	"cryptellation/svc/exchanges/internal/adapters/exchanges/binance"
 	"cryptellation/svc/exchanges/internal/app/ports/exchanges"

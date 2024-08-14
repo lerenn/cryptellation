@@ -5,7 +5,7 @@ import (
 	"errors"
 	"time"
 
-	"cryptellation/pkg/adapters/telemetry"
+	"cryptellation/internal/adapters/telemetry"
 	common "cryptellation/pkg/client"
 	"cryptellation/pkg/models/timeserie"
 	"cryptellation/pkg/utils"

@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"cryptellation/pkg/adapters/telemetry"
+	"cryptellation/internal/adapters/telemetry"
 	"cryptellation/pkg/models/event"
 
 	"cryptellation/svc/backtests/pkg/backtest"

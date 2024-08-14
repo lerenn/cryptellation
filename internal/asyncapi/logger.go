@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"cryptellation/pkg/adapters/telemetry"
+	"cryptellation/internal/adapters/telemetry"
 
 	"github.com/lerenn/asyncapi-codegen/pkg/extensions"
 )

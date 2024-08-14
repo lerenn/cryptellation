@@ -4,7 +4,7 @@ import (
 	"strconv"
 	"time"
 
-	adapter "cryptellation/pkg/adapters/exchanges/binance"
+	adapter "cryptellation/internal/adapters/exchanges/binance"
 
 	"cryptellation/svc/candlesticks/pkg/candlestick"
 	"cryptellation/svc/candlesticks/pkg/period"

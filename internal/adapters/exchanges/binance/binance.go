@@ -3,7 +3,7 @@ package binance
 import (
 	"io"
 
-	"cryptellation/pkg/config"
+	"cryptellation/internal/config"
 
 	"cryptellation/svc/exchanges/pkg/exchange"
 

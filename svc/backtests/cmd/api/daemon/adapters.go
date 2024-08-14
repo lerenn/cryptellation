@@ -3,8 +3,8 @@ package daemon
 import (
 	"context"
 
-	asyncapipkg "cryptellation/pkg/asyncapi"
-	"cryptellation/pkg/config"
+	asyncapipkg "cryptellation/internal/asyncapi"
+	"cryptellation/internal/config"
 
 	mongo "cryptellation/svc/backtests/internal/adapters/db/mongo"
 	natsBacktests "cryptellation/svc/backtests/internal/adapters/events/nats"

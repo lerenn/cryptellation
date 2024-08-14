@@ -16,7 +16,7 @@ package main
 
 import (
 	"context"
-	"cryptellation/pkg/dagger/internal/dagger"
+	"cryptellation/internal/dagger/internal/dagger"
 )
 
 const (

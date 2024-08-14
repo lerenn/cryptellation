@@ -1,4 +1,4 @@
-go 1.22.5
+go 1.22.6
 
 use (
 	./build/ci/dagger
@@ -6,8 +6,9 @@ use (
 	./cmd/cryptellation
 	./cmd/cryptellation-tui
 	./examples/go
+	./internal
+	./internal/dagger
 	./pkg
-	./pkg/dagger
 	./svc/backtests
 	./svc/backtests/build/ci/dagger
 	./svc/backtests/pkg/dagger

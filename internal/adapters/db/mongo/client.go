@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"cryptellation/pkg/config"
+	"cryptellation/internal/config"
 
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"

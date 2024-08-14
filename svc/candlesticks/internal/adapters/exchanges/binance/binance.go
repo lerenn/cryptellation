@@ -4,9 +4,9 @@ import (
 	"context"
 	"time"
 
-	"cryptellation/pkg/adapters/exchanges/binance"
-	"cryptellation/pkg/adapters/telemetry"
-	"cryptellation/pkg/config"
+	"cryptellation/internal/adapters/exchanges/binance"
+	"cryptellation/internal/adapters/telemetry"
+	"cryptellation/internal/config"
 
 	"cryptellation/svc/candlesticks/internal/adapters/exchanges/binance/entities"
 	"cryptellation/svc/candlesticks/internal/app/ports/exchanges"

@@ -3,8 +3,8 @@ package nats
 import (
 	"context"
 
-	asyncapipkg "cryptellation/pkg/asyncapi"
-	"cryptellation/pkg/config"
+	asyncapipkg "cryptellation/internal/asyncapi"
+	"cryptellation/internal/config"
 
 	asyncapi "cryptellation/svc/indicators/api/asyncapi"
 	"cryptellation/svc/indicators/internal/app"

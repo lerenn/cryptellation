@@ -3,7 +3,7 @@ package client
 import (
 	"context"
 
-	"cryptellation/pkg/adapters/telemetry"
+	"cryptellation/internal/adapters/telemetry"
 	"cryptellation/pkg/models/event"
 
 	backtests "cryptellation/svc/backtests/clients/go"

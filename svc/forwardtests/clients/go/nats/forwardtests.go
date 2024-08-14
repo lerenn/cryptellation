@@ -3,9 +3,9 @@ package nats
 import (
 	"context"
 
-	helpers "cryptellation/pkg/asyncapi"
+	helpers "cryptellation/internal/asyncapi"
+	"cryptellation/internal/config"
 	common "cryptellation/pkg/client"
-	"cryptellation/pkg/config"
 	"cryptellation/pkg/models/account"
 
 	asyncapi "cryptellation/svc/forwardtests/api/asyncapi"

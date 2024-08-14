@@ -3,7 +3,7 @@ package nats
 import (
 	"testing"
 
-	"cryptellation/pkg/config"
+	"cryptellation/internal/config"
 
 	"cryptellation/svc/ticks/internal/app/ports/events"
 

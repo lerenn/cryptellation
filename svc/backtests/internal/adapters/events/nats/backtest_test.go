@@ -3,7 +3,7 @@ package backtests
 import (
 	"testing"
 
-	"cryptellation/pkg/config"
+	"cryptellation/internal/config"
 
 	"cryptellation/svc/backtests/internal/app/ports/events"
 

@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"time"
 
-	"cryptellation/pkg/adapters/exchanges/binance"
-	"cryptellation/pkg/config"
+	"cryptellation/internal/adapters/exchanges/binance"
+	"cryptellation/internal/config"
 
 	"cryptellation/svc/exchanges/pkg/exchange"
 )

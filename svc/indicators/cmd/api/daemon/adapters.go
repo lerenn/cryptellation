@@ -3,8 +3,8 @@ package daemon
 import (
 	"context"
 
-	asyncapipkg "cryptellation/pkg/asyncapi"
-	"cryptellation/pkg/config"
+	asyncapipkg "cryptellation/internal/asyncapi"
+	"cryptellation/internal/config"
 
 	candlesticks "cryptellation/svc/candlesticks/clients/go"
 	candlestickscache "cryptellation/svc/candlesticks/clients/go/cache"

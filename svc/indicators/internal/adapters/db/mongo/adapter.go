@@ -3,8 +3,8 @@ package mongo
 import (
 	"context"
 
-	mongoutil "cryptellation/pkg/adapters/db/mongo"
-	"cryptellation/pkg/config"
+	mongoutil "cryptellation/internal/adapters/db/mongo"
+	"cryptellation/internal/config"
 
 	port "cryptellation/svc/indicators/internal/app/ports/db"
 

@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	binancePkg "cryptellation/pkg/adapters/exchanges/binance"
+	binancePkg "cryptellation/internal/adapters/exchanges/binance"
 	"cryptellation/pkg/models/event"
 
 	"cryptellation/svc/ticks/internal/adapters/exchanges/binance"
