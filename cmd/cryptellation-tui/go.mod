@@ -1,6 +1,6 @@
 module cryptellation/cmd/cryptellation-tui
 
-go 1.22.6
+go 1.22.4
 
 replace (
 	cryptellation/client => ../../clients/go

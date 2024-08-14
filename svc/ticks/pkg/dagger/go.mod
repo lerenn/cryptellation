@@ -1,6 +1,6 @@
 module cryptellation/svc/ticks/pkg/dagger
 
-go 1.22.5
+go 1.22.4
 
 require (
 	github.com/99designs/gqlgen v0.17.49

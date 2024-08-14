@@ -1,6 +1,6 @@
 module cryptellation/internal
 
-go 1.22.6
+go 1.22.4
 
 require (
 	github.com/adshao/go-binance/v2 v2.6.0
