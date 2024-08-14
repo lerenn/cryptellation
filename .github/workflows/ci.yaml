@@ -17,7 +17,7 @@ jobs:
       - uses: actions/checkout@v4.1.1
       - uses: actions/setup-go@v5.0.0
         with:
-          go-version-file: go.mod
+          go-version-file: go.work.example
           cache: true
       - uses: dagger/dagger-for-github@v5
         with:
