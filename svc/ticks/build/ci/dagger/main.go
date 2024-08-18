@@ -16,11 +16,14 @@ package main
 
 import (
 	"context"
+	"cryptellation/internal/docker"
 	"cryptellation/svc/ticks/build/ci/dagger/internal/dagger"
+	"fmt"
 )
 
 const (
-	path = "svc/ticks"
+	path            = "svc/ticks"
+	dockerImageName = "lerenn/cryptellation-ticks"
 )
 
 type CryptellationTicksCi struct{}
@@ -78,4 +81,36 @@ func (mod *CryptellationTicksCi) EndToEndTests(
 	return c.WithExec([]string{
 		"go", "test", "./test/...",
 	})
+}
+
+// Publishes the Docker image
+func (ci *CryptellationTicksCi) PublishDockerImage(
+	ctx context.Context,
+	sourceDir *dagger.Directory,
+	tags []string,
+) error {
+	// Get images for each platform
+	platformVariants := make([]*dagger.Container, 0, len(docker.GoRunnersInfo))
+	for targetPlatform := range docker.GoRunnersInfo {
+		runner := dag.CryptellationTicks().Runner(sourceDir, dagger.CryptellationTicksRunnerOpts{
+			TargetPlatform: targetPlatform,
+		})
+
+		platformVariants = append(platformVariants, runner)
+	}
+
+	// Set publication options from images
+	publishOpts := dagger.ContainerPublishOpts{
+		PlatformVariants: platformVariants,
+	}
+
+	// Publish with tags
+	for _, tag := range tags {
+		addr := fmt.Sprintf("%s:%s", dockerImageName, tag)
+		if _, err := dag.Container().Publish(ctx, addr, publishOpts); err != nil {
+			return err
+		}
+	}
+
+	return nil
 }

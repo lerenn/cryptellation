@@ -15,11 +15,13 @@
 package main
 
 import (
+	"context"
 	"dagger/cryptellation-ci/internal/dagger"
 )
 
 type CryptellationCi struct{}
 
+// Check returns a list of containers for checking everything
 func (m *CryptellationCi) Check(sourceDir *dagger.Directory, secretsFile *dagger.Secret) []*dagger.Container {
 	containers := make([]*dagger.Container, 0)
 	containers = append(containers, m.Lint(sourceDir)...)
@@ -30,6 +32,7 @@ func (m *CryptellationCi) Check(sourceDir *dagger.Directory, secretsFile *dagger
 	return containers
 }
 
+// Lint returns a list of containers for linting
 func (m *CryptellationCi) Lint(sourceDir *dagger.Directory) []*dagger.Container {
 	return []*dagger.Container{
 		// Client
@@ -58,6 +61,7 @@ func (m *CryptellationCi) Lint(sourceDir *dagger.Directory) []*dagger.Container 
 	}
 }
 
+// CheckGeneration returns a list of containers for checking generation
 func (m *CryptellationCi) CheckGeneration(sourceDir *dagger.Directory) []*dagger.Container {
 	return []*dagger.Container{
 		// Client
@@ -86,6 +90,7 @@ func (m *CryptellationCi) CheckGeneration(sourceDir *dagger.Directory) []*dagger
 	}
 }
 
+// UnitTests returns a list of containers for unit tests
 func (m *CryptellationCi) UnitTests(sourceDir *dagger.Directory) []*dagger.Container {
 	return []*dagger.Container{
 		// Client
@@ -114,6 +119,7 @@ func (m *CryptellationCi) UnitTests(sourceDir *dagger.Directory) []*dagger.Conta
 	}
 }
 
+// IntegrationTests returns a list of containers for integration tests
 func (m *CryptellationCi) IntegrationTests(sourceDir *dagger.Directory, secretsFile *dagger.Secret) []*dagger.Container {
 	return []*dagger.Container{
 		dag.CryptellationBacktestsCi().IntegrationTests(sourceDir),
@@ -125,6 +131,7 @@ func (m *CryptellationCi) IntegrationTests(sourceDir *dagger.Directory, secretsF
 	}
 }
 
+// EndToEndTests returns a list of containers for end-to-end tests
 func (m *CryptellationCi) EndToEndTests(sourceDir *dagger.Directory, secretsFile *dagger.Secret) []*dagger.Container {
 	return []*dagger.Container{
 		dag.CryptellationBacktestsCi().EndToEndTests(sourceDir, secretsFile),
@@ -134,4 +141,54 @@ func (m *CryptellationCi) EndToEndTests(sourceDir *dagger.Directory, secretsFile
 		dag.CryptellationIndicatorsCi().EndToEndTests(sourceDir, secretsFile),
 		dag.CryptellationTicksCi().EndToEndTests(sourceDir, secretsFile),
 	}
+}
+
+// Publish will publish a new version for Docker and Helm.
+// 1. Push a new commit with tag on git repository with new version (for Helm, etc)
+// 2. Push the new Docker images on Docker Hub
+// 3. Push the new Helm chart
+// If this is not 'main' branch or without new semver, then it will just push
+// docker image with git tag.
+func (ci *CryptellationCi) Publish(
+	ctx context.Context,
+	sourceDir *dagger.Directory,
+	// +optional
+	sshDir *dagger.Directory,
+) error {
+	repo := NewGit(sourceDir, sshDir)
+
+	// Update Helm chart
+	sourceDir, err := updateHelmChart(ctx, sourceDir, &repo)
+	if err != nil {
+		return err
+	}
+	repo.UpdateSourceDir(sourceDir)
+
+	// Push new commit with tag
+	if err := repo.PushNewCommitWithTag(ctx); err != nil {
+		return err
+	}
+
+	// Get tags
+	tags, err := getDockerTags(ctx, &repo)
+	if err != nil {
+		return err
+	}
+
+	// Publish docker images
+	callbacks := []func(context.Context, *dagger.Directory, []string) error{
+		dag.CryptellationBacktestsCi().PublishDockerImage,
+		dag.CryptellationCandlesticksCi().PublishDockerImage,
+		dag.CryptellationExchangesCi().PublishDockerImage,
+		dag.CryptellationForwardtestsCi().PublishDockerImage,
+		dag.CryptellationIndicatorsCi().PublishDockerImage,
+		dag.CryptellationTicksCi().PublishDockerImage,
+	}
+	for _, callback := range callbacks {
+		if err := callback(ctx, sourceDir, tags); err != nil {
+			return err
+		}
+	}
+
+	return nil
 }

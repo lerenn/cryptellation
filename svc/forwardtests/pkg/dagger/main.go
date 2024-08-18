@@ -14,12 +14,43 @@
 
 package main
 
-import "cryptellation/svc/forwardtests/pkg/dagger/internal/dagger"
+import (
+	"cryptellation/internal/docker"
+	"cryptellation/svc/forwardtests/pkg/dagger/internal/dagger"
+	"runtime"
+)
 
 type CryptellationForwardtests struct{}
 
-func (m *CryptellationForwardtests) Runner(sourceDir *dagger.Directory) *dagger.Container {
+func (m *CryptellationForwardtests) Runner(
+	sourceDir *dagger.Directory,
+	// +optional
+	targetPlatform string,
+) *dagger.Container {
+	// Get running OS, if that's an OS unsupported by Docker, replace by Linu
+	os := runtime.GOOS
+	if os == "darwin" {
+		os = "linux"
+	}
+
+	// Set default runner info and override by argument
+	runnerInfo := docker.GoRunnersInfo["linux/amd64"]
+	if targetPlatform != "" {
+		info, ok := docker.GoRunnersInfo[targetPlatform]
+		if ok {
+			runnerInfo = info
+		}
+	}
+
 	return sourceDir.DockerBuild(dagger.DirectoryDockerBuildOpts{
+		BuildArgs: []dagger.BuildArg{
+			{Name: "BUILDPLATFORM", Value: os + "/" + runtime.GOARCH},
+			{Name: "TARGETOS", Value: runnerInfo.OS},
+			{Name: "TARGETARCH", Value: runnerInfo.Arch},
+			{Name: "BUILDBASEIMAGE", Value: runnerInfo.BuildBaseImage},
+			{Name: "TARGETBASEIMAGE", Value: runnerInfo.TargetBaseImage},
+		},
+		Platform:   dagger.Platform(runnerInfo.OS + "/" + runnerInfo.Arch),
 		Dockerfile: "/svc/forwardtests/build/package/Dockerfile",
 	})
 }
@@ -30,7 +61,7 @@ func (m *CryptellationForwardtests) RunnerWithDependencies(
 	mongo *dagger.Service,
 	nats *dagger.Service,
 ) *dagger.Container {
-	c := m.Runner(sourceDir)
+	c := m.Runner(sourceDir, runtime.GOOS+"/"+runtime.GOARCH)
 
 	c = dag.CryptellationInternal().AttachMongo(c, mongo)
 	c = dag.CryptellationInternal().AttachNats(c, nats)

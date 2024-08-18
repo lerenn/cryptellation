@@ -30,3 +30,7 @@ dagger/end-to-end-tests: ## Run all end-to-end tests through Dagger
 		--source-dir=$(PROJECT_ROOT_PATH) \
 		--secrets-file=file:$(PROJECT_ROOT_PATH)/.credentials.env \
 		stdout
+
+.PHONY: dagger/publish
+dagger/publish: ## Publish the project through Dagger
+	@dagger call -m $(DAGGER_MODULE_PATH) publish --source-dir=$(PROJECT_ROOT_PATH) --ssh-dir=~/.ssh

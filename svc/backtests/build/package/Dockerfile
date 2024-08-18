@@ -1,10 +1,15 @@
-# Building image
-FROM --platform=${BUILDPLATFORM:-linux/amd64} golang:alpine AS build
+# Dockerfile arguments
+ARG BUILDPLATFORM=linux/amd64
 
-ARG TARGETPLATFORM
-ARG BUILDPLATFORM
-ARG TARGETOS
-ARG TARGETARCH
+ARG TARGETOS=linux
+ARG TARGETARCH=amd64
+
+ARG BUILDBASEIMAGE=golang:alpine
+ARG TARGETBASEIMAGE=alpine:latest
+
+
+# Building image
+FROM --platform=${BUILDPLATFORM:-linux/amd64} ${BUILDBASEIMAGE} AS build
 
 # Disable CGO
 ENV CGO_ENABLED=0
@@ -22,7 +27,7 @@ RUN --mount=type=cache,target=/root/.cache/go-build \
     CGO_ENABLED=0 GOOS=${TARGETOS} GOARCH=${TARGETARCH} go install ./cmd/*
 
 # Get final base image
-FROM alpine
+FROM --platform=${TARGETOS}/${TARGETARCH} ${TARGETBASEIMAGE}
 
 # Set environment variables
 ENV HEALTH_PORT=9000

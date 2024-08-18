@@ -2,7 +2,10 @@ module cryptellation/svc/backtests/pkg/dagger
 
 go 1.22.4
 
+replace cryptellation/internal => ../../../../internal
+
 require (
+	cryptellation/internal v0.0.0-00010101000000-000000000000
 	github.com/99designs/gqlgen v0.17.49
 	github.com/Khan/genqlient v0.7.0
 	github.com/vektah/gqlparser/v2 v2.5.16
