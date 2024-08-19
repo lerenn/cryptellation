@@ -143,19 +143,19 @@ func (m *CryptellationCi) EndToEndTests(sourceDir *dagger.Directory, secretsFile
 	}
 }
 
-// Publish will publish a new version for Docker and Helm.
-// 1. Push a new commit with tag on git repository with new version (for Helm, etc)
-// 2. Push the new Docker images on Docker Hub
-// 3. Push the new Helm chart
-// If this is not 'main' branch or without new semver, then it will just push
-// docker image with git tag.
-func (ci *CryptellationCi) Publish(
+// Release the new version
+func (ci *CryptellationCi) Release(
 	ctx context.Context,
 	sourceDir *dagger.Directory,
 	// +optional
 	sshPrivateKeyFile *dagger.Secret,
 ) error {
 	repo := NewGit(sourceDir, sshPrivateKeyFile)
+
+	// Push new commit with tag
+	if err := repo.PublishNewSemVerTag(ctx); err != nil {
+		return err
+	}
 
 	// Update Helm chart
 	sourceDir, err := updateHelmChart(ctx, sourceDir, &repo)
@@ -165,19 +165,25 @@ func (ci *CryptellationCi) Publish(
 	repo.UpdateSourceDir(sourceDir)
 
 	// Push new commit with tag
-	if err := repo.PushNewCommitWithTag(ctx); err != nil {
-		return err
-	}
+	return repo.PublishNewCommit(ctx, "chore: update Helm chart")
+}
 
-	// Publish Docker images
-	if err := publishDockerImages(ctx, sourceDir, &repo); err != nil {
-		return err
-	}
+func (ci *CryptellationCi) PublishDockerImages(
+	ctx context.Context,
+	sourceDir *dagger.Directory,
+	// +optional
+	sshPrivateKeyFile *dagger.Secret,
+) error {
+	repo := NewGit(sourceDir, sshPrivateKeyFile)
+	return publishDockerImages(ctx, sourceDir, &repo)
+}
 
-	// Publish Helm chart
-	if err := publishHelmChart(ctx, sourceDir, sshPrivateKeyFile, &repo); err != nil {
-		return err
-	}
-
-	return nil
+func (ci *CryptellationCi) PublishHelmCharts(
+	ctx context.Context,
+	sourceDir *dagger.Directory,
+	// +optional
+	sshPrivateKeyFile *dagger.Secret,
+) error {
+	repo := NewGit(sourceDir, sshPrivateKeyFile)
+	return publishHelmChart(ctx, sourceDir, sshPrivateKeyFile, &repo)
 }

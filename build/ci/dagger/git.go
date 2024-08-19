@@ -165,7 +165,7 @@ func (g *Git) resetLastCommitCache() {
 	g.lastCommit.shortSHA = ""
 }
 
-func (g *Git) PushNewCommitWithTag(ctx context.Context) error {
+func (g *Git) PublishNewSemVerTag(ctx context.Context) error {
 	// Get new semver
 	semver, err := g.GetNewSemVerIfNeeded(ctx)
 	if err != nil {
@@ -175,37 +175,6 @@ func (g *Git) PushNewCommitWithTag(ctx context.Context) error {
 	// Check if semver is empty
 	if semver == "" {
 		return nil
-	}
-
-	// Set github repository requirements
-	g.container, err = setGithubRepositoryRequirements(ctx, g.container)
-	if err != nil {
-		return err
-	}
-
-	// Add all changes
-	g.container, err = g.container.
-		WithExec([]string{"git", "add", "."}).
-		Sync(ctx)
-	if err != nil {
-		return err
-	}
-
-	// Commit changes
-	g.container, err = g.container.
-		WithExec([]string{"git", "commit", "-m", "chore: release " + semver}).
-		Sync(ctx)
-	if err != nil {
-		return err
-	}
-	g.resetLastCommitCache()
-
-	// Push new commit
-	g.container, err = g.container.
-		WithExec([]string{"git", "push"}).
-		Sync(ctx)
-	if err != nil {
-		return err
 	}
 
 	// Tag commit
@@ -222,4 +191,50 @@ func (g *Git) PushNewCommitWithTag(ctx context.Context) error {
 		Sync(ctx)
 
 	return err
+}
+
+func (g *Git) PublishNewCommit(ctx context.Context, title string) error {
+	var err error
+
+	// Set github repository requirements
+	g.container, err = setGithubRepositoryRequirements(ctx, g.container)
+	if err != nil {
+		return err
+	}
+
+	// Set new branch
+	branchName := strings.ReplaceAll(title, " ", "-")
+	g.container, err = g.container.
+		WithExec([]string{"git", "checkout", "-b", branchName}).
+		Sync(ctx)
+	if err != nil {
+		return err
+	}
+
+	// Add all changes
+	g.container, err = g.container.
+		WithExec([]string{"git", "add", "."}).
+		Sync(ctx)
+	if err != nil {
+		return err
+	}
+
+	// Commit changes
+	g.container, err = g.container.
+		WithExec([]string{"git", "commit", "-m", title}).
+		Sync(ctx)
+	if err != nil {
+		return err
+	}
+	g.resetLastCommitCache()
+
+	// Push new commit
+	g.container, err = g.container.
+		WithExec([]string{"git", "push"}).
+		Sync(ctx)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
