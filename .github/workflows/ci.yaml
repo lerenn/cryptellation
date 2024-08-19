@@ -94,7 +94,7 @@ jobs:
     timeout-minutes: 5
     if: |
       github.ref == 'refs/heads/main' && 
-      ${{ !startsWith(github.event.head_commit.message, 'release:') }}
+      !startsWith(github.event.head_commit.message, 'release:')
     steps:
       - uses: actions/checkout@v4.1.1
         with:
@@ -121,7 +121,7 @@ jobs:
     timeout-minutes: 5
     if: |
       github.ref == 'refs/heads/main' && 
-      ${{ startsWith(github.event.head_commit.message, 'release:') }}
+      startsWith(github.event.head_commit.message, 'release:')
     steps:
       - uses: actions/checkout@v4.1.1
         with:
