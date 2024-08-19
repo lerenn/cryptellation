@@ -143,19 +143,14 @@ func (m *CryptellationCi) EndToEndTests(sourceDir *dagger.Directory, secretsFile
 	}
 }
 
-// Release the new version
-func (ci *CryptellationCi) Release(
+// Create a new release
+func (ci *CryptellationCi) CreateRelease(
 	ctx context.Context,
 	sourceDir *dagger.Directory,
 	// +optional
 	sshPrivateKeyFile *dagger.Secret,
 ) error {
 	repo := NewGit(sourceDir, sshPrivateKeyFile)
-
-	// Push new commit with tag
-	if err := repo.PublishNewSemVerTag(ctx); err != nil {
-		return err
-	}
 
 	// Update Helm chart
 	sourceDir, err := updateHelmChart(ctx, sourceDir, &repo)
@@ -164,26 +159,37 @@ func (ci *CryptellationCi) Release(
 	}
 	repo.UpdateSourceDir(sourceDir)
 
+	// Get new semver
+	newSemVer, err := repo.GetNewSemVerIfNeeded(ctx)
+	if err != nil {
+		return err
+	} else if newSemVer == "" {
+		return nil
+	}
+
 	// Push new commit with tag
-	return repo.PublishNewCommit(ctx, "chore: update Helm chart")
+	return repo.PublishNewCommit(ctx, "release: "+newSemVer)
 }
 
-func (ci *CryptellationCi) PublishDockerImages(
+// Publish a new release
+func (ci *CryptellationCi) PublishRelease(
 	ctx context.Context,
 	sourceDir *dagger.Directory,
 	// +optional
 	sshPrivateKeyFile *dagger.Secret,
 ) error {
 	repo := NewGit(sourceDir, sshPrivateKeyFile)
-	return publishDockerImages(ctx, sourceDir, &repo)
-}
 
-func (ci *CryptellationCi) PublishHelmCharts(
-	ctx context.Context,
-	sourceDir *dagger.Directory,
-	// +optional
-	sshPrivateKeyFile *dagger.Secret,
-) error {
-	repo := NewGit(sourceDir, sshPrivateKeyFile)
+	// Publish new tag
+	if err := repo.PublishTagFromReleaseTitle(ctx); err != nil {
+		return err
+	}
+
+	// Publish Docker images
+	if err := publishDockerImages(ctx, sourceDir, &repo); err != nil {
+		return err
+	}
+
+	// Publish Helm chart
 	return publishHelmChart(ctx, sourceDir, sshPrivateKeyFile, &repo)
 }

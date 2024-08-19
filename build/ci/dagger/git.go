@@ -165,17 +165,14 @@ func (g *Git) resetLastCommitCache() {
 	g.lastCommit.shortSHA = ""
 }
 
-func (g *Git) PublishNewSemVerTag(ctx context.Context) error {
+func (g *Git) PublishTagFromReleaseTitle(ctx context.Context) error {
 	// Get new semver
-	semver, err := g.GetNewSemVerIfNeeded(ctx)
+	title, err := g.GetLastCommitTitle(ctx)
 	if err != nil {
 		return err
 	}
-
-	// Check if semver is empty
-	if semver == "" {
-		return nil
-	}
+	title = strings.TrimPrefix(title, "release: ")
+	semver := strings.Split(title, " ")[0]
 
 	// Tag commit
 	g.container, err = g.container.
