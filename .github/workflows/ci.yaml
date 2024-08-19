@@ -112,7 +112,7 @@ jobs:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
 
   publish-docker-images:
-    name: Release a new version
+    name: Publish Docker images
     permissions:
       contents: write
     needs: ["release"]
@@ -138,7 +138,7 @@ jobs:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
 
   publish-helm-charts:
-    name: Release a new version
+    name: Publish Helm Charts
     permissions:
       contents: write
     runs-on: ubuntu-latest
