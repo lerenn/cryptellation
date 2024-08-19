@@ -101,6 +101,7 @@ func updateHelmChartAppVersion(
 	} else if newVersion == "" {
 		return sourceDir, nil
 	}
+	newVersion = strings.TrimPrefix(newVersion, "v")
 
 	// Update Helm chart
 	cmd := "sed -i \"s/^appVersion\\: .*/appVersion\\: " + newVersion + "/\" src/deployments/helm/cryptellation/Chart.yaml"

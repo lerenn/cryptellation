@@ -150,7 +150,7 @@ func (g *Git) GetNewSemVerIfNeeded(ctx context.Context) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	newSemVer = "v" + g.newSemVer
+	newSemVer = "v" + newSemVer
 
 	// Check if new version is the same as the last tag
 	if newSemVer == tag {
