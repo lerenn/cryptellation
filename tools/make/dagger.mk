@@ -33,4 +33,6 @@ dagger/end-to-end-tests: ## Run all end-to-end tests through Dagger
 
 .PHONY: dagger/publish
 dagger/publish: ## Publish the project through Dagger
-	@dagger call -m $(DAGGER_MODULE_PATH) publish --source-dir=$(PROJECT_ROOT_PATH) --ssh-dir=~/.ssh
+	@dagger call -m $(DAGGER_MODULE_PATH) publish \
+		--source-dir=$(PROJECT_ROOT_PATH) \
+		--ssh-private-key-file=file:~/.ssh/id_rsa

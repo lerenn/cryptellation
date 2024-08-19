@@ -153,12 +153,12 @@ func (ci *CryptellationCi) Publish(
 	ctx context.Context,
 	sourceDir *dagger.Directory,
 	// +optional
-	sshDir *dagger.Directory,
+	sshPrivateKeyFile *dagger.Secret,
 ) error {
-	repo := NewGit(sourceDir, sshDir)
+	repo := NewGit(sourceDir, sshPrivateKeyFile)
 
 	// Update Helm chart
-	sourceDir, err := updateHelmChartIfNecessary(ctx, sourceDir, &repo)
+	sourceDir, err := updateHelmChart(ctx, sourceDir, &repo)
 	if err != nil {
 		return err
 	}
@@ -171,6 +171,11 @@ func (ci *CryptellationCi) Publish(
 
 	// Publish Docker images
 	if err := publishDockerImages(ctx, sourceDir, &repo); err != nil {
+		return err
+	}
+
+	// Publish Helm chart
+	if err := publishHelmChart(ctx, sourceDir, sshPrivateKeyFile, &repo); err != nil {
 		return err
 	}
 

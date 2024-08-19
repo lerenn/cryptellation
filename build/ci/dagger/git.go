@@ -19,15 +19,15 @@ type Git struct {
 	actualBranch string
 }
 
-func NewGit(srcDir, sshDir *dagger.Directory) Git {
+func NewGit(srcDir *dagger.Directory, sshPrivateKeyFile *dagger.Secret) Git {
 	container := dag.Container().
 		From("alpine/git").
 		WithMountedDirectory("/git", srcDir).
 		WithWorkdir("/git").
 		WithoutEntrypoint()
 
-	if sshDir != nil {
-		container = container.WithMountedDirectory("/root/.ssh", sshDir)
+	if sshPrivateKeyFile != nil {
+		container = container.WithMountedSecret("/root/.ssh/id_rsa", sshPrivateKeyFile)
 	}
 
 	return Git{
