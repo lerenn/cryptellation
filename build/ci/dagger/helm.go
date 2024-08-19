@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"dagger/cryptellation-ci/internal/dagger"
-	"fmt"
 	"regexp"
 	"strings"
 )
@@ -46,7 +45,7 @@ func updateHelmChartVersion(
 	}
 
 	// Compile regexp
-	versionRegex, err := regexp.Compile("\n" + field + ": .*")
+	versionRegex, err := regexp.Compile("^" + field + ": (.*)")
 	if err != nil {
 		return sourceDir, err
 	}
@@ -56,10 +55,7 @@ func updateHelmChartVersion(
 	if err != nil {
 		return sourceDir, err
 	}
-	if version == "" {
-		return sourceDir, fmt.Errorf("field %q not found in Helm chart", field)
-	}
-	version = strings.TrimPrefix(version, "\n"+field+": ")
+	version = strings.TrimPrefix(version, field+": ")
 	version = strings.Trim(version, "\"")
 
 	// Get last commit title
