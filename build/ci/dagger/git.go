@@ -156,6 +156,11 @@ func (g *Git) GetNewSemVerIfNeeded(ctx context.Context) (string, error) {
 	return "v" + g.newSemVer, nil
 }
 
+func (g *Git) resetLastCommitCache() {
+	g.lastCommit.title = ""
+	g.lastCommit.shortSHA = ""
+}
+
 func (g *Git) PushNewCommitWithTag(ctx context.Context) error {
 	// Get new semver
 	semver, err := g.GetNewSemVerIfNeeded(ctx)
@@ -183,6 +188,7 @@ func (g *Git) PushNewCommitWithTag(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
+	g.resetLastCommitCache()
 
 	// Push new commit
 	g.container, err = g.container.

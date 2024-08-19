@@ -158,7 +158,7 @@ func (ci *CryptellationCi) Publish(
 	repo := NewGit(sourceDir, sshDir)
 
 	// Update Helm chart
-	sourceDir, err := updateHelmChart(ctx, sourceDir, &repo)
+	sourceDir, err := updateHelmChartIfNecessary(ctx, sourceDir, &repo)
 	if err != nil {
 		return err
 	}
@@ -169,25 +169,9 @@ func (ci *CryptellationCi) Publish(
 		return err
 	}
 
-	// Get tags
-	tags, err := getDockerTags(ctx, &repo)
-	if err != nil {
+	// Publish Docker images
+	if err := publishDockerImages(ctx, sourceDir, &repo); err != nil {
 		return err
-	}
-
-	// Publish docker images
-	callbacks := []func(context.Context, *dagger.Directory, []string) error{
-		dag.CryptellationBacktestsCi().PublishDockerImage,
-		dag.CryptellationCandlesticksCi().PublishDockerImage,
-		dag.CryptellationExchangesCi().PublishDockerImage,
-		dag.CryptellationForwardtestsCi().PublishDockerImage,
-		dag.CryptellationIndicatorsCi().PublishDockerImage,
-		dag.CryptellationTicksCi().PublishDockerImage,
-	}
-	for _, callback := range callbacks {
-		if err := callback(ctx, sourceDir, tags); err != nil {
-			return err
-		}
 	}
 
 	return nil

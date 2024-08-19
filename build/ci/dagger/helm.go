@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-func updateHelmChart(
+func updateHelmChartIfNecessary(
 	ctx context.Context,
 	sourceDir *dagger.Directory,
 	repo *Git,
@@ -45,7 +45,7 @@ func updateHelmChartVersion(
 	}
 
 	// Compile regexp
-	versionRegex, err := regexp.Compile(field + ": (.*)")
+	versionRegex, err := regexp.Compile("^" + field + ": (.*)")
 	if err != nil {
 		return sourceDir, err
 	}
