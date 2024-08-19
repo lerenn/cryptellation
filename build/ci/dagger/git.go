@@ -177,6 +177,12 @@ func (g *Git) PushNewCommitWithTag(ctx context.Context) error {
 		return nil
 	}
 
+	// Set github repository requirements
+	g.container, err = setGithubRepositoryRequirements(ctx, g.container)
+	if err != nil {
+		return err
+	}
+
 	// Add all changes
 	g.container, err = g.container.
 		WithExec([]string{"git", "add", "."}).

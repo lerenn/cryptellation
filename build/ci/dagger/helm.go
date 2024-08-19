@@ -63,10 +63,8 @@ func publishHelmChart(
 		return err
 	}
 
-	// Add SSH config for github
-	container, err = container.
-		WithExec([]string{"sh", "-c", "echo -e 'Host github.com\n\tStrictHostKeyChecking no\n' > /root/.ssh/config"}).
-		Sync(ctx)
+	// Set github repository requirements
+	container, err = setGithubRepositoryRequirements(ctx, container)
 	if err != nil {
 		return err
 	}
@@ -99,20 +97,6 @@ func publishHelmChart(
 	// Add all changes
 	container, err = container.
 		WithExec([]string{"git", "add", "."}).
-		Sync(ctx)
-	if err != nil {
-		return err
-	}
-
-	// Add infos on author
-	container, err = container.
-		WithExec([]string{"git", "config", "--global", "user.email", "louis.fradin+cryptellation-ci@gmail.com"}).
-		Sync(ctx)
-	if err != nil {
-		return err
-	}
-	container, err = container.
-		WithExec([]string{"git", "config", "--global", "user.name", "Cryptellation CI"}).
 		Sync(ctx)
 	if err != nil {
 		return err
