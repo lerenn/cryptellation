@@ -183,9 +183,6 @@ func updateHelmChartVersion(
 
 	// Get version from Helm chart
 	version := versionRegex.FindString(content)
-	if err != nil {
-		return sourceDir, err
-	}
 	if version == "" {
 		return sourceDir, fmt.Errorf("field 'version' not found in Helm chart")
 	}
