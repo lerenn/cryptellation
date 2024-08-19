@@ -12,7 +12,7 @@ jobs:
   lint:
     name: Run linter
     if: |
-      (! github.ref == 'refs/heads/main') || 
+      github.ref != 'refs/heads/main' || 
         (github.ref == 'refs/heads/main' && 
         !startsWith(github.event.head_commit.message, 'release:'))
     runs-on: ubuntu-latest
@@ -29,7 +29,7 @@ jobs:
   check-generation:
     name: Check generation has been run
     if: |
-      (! github.ref == 'refs/heads/main') || 
+      github.ref != 'refs/heads/main' || 
         (github.ref == 'refs/heads/main' && 
         !startsWith(github.event.head_commit.message, 'release:'))
     runs-on: ubuntu-latest
@@ -47,7 +47,7 @@ jobs:
     name: Run unit tests
     needs: ["lint", "check-generation"]
     if: |
-      (! github.ref == 'refs/heads/main') || 
+      github.ref != 'refs/heads/main' || 
         (github.ref == 'refs/heads/main' && 
         !startsWith(github.event.head_commit.message, 'release:'))
     runs-on: ubuntu-latest
