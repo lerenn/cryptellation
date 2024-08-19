@@ -56,7 +56,7 @@ func getDockerTags(ctx context.Context, repo *Git) ([]string, error) {
 	}
 
 	// Check if there is a new sem ver, if there is none, just stop here
-	newSemVer, err := repo.GetNewSemVerIfNeeded(ctx)
+	newSemVer, err := repo.GetLastTag(ctx)
 	if err != nil {
 		return nil, err
 	} else if newSemVer == "" {

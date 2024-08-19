@@ -143,13 +143,8 @@ func (m *CryptellationCi) EndToEndTests(sourceDir *dagger.Directory, secretsFile
 	}
 }
 
-// Publish will publish a new version for Docker and Helm.
-// 1. Push a new commit with tag on git repository with new version (for Helm, etc)
-// 2. Push the new Docker images on Docker Hub
-// 3. Push the new Helm chart
-// If this is not 'main' branch or without new semver, then it will just push
-// docker image with git tag.
-func (ci *CryptellationCi) Publish(
+// Release a new version on git repository with new version (for Helm, etc)
+func (ci *CryptellationCi) Release(
 	ctx context.Context,
 	sourceDir *dagger.Directory,
 	// +optional
@@ -165,7 +160,28 @@ func (ci *CryptellationCi) Publish(
 	repo.UpdateSourceDir(sourceDir)
 
 	// Push new commit with tag
-	if err := repo.PushNewCommitWithTag(ctx); err != nil {
+	if err := repo.PushNewCommitOnNewBranch(ctx); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// Publish new version on Docker Hub and Helm chart
+// 1. Push the new Docker images on Docker Hub
+// 2. Push the new Helm chart
+// If this is not 'main' branch or without new semver, then it will just push
+// docker image with git tag.
+func (ci *CryptellationCi) Publish(
+	ctx context.Context,
+	sourceDir *dagger.Directory,
+	// +optional
+	sshPrivateKeyFile *dagger.Secret,
+) error {
+	repo := NewGit(sourceDir, sshPrivateKeyFile)
+
+	// Add tag
+	if err := repo.PushSemVerTagOnLastCommit(ctx); err != nil {
 		return err
 	}
 

@@ -165,7 +165,7 @@ func (g *Git) resetLastCommitCache() {
 	g.lastCommit.shortSHA = ""
 }
 
-func (g *Git) PushNewCommitWithTag(ctx context.Context) error {
+func (g *Git) PushNewCommitOnNewBranch(ctx context.Context) error {
 	// Get new semver
 	semver, err := g.GetNewSemVerIfNeeded(ctx)
 	if err != nil {
@@ -179,6 +179,14 @@ func (g *Git) PushNewCommitWithTag(ctx context.Context) error {
 
 	// Set github repository requirements
 	g.container, err = setGithubRepositoryRequirements(ctx, g.container)
+	if err != nil {
+		return err
+	}
+
+	// Add all changes
+	g.container, err = g.container.
+		WithExec([]string{"git", "checkout", "-b", "release-" + semver}).
+		Sync(ctx)
 	if err != nil {
 		return err
 	}
@@ -202,11 +210,23 @@ func (g *Git) PushNewCommitWithTag(ctx context.Context) error {
 
 	// Push new commit
 	g.container, err = g.container.
-		WithExec([]string{"git", "push"}).
+		WithExec([]string{"git", "push", "--set-upstream", "origin", "release-" + semver}).
 		Sync(ctx)
 	if err != nil {
 		return err
 	}
+
+	return nil
+}
+
+func (g *Git) PushSemVerTagOnLastCommit(ctx context.Context) error {
+	// Get new semver
+	title, err := g.GetLastCommitTitle(ctx)
+	if err != nil {
+		return err
+	}
+	title = strings.TrimPrefix(title, "chore: release ")
+	semver := strings.Split(title, " ")[0]
 
 	// Tag commit
 	g.container, err = g.container.

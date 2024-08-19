@@ -31,8 +31,14 @@ dagger/end-to-end-tests: ## Run all end-to-end tests through Dagger
 		--secrets-file=file:$(PROJECT_ROOT_PATH)/.credentials.env \
 		stdout
 
+.PHONY: dagger/release
+dagger/release: ## Publish a new branch with a new release
+	@dagger call -m $(DAGGER_MODULE_PATH) release \
+		--source-dir=$(PROJECT_ROOT_PATH) \
+		--ssh-private-key-file=file:~/.ssh/id_rsa
+
 .PHONY: dagger/publish
-dagger/publish: ## Publish the project through Dagger
+dagger/publish: ## Publish the project on Docker Hub and Helm
 	@dagger call -m $(DAGGER_MODULE_PATH) publish \
 		--source-dir=$(PROJECT_ROOT_PATH) \
 		--ssh-private-key-file=file:~/.ssh/id_rsa

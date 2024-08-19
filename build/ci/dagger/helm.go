@@ -207,7 +207,7 @@ func updateHelmChartAppVersion(
 	repo *Git,
 ) (*dagger.Directory, error) {
 	// Update app semver
-	newVersion, err := repo.GetNewSemVerIfNeeded(ctx)
+	newVersion, err := repo.GetLastTag(ctx)
 	if err != nil {
 		return sourceDir, err
 	} else if newVersion == "" {
