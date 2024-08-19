@@ -21,20 +21,19 @@ func updateHelmChartIfNecessary(
 	// }
 
 	// Update Helm chart version
-	sourceDir, err := updateHelmChartVersion(ctx, sourceDir, repo, "version")
+	sourceDir, err := updateHelmChartVersion(ctx, sourceDir, repo)
 	if err != nil {
 		return sourceDir, err
 	}
 
 	// Update Helm chart app version
-	return updateHelmChartVersion(ctx, sourceDir, repo, "appVersion")
+	return updateHelmChartAppVersion(ctx, sourceDir, repo)
 }
 
 func updateHelmChartVersion(
 	ctx context.Context,
 	sourceDir *dagger.Directory,
 	repo *Git,
-	field string,
 ) (*dagger.Directory, error) {
 	// Get Helm chart
 	helmChart := sourceDir.File("deployments/helm/cryptellation/Chart.yaml")
@@ -46,7 +45,7 @@ func updateHelmChartVersion(
 	}
 
 	// Compile regexp
-	versionRegex, err := regexp.Compile("\n" + field + ": .*")
+	versionRegex, err := regexp.Compile("\nversion: .*")
 	if err != nil {
 		return sourceDir, err
 	}
@@ -57,9 +56,9 @@ func updateHelmChartVersion(
 		return sourceDir, err
 	}
 	if version == "" {
-		return sourceDir, fmt.Errorf("field %q not found in Helm chart", field)
+		return sourceDir, fmt.Errorf("field 'version' not found in Helm chart")
 	}
-	version = strings.TrimPrefix(version, "\n"+field+": ")
+	version = strings.TrimPrefix(version, "\nversion: ")
 	version = strings.Trim(version, "\"")
 
 	// Get last commit title
@@ -77,7 +76,34 @@ func updateHelmChartVersion(
 	}
 
 	// Update Helm chart
-	cmd := "sed -i \"s/^" + field + "\\: .*/" + field + "\\: " + newVersion + "/\" src/deployments/helm/cryptellation/Chart.yaml"
+	cmd := "sed -i \"s/^version\\: .*/version\\: " + newVersion + "/\" src/deployments/helm/cryptellation/Chart.yaml"
+	c, err := dag.Container().From("alpine").
+		WithMountedDirectory("src", sourceDir).
+		WithExec([]string{"sh", "-c", cmd}).
+		Sync(ctx)
+	if err != nil {
+		return sourceDir, err
+	}
+
+	// Export modified directory
+	return c.Directory("src"), nil
+}
+
+func updateHelmChartAppVersion(
+	ctx context.Context,
+	sourceDir *dagger.Directory,
+	repo *Git,
+) (*dagger.Directory, error) {
+	// Update app semver
+	newVersion, err := repo.GetNewSemVerIfNeeded(ctx)
+	if err != nil {
+		return sourceDir, err
+	} else if newVersion == "" {
+		return sourceDir, nil
+	}
+
+	// Update Helm chart
+	cmd := "sed -i \"s/^appVersion\\: .*/appVersion\\: " + newVersion + "/\" src/deployments/helm/cryptellation/Chart.yaml"
 	c, err := dag.Container().From("alpine").
 		WithMountedDirectory("src", sourceDir).
 		WithExec([]string{"sh", "-c", cmd}).

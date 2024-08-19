@@ -149,11 +149,15 @@ func (g *Git) GetNewSemVerIfNeeded(ctx context.Context) (string, error) {
 	newSemVer, err := parseAndUpdateSemVer(tag, title)
 	if err != nil {
 		return "", err
-	} else if newSemVer == tag {
+	}
+	newSemVer = "v" + g.newSemVer
+
+	// Check if new version is the same as the last tag
+	if newSemVer == tag {
 		return "", nil
 	}
 
-	return "v" + g.newSemVer, nil
+	return newSemVer, nil
 }
 
 func (g *Git) resetLastCommitCache() {
