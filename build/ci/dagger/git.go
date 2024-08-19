@@ -201,7 +201,7 @@ func (g *Git) PublishNewCommit(ctx context.Context, title string) error {
 
 	// Set new branch
 	branchName := strings.ReplaceAll(title, " ", "-")
-	branchName = strings.ReplaceAll(branchName, ":", "-")
+	branchName = strings.ReplaceAll(branchName, ":", "")
 	g.container, err = g.container.
 		WithExec([]string{"git", "checkout", "-b", branchName}).
 		Sync(ctx)
@@ -228,7 +228,7 @@ func (g *Git) PublishNewCommit(ctx context.Context, title string) error {
 
 	// Push new commit
 	g.container, err = g.container.
-		WithExec([]string{"git", "push"}).
+		WithExec([]string{"git", "push", "--set-upstream", "origin", branchName}).
 		Sync(ctx)
 	if err != nil {
 		return err
