@@ -129,7 +129,7 @@ func publishHelmChart(
 	}
 
 	// Push new commit
-	container, err = container.
+	_, err = container.
 		WithExec([]string{"git", "push"}).
 		Sync(ctx)
 	if err != nil {

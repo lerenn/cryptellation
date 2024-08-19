@@ -5,6 +5,10 @@ import (
 	"dagger/cryptellation-ci/internal/dagger"
 )
 
+type dockerPublisher interface {
+	PublishDockerImage(context.Context, *dagger.Directory, []string) error
+}
+
 func publishDockerImages(
 	ctx context.Context,
 	sourceDir *dagger.Directory,
@@ -17,16 +21,16 @@ func publishDockerImages(
 	}
 
 	// Publish docker images
-	callbacks := []func(context.Context, *dagger.Directory, []string) error{
-		dag.CryptellationBacktestsCi().PublishDockerImage,
-		dag.CryptellationCandlesticksCi().PublishDockerImage,
-		dag.CryptellationExchangesCi().PublishDockerImage,
-		dag.CryptellationForwardtestsCi().PublishDockerImage,
-		dag.CryptellationIndicatorsCi().PublishDockerImage,
-		dag.CryptellationTicksCi().PublishDockerImage,
+	publishers := []dockerPublisher{
+		dag.CryptellationBacktestsCi(),
+		dag.CryptellationCandlesticksCi(),
+		dag.CryptellationExchangesCi(),
+		dag.CryptellationForwardtestsCi(),
+		dag.CryptellationIndicatorsCi(),
+		dag.CryptellationTicksCi(),
 	}
-	for _, callback := range callbacks {
-		if err := callback(ctx, sourceDir, tags); err != nil {
+	for _, pub := range publishers {
+		if err := pub.PublishDockerImage(ctx, sourceDir, tags); err != nil {
 			return err
 		}
 	}
