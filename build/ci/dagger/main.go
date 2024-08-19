@@ -149,6 +149,8 @@ func (ci *CryptellationCi) CreateRelease(
 	sourceDir *dagger.Directory,
 	// +optional
 	sshPrivateKeyFile *dagger.Secret,
+	// +optional
+	githubToken *dagger.Secret,
 ) error {
 	repo := NewGit(sourceDir, sshPrivateKeyFile)
 
@@ -168,7 +170,7 @@ func (ci *CryptellationCi) CreateRelease(
 	}
 
 	// Push new commit with tag
-	return repo.PublishNewCommit(ctx, "release: "+newSemVer)
+	return repo.PublishNewCommit(ctx, "release: "+newSemVer, githubToken)
 }
 
 // Publish a new release

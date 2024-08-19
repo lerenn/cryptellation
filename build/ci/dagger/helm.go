@@ -34,8 +34,16 @@ func publishHelmChart(
 		container = container.WithMountedSecret("/root/.ssh/id_rsa", sshPrivateKeyFile)
 	}
 
-	// Generate package
+	// Update dependencies
 	container, err := container.
+		WithExec([]string{"helm", "dependency", "update", "/src/deployments/helm/cryptellation"}).
+		Sync(ctx)
+	if err != nil {
+		return err
+	}
+
+	// Generate package
+	container, err = container.
 		WithExec([]string{"helm", "package", "/src/deployments/helm/cryptellation"}).
 		Sync(ctx)
 	if err != nil {
@@ -217,7 +225,7 @@ func updateHelmChartAppVersion(
 	newVersion = fmt.Sprintf("\"%s\"", newVersion)
 
 	// Update Helm chart
-	cmd := "sed -i \"s/^appVersion\\: .*/appVersion\\: " + newVersion + "/\" src/deployments/helm/cryptellation/Chart.yaml"
+	cmd := "sed -i 's/^appVersion\\: .*/appVersion\\: \"" + newVersion + "\"/' src/deployments/helm/cryptellation/Chart.yaml"
 	c, err := dag.Container().From("alpine").
 		WithMountedDirectory("src", sourceDir).
 		WithExec([]string{"sh", "-c", cmd}).

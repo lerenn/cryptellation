@@ -11,6 +11,9 @@ on:
 jobs:
   lint:
     name: Run linter
+    if: |
+      github.ref == 'refs/heads/main' && 
+      !startsWith(github.event.head_commit.message, 'release:')
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
@@ -24,6 +27,9 @@ jobs:
   
   check-generation:
     name: Check generation has been run
+    if: |
+      github.ref == 'refs/heads/main' && 
+      !startsWith(github.event.head_commit.message, 'release:')
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
@@ -38,6 +44,9 @@ jobs:
   unit-tests:
     name: Run unit tests
     needs: ["lint", "check-generation"]
+    if: |
+      github.ref == 'refs/heads/main' && 
+      !startsWith(github.event.head_commit.message, 'release:')
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
@@ -109,9 +118,10 @@ jobs:
       - uses: dagger/dagger-for-github@v6.5.0
         with:
           verb: call
-          args: -m build/ci create-release --source-dir=. --ssh-private-key-file=env:SSH_PRIVATE_KEY
+          args: -m build/ci create-release --source-dir=. --ssh-private-key-file=env:SSH_PRIVATE_KEY --github-token=env:GITHUB_TOKEN
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   publish-release:
     name: Publish the release of the new version

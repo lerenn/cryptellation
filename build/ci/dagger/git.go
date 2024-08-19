@@ -2,8 +2,11 @@ package main
 
 import (
 	"context"
+	"cryptellation/pkg/utils"
 	"dagger/cryptellation-ci/internal/dagger"
 	"strings"
+
+	"github.com/google/go-github/v63/github"
 )
 
 type Git struct {
@@ -190,7 +193,11 @@ func (g *Git) PublishTagFromReleaseTitle(ctx context.Context) error {
 	return err
 }
 
-func (g *Git) PublishNewCommit(ctx context.Context, title string) error {
+func (g *Git) PublishNewCommit(
+	ctx context.Context,
+	title string,
+	githubToken *dagger.Secret,
+) error {
 	var err error
 
 	// Set github repository requirements
@@ -232,6 +239,22 @@ func (g *Git) PublishNewCommit(ctx context.Context, title string) error {
 		Sync(ctx)
 	if err != nil {
 		return err
+	}
+
+	// Create pull request
+	if githubToken != nil {
+		token, err := githubToken.Plaintext(ctx)
+		if err != nil {
+			return err
+		}
+
+		client := github.NewClient(nil).WithAuthToken(token)
+		client.PullRequests.Create(ctx, "lerenn", "cryptellation", &github.NewPullRequest{
+			Title:               &title,
+			Base:                utils.ToReference("main"),
+			Head:                utils.ToReference(branchName),
+			MaintainerCanModify: utils.ToReference(true),
+		})
 	}
 
 	return nil
