@@ -102,6 +102,7 @@ func updateHelmChartAppVersion(
 		return sourceDir, nil
 	}
 	newVersion = strings.TrimPrefix(newVersion, "v")
+	newVersion = fmt.Sprintf("\"%s\"", newVersion)
 
 	// Update Helm chart
 	cmd := "sed -i \"s/^appVersion\\: .*/appVersion\\: " + newVersion + "/\" src/deployments/helm/cryptellation/Chart.yaml"
