@@ -204,6 +204,7 @@ func (g *Git) PublishNewCommit(ctx context.Context, title string) error {
 
 	// Set new branch
 	branchName := strings.ReplaceAll(title, " ", "-")
+	branchName = strings.ReplaceAll(branchName, ":", "-")
 	g.container, err = g.container.
 		WithExec([]string{"git", "checkout", "-b", branchName}).
 		Sync(ctx)
