@@ -32,7 +32,7 @@ services:
   backtests:
     image:
       repository: lerenn/cryptellation-backtests
-      tag: v1.12.0
+      tag: {{ .Chart.AppVersion }}
       pullPolicy: Always
     mongodb:
       database: backtests
@@ -41,7 +41,7 @@ services:
   candlesticks:
     image:
       repository: lerenn/cryptellation-candlesticks
-      tag: v1.12.0
+      tag: {{ .Chart.AppVersion }}
       pullPolicy: Always
     mongodb:
       database: candlesticks
@@ -50,7 +50,7 @@ services:
   exchanges:
     image:
       repository: lerenn/cryptellation-exchanges
-      tag: v1.12.0
+      tag: {{ .Chart.AppVersion }}
       pullPolicy: Always
     mongodb:
       database: exchanges
@@ -59,7 +59,7 @@ services:
   forwardtests:
     image:
       repository: lerenn/cryptellation-forwardtests
-      tag: v1.12.0
+      tag: {{ .Chart.AppVersion }}
       pullPolicy: Always
     mongodb:
       database: forwardtests
@@ -68,7 +68,7 @@ services:
   indicators:
     image:
       repository: lerenn/cryptellation-indicators
-      tag: v1.12.0
+      tag: {{ .Chart.AppVersion }}
       pullPolicy: Always
     mongodb:
       database: indicators
@@ -77,7 +77,7 @@ services:
   ticks:
     image:
       repository: lerenn/cryptellation-ticks
-      tag: v1.12.0
+      tag: {{ .Chart.AppVersion }}
       pullPolicy: Always
     mongodb:
       database: ticks
