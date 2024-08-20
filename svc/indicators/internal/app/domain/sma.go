@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"cryptellation/internal/adapters/telemetry"
+	"cryptellation/pkg/adapters/telemetry"
 	"cryptellation/pkg/models/timeserie"
 	"cryptellation/pkg/utils"
 

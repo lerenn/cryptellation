@@ -3,7 +3,7 @@ package client
 import (
 	"context"
 
-	"cryptellation/internal/adapters/telemetry"
+	"cryptellation/pkg/adapters/telemetry"
 	"cryptellation/svc/forwardtests/pkg/forwardtest"
 
 	"cryptellation/svc/ticks/pkg/tick"

@@ -7,7 +7,7 @@ import (
 
 	cryptellation "cryptellation/client"
 
-	"cryptellation/internal/adapters/telemetry"
+	"cryptellation/pkg/adapters/telemetry"
 	common "cryptellation/pkg/client"
 	"cryptellation/pkg/models/event"
 	"cryptellation/pkg/models/order"

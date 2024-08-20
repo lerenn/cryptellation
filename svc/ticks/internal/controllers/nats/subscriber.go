@@ -3,7 +3,7 @@ package nats
 import (
 	"context"
 
-	"cryptellation/internal/adapters/telemetry"
+	"cryptellation/pkg/adapters/telemetry"
 	"cryptellation/pkg/version"
 
 	"cryptellation/svc/ticks/api/asyncapi"

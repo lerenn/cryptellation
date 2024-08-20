@@ -4,9 +4,9 @@ import (
 	"context"
 	"os"
 
-	"cryptellation/internal/adapters/telemetry"
-	"cryptellation/internal/adapters/telemetry/console"
-	"cryptellation/internal/adapters/telemetry/otel"
+	"cryptellation/pkg/adapters/telemetry"
+	"cryptellation/pkg/adapters/telemetry/console"
+	"cryptellation/pkg/adapters/telemetry/otel"
 	"cryptellation/pkg/version"
 
 	"github.com/spf13/cobra"

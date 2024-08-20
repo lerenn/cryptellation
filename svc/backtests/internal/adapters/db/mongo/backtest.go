@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"cryptellation/internal/adapters/telemetry"
+	"cryptellation/pkg/adapters/telemetry"
 
 	"cryptellation/svc/backtests/internal/adapters/db/mongo/entities"
 	port "cryptellation/svc/backtests/internal/app/ports/db"

@@ -5,8 +5,8 @@ import (
 	"time"
 
 	"cryptellation/internal/adapters/exchanges/binance"
-	"cryptellation/internal/adapters/telemetry"
 	"cryptellation/internal/config"
+	"cryptellation/pkg/adapters/telemetry"
 
 	"cryptellation/svc/candlesticks/internal/adapters/exchanges/binance/entities"
 	"cryptellation/svc/candlesticks/internal/app/ports/exchanges"

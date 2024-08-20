@@ -8,7 +8,7 @@ import (
 	"strconv"
 	"sync/atomic"
 
-	"cryptellation/internal/adapters/telemetry"
+	"cryptellation/pkg/adapters/telemetry"
 )
 
 const (
