@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"cryptellation/internal/config"
+	"cryptellation/pkg/config"
 
 	"cryptellation/svc/candlesticks/internal/app/ports/exchanges"
 	"cryptellation/svc/candlesticks/pkg/candlestick"

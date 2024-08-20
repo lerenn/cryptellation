@@ -8,7 +8,7 @@ import (
 	"cryptellation/internal/adapters/telemetry"
 	"cryptellation/internal/adapters/telemetry/console"
 	"cryptellation/internal/adapters/telemetry/otel"
-	"cryptellation/internal/config"
+	"cryptellation/pkg/config"
 	"cryptellation/pkg/models/account"
 
 	"cryptellation/svc/forwardtests/pkg/forwardtest"

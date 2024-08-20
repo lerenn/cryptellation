@@ -8,8 +8,8 @@ import (
 
 	cryptellation "cryptellation/client"
 
-	"cryptellation/internal/config"
 	"cryptellation/pkg/charts"
+	"cryptellation/pkg/config"
 	"cryptellation/pkg/utils"
 
 	candlesticks "cryptellation/svc/candlesticks/clients/go"

@@ -6,7 +6,7 @@ import (
 
 	client "cryptellation/client"
 
-	"cryptellation/internal/config"
+	"cryptellation/pkg/config"
 	"cryptellation/pkg/version"
 
 	"github.com/spf13/cobra"

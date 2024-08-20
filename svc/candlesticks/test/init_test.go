@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	"cryptellation/internal/config"
+	"cryptellation/pkg/config"
 
 	client "cryptellation/svc/candlesticks/clients/go"
 	"cryptellation/svc/candlesticks/clients/go/nats"

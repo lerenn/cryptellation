@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"cryptellation/internal/config"
+	"cryptellation/pkg/config"
 	"cryptellation/pkg/models/account"
 
 	"cryptellation/svc/backtests/internal/app/ports/db"

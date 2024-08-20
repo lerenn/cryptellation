@@ -5,8 +5,8 @@ import (
 	"errors"
 	"sync"
 
-	"cryptellation/internal/config"
 	"cryptellation/pkg/client"
+	"cryptellation/pkg/config"
 
 	backtests "cryptellation/svc/backtests/clients/go"
 	backtestsnats "cryptellation/svc/backtests/clients/go/nats"

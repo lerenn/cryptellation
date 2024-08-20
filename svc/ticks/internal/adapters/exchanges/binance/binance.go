@@ -8,7 +8,7 @@ import (
 
 	"cryptellation/internal/adapters/exchanges/binance"
 	"cryptellation/internal/adapters/telemetry"
-	"cryptellation/internal/config"
+	"cryptellation/pkg/config"
 
 	"cryptellation/svc/candlesticks/pkg/pair"
 

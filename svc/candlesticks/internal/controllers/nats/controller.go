@@ -4,7 +4,7 @@ import (
 	"context"
 
 	asyncapipkg "cryptellation/internal/asyncapi"
-	"cryptellation/internal/config"
+	"cryptellation/pkg/config"
 
 	"cryptellation/svc/candlesticks/api/asyncapi"
 	"cryptellation/svc/candlesticks/internal/app"

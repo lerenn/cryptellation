@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"cryptellation/internal/adapters/exchanges/binance"
-	"cryptellation/internal/config"
+	"cryptellation/pkg/config"
 
 	"cryptellation/svc/exchanges/pkg/exchange"
 )

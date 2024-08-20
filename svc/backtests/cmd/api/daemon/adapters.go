@@ -4,7 +4,7 @@ import (
 	"context"
 
 	asyncapipkg "cryptellation/internal/asyncapi"
-	"cryptellation/internal/config"
+	"cryptellation/pkg/config"
 
 	mongo "cryptellation/svc/backtests/internal/adapters/db/mongo"
 	natsBacktests "cryptellation/svc/backtests/internal/adapters/events/nats"

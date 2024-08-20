@@ -6,8 +6,8 @@ import (
 
 	"cryptellation/internal/adapters/telemetry"
 	helpers "cryptellation/internal/asyncapi"
-	"cryptellation/internal/config"
 	common "cryptellation/pkg/client"
+	"cryptellation/pkg/config"
 
 	asyncapi "cryptellation/svc/candlesticks/api/asyncapi"
 	client "cryptellation/svc/candlesticks/clients/go"

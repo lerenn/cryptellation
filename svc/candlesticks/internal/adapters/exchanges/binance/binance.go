@@ -6,7 +6,7 @@ import (
 
 	"cryptellation/internal/adapters/exchanges/binance"
 	"cryptellation/internal/adapters/telemetry"
-	"cryptellation/internal/config"
+	"cryptellation/pkg/config"
 
 	"cryptellation/svc/candlesticks/internal/adapters/exchanges/binance/entities"
 	"cryptellation/svc/candlesticks/internal/app/ports/exchanges"

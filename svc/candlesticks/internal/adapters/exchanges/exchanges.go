@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	binancePkg "cryptellation/internal/adapters/exchanges/binance"
-	"cryptellation/internal/config"
+	"cryptellation/pkg/config"
 
 	"cryptellation/svc/candlesticks/internal/adapters/exchanges/binance"
 	"cryptellation/svc/candlesticks/internal/app/ports/exchanges"

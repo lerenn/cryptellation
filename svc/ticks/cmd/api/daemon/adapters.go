@@ -3,7 +3,7 @@ package daemon
 import (
 	"context"
 
-	"cryptellation/internal/config"
+	"cryptellation/pkg/config"
 
 	natsTicks "cryptellation/svc/ticks/internal/adapters/events/nats"
 	"cryptellation/svc/ticks/internal/adapters/exchanges"

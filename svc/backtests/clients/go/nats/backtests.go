@@ -6,8 +6,8 @@ import (
 	"time"
 
 	helpers "cryptellation/internal/asyncapi"
-	"cryptellation/internal/config"
 	common "cryptellation/pkg/client"
+	"cryptellation/pkg/config"
 	"cryptellation/pkg/models/account"
 	"cryptellation/pkg/models/event"
 

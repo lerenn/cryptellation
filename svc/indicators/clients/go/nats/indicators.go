@@ -4,8 +4,8 @@ import (
 	"context"
 
 	helpers "cryptellation/internal/asyncapi"
-	"cryptellation/internal/config"
 	common "cryptellation/pkg/client"
+	"cryptellation/pkg/config"
 	"cryptellation/pkg/models/timeserie"
 
 	asyncapi "cryptellation/svc/indicators/api/asyncapi"

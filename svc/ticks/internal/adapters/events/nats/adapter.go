@@ -2,7 +2,7 @@ package nats
 
 import (
 	adapter "cryptellation/internal/adapters/events/nats"
-	"cryptellation/internal/config"
+	"cryptellation/pkg/config"
 
 	asyncapi "cryptellation/svc/ticks/api/asyncapi"
 )

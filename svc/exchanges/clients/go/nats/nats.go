@@ -11,8 +11,8 @@ import (
 	"github.com/lerenn/asyncapi-codegen/pkg/extensions"
 	natsextension "github.com/lerenn/asyncapi-codegen/pkg/extensions/brokers/nats"
 
-	"cryptellation/internal/config"
 	common "cryptellation/pkg/client"
+	"cryptellation/pkg/config"
 
 	"cryptellation/svc/exchanges/pkg/exchange"
 )

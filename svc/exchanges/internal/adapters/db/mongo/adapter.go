@@ -4,7 +4,7 @@ import (
 	"context"
 
 	mongoutil "cryptellation/internal/adapters/db/mongo"
-	"cryptellation/internal/config"
+	"cryptellation/pkg/config"
 
 	port "cryptellation/svc/exchanges/internal/app/ports/db"
 

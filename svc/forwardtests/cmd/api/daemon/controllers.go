@@ -1,7 +1,7 @@
 package daemon
 
 import (
-	"cryptellation/internal/config"
+	"cryptellation/pkg/config"
 
 	"cryptellation/svc/forwardtests/internal/controllers/nats"
 )

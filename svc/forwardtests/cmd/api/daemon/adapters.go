@@ -4,7 +4,7 @@ import (
 	"context"
 
 	asyncapipkg "cryptellation/internal/asyncapi"
-	"cryptellation/internal/config"
+	"cryptellation/pkg/config"
 
 	candlesticks "cryptellation/svc/candlesticks/clients/go"
 	candlestickscache "cryptellation/svc/candlesticks/clients/go/cache"
