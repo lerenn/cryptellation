@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"cryptellation/internal/adapters/telemetry"
+	"cryptellation/pkg/adapters/telemetry"
 	"cryptellation/pkg/models/order"
 
 	candlesticks "cryptellation/svc/candlesticks/clients/go"

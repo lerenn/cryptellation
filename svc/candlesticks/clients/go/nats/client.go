@@ -4,8 +4,8 @@ import (
 	"context"
 	"time"
 
-	"cryptellation/internal/adapters/telemetry"
 	helpers "cryptellation/internal/asyncapi"
+	"cryptellation/pkg/adapters/telemetry"
 	common "cryptellation/pkg/client"
 	"cryptellation/pkg/config"
 

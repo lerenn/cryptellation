@@ -3,7 +3,7 @@ package domain
 import (
 	"context"
 
-	"cryptellation/internal/adapters/telemetry"
+	"cryptellation/pkg/adapters/telemetry"
 
 	"cryptellation/svc/forwardtests/internal/app"
 	"cryptellation/svc/forwardtests/internal/app/ports/db"

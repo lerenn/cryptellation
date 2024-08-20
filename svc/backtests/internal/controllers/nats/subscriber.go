@@ -4,7 +4,7 @@ import (
 	"context"
 	"net/http"
 
-	"cryptellation/internal/adapters/telemetry"
+	"cryptellation/pkg/adapters/telemetry"
 	"cryptellation/pkg/version"
 
 	asyncapi "cryptellation/svc/backtests/api/asyncapi"

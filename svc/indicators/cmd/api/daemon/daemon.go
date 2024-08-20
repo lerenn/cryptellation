@@ -6,7 +6,7 @@ import (
 	"os/signal"
 	"syscall"
 
-	"cryptellation/internal/adapters/telemetry"
+	"cryptellation/pkg/adapters/telemetry"
 	"cryptellation/pkg/controllers/http"
 )
 
