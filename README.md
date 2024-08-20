@@ -13,7 +13,7 @@ different cryptographic markets, featuring **backtesting**, **forward testing** 
 | **Backtests**    | Go         | Execute backtests                       |
 | **Candlesticks** | Go         | Get cached informations on candlesticks |
 | **Exchanges**    | Go         | Get cached informations on exchanges    |
-| **Forwartests**  | Go         | Execute forward tests                   |
+| **Forwardtests** | Go         | Execute forward tests                   |
 | **Indicators**   | Go         | Calculate and cache indicators          |
 | **Ticks**        | Go         | Get ticks from exchanges                |
 
