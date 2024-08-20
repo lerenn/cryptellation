@@ -18,7 +18,7 @@ var (
 
 var ticksCmd = &cobra.Command{
 	Use:     "ticks",
-	Aliases: []string{"c"},
+	Aliases: []string{"t"},
 	Short:   "Manipulate ticks service",
 	PersistentPreRunE: func(cmd *cobra.Command, args []string) (err error) {
 		if err := executeParentPersistentPreRuns(cmd, args); err != nil {
@@ -31,7 +31,7 @@ var ticksCmd = &cobra.Command{
 
 var ticksListenCmd = &cobra.Command{
 	Use:     "listen",
-	Aliases: []string{"r"},
+	Aliases: []string{"l"},
 	Short:   "Listen to ticks on service",
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		timeout, err := time.ParseDuration(ticksTimeout)
@@ -61,7 +61,7 @@ var ticksListenCmd = &cobra.Command{
 
 var ticksInfoCmd = &cobra.Command{
 	Use:     "service",
-	Aliases: []string{"service"},
+	Aliases: []string{"svc"},
 	Short:   "Read info from ticks service",
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		return displayServiceInfo(globalClient.Ticks())

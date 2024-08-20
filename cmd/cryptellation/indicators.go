@@ -18,7 +18,7 @@ var indicatorsCmd = &cobra.Command{
 }
 
 var indicatorsInfoCmd = &cobra.Command{
-	Use:     "service",
+	Use:     "svc",
 	Aliases: []string{"service"},
 	Short:   "Read info from indicators service",
 	RunE: func(cmd *cobra.Command, args []string) (err error) {

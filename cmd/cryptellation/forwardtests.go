@@ -9,7 +9,7 @@ import (
 
 var forwardtestsCmd = &cobra.Command{
 	Use:     "forwardtests",
-	Aliases: []string{"c"},
+	Aliases: []string{"ft"},
 	Short:   "Manipulate forwardtests service",
 	PersistentPreRunE: func(cmd *cobra.Command, args []string) (err error) {
 		if err := executeParentPersistentPreRuns(cmd, args); err != nil {
@@ -22,7 +22,7 @@ var forwardtestsCmd = &cobra.Command{
 
 var forwardtestsInfoCmd = &cobra.Command{
 	Use:     "service",
-	Aliases: []string{"service"},
+	Aliases: []string{"svc"},
 	Short:   "Read info from forwardtests service",
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		return displayServiceInfo(globalClient.ForwardTests())
@@ -31,7 +31,7 @@ var forwardtestsInfoCmd = &cobra.Command{
 
 var forwardtestsListCmd = &cobra.Command{
 	Use:     "list",
-	Aliases: []string{"list"},
+	Aliases: []string{"l"},
 	Short:   "List forward tests",
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		list, err := globalClient.ForwardTests().ListForwardTests(cmd.Context())
@@ -49,7 +49,7 @@ var forwardtestsListCmd = &cobra.Command{
 
 var forwardtestsStatusCmd = &cobra.Command{
 	Use:     "status <id>",
-	Aliases: []string{"status"},
+	Aliases: []string{"s"},
 	Args:    cobra.ExactArgs(1),
 	Short:   "Get forward test status",
 	RunE: func(cmd *cobra.Command, args []string) error {

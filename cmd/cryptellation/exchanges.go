@@ -9,7 +9,7 @@ import (
 
 var exchangesCmd = &cobra.Command{
 	Use:     "exchanges",
-	Aliases: []string{"c"},
+	Aliases: []string{"ex"},
 	Short:   "Manipulate exchanges service",
 	PersistentPreRunE: func(cmd *cobra.Command, args []string) (err error) {
 		if err := executeParentPersistentPreRuns(cmd, args); err != nil {
@@ -37,7 +37,7 @@ var exchangesReadCmd = &cobra.Command{
 
 var exchangesInfoCmd = &cobra.Command{
 	Use:     "service",
-	Aliases: []string{"service"},
+	Aliases: []string{"svc"},
 	Short:   "Read info from exchanges service",
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		return displayServiceInfo(globalClient.Exchanges())

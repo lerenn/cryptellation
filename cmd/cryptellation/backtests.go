@@ -6,7 +6,7 @@ import (
 
 var backtestsCmd = &cobra.Command{
 	Use:     "backtests",
-	Aliases: []string{"c"},
+	Aliases: []string{"bt"},
 	Short:   "Manipulate backtests service",
 	PersistentPreRunE: func(cmd *cobra.Command, args []string) (err error) {
 		if err := executeParentPersistentPreRuns(cmd, args); err != nil {
@@ -19,7 +19,7 @@ var backtestsCmd = &cobra.Command{
 
 var backtestsInfoCmd = &cobra.Command{
 	Use:     "service",
-	Aliases: []string{"service"},
+	Aliases: []string{"svc"},
 	Short:   "Read info from backtests service",
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		return displayServiceInfo(globalClient.Backtests())
