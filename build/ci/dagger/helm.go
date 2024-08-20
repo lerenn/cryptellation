@@ -72,17 +72,19 @@ func publishHelmChart(
 		return err
 	}
 
-	// Set github repository requirements
-	container, err = setGithubRepositoryRequirements(ctx, container)
-	if err != nil {
-		return err
-	}
-
 	// Clone the package repository
 	var url string
 	if auth.SSHPrivateKeyFile != nil {
+		// Set correct url
 		url = sshHelmPkgGitRepo
+
+		// Set github repository requirements
+		container, err = setGithubRepositoryRequirements(ctx, container)
+		if err != nil {
+			return err
+		}
 	} else if auth.GithubToken != nil {
+		// Set correct url
 		tokenPlainText, err := auth.GithubToken.Plaintext(ctx)
 		if err != nil {
 			return err

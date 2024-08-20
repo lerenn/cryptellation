@@ -38,7 +38,8 @@ func (ap authParams) Validate() error {
 
 func NewGit(ctx context.Context, srcDir *dagger.Directory, auth authParams) (Git, error) {
 	// Check auth params
-	if err := auth.Validate(); err != nil {
+	err := auth.Validate()
+	if err != nil {
 		return Git{}, err
 	}
 
@@ -49,16 +50,23 @@ func NewGit(ctx context.Context, srcDir *dagger.Directory, auth authParams) (Git
 		WithWorkdir("/git").
 		WithoutEntrypoint()
 
+	// Set authentication based on the provided parameters
 	if auth.SSHPrivateKeyFile != nil {
+		// Mount the SSH private key
 		container = container.WithMountedSecret("/root/.ssh/id_rsa", auth.SSHPrivateKeyFile)
-	}
 
-	if auth.GithubToken != nil {
+		// Set github repository requirements
+		container, err = setGithubRepositoryRequirements(ctx, container)
+		if err != nil {
+			return Git{}, err
+		}
+	} else if auth.GithubToken != nil {
 		token, err := auth.GithubToken.Plaintext(ctx)
 		if err != nil {
 			return Git{}, err
 		}
 
+		// Change the url to use the token
 		container, err = container.WithExec([]string{
 			"git", "remote", "set-url", "origin", "https://lerenn:" + token + "@github.com/lerenn/cryptellation.git",
 		}).Sync(ctx)
@@ -233,12 +241,6 @@ func (g *Git) PublishNewCommit(
 	title string,
 ) error {
 	var err error
-
-	// Set github repository requirements
-	g.container, err = setGithubRepositoryRequirements(ctx, g.container)
-	if err != nil {
-		return err
-	}
 
 	// Set new branch
 	branchName := strings.ReplaceAll(title, " ", "-")
