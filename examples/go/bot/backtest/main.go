@@ -21,7 +21,7 @@ import (
 func main() {
 	// Init opentelemetry and set it globally
 	console.Fallback(otel.NewTelemeter(context.Background(), "cryptellation-backtests"))
-	defer telemetry.Close(context.TODO())
+	defer telemetry.Close(context.Background())
 
 	// Create a cryptellation client
 	client, err := cryptellation.NewServices(config.LoadNATS())
@@ -30,23 +30,27 @@ func main() {
 	}
 
 	// Create backtest
-	b, err := cryptellation.NewBacktest(client, backtests.BacktestCreationPayload{
-		Accounts: map[string]account.Account{
-			"binance": {
-				Balances: map[string]float64{
-					"USDT": 1000,
+	b, err := cryptellation.NewBacktest(
+		context.Background(),
+		client,
+		backtests.BacktestCreationPayload{
+			Accounts: map[string]account.Account{
+				"binance": {
+					Balances: map[string]float64{
+						"USDT": 1000,
+					},
 				},
 			},
+			StartTime: utils.Must(time.Parse(time.RFC3339, "2024-01-01T00:00:00Z")),
+			EndTime:   utils.ToReference(utils.Must(time.Parse(time.RFC3339, "2024-01-02T00:00:00Z"))),
 		},
-		StartTime: utils.Must(time.Parse(time.RFC3339, "2024-01-01T00:00:00Z")),
-		EndTime:   utils.ToReference(utils.Must(time.Parse(time.RFC3339, "2024-01-02T00:00:00Z"))),
-	}, &bot.Bot{})
+		&bot.Bot{})
 	if err != nil {
 		panic(err)
 	}
 
 	// Run backtest
-	if err := b.Run(); err != nil {
+	if err := b.Run(context.Background()); err != nil {
 		panic(err)
 	}
 }

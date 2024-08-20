@@ -19,7 +19,7 @@ import (
 func main() {
 	// Init opentelemetry and set it globally
 	console.Fallback(otel.NewTelemeter(context.Background(), "cryptellation-backtests"))
-	defer telemetry.Close(context.TODO())
+	defer telemetry.Close(context.Background())
 
 	// Create a cryptellation client
 	client, err := cryptellation.NewServices(config.LoadNATS())
@@ -28,21 +28,25 @@ func main() {
 	}
 
 	// Create forwardtest
-	b, err := cryptellation.NewForwardTest(client, forwardtest.NewPayload{
-		Accounts: map[string]account.Account{
-			"binance": {
-				Balances: map[string]float64{
-					"USDT": 1000,
+	b, err := cryptellation.NewForwardTest(
+		context.Background(),
+		client,
+		forwardtest.NewPayload{
+			Accounts: map[string]account.Account{
+				"binance": {
+					Balances: map[string]float64{
+						"USDT": 1000,
+					},
 				},
 			},
 		},
-	}, &bot.Bot{})
+		&bot.Bot{})
 	if err != nil {
 		panic(err)
 	}
 
 	// Run backtest
-	if err := b.Run(); err != nil {
+	if err := b.Run(context.Background()); err != nil {
 		panic(err)
 	}
 }

@@ -25,15 +25,15 @@ type Bot struct {
 	isPositioned bool
 }
 
-func (b *Bot) OnInit(run *cryptellation.Run) {
-	telemetry.L(context.Background()).Debug("OnInit() called")
-	defer telemetry.L(context.Background()).Info("Bot initialized")
+func (b *Bot) OnInit(ctx context.Context, run *cryptellation.Run) {
+	telemetry.L(ctx).Debug("OnInit() called")
+	defer telemetry.L(ctx).Info("Bot initialized")
 
 	b.run = run
 }
 
-func (b *Bot) TicksToListen() []event.TickSubscription {
-	telemetry.L(context.Background()).Debug("TicksToListen() called")
+func (b *Bot) TicksToListen(ctx context.Context) []event.TickSubscription {
+	telemetry.L(ctx).Debug("TicksToListen() called")
 
 	return []event.TickSubscription{
 		{
@@ -43,8 +43,8 @@ func (b *Bot) TicksToListen() []event.TickSubscription {
 	}
 }
 
-func (b *Bot) OnTick(t tick.Tick) error {
-	telemetry.L(context.Background()).Debugf("OnTick(t=%+v) called", t)
+func (b *Bot) OnTick(ctx context.Context, t tick.Tick) error {
+	telemetry.L(ctx).Debugf("OnTick(t=%+v) called", t)
 
 	payload := indicators.SMAPayload{
 		Exchange:     t.Exchange,
@@ -55,14 +55,14 @@ func (b *Bot) OnTick(t tick.Tick) error {
 		PeriodNumber: 20,
 		PriceType:    candlestick.PriceTypeIsClose,
 	}
-	telemetry.L(context.Background()).Debugf("Request SMA with %+v", payload)
-	s, err := b.run.Services.Indicators().SMA(context.Background(), payload)
+	telemetry.L(ctx).Debugf("Request SMA with %+v", payload)
+	s, err := b.run.Services.Indicators().SMA(ctx, payload)
 	if err != nil {
 		return err
 	}
 
 	_ = s.Loop(func(t time.Time, v float64) (bool, error) {
-		telemetry.L(context.Background()).Debugf("SMA point at %s: %f", t, v)
+		telemetry.L(ctx).Debugf("SMA point at %s: %f", t, v)
 		return false, nil
 	})
 
@@ -74,13 +74,13 @@ func (b *Bot) OnTick(t tick.Tick) error {
 	if !ok {
 		return fmt.Errorf("previous SMA is empty")
 	}
-	telemetry.L(context.Background()).Debugf("SMA received [%f, %f]", previousLast, last)
+	telemetry.L(ctx).Debugf("SMA received [%f, %f]", previousLast, last)
 
 	if last > previousLast && !b.isPositioned {
 		fmt.Println("+ at", t.Price)
 		b.isPositioned = true
 
-		if err := b.run.CreateOrder(context.Background(), common.OrderCreationPayload{
+		if err := b.run.CreateOrder(ctx, common.OrderCreationPayload{
 			Exchange: t.Exchange,
 			Pair:     t.Pair,
 			Quantity: 0.01,
@@ -90,12 +90,12 @@ func (b *Bot) OnTick(t tick.Tick) error {
 			return err
 		}
 
-		telemetry.L(context.Background()).Debug("Buy order created")
+		telemetry.L(ctx).Debug("Buy order created")
 	} else if last < previousLast && b.isPositioned {
 		fmt.Println("- at", t.Price)
 		b.isPositioned = false
 
-		if err := b.run.CreateOrder(context.Background(), common.OrderCreationPayload{
+		if err := b.run.CreateOrder(ctx, common.OrderCreationPayload{
 			Exchange: t.Exchange,
 			Pair:     t.Pair,
 			Quantity: 0.01,
@@ -105,19 +105,19 @@ func (b *Bot) OnTick(t tick.Tick) error {
 			return err
 		}
 
-		telemetry.L(context.Background()).Debug("Sell order created")
+		telemetry.L(ctx).Debug("Sell order created")
 	} else {
-		telemetry.L(context.Background()).Debug("No action taken")
+		telemetry.L(ctx).Debug("No action taken")
 	}
 
 	return nil
 }
 
-func (b *Bot) OnExit() error {
-	telemetry.L(context.Background()).Debug("OnExit() called")
+func (b *Bot) OnExit(ctx context.Context) error {
+	telemetry.L(ctx).Debug("OnExit() called")
 
 	if b.isPositioned {
-		if err := b.run.CreateOrder(context.Background(), common.OrderCreationPayload{
+		if err := b.run.CreateOrder(ctx, common.OrderCreationPayload{
 			Exchange: "binance",
 			Pair:     "BTC-USDT",
 			Quantity: 0.01,
@@ -128,11 +128,11 @@ func (b *Bot) OnExit() error {
 		}
 	}
 
-	accounts, err := b.run.GetAccounts(context.Background())
+	accounts, err := b.run.GetAccounts(ctx)
 	if err != nil {
 		return err
 	}
-	telemetry.L(context.Background()).Infof("Result: $%f", accounts["binance"].Balances["USDT"])
+	telemetry.L(ctx).Infof("Result: $%f", accounts["binance"].Balances["USDT"])
 
 	return nil
 }

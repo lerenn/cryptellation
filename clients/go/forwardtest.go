@@ -3,6 +3,7 @@ package client
 import (
 	"context"
 
+	"cryptellation/internal/adapters/telemetry"
 	"cryptellation/svc/forwardtests/pkg/forwardtest"
 
 	"cryptellation/svc/ticks/pkg/tick"
@@ -13,11 +14,16 @@ type ForwardTest struct {
 	bot Bot
 }
 
-func NewForwardTest(services Services, parameters forwardtest.NewPayload, bot Bot) (*ForwardTest, error) {
+func NewForwardTest(
+	ctx context.Context,
+	services Services,
+	parameters forwardtest.NewPayload,
+	bot Bot,
+) (*ForwardTest, error) {
 	var run Run
 
 	// Create the forward test
-	id, err := services.ForwardTests().CreateForwardTest(context.Background(), parameters)
+	id, err := services.ForwardTests().CreateForwardTest(ctx, parameters)
 	if err != nil {
 		return nil, err
 	}
@@ -28,7 +34,7 @@ func NewForwardTest(services Services, parameters forwardtest.NewPayload, bot Bo
 	run.Services = services
 
 	// Init the robot
-	bot.OnInit(&run)
+	bot.OnInit(ctx, &run)
 
 	return &ForwardTest{
 		run: &run,
@@ -36,12 +42,12 @@ func NewForwardTest(services Services, parameters forwardtest.NewPayload, bot Bo
 	}, nil
 }
 
-func (ft *ForwardTest) Run() error {
+func (ft *ForwardTest) Run(ctx context.Context) error {
 	// Subscribe to ticks
-	tListen := ft.bot.TicksToListen()
+	tListen := ft.bot.TicksToListen(ctx)
 	ticksChan := make(chan tick.Tick, 64)
 	for _, ts := range tListen {
-		ctx, cancel := context.WithCancel(context.Background())
+		ctx, cancel := context.WithCancel(ctx)
 		defer cancel()
 
 		ch, err := ft.run.Services.Ticks().SubscribeToTicks(ctx, ts)
@@ -66,10 +72,11 @@ func (ft *ForwardTest) Run() error {
 		ft.run.Time = t.Time
 
 		// Call the bot on other events
-		if err := ft.bot.OnTick(t); err != nil {
-			return err
+		if err := ft.bot.OnTick(ctx, t); err != nil {
+			telemetry.L(ctx).Error("error on tick: " + err.Error())
+			continue
 		}
 	}
 
-	return ft.bot.OnExit()
+	return ft.bot.OnExit(ctx)
 }

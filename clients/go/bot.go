@@ -1,15 +1,16 @@
 package client
 
 import (
+	"context"
 	"cryptellation/pkg/models/event"
 
 	"cryptellation/svc/ticks/pkg/tick"
 )
 
 type Bot interface {
-	OnInit(run *Run)
-	OnTick(tick.Tick) error
-	OnExit() error
+	OnInit(ctx context.Context, run *Run)
+	OnTick(ctx context.Context, t tick.Tick) error
+	OnExit(ctx context.Context) error
 
-	TicksToListen() []event.TickSubscription
+	TicksToListen(ctx context.Context) []event.TickSubscription
 }
