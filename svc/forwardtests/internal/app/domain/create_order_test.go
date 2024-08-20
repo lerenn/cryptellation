@@ -8,13 +8,13 @@ import (
 	"github.com/lerenn/cryptellation/pkg/models/account"
 	"github.com/lerenn/cryptellation/pkg/models/order"
 
-	candlesticks "github.com/lerenn/cryptellation/candlesticks/clients/go"
-	"github.com/lerenn/cryptellation/candlesticks/pkg/candlestick"
-	"github.com/lerenn/cryptellation/candlesticks/pkg/period"
+	candlesticks "github.com/lerenn/cryptellation/svc/candlesticks/clients/go"
+	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/candlestick"
+	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/period"
 
-	"github.com/lerenn/cryptellation/forwardtests/internal/app"
-	"github.com/lerenn/cryptellation/forwardtests/internal/app/ports/db"
-	"github.com/lerenn/cryptellation/forwardtests/pkg/forwardtest"
+	"github.com/lerenn/cryptellation/svc/forwardtests/internal/app"
+	"github.com/lerenn/cryptellation/svc/forwardtests/internal/app/ports/db"
+	"github.com/lerenn/cryptellation/svc/forwardtests/pkg/forwardtest"
 
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/suite"

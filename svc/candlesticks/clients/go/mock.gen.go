@@ -8,7 +8,7 @@ import (
 	context "context"
 	reflect "reflect"
 
-	candlestick "github.com/lerenn/cryptellation/candlesticks/pkg/candlestick"
+	candlestick "github.com/lerenn/cryptellation/svc/candlesticks/pkg/candlestick"
 	client "github.com/lerenn/cryptellation/pkg/client"
 	gomock "go.uber.org/mock/gomock"
 )

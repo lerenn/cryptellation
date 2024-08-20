@@ -7,11 +7,11 @@ import (
 
 	"github.com/lerenn/cryptellation/pkg/utils"
 
-	"github.com/lerenn/cryptellation/candlesticks/internal/app"
-	db "github.com/lerenn/cryptellation/candlesticks/internal/app/ports/db"
-	"github.com/lerenn/cryptellation/candlesticks/internal/app/ports/exchanges"
-	"github.com/lerenn/cryptellation/candlesticks/pkg/candlestick"
-	"github.com/lerenn/cryptellation/candlesticks/pkg/period"
+	"github.com/lerenn/cryptellation/svc/candlesticks/internal/app"
+	db "github.com/lerenn/cryptellation/svc/candlesticks/internal/app/ports/db"
+	"github.com/lerenn/cryptellation/svc/candlesticks/internal/app/ports/exchanges"
+	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/candlestick"
+	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/period"
 
 	"github.com/stretchr/testify/suite"
 	"go.uber.org/mock/gomock"

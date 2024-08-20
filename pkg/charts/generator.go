@@ -8,10 +8,10 @@ import (
 
 	"github.com/lerenn/cryptellation/pkg/utils"
 
-	cdksclient "github.com/lerenn/cryptellation/candlesticks/clients/go"
-	"github.com/lerenn/cryptellation/candlesticks/pkg/candlestick"
+	cdksclient "github.com/lerenn/cryptellation/svc/candlesticks/clients/go"
+	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/candlestick"
 
-	indclient "github.com/lerenn/cryptellation/indicators/clients/go"
+	indclient "github.com/lerenn/cryptellation/svc/indicators/clients/go"
 
 	"github.com/go-echarts/go-echarts/v2/charts"
 	"github.com/go-echarts/go-echarts/v2/opts"

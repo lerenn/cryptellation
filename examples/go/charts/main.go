@@ -12,11 +12,11 @@ import (
 	"github.com/lerenn/cryptellation/pkg/config"
 	"github.com/lerenn/cryptellation/pkg/utils"
 
-	candlesticks "github.com/lerenn/cryptellation/candlesticks/clients/go"
-	"github.com/lerenn/cryptellation/candlesticks/pkg/candlestick"
-	"github.com/lerenn/cryptellation/candlesticks/pkg/period"
+	candlesticks "github.com/lerenn/cryptellation/svc/candlesticks/clients/go"
+	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/candlestick"
+	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/period"
 
-	indicators "github.com/lerenn/cryptellation/indicators/clients/go"
+	indicators "github.com/lerenn/cryptellation/svc/indicators/clients/go"
 )
 
 func main() {

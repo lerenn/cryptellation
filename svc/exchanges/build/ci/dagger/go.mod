@@ -1,4 +1,4 @@
-module github.com/lerenn/cryptellation/exchanges/build/ci/dagger
+module github.com/lerenn/cryptellation/svc/exchanges/build/ci/dagger
 
 go 1.22.4
 

@@ -8,8 +8,8 @@ import (
 	"github.com/lerenn/cryptellation/pkg/adapters/telemetry"
 	"github.com/lerenn/cryptellation/pkg/models/order"
 
-	candlesticks "github.com/lerenn/cryptellation/candlesticks/clients/go"
-	"github.com/lerenn/cryptellation/candlesticks/pkg/period"
+	candlesticks "github.com/lerenn/cryptellation/svc/candlesticks/clients/go"
+	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/period"
 
 	"github.com/google/uuid"
 )

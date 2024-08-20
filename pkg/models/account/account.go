@@ -6,7 +6,7 @@ import (
 
 	"github.com/lerenn/cryptellation/pkg/models/order"
 
-	"github.com/lerenn/cryptellation/candlesticks/pkg/pair"
+	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/pair"
 )
 
 var (

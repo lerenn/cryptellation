@@ -1,10 +1,10 @@
 package domain
 
 import (
-	candlesticks "github.com/lerenn/cryptellation/candlesticks/clients/go"
+	candlesticks "github.com/lerenn/cryptellation/svc/candlesticks/clients/go"
 
-	"github.com/lerenn/cryptellation/forwardtests/internal/app"
-	"github.com/lerenn/cryptellation/forwardtests/internal/app/ports/db"
+	"github.com/lerenn/cryptellation/svc/forwardtests/internal/app"
+	"github.com/lerenn/cryptellation/svc/forwardtests/internal/app/ports/db"
 )
 
 // Test interface implementation

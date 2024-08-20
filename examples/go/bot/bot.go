@@ -12,10 +12,10 @@ import (
 	"github.com/lerenn/cryptellation/pkg/models/event"
 	"github.com/lerenn/cryptellation/pkg/models/order"
 
-	"github.com/lerenn/cryptellation/candlesticks/pkg/candlestick"
-	"github.com/lerenn/cryptellation/candlesticks/pkg/period"
+	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/candlestick"
+	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/period"
 
-	indicators "github.com/lerenn/cryptellation/indicators/clients/go"
+	indicators "github.com/lerenn/cryptellation/svc/indicators/clients/go"
 
 	"github.com/lerenn/cryptellation/ticks/pkg/tick"
 )

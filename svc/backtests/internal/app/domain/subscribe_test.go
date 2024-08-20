@@ -11,7 +11,7 @@ import (
 	"github.com/lerenn/cryptellation/svc/backtests/internal/app/ports/events"
 	"github.com/lerenn/cryptellation/svc/backtests/pkg/backtest"
 
-	candlesticks "github.com/lerenn/cryptellation/candlesticks/clients/go"
+	candlesticks "github.com/lerenn/cryptellation/svc/candlesticks/clients/go"
 
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/suite"

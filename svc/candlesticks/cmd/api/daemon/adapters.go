@@ -5,10 +5,10 @@ import (
 
 	"github.com/lerenn/cryptellation/pkg/config"
 
-	"github.com/lerenn/cryptellation/candlesticks/internal/adapters/db/mongo"
-	"github.com/lerenn/cryptellation/candlesticks/internal/adapters/exchanges"
-	"github.com/lerenn/cryptellation/candlesticks/internal/app/ports/db"
-	exchangesPort "github.com/lerenn/cryptellation/candlesticks/internal/app/ports/exchanges"
+	"github.com/lerenn/cryptellation/svc/candlesticks/internal/adapters/db/mongo"
+	"github.com/lerenn/cryptellation/svc/candlesticks/internal/adapters/exchanges"
+	"github.com/lerenn/cryptellation/svc/candlesticks/internal/app/ports/db"
+	exchangesPort "github.com/lerenn/cryptellation/svc/candlesticks/internal/app/ports/exchanges"
 )
 
 type adapters struct {

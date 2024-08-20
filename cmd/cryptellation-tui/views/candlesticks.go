@@ -9,12 +9,12 @@ import (
 	"github.com/lerenn/cryptellation/pkg/config"
 	"github.com/lerenn/cryptellation/pkg/utils"
 
-	cdsclient "github.com/lerenn/cryptellation/candlesticks/clients/go"
-	candlestickscache "github.com/lerenn/cryptellation/candlesticks/clients/go/cache"
-	candlesticksnats "github.com/lerenn/cryptellation/candlesticks/clients/go/nats"
-	candlesticksretry "github.com/lerenn/cryptellation/candlesticks/clients/go/retry"
-	"github.com/lerenn/cryptellation/candlesticks/pkg/candlestick"
-	"github.com/lerenn/cryptellation/candlesticks/pkg/period"
+	cdsclient "github.com/lerenn/cryptellation/svc/candlesticks/clients/go"
+	candlestickscache "github.com/lerenn/cryptellation/svc/candlesticks/clients/go/cache"
+	candlesticksnats "github.com/lerenn/cryptellation/svc/candlesticks/clients/go/nats"
+	candlesticksretry "github.com/lerenn/cryptellation/svc/candlesticks/clients/go/retry"
+	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/candlestick"
+	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/period"
 
 	"github.com/lerenn/cryptellation/cmd/cryptellation-tui/charts"
 	"github.com/lerenn/cryptellation/cmd/cryptellation-tui/charts/candlesticks"

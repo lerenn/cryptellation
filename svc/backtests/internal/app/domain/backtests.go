@@ -5,7 +5,7 @@ import (
 	"github.com/lerenn/cryptellation/svc/backtests/internal/app/ports/db"
 	"github.com/lerenn/cryptellation/svc/backtests/internal/app/ports/events"
 
-	candlesticks "github.com/lerenn/cryptellation/candlesticks/clients/go"
+	candlesticks "github.com/lerenn/cryptellation/svc/candlesticks/clients/go"
 )
 
 // Test interface implementation

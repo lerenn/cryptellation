@@ -15,9 +15,9 @@ import (
 	client "github.com/lerenn/cryptellation/svc/backtests/clients/go"
 	"github.com/lerenn/cryptellation/svc/backtests/pkg/backtest"
 
-	"github.com/lerenn/cryptellation/candlesticks/pkg/period"
+	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/period"
 
-	"github.com/lerenn/cryptellation/ticks/pkg/tick"
+	"github.com/lerenn/cryptellation/svc/ticks/pkg/tick"
 
 	"github.com/google/uuid"
 )

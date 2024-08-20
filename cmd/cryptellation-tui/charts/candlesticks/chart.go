@@ -3,8 +3,8 @@ package candlesticks
 import (
 	"time"
 
-	"github.com/lerenn/cryptellation/candlesticks/pkg/candlestick"
-	"github.com/lerenn/cryptellation/candlesticks/pkg/period"
+	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/candlestick"
+	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/period"
 
 	"github.com/lerenn/cryptellation/cmd/cryptellation-tui/charts"
 

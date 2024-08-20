@@ -3,27 +3,27 @@ module github.com/lerenn/cryptellation/clients/go
 go 1.22.4
 
 replace (
-	github.com/lerenn/cryptellation/candlesticks => ../../svc/candlesticks
+	github.com/lerenn/cryptellation/svc/candlesticks => ../../svc/candlesticks
 
 	github.com/lerenn/cryptellation/client => ../../svc/backtests
 	github.com/lerenn/cryptellation/clients/go => ../../clients/go
-	github.com/lerenn/cryptellation/exchanges => ../../svc/exchanges
-	github.com/lerenn/cryptellation/forwardtests => ../../svc/forwardtests
-	github.com/lerenn/cryptellation/indicators => ../../svc/indicators
+	github.com/lerenn/cryptellation/svc/exchanges => ../../svc/exchanges
+	github.com/lerenn/cryptellation/svc/forwardtests => ../../svc/forwardtests
+	github.com/lerenn/cryptellation/svc/indicators => ../../svc/indicators
 	github.com/lerenn/cryptellation/internal => ../../internal
 	github.com/lerenn/cryptellation/pkg => ../../pkg
-	github.com/lerenn/cryptellation/ticks => ../../svc/ticks
+	github.com/lerenn/cryptellation/svc/ticks => ../../svc/ticks
 )
 
 require (
 	github.com/google/uuid v1.6.0
-	github.com/lerenn/cryptellation/candlesticks v0.0.0-00010101000000-000000000000
+	github.com/lerenn/cryptellation/svc/candlesticks v0.0.0-00010101000000-000000000000
 	github.com/lerenn/cryptellation/client v0.0.0-00010101000000-000000000000
-	github.com/lerenn/cryptellation/exchanges v0.0.0-00010101000000-000000000000
-	github.com/lerenn/cryptellation/forwardtests v0.0.0-00010101000000-000000000000
-	github.com/lerenn/cryptellation/indicators v0.0.0-00010101000000-000000000000
+	github.com/lerenn/cryptellation/svc/exchanges v0.0.0-00010101000000-000000000000
+	github.com/lerenn/cryptellation/svc/forwardtests v0.0.0-00010101000000-000000000000
+	github.com/lerenn/cryptellation/svc/indicators v0.0.0-00010101000000-000000000000
 	github.com/lerenn/cryptellation/pkg v0.0.0-00010101000000-000000000000
-	github.com/lerenn/cryptellation/ticks v0.0.0-00010101000000-000000000000
+	github.com/lerenn/cryptellation/svc/ticks v0.0.0-00010101000000-000000000000
 )
 
 require (

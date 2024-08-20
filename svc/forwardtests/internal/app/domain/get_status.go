@@ -7,10 +7,10 @@ import (
 
 	"github.com/lerenn/cryptellation/pkg/utils"
 
-	client "github.com/lerenn/cryptellation/candlesticks/clients/go"
-	"github.com/lerenn/cryptellation/candlesticks/pkg/period"
+	client "github.com/lerenn/cryptellation/svc/candlesticks/clients/go"
+	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/period"
 
-	"github.com/lerenn/cryptellation/forwardtests/pkg/forwardtest"
+	"github.com/lerenn/cryptellation/svc/forwardtests/pkg/forwardtest"
 
 	"github.com/google/uuid"
 )

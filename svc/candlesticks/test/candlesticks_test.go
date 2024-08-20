@@ -6,9 +6,9 @@ import (
 
 	"github.com/lerenn/cryptellation/pkg/utils"
 
-	client "github.com/lerenn/cryptellation/candlesticks/clients/go"
-	"github.com/lerenn/cryptellation/candlesticks/pkg/candlestick"
-	"github.com/lerenn/cryptellation/candlesticks/pkg/period"
+	client "github.com/lerenn/cryptellation/svc/candlesticks/clients/go"
+	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/candlestick"
+	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/period"
 )
 
 func (suite *EndToEndSuite) TestReadCandlesticks() {

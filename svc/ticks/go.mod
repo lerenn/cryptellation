@@ -1,4 +1,4 @@
-module github.com/lerenn/cryptellation/ticks
+module github.com/lerenn/cryptellation/svc/ticks
 
 go 1.22.4
 
@@ -8,17 +8,17 @@ replace (
 	github.com/lerenn/cryptellation/pkg => ../../pkg
 
 	github.com/lerenn/cryptellation/client => ../backtests
-	github.com/lerenn/cryptellation/candlesticks => ../candlesticks
-	github.com/lerenn/cryptellation/exchanges => ../exchanges
-	github.com/lerenn/cryptellation/forwardtests => ../forwardtests
-	github.com/lerenn/cryptellation/indicators => ../indicators
-	github.com/lerenn/cryptellation/ticks => ../ticks
+	github.com/lerenn/cryptellation/svc/candlesticks => ../candlesticks
+	github.com/lerenn/cryptellation/svc/exchanges => ../exchanges
+	github.com/lerenn/cryptellation/svc/forwardtests => ../forwardtests
+	github.com/lerenn/cryptellation/svc/indicators => ../indicators
+	github.com/lerenn/cryptellation/svc/ticks => ../ticks
 )
 
 require (
 	github.com/lerenn/cryptellation/internal v0.0.0-00010101000000-000000000000
 	github.com/lerenn/cryptellation/pkg v0.0.0-00010101000000-000000000000
-	github.com/lerenn/cryptellation/candlesticks v0.0.0-00010101000000-000000000000
+	github.com/lerenn/cryptellation/svc/candlesticks v0.0.0-00010101000000-000000000000
 	github.com/adshao/go-binance/v2 v2.6.0
 	github.com/google/uuid v1.6.0
 	github.com/lerenn/asyncapi-codegen v0.43.0
@@ -28,7 +28,7 @@ require (
 )
 
 require (
-	github.com/lerenn/cryptellation/exchanges v0.0.0-00010101000000-000000000000 // indirect
+	github.com/lerenn/cryptellation/svc/exchanges v0.0.0-00010101000000-000000000000 // indirect
 	dario.cat/mergo v1.0.0 // indirect
 	github.com/Microsoft/go-winio v0.6.2 // indirect
 	github.com/ProtonMail/go-crypto v1.0.0 // indirect

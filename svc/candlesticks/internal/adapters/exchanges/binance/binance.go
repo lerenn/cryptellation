@@ -9,9 +9,9 @@ import (
 	"github.com/lerenn/cryptellation/pkg/adapters/telemetry"
 	"github.com/lerenn/cryptellation/pkg/config"
 
-	"github.com/lerenn/cryptellation/candlesticks/internal/adapters/exchanges/binance/entities"
-	"github.com/lerenn/cryptellation/candlesticks/internal/app/ports/exchanges"
-	"github.com/lerenn/cryptellation/candlesticks/pkg/candlestick"
+	"github.com/lerenn/cryptellation/svc/candlesticks/internal/adapters/exchanges/binance/entities"
+	"github.com/lerenn/cryptellation/svc/candlesticks/internal/app/ports/exchanges"
+	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/candlestick"
 )
 
 type Service struct {

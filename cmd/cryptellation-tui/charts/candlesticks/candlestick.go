@@ -4,7 +4,7 @@ import (
 	"math"
 	"time"
 
-	"github.com/lerenn/cryptellation/candlesticks/pkg/candlestick"
+	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/candlestick"
 )
 
 func getMinMax(data *candlestick.List) (min, max float64) {

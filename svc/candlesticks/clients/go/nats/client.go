@@ -10,9 +10,9 @@ import (
 	common "github.com/lerenn/cryptellation/pkg/client"
 	"github.com/lerenn/cryptellation/pkg/config"
 
-	asyncapi "github.com/lerenn/cryptellation/candlesticks/api/asyncapi"
-	client "github.com/lerenn/cryptellation/candlesticks/clients/go"
-	"github.com/lerenn/cryptellation/candlesticks/pkg/candlestick"
+	asyncapi "github.com/lerenn/cryptellation/svc/candlesticks/api/asyncapi"
+	client "github.com/lerenn/cryptellation/svc/candlesticks/clients/go"
+	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/candlestick"
 
 	"github.com/lerenn/asyncapi-codegen/pkg/extensions"
 	natsextension "github.com/lerenn/asyncapi-codegen/pkg/extensions/brokers/nats"

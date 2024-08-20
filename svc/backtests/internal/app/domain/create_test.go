@@ -14,9 +14,9 @@ import (
 	"github.com/lerenn/cryptellation/svc/backtests/internal/app/ports/events"
 	"github.com/lerenn/cryptellation/svc/backtests/pkg/backtest"
 
-	candlesticks "github.com/lerenn/cryptellation/candlesticks/clients/go"
-	"github.com/lerenn/cryptellation/candlesticks/pkg/candlestick"
-	"github.com/lerenn/cryptellation/candlesticks/pkg/period"
+	candlesticks "github.com/lerenn/cryptellation/svc/candlesticks/clients/go"
+	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/candlestick"
+	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/period"
 
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/suite"

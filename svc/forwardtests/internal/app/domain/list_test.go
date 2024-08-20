@@ -4,11 +4,11 @@ import (
 	"context"
 	"testing"
 
-	candlesticks "github.com/lerenn/cryptellation/candlesticks/clients/go"
+	candlesticks "github.com/lerenn/cryptellation/svc/candlesticks/clients/go"
 
-	"github.com/lerenn/cryptellation/forwardtests/internal/app"
-	"github.com/lerenn/cryptellation/forwardtests/internal/app/ports/db"
-	"github.com/lerenn/cryptellation/forwardtests/pkg/forwardtest"
+	"github.com/lerenn/cryptellation/svc/forwardtests/internal/app"
+	"github.com/lerenn/cryptellation/svc/forwardtests/internal/app/ports/db"
+	"github.com/lerenn/cryptellation/svc/forwardtests/pkg/forwardtest"
 
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/suite"

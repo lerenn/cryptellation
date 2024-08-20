@@ -11,9 +11,9 @@ import (
 	"github.com/lerenn/cryptellation/pkg/adapters/telemetry"
 	"github.com/lerenn/cryptellation/pkg/config"
 
-	"github.com/lerenn/cryptellation/candlesticks/pkg/pair"
+	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/pair"
 
-	"github.com/lerenn/cryptellation/ticks/pkg/tick"
+	"github.com/lerenn/cryptellation/svc/ticks/pkg/tick"
 
 	client "github.com/adshao/go-binance/v2"
 )

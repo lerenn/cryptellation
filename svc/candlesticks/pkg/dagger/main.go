@@ -17,7 +17,7 @@ package main
 import (
 	"runtime"
 
-	"github.com/lerenn/cryptellation/candlesticks/dagger/internal/dagger"
+	"github.com/lerenn/cryptellation/svc/candlesticks/dagger/internal/dagger"
 
 	"github.com/lerenn/cryptellation/internal/docker"
 )

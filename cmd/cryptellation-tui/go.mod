@@ -7,16 +7,16 @@ replace (
 	github.com/lerenn/cryptellation/pkg => ../../pkg
 
 	github.com/lerenn/cryptellation/client => ../../svc/backtests
-	github.com/lerenn/cryptellation/candlesticks => ../../svc/candlesticks
-	github.com/lerenn/cryptellation/exchanges => ../../svc/exchanges
-	github.com/lerenn/cryptellation/forwardtests => ../../svc/forwardtests
-	github.com/lerenn/cryptellation/indicators => ../../svc/indicators
-	github.com/lerenn/cryptellation/ticks => ../../svc/ticks
+	github.com/lerenn/cryptellation/svc/candlesticks => ../../svc/candlesticks
+	github.com/lerenn/cryptellation/svc/exchanges => ../../svc/exchanges
+	github.com/lerenn/cryptellation/svc/forwardtests => ../../svc/forwardtests
+	github.com/lerenn/cryptellation/svc/indicators => ../../svc/indicators
+	github.com/lerenn/cryptellation/svc/ticks => ../../svc/ticks
 )
 
 require (
 	github.com/lerenn/cryptellation/pkg v0.0.0-00010101000000-000000000000
-	github.com/lerenn/cryptellation/candlesticks v0.0.0-00010101000000-000000000000
+	github.com/lerenn/cryptellation/svc/candlesticks v0.0.0-00010101000000-000000000000
 	github.com/charmbracelet/bubbles v0.18.0
 	github.com/charmbracelet/bubbletea v0.26.6
 	github.com/dsnet/golib/unitconv v1.0.2

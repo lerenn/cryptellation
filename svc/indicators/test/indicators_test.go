@@ -6,10 +6,10 @@ import (
 
 	"github.com/lerenn/cryptellation/pkg/utils"
 
-	"github.com/lerenn/cryptellation/candlesticks/pkg/candlestick"
-	"github.com/lerenn/cryptellation/candlesticks/pkg/period"
+	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/candlestick"
+	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/period"
 
-	client "github.com/lerenn/cryptellation/indicators/clients/go"
+	client "github.com/lerenn/cryptellation/svc/indicators/clients/go"
 )
 
 func (suite *EndToEndSuite) TestGetSMA() {

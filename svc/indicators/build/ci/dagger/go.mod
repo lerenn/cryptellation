@@ -1,4 +1,4 @@
-module github.com/lerenn/cryptellation/indicators/build/ci/dagger-ci
+module github.com/lerenn/cryptellation/svc/indicators/build/ci/dagger-ci
 
 go 1.22.4
 

@@ -7,18 +7,18 @@ replace (
 	github.com/lerenn/cryptellation/internal => ../internal
 
 	github.com/lerenn/cryptellation/client => ../svc/backtests
-	github.com/lerenn/cryptellation/candlesticks => ../svc/candlesticks
-	github.com/lerenn/cryptellation/exchanges => ../svc/exchanges
-	github.com/lerenn/cryptellation/forwardtests => ../svc/forwardtests
-	github.com/lerenn/cryptellation/indicators => ../svc/indicators
-	github.com/lerenn/cryptellation/ticks => ../svc/ticks
+	github.com/lerenn/cryptellation/svc/candlesticks => ../svc/candlesticks
+	github.com/lerenn/cryptellation/svc/exchanges => ../svc/exchanges
+	github.com/lerenn/cryptellation/svc/forwardtests => ../svc/forwardtests
+	github.com/lerenn/cryptellation/svc/indicators => ../svc/indicators
+	github.com/lerenn/cryptellation/svc/ticks => ../svc/ticks
 )
 
 require (
 	github.com/lerenn/cryptellation/clients/go v0.0.0-00010101000000-000000000000
-	github.com/lerenn/cryptellation/candlesticks v0.0.0-00010101000000-000000000000
-	github.com/lerenn/cryptellation/indicators v0.0.0-00010101000000-000000000000
-	github.com/lerenn/cryptellation/ticks v0.0.0-00010101000000-000000000000
+	github.com/lerenn/cryptellation/svc/candlesticks v0.0.0-00010101000000-000000000000
+	github.com/lerenn/cryptellation/svc/indicators v0.0.0-00010101000000-000000000000
+	github.com/lerenn/cryptellation/svc/ticks v0.0.0-00010101000000-000000000000
 	github.com/go-echarts/go-echarts/v2 v2.4.1
 	github.com/go-git/go-git/v5 v5.12.0
 	github.com/google/go-cmp v0.6.0
@@ -30,8 +30,8 @@ require (
 require (
 	github.com/lerenn/cryptellation/internal v0.0.0-00010101000000-000000000000 // indirect
 	github.com/lerenn/cryptellation/client v0.0.0-00010101000000-000000000000 // indirect
-	github.com/lerenn/cryptellation/exchanges v0.0.0-00010101000000-000000000000 // indirect
-	github.com/lerenn/cryptellation/forwardtests v0.0.0-00010101000000-000000000000 // indirect
+	github.com/lerenn/cryptellation/svc/exchanges v0.0.0-00010101000000-000000000000 // indirect
+	github.com/lerenn/cryptellation/svc/forwardtests v0.0.0-00010101000000-000000000000 // indirect
 	dario.cat/mergo v1.0.0 // indirect
 	github.com/Microsoft/go-winio v0.6.2 // indirect
 	github.com/ProtonMail/go-crypto v1.0.0 // indirect

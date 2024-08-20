@@ -6,8 +6,8 @@ import (
 
 	mongoutil "github.com/lerenn/cryptellation/internal/adapters/db/mongo"
 
-	"github.com/lerenn/cryptellation/candlesticks/internal/adapters/db/mongo/entities"
-	"github.com/lerenn/cryptellation/candlesticks/pkg/candlestick"
+	"github.com/lerenn/cryptellation/svc/candlesticks/internal/adapters/db/mongo/entities"
+	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/candlestick"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo/options"

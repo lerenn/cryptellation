@@ -7,13 +7,13 @@ import (
 
 	"github.com/lerenn/cryptellation/pkg/config"
 
-	candlesticks "github.com/lerenn/cryptellation/candlesticks/clients/go"
-	candlestickscache "github.com/lerenn/cryptellation/candlesticks/clients/go/cache"
-	candlesticksnats "github.com/lerenn/cryptellation/candlesticks/clients/go/nats"
-	candlesticksretry "github.com/lerenn/cryptellation/candlesticks/clients/go/retry"
+	candlesticks "github.com/lerenn/cryptellation/svc/candlesticks/clients/go"
+	candlestickscache "github.com/lerenn/cryptellation/svc/candlesticks/clients/go/cache"
+	candlesticksnats "github.com/lerenn/cryptellation/svc/candlesticks/clients/go/nats"
+	candlesticksretry "github.com/lerenn/cryptellation/svc/candlesticks/clients/go/retry"
 
-	mongo "github.com/lerenn/cryptellation/forwardtests/internal/adapters/db/mongo"
-	"github.com/lerenn/cryptellation/forwardtests/internal/app/ports/db"
+	mongo "github.com/lerenn/cryptellation/svc/forwardtests/internal/adapters/db/mongo"
+	"github.com/lerenn/cryptellation/svc/forwardtests/internal/app/ports/db"
 )
 
 type adapters struct {

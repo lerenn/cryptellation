@@ -1,8 +1,8 @@
 package daemon
 
 import (
-	"github.com/lerenn/cryptellation/candlesticks/internal/app"
-	"github.com/lerenn/cryptellation/candlesticks/internal/app/domain"
+	"github.com/lerenn/cryptellation/svc/candlesticks/internal/app"
+	"github.com/lerenn/cryptellation/svc/candlesticks/internal/app/domain"
 )
 
 type components struct {

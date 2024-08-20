@@ -9,8 +9,8 @@ import (
 
 	"github.com/lerenn/cryptellation/svc/backtests/pkg/backtest"
 
-	"github.com/lerenn/cryptellation/candlesticks/pkg/candlestick"
-	"github.com/lerenn/cryptellation/candlesticks/pkg/period"
+	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/candlestick"
+	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/period"
 
 	uuid "github.com/google/uuid"
 	"github.com/stretchr/testify/suite"

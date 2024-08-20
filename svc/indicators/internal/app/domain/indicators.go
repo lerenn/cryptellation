@@ -1,9 +1,9 @@
 package domain
 
 import (
-	candlesticks "github.com/lerenn/cryptellation/candlesticks/clients/go"
+	candlesticks "github.com/lerenn/cryptellation/svc/candlesticks/clients/go"
 
-	"github.com/lerenn/cryptellation/indicators/internal/app/ports/db"
+	"github.com/lerenn/cryptellation/svc/indicators/internal/app/ports/db"
 )
 
 type indicators struct {

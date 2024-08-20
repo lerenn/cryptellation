@@ -5,7 +5,7 @@ import (
 
 	"github.com/lerenn/cryptellation/pkg/models/timeserie"
 
-	"github.com/lerenn/cryptellation/candlesticks/pkg/candlestick"
+	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/candlestick"
 )
 
 type PointPayload struct {

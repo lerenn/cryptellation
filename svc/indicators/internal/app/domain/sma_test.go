@@ -8,12 +8,12 @@ import (
 	"github.com/lerenn/cryptellation/pkg/models/timeserie"
 	"github.com/lerenn/cryptellation/pkg/utils"
 
-	candlesticks "github.com/lerenn/cryptellation/candlesticks/clients/go"
-	"github.com/lerenn/cryptellation/candlesticks/pkg/candlestick"
-	"github.com/lerenn/cryptellation/candlesticks/pkg/period"
+	candlesticks "github.com/lerenn/cryptellation/svc/candlesticks/clients/go"
+	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/candlestick"
+	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/period"
 
-	"github.com/lerenn/cryptellation/indicators/internal/app"
-	"github.com/lerenn/cryptellation/indicators/internal/app/ports/db"
+	"github.com/lerenn/cryptellation/svc/indicators/internal/app"
+	"github.com/lerenn/cryptellation/svc/indicators/internal/app/ports/db"
 
 	"github.com/stretchr/testify/suite"
 	"go.uber.org/mock/gomock"

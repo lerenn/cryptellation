@@ -5,8 +5,8 @@ import (
 
 	common "github.com/lerenn/cryptellation/pkg/client"
 
-	client "github.com/lerenn/cryptellation/candlesticks/clients/go"
-	"github.com/lerenn/cryptellation/candlesticks/pkg/candlestick"
+	client "github.com/lerenn/cryptellation/svc/candlesticks/clients/go"
+	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/candlestick"
 )
 
 type retry struct {

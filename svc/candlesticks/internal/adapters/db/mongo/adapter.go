@@ -7,7 +7,7 @@ import (
 
 	"github.com/lerenn/cryptellation/pkg/config"
 
-	port "github.com/lerenn/cryptellation/candlesticks/internal/app/ports/db"
+	port "github.com/lerenn/cryptellation/svc/candlesticks/internal/app/ports/db"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"

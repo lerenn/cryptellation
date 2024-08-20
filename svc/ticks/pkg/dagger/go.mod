@@ -1,4 +1,4 @@
-module github.com/lerenn/cryptellation/ticks/pkg/dagger
+module github.com/lerenn/cryptellation/svc/ticks/pkg/dagger
 
 go 1.22.4
 

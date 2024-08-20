@@ -6,8 +6,8 @@ import (
 
 	adapter "github.com/lerenn/cryptellation/internal/adapters/exchanges/binance"
 
-	"github.com/lerenn/cryptellation/candlesticks/pkg/candlestick"
-	"github.com/lerenn/cryptellation/candlesticks/pkg/period"
+	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/candlestick"
+	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/period"
 
 	binance "github.com/adshao/go-binance/v2"
 )

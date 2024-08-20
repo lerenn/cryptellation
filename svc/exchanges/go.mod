@@ -1,4 +1,4 @@
-module github.com/lerenn/cryptellation/exchanges
+module github.com/lerenn/cryptellation/svc/exchanges
 
 go 1.22.4
 
@@ -8,11 +8,11 @@ replace (
 	github.com/lerenn/cryptellation/pkg => ../../pkg
 
 	github.com/lerenn/cryptellation/client => ../backtests
-	github.com/lerenn/cryptellation/candlesticks => ../candlesticks
-	github.com/lerenn/cryptellation/exchanges => ../exchanges
-	github.com/lerenn/cryptellation/forwardtests => ../forwardtests
-	github.com/lerenn/cryptellation/indicators => ../indicators
-	github.com/lerenn/cryptellation/ticks => ../ticks
+	github.com/lerenn/cryptellation/svc/candlesticks => ../candlesticks
+	github.com/lerenn/cryptellation/svc/exchanges => ../exchanges
+	github.com/lerenn/cryptellation/svc/forwardtests => ../forwardtests
+	github.com/lerenn/cryptellation/svc/indicators => ../indicators
+	github.com/lerenn/cryptellation/svc/ticks => ../ticks
 )
 
 require (

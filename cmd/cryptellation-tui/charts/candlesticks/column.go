@@ -3,7 +3,7 @@ package candlesticks
 import (
 	"math"
 
-	"github.com/lerenn/cryptellation/candlesticks/pkg/candlestick"
+	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/candlestick"
 )
 
 const (

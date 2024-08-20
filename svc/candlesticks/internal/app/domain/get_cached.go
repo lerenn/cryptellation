@@ -9,10 +9,10 @@ import (
 	"github.com/lerenn/cryptellation/pkg/models/timeserie"
 	"github.com/lerenn/cryptellation/pkg/utils"
 
-	"github.com/lerenn/cryptellation/candlesticks/internal/app"
-	"github.com/lerenn/cryptellation/candlesticks/internal/app/ports/exchanges"
-	"github.com/lerenn/cryptellation/candlesticks/pkg/candlestick"
-	"github.com/lerenn/cryptellation/candlesticks/pkg/period"
+	"github.com/lerenn/cryptellation/svc/candlesticks/internal/app"
+	"github.com/lerenn/cryptellation/svc/candlesticks/internal/app/ports/exchanges"
+	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/candlestick"
+	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/period"
 )
 
 const (

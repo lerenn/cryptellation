@@ -1,4 +1,4 @@
-module github.com/lerenn/cryptellation/candlesticks/build/ci/dagger
+module github.com/lerenn/cryptellation/svc/candlesticks/build/ci/dagger
 
 go 1.22.4
 
