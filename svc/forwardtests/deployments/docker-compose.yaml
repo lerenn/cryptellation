@@ -10,7 +10,7 @@ services:
       - uptrace-otelcollector
     networks:
       - cryptellation
-    working_dir: /go/src/cryptellation
+    working_dir: /go/src/github.com/lerenn/cryptellation
     environment:
       DEV_MODE: true
       HEALTH_PORT: 9000
@@ -27,4 +27,4 @@ services:
     volumes:
       - gocache:/go/pkg/mod
       - gobuild:/root/.cache/go-build
-      - ../../../:/go/src/cryptellation
+      - ../../../:/go/src/github.com/lerenn/cryptellation

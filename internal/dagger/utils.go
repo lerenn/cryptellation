@@ -23,10 +23,10 @@ func (mod *CryptellationInternal) WithGoCodeAndCacheAsWorkDirectory(
 		WithMountedCache("/go/pkg/mod", dag.CacheVolume("gocache")).
 
 		// Add source code
-		WithMountedDirectory("/go/src/cryptellation", sourceDir).
+		WithMountedDirectory("/go/src/github.com/lerenn/cryptellation", sourceDir).
 
 		// Add workdir
-		WithWorkdir("/go/src/cryptellation/" + path)
+		WithWorkdir("/go/src/github.com/lerenn/cryptellation/" + path)
 }
 
 func (mod *CryptellationInternal) CryptellationGoCodeContainer(

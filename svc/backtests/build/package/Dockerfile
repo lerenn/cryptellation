@@ -7,7 +7,6 @@ ARG TARGETARCH=amd64
 ARG BUILDBASEIMAGE=golang:alpine
 ARG TARGETBASEIMAGE=alpine:latest
 
-
 # Building image
 FROM --platform=${BUILDPLATFORM:-linux/amd64} ${BUILDBASEIMAGE} AS build
 
@@ -15,11 +14,11 @@ FROM --platform=${BUILDPLATFORM:-linux/amd64} ${BUILDBASEIMAGE} AS build
 ENV CGO_ENABLED=0
 
 # Get all remaining code
-RUN mkdir -p /go/src/cryptellation
-COPY ./ /go/src/cryptellation
+RUN mkdir -p /go/src/github.com/lerenn/cryptellation
+COPY ./ /go/src/github.com/lerenn/cryptellation
 
 # Set the workdir
-WORKDIR /go/src/github.com/lerenn/cryptellation/client
+WORKDIR /go/src/github.com/lerenn/cryptellation/svc/backtests
 
 # Build everything in cmd/
 RUN --mount=type=cache,target=/root/.cache/go-build \
@@ -35,11 +34,8 @@ ENV HEALTH_PORT=9000
 # Expose ports
 EXPOSE 9000
 
-# Copy files
-COPY ./svc/backtests/build/package/entrypoint.sh /entrypoint.sh
-
 # Get binary
 COPY --from=build /go/bin/* /usr/local/bin
 
-# Set entrypoint
-ENTRYPOINT ["sh", "/entrypoint.sh"]
+# Set command
+CMD ["api", "serve"]

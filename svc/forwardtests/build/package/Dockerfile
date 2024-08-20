@@ -14,8 +14,8 @@ FROM --platform=${BUILDPLATFORM:-linux/amd64} ${BUILDBASEIMAGE} AS build
 ENV CGO_ENABLED=0
 
 # Get all remaining code
-RUN mkdir -p /go/src/cryptellation
-COPY ./ /go/src/cryptellation
+RUN mkdir -p /go/src/github.com/lerenn/cryptellation
+COPY ./ /go/src/github.com/lerenn/cryptellation
 
 # Set the workdir
 WORKDIR /go/src/github.com/lerenn/cryptellation/svc/forwardtests

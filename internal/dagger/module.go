@@ -39,7 +39,7 @@ func (mod *CryptellationInternal) CheckGeneration(
 	path string,
 ) *dagger.Container {
 	return mod.CryptellationGoCodeContainer(sourceDir, path).
-		WithExec([]string{"sh", "/go/src/cryptellation/scripts/check-generation.sh"})
+		WithExec([]string{"sh", "/go/src/github.com/lerenn/cryptellation/scripts/check-generation.sh"})
 }
 
 func (mod *CryptellationInternal) UnitTests(sourceDir *dagger.Directory, path string) *dagger.Container {
