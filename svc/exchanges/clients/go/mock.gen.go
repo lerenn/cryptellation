@@ -8,7 +8,7 @@ import (
 	context "context"
 	reflect "reflect"
 
-	exchange "github.com/lerenn/cryptellation/exchanges/pkg/exchange"
+	exchange "github.com/lerenn/cryptellation/svc/exchanges/pkg/exchange"
 	client "github.com/lerenn/cryptellation/pkg/client"
 	gomock "go.uber.org/mock/gomock"
 )

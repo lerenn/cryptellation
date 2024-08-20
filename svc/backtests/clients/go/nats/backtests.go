@@ -15,7 +15,7 @@ import (
 	asyncapi "github.com/lerenn/cryptellation/svc/backtests/api/asyncapi"
 	client "github.com/lerenn/cryptellation/svc/backtests/clients/go"
 
-	"github.com/lerenn/cryptellation/ticks/pkg/tick"
+	"github.com/lerenn/cryptellation/svc/ticks/pkg/tick"
 
 	"github.com/google/uuid"
 	"github.com/lerenn/asyncapi-codegen/pkg/extensions"

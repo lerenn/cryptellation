@@ -3,7 +3,7 @@ package daemon
 import (
 	"github.com/lerenn/cryptellation/pkg/config"
 
-	"github.com/lerenn/cryptellation/exchanges/internal/controllers/nats"
+	"github.com/lerenn/cryptellation/svc/exchanges/internal/controllers/nats"
 )
 
 type controllers struct {

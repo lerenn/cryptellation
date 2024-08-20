@@ -5,8 +5,8 @@ import (
 
 	"github.com/lerenn/cryptellation/pkg/models/event"
 
-	asyncapi "github.com/lerenn/cryptellation/ticks/api/asyncapi"
-	"github.com/lerenn/cryptellation/ticks/pkg/tick"
+	asyncapi "github.com/lerenn/cryptellation/svc/ticks/api/asyncapi"
+	"github.com/lerenn/cryptellation/svc/ticks/pkg/tick"
 )
 
 func (a *Adapter) PublishTick(ctx context.Context, tick tick.Tick) error {

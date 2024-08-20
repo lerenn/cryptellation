@@ -6,8 +6,8 @@ import (
 
 	"github.com/lerenn/cryptellation/pkg/config"
 
-	client "github.com/lerenn/cryptellation/indicators/clients/go"
-	"github.com/lerenn/cryptellation/indicators/clients/go/nats"
+	client "github.com/lerenn/cryptellation/svc/indicators/clients/go"
+	"github.com/lerenn/cryptellation/svc/indicators/clients/go/nats"
 
 	"github.com/stretchr/testify/suite"
 )

@@ -6,8 +6,8 @@ import (
 	common "github.com/lerenn/cryptellation/pkg/client"
 	"github.com/lerenn/cryptellation/pkg/models/event"
 
-	client "github.com/lerenn/cryptellation/ticks/clients/go"
-	"github.com/lerenn/cryptellation/ticks/pkg/tick"
+	client "github.com/lerenn/cryptellation/svc/ticks/clients/go"
+	"github.com/lerenn/cryptellation/svc/ticks/pkg/tick"
 )
 
 type retry struct {

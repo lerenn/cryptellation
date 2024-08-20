@@ -10,7 +10,7 @@ import (
 
 	client "github.com/lerenn/cryptellation/pkg/client"
 	event "github.com/lerenn/cryptellation/pkg/models/event"
-	tick "github.com/lerenn/cryptellation/ticks/pkg/tick"
+	tick "github.com/lerenn/cryptellation/svc/ticks/pkg/tick"
 	gomock "go.uber.org/mock/gomock"
 )
 

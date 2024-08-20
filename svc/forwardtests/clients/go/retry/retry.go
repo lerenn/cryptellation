@@ -6,8 +6,8 @@ import (
 	common "github.com/lerenn/cryptellation/pkg/client"
 	"github.com/lerenn/cryptellation/pkg/models/account"
 
-	client "github.com/lerenn/cryptellation/forwardtests/clients/go"
-	"github.com/lerenn/cryptellation/forwardtests/pkg/forwardtest"
+	client "github.com/lerenn/cryptellation/svc/forwardtests/clients/go"
+	"github.com/lerenn/cryptellation/svc/forwardtests/pkg/forwardtest"
 
 	"github.com/google/uuid"
 )

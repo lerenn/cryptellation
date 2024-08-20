@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/lerenn/cryptellation/forwardtests/cmd/api/daemon"
+	"github.com/lerenn/cryptellation/svc/forwardtests/cmd/api/daemon"
 
 	"github.com/spf13/cobra"
 )

@@ -5,7 +5,7 @@ import (
 
 	"github.com/lerenn/cryptellation/pkg/config"
 
-	asyncapi "github.com/lerenn/cryptellation/ticks/api/asyncapi"
+	asyncapi "github.com/lerenn/cryptellation/svc/ticks/api/asyncapi"
 )
 
 type Adapter struct {

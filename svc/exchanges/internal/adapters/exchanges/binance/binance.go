@@ -9,7 +9,7 @@ import (
 
 	"github.com/lerenn/cryptellation/pkg/config"
 
-	"github.com/lerenn/cryptellation/exchanges/pkg/exchange"
+	"github.com/lerenn/cryptellation/svc/exchanges/pkg/exchange"
 )
 
 type Service struct {

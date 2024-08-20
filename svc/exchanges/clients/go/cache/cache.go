@@ -7,8 +7,8 @@ import (
 
 	common "github.com/lerenn/cryptellation/pkg/client"
 
-	client "github.com/lerenn/cryptellation/exchanges/clients/go"
-	"github.com/lerenn/cryptellation/exchanges/pkg/exchange"
+	client "github.com/lerenn/cryptellation/svc/exchanges/clients/go"
+	"github.com/lerenn/cryptellation/svc/exchanges/pkg/exchange"
 
 	"github.com/bluele/gcache"
 )

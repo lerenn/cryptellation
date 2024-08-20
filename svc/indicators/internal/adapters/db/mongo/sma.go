@@ -5,8 +5,8 @@ import (
 
 	"github.com/lerenn/cryptellation/pkg/models/timeserie"
 
-	"github.com/lerenn/cryptellation/indicators/internal/adapters/db/mongo/entities"
-	"github.com/lerenn/cryptellation/indicators/internal/app/ports/db"
+	"github.com/lerenn/cryptellation/svc/indicators/internal/adapters/db/mongo/entities"
+	"github.com/lerenn/cryptellation/svc/indicators/internal/app/ports/db"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo/options"

@@ -7,8 +7,8 @@ import (
 	"github.com/lerenn/cryptellation/pkg/adapters/telemetry"
 	"github.com/lerenn/cryptellation/pkg/version"
 
-	asyncapi "github.com/lerenn/cryptellation/indicators/api/asyncapi"
-	"github.com/lerenn/cryptellation/indicators/internal/app"
+	asyncapi "github.com/lerenn/cryptellation/svc/indicators/api/asyncapi"
+	"github.com/lerenn/cryptellation/svc/indicators/internal/app"
 )
 
 type subscriber struct {

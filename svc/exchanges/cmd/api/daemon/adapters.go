@@ -5,10 +5,10 @@ import (
 
 	"github.com/lerenn/cryptellation/pkg/config"
 
-	mongo "github.com/lerenn/cryptellation/exchanges/internal/adapters/db/mongo"
-	"github.com/lerenn/cryptellation/exchanges/internal/adapters/exchanges"
-	"github.com/lerenn/cryptellation/exchanges/internal/app/ports/db"
-	exchangesPort "github.com/lerenn/cryptellation/exchanges/internal/app/ports/exchanges"
+	mongo "github.com/lerenn/cryptellation/svc/exchanges/internal/adapters/db/mongo"
+	"github.com/lerenn/cryptellation/svc/exchanges/internal/adapters/exchanges"
+	"github.com/lerenn/cryptellation/svc/exchanges/internal/app/ports/db"
+	exchangesPort "github.com/lerenn/cryptellation/svc/exchanges/internal/app/ports/exchanges"
 )
 
 type adapters struct {

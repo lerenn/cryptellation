@@ -7,7 +7,7 @@ import (
 
 	"github.com/lerenn/cryptellation/pkg/config"
 
-	port "github.com/lerenn/cryptellation/forwardtests/internal/app/ports/db"
+	port "github.com/lerenn/cryptellation/svc/forwardtests/internal/app/ports/db"
 
 	"go.mongodb.org/mongo-driver/mongo"
 )

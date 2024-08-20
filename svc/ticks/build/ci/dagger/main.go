@@ -18,7 +18,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/lerenn/cryptellation/ticks/build/ci/dagger/internal/dagger"
+	"github.com/lerenn/cryptellation/svc/ticks/build/ci/dagger/internal/dagger"
 
 	"github.com/lerenn/cryptellation/internal/docker"
 )

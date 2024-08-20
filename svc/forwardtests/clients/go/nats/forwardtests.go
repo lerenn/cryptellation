@@ -9,9 +9,9 @@ import (
 	"github.com/lerenn/cryptellation/pkg/config"
 	"github.com/lerenn/cryptellation/pkg/models/account"
 
-	asyncapi "github.com/lerenn/cryptellation/forwardtests/api/asyncapi"
-	client "github.com/lerenn/cryptellation/forwardtests/clients/go"
-	"github.com/lerenn/cryptellation/forwardtests/pkg/forwardtest"
+	asyncapi "github.com/lerenn/cryptellation/svc/forwardtests/api/asyncapi"
+	client "github.com/lerenn/cryptellation/svc/forwardtests/clients/go"
+	"github.com/lerenn/cryptellation/svc/forwardtests/pkg/forwardtest"
 
 	"github.com/google/uuid"
 	"github.com/lerenn/asyncapi-codegen/pkg/extensions"

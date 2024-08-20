@@ -10,9 +10,9 @@ import (
 	"github.com/lerenn/cryptellation/pkg/config"
 	"github.com/lerenn/cryptellation/pkg/models/event"
 
-	asyncapi "github.com/lerenn/cryptellation/ticks/api/asyncapi"
-	client "github.com/lerenn/cryptellation/ticks/clients/go"
-	"github.com/lerenn/cryptellation/ticks/pkg/tick"
+	asyncapi "github.com/lerenn/cryptellation/svc/ticks/api/asyncapi"
+	client "github.com/lerenn/cryptellation/svc/ticks/clients/go"
+	"github.com/lerenn/cryptellation/svc/ticks/pkg/tick"
 
 	"github.com/lerenn/asyncapi-codegen/pkg/extensions"
 	natsextension "github.com/lerenn/asyncapi-codegen/pkg/extensions/brokers/nats"

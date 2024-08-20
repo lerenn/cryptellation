@@ -8,9 +8,9 @@ import (
 
 	"github.com/lerenn/cryptellation/pkg/models/event"
 
-	"github.com/lerenn/cryptellation/ticks/internal/adapters/exchanges/binance"
-	"github.com/lerenn/cryptellation/ticks/internal/app/ports/exchanges"
-	"github.com/lerenn/cryptellation/ticks/pkg/tick"
+	"github.com/lerenn/cryptellation/svc/ticks/internal/adapters/exchanges/binance"
+	"github.com/lerenn/cryptellation/svc/ticks/internal/app/ports/exchanges"
+	"github.com/lerenn/cryptellation/svc/ticks/pkg/tick"
 )
 
 type Exchanges struct {

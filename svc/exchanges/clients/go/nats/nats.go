@@ -5,8 +5,8 @@ import (
 
 	helpers "github.com/lerenn/cryptellation/internal/asyncapi"
 
-	asyncapi "github.com/lerenn/cryptellation/exchanges/api/asyncapi"
-	client "github.com/lerenn/cryptellation/exchanges/clients/go"
+	asyncapi "github.com/lerenn/cryptellation/svc/exchanges/api/asyncapi"
+	client "github.com/lerenn/cryptellation/svc/exchanges/clients/go"
 
 	"github.com/lerenn/asyncapi-codegen/pkg/extensions"
 	natsextension "github.com/lerenn/asyncapi-codegen/pkg/extensions/brokers/nats"
@@ -14,7 +14,7 @@ import (
 	common "github.com/lerenn/cryptellation/pkg/client"
 	"github.com/lerenn/cryptellation/pkg/config"
 
-	"github.com/lerenn/cryptellation/exchanges/pkg/exchange"
+	"github.com/lerenn/cryptellation/svc/exchanges/pkg/exchange"
 )
 
 type nats struct {

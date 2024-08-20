@@ -5,8 +5,8 @@ import (
 	"testing"
 	"time"
 
-	client "github.com/lerenn/cryptellation/exchanges/clients/go"
-	"github.com/lerenn/cryptellation/exchanges/pkg/exchange"
+	client "github.com/lerenn/cryptellation/svc/exchanges/clients/go"
+	"github.com/lerenn/cryptellation/svc/exchanges/pkg/exchange"
 
 	"github.com/stretchr/testify/suite"
 	gomock "go.uber.org/mock/gomock"

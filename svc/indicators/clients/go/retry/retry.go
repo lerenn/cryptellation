@@ -6,7 +6,7 @@ import (
 	common "github.com/lerenn/cryptellation/pkg/client"
 	"github.com/lerenn/cryptellation/pkg/models/timeserie"
 
-	client "github.com/lerenn/cryptellation/indicators/clients/go"
+	client "github.com/lerenn/cryptellation/svc/indicators/clients/go"
 )
 
 type retry struct {

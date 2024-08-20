@@ -6,9 +6,9 @@ import (
 
 	binancePkg "github.com/lerenn/cryptellation/internal/adapters/exchanges/binance"
 
-	"github.com/lerenn/cryptellation/exchanges/internal/adapters/exchanges/binance"
-	"github.com/lerenn/cryptellation/exchanges/internal/app/ports/exchanges"
-	"github.com/lerenn/cryptellation/exchanges/pkg/exchange"
+	"github.com/lerenn/cryptellation/svc/exchanges/internal/adapters/exchanges/binance"
+	"github.com/lerenn/cryptellation/svc/exchanges/internal/app/ports/exchanges"
+	"github.com/lerenn/cryptellation/svc/exchanges/pkg/exchange"
 )
 
 type Exchanges struct {

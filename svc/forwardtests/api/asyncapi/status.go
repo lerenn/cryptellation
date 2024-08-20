@@ -1,6 +1,6 @@
 package asyncapi
 
-import "github.com/lerenn/cryptellation/forwardtests/pkg/forwardtest"
+import "github.com/lerenn/cryptellation/svc/forwardtests/pkg/forwardtest"
 
 func (msg *StatusResponseMessage) Set(status forwardtest.Status) {
 	msg.Payload.Status = &ForwardTestStatusSchema{

@@ -7,8 +7,8 @@ import (
 
 	"github.com/lerenn/cryptellation/pkg/config"
 
-	"github.com/lerenn/cryptellation/ticks/api/asyncapi"
-	ticks "github.com/lerenn/cryptellation/ticks/internal/app"
+	"github.com/lerenn/cryptellation/svc/ticks/api/asyncapi"
+	ticks "github.com/lerenn/cryptellation/svc/ticks/internal/app"
 
 	"github.com/lerenn/asyncapi-codegen/pkg/extensions"
 	"github.com/lerenn/asyncapi-codegen/pkg/extensions/brokers/nats"

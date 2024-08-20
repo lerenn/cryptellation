@@ -6,7 +6,7 @@ import (
 
 	"github.com/lerenn/cryptellation/pkg/config"
 
-	"github.com/lerenn/cryptellation/forwardtests/internal/app/ports/db"
+	"github.com/lerenn/cryptellation/svc/forwardtests/internal/app/ports/db"
 
 	"github.com/stretchr/testify/suite"
 )

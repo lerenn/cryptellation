@@ -9,8 +9,8 @@ import (
 	"github.com/lerenn/cryptellation/pkg/config"
 	"github.com/lerenn/cryptellation/pkg/models/timeserie"
 
-	asyncapi "github.com/lerenn/cryptellation/indicators/api/asyncapi"
-	client "github.com/lerenn/cryptellation/indicators/clients/go"
+	asyncapi "github.com/lerenn/cryptellation/svc/indicators/api/asyncapi"
+	client "github.com/lerenn/cryptellation/svc/indicators/clients/go"
 
 	"github.com/lerenn/asyncapi-codegen/pkg/extensions"
 	natsextension "github.com/lerenn/asyncapi-codegen/pkg/extensions/brokers/nats"

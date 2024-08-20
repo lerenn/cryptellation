@@ -17,7 +17,7 @@ import (
 
 	indicators "github.com/lerenn/cryptellation/svc/indicators/clients/go"
 
-	"github.com/lerenn/cryptellation/ticks/pkg/tick"
+	"github.com/lerenn/cryptellation/svc/ticks/pkg/tick"
 )
 
 type Bot struct {

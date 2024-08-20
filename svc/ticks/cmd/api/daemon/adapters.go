@@ -5,10 +5,10 @@ import (
 
 	"github.com/lerenn/cryptellation/pkg/config"
 
-	natsTicks "github.com/lerenn/cryptellation/ticks/internal/adapters/events/nats"
-	"github.com/lerenn/cryptellation/ticks/internal/adapters/exchanges"
-	"github.com/lerenn/cryptellation/ticks/internal/app/ports/events"
-	exchangesPort "github.com/lerenn/cryptellation/ticks/internal/app/ports/exchanges"
+	natsTicks "github.com/lerenn/cryptellation/svc/ticks/internal/adapters/events/nats"
+	"github.com/lerenn/cryptellation/svc/ticks/internal/adapters/exchanges"
+	"github.com/lerenn/cryptellation/svc/ticks/internal/app/ports/events"
+	exchangesPort "github.com/lerenn/cryptellation/svc/ticks/internal/app/ports/exchanges"
 )
 
 type adapters struct {

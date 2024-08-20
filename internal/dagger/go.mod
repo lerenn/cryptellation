@@ -3,14 +3,13 @@ module github.com/lerenn/cryptellation/internal/dagger
 go 1.22.4
 
 replace (
-	github.com/lerenn/cryptellation/svc/candlesticks => ../../svc/candlesticks
-
 	github.com/lerenn/cryptellation/client => ../../svc/backtests
 	github.com/lerenn/cryptellation/clients/go => ../../clients/go
+	github.com/lerenn/cryptellation/pkg => ../../pkg
+	github.com/lerenn/cryptellation/svc/candlesticks => ../../svc/candlesticks
 	github.com/lerenn/cryptellation/svc/exchanges => ../../svc/exchanges
 	github.com/lerenn/cryptellation/svc/forwardtests => ../../svc/forwardtests
 	github.com/lerenn/cryptellation/svc/indicators => ../../svc/indicators
-	github.com/lerenn/cryptellation/pkg => ../../pkg
 	github.com/lerenn/cryptellation/svc/ticks => ../../svc/ticks
 )
 

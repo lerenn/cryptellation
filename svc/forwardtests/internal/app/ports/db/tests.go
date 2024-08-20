@@ -6,7 +6,7 @@ import (
 
 	"github.com/lerenn/cryptellation/pkg/models/account"
 
-	"github.com/lerenn/cryptellation/forwardtests/pkg/forwardtest"
+	"github.com/lerenn/cryptellation/svc/forwardtests/pkg/forwardtest"
 
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/suite"
