@@ -6,10 +6,10 @@ package db
 
 import (
 	context "context"
-	candlestick "github.com/lerenn/cryptellation/candlesticks/pkg/candlestick"
 	reflect "reflect"
 	time "time"
 
+	candlestick "github.com/lerenn/cryptellation/candlesticks/pkg/candlestick"
 	gomock "go.uber.org/mock/gomock"
 )
 

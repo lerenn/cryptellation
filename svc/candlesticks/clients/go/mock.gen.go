@@ -6,10 +6,10 @@ package client
 
 import (
 	context "context"
-	client "github.com/lerenn/cryptellation/pkg/client"
-	candlestick "github.com/lerenn/cryptellation/candlesticks/pkg/candlestick"
 	reflect "reflect"
 
+	candlestick "github.com/lerenn/cryptellation/candlesticks/pkg/candlestick"
+	client "github.com/lerenn/cryptellation/pkg/client"
 	gomock "go.uber.org/mock/gomock"
 )
 

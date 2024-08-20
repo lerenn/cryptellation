@@ -6,11 +6,11 @@ package client
 
 import (
 	context "context"
+	reflect "reflect"
+
 	client "github.com/lerenn/cryptellation/pkg/client"
 	event "github.com/lerenn/cryptellation/pkg/models/event"
 	tick "github.com/lerenn/cryptellation/ticks/pkg/tick"
-	reflect "reflect"
-
 	gomock "go.uber.org/mock/gomock"
 )
 

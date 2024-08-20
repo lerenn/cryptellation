@@ -6,10 +6,10 @@ package db
 
 import (
 	context "context"
-	forwardtest "github.com/lerenn/cryptellation/forwardtests/pkg/forwardtest"
 	reflect "reflect"
 
 	uuid "github.com/google/uuid"
+	forwardtest "github.com/lerenn/cryptellation/forwardtests/pkg/forwardtest"
 	gomock "go.uber.org/mock/gomock"
 )
 

@@ -6,9 +6,9 @@ package exchanges
 
 import (
 	context "context"
-	exchange "github.com/lerenn/cryptellation/exchanges/pkg/exchange"
 	reflect "reflect"
 
+	exchange "github.com/lerenn/cryptellation/exchanges/pkg/exchange"
 	gomock "go.uber.org/mock/gomock"
 )
 
