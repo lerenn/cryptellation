@@ -33,6 +33,8 @@ jobs:
   # Build job
   build:
     runs-on: ubuntu-latest
+    if: |
+      startsWith(github.event.head_commit.message, 'release:')
     env:
       HUGO_VERSION: 0.111.3
     steps:

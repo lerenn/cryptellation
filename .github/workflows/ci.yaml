@@ -12,7 +12,6 @@ jobs:
   lint:
     name: Run linter
     if: |
-      github.ref != 'refs/heads/main' || 
       !startsWith(github.event.head_commit.message, 'release:')
     runs-on: ubuntu-latest
     timeout-minutes: 5
@@ -28,7 +27,6 @@ jobs:
   check-generation:
     name: Check generation has been run
     if: |
-      github.ref != 'refs/heads/main' || 
       !startsWith(github.event.head_commit.message, 'release:')
     runs-on: ubuntu-latest
     timeout-minutes: 5
@@ -45,7 +43,6 @@ jobs:
     name: Run unit tests
     needs: ["lint", "check-generation"]
     if: |
-      github.ref != 'refs/heads/main' || 
       !startsWith(github.event.head_commit.message, 'release:')
     runs-on: ubuntu-latest
     timeout-minutes: 5

@@ -249,12 +249,14 @@ func (g *Git) PublishNewCommit(
 		}
 
 		client := github.NewClient(nil).WithAuthToken(token)
-		client.PullRequests.Create(ctx, "lerenn", "cryptellation", &github.NewPullRequest{
+		if _, _, err := client.PullRequests.Create(ctx, "lerenn", "cryptellation", &github.NewPullRequest{
 			Title:               &title,
 			Base:                utils.ToReference("main"),
 			Head:                utils.ToReference(branchName),
 			MaintainerCanModify: utils.ToReference(true),
-		})
+		}); err != nil {
+			return err
+		}
 	}
 
 	return nil

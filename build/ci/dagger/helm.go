@@ -225,7 +225,7 @@ func updateHelmChartAppVersion(
 	newVersion = fmt.Sprintf("\"%s\"", newVersion)
 
 	// Update Helm chart
-	cmd := "sed -i 's/^appVersion\\: .*/appVersion\\: \"" + newVersion + "\"/' src/deployments/helm/cryptellation/Chart.yaml"
+	cmd := "sed -i 's/^appVersion\\: .*/appVersion\\: " + newVersion + "/' src/deployments/helm/cryptellation/Chart.yaml"
 	c, err := dag.Container().From("alpine").
 		WithMountedDirectory("src", sourceDir).
 		WithExec([]string{"sh", "-c", cmd}).
