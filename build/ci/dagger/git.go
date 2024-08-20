@@ -2,9 +2,10 @@ package main
 
 import (
 	"context"
-	"dagger/cryptellation-ci/internal/dagger"
 	"fmt"
 	"strings"
+
+	"github.com/lerenn/cryptellation/build/ci/dagger/internal/dagger"
 
 	"github.com/lerenn/cryptellation/pkg/utils"
 

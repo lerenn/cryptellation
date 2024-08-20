@@ -16,7 +16,8 @@ package main
 
 import (
 	"context"
-	"dagger/cryptellation-ci/internal/dagger"
+
+	"github.com/lerenn/cryptellation/build/ci/dagger/internal/dagger"
 )
 
 type CryptellationCi struct{}

@@ -1,11 +1,17 @@
-module dagger/cryptellation-ci
+module github.com/lerenn/cryptellation/build/ci/dagger
 
 go 1.22.4
+
+replace (
+	github.com/lerenn/cryptellation/internal => ../../../internal
+	github.com/lerenn/cryptellation/pkg => ../../../pkg
+)
 
 require (
 	github.com/99designs/gqlgen v0.17.49
 	github.com/Khan/genqlient v0.7.0
 	github.com/google/go-github/v63 v63.0.0
+	github.com/lerenn/cryptellation/pkg v0.0.0-00010101000000-000000000000
 	github.com/vektah/gqlparser/v2 v2.5.16
 	go.opentelemetry.io/otel v1.28.0
 	go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploggrpc v0.0.0-20240812163816-c609b12d9815
@@ -29,7 +35,6 @@ require (
 	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.21.0 // indirect
-	github.com/sergi/go-diff v1.3.2-0.20230802210424-5b0b94c5c0d3 // indirect
 	github.com/sosodev/duration v1.3.1 // indirect
 	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.28.0 // indirect
 	go.opentelemetry.io/otel/metric v1.28.0 // indirect
