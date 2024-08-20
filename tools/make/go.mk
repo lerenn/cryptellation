@@ -4,7 +4,7 @@ go/generate: ## Generate the code
 
 .PHONY: go/lint
 go/lint: ## Lint the code
-	@go run github.com/golangci/golangci-lint/cmd/golangci-lint@v1.55 run ./...
+	@go run github.com/golangci/golangci-lint/cmd/golangci-lint@v1.60.1 run ./...
 
 .PHONY: go/test/unit
 go/test/unit: ## Launch unit tests	
