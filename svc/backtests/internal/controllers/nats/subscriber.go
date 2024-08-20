@@ -7,8 +7,8 @@ import (
 	"github.com/lerenn/cryptellation/pkg/adapters/telemetry"
 	"github.com/lerenn/cryptellation/pkg/version"
 
-	asyncapi "github.com/lerenn/cryptellation/client/api/asyncapi"
-	"github.com/lerenn/cryptellation/client/internal/app"
+	asyncapi "github.com/lerenn/cryptellation/svc/backtests/api/asyncapi"
+	"github.com/lerenn/cryptellation/svc/backtests/internal/app"
 
 	"github.com/google/uuid"
 )

@@ -9,8 +9,8 @@ import (
 	"github.com/lerenn/cryptellation/pkg/config"
 	"github.com/lerenn/cryptellation/pkg/models/account"
 
-	"github.com/lerenn/cryptellation/client/internal/app/ports/db"
-	"github.com/lerenn/cryptellation/client/pkg/backtest"
+	"github.com/lerenn/cryptellation/svc/backtests/internal/app/ports/db"
+	"github.com/lerenn/cryptellation/svc/backtests/pkg/backtest"
 
 	"github.com/lerenn/cryptellation/candlesticks/pkg/candlestick"
 	"github.com/lerenn/cryptellation/candlesticks/pkg/period"

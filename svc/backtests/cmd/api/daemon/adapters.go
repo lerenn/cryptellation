@@ -7,10 +7,10 @@ import (
 
 	"github.com/lerenn/cryptellation/pkg/config"
 
-	mongo "github.com/lerenn/cryptellation/client/internal/adapters/db/mongo"
-	natsBacktests "github.com/lerenn/cryptellation/client/internal/adapters/events/nats"
-	"github.com/lerenn/cryptellation/client/internal/app/ports/db"
-	"github.com/lerenn/cryptellation/client/internal/app/ports/events"
+	mongo "github.com/lerenn/cryptellation/svc/backtests/internal/adapters/db/mongo"
+	natsBacktests "github.com/lerenn/cryptellation/svc/backtests/internal/adapters/events/nats"
+	"github.com/lerenn/cryptellation/svc/backtests/internal/app/ports/db"
+	"github.com/lerenn/cryptellation/svc/backtests/internal/app/ports/events"
 
 	candlesticks "github.com/lerenn/cryptellation/candlesticks/clients/go"
 	candlestickscache "github.com/lerenn/cryptellation/candlesticks/clients/go/cache"

@@ -1,4 +1,4 @@
-module github.com/lerenn/cryptellation/client
+module github.com/lerenn/cryptellation/svc/backtests
 
 go 1.22.4
 

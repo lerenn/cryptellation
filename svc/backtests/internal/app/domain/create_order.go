@@ -7,7 +7,7 @@ import (
 	"github.com/lerenn/cryptellation/pkg/adapters/telemetry"
 	"github.com/lerenn/cryptellation/pkg/models/order"
 
-	"github.com/lerenn/cryptellation/client/pkg/backtest"
+	"github.com/lerenn/cryptellation/svc/backtests/pkg/backtest"
 
 	candlesticks "github.com/lerenn/cryptellation/candlesticks/clients/go"
 

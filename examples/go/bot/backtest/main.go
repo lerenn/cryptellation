@@ -13,7 +13,7 @@ import (
 	"github.com/lerenn/cryptellation/pkg/models/account"
 	"github.com/lerenn/cryptellation/pkg/utils"
 
-	backtests "github.com/lerenn/cryptellation/client/clients/go"
+	backtests "github.com/lerenn/cryptellation/svc/backtests/clients/go"
 
 	"github.com/lerenn/cryptellation/examples/go/bot"
 )

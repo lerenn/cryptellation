@@ -1,4 +1,4 @@
-module github.com/lerenn/cryptellation/client/pkg/dagger
+module github.com/lerenn/cryptellation/svc/backtests/pkg/dagger
 
 go 1.22.4
 

@@ -9,10 +9,10 @@ import (
 	"github.com/lerenn/cryptellation/pkg/models/event"
 	"github.com/lerenn/cryptellation/pkg/models/order"
 
-	"github.com/lerenn/cryptellation/client/internal/app"
-	"github.com/lerenn/cryptellation/client/internal/app/ports/db"
-	"github.com/lerenn/cryptellation/client/internal/app/ports/events"
-	"github.com/lerenn/cryptellation/client/pkg/backtest"
+	"github.com/lerenn/cryptellation/svc/backtests/internal/app"
+	"github.com/lerenn/cryptellation/svc/backtests/internal/app/ports/db"
+	"github.com/lerenn/cryptellation/svc/backtests/internal/app/ports/events"
+	"github.com/lerenn/cryptellation/svc/backtests/pkg/backtest"
 
 	candlesticks "github.com/lerenn/cryptellation/candlesticks/clients/go"
 	"github.com/lerenn/cryptellation/candlesticks/pkg/candlestick"

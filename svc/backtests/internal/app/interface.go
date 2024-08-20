@@ -6,7 +6,7 @@ import (
 	"github.com/lerenn/cryptellation/pkg/models/account"
 	"github.com/lerenn/cryptellation/pkg/models/order"
 
-	"github.com/lerenn/cryptellation/client/pkg/backtest"
+	"github.com/lerenn/cryptellation/svc/backtests/pkg/backtest"
 
 	"github.com/google/uuid"
 )

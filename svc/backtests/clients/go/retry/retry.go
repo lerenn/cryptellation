@@ -7,7 +7,7 @@ import (
 	"github.com/lerenn/cryptellation/pkg/models/account"
 	"github.com/lerenn/cryptellation/pkg/models/event"
 
-	client "github.com/lerenn/cryptellation/client/clients/go"
+	client "github.com/lerenn/cryptellation/svc/backtests/clients/go"
 
 	"github.com/google/uuid"
 )

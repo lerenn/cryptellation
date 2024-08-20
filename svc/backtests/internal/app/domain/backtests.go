@@ -1,9 +1,9 @@
 package domain
 
 import (
-	"github.com/lerenn/cryptellation/client/internal/app"
-	"github.com/lerenn/cryptellation/client/internal/app/ports/db"
-	"github.com/lerenn/cryptellation/client/internal/app/ports/events"
+	"github.com/lerenn/cryptellation/svc/backtests/internal/app"
+	"github.com/lerenn/cryptellation/svc/backtests/internal/app/ports/db"
+	"github.com/lerenn/cryptellation/svc/backtests/internal/app/ports/events"
 
 	candlesticks "github.com/lerenn/cryptellation/candlesticks/clients/go"
 )

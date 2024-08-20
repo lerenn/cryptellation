@@ -7,7 +7,7 @@ import (
 
 	"github.com/lerenn/cryptellation/pkg/config"
 
-	port "github.com/lerenn/cryptellation/client/internal/app/ports/db"
+	port "github.com/lerenn/cryptellation/svc/backtests/internal/app/ports/db"
 )
 
 var _ port.Port = (*Adapter)(nil)

@@ -12,8 +12,8 @@ import (
 	"github.com/lerenn/cryptellation/pkg/models/event"
 	"github.com/lerenn/cryptellation/pkg/utils"
 
-	client "github.com/lerenn/cryptellation/client/clients/go"
-	"github.com/lerenn/cryptellation/client/pkg/backtest"
+	client "github.com/lerenn/cryptellation/svc/backtests/clients/go"
+	"github.com/lerenn/cryptellation/svc/backtests/pkg/backtest"
 
 	"github.com/lerenn/cryptellation/candlesticks/pkg/period"
 

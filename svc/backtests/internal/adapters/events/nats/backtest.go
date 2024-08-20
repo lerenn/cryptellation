@@ -5,7 +5,7 @@ import (
 
 	"github.com/lerenn/cryptellation/pkg/models/event"
 
-	asyncapi "github.com/lerenn/cryptellation/client/api/asyncapi"
+	asyncapi "github.com/lerenn/cryptellation/svc/backtests/api/asyncapi"
 
 	"github.com/google/uuid"
 )

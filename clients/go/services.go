@@ -8,9 +8,9 @@ import (
 	"github.com/lerenn/cryptellation/pkg/client"
 	"github.com/lerenn/cryptellation/pkg/config"
 
-	backtests "github.com/lerenn/cryptellation/client/clients/go"
-	backtestsnats "github.com/lerenn/cryptellation/client/clients/go/nats"
-	backtestsretry "github.com/lerenn/cryptellation/client/clients/go/retry"
+	backtests "github.com/lerenn/cryptellation/svc/backtests/clients/go"
+	backtestsnats "github.com/lerenn/cryptellation/svc/backtests/clients/go/nats"
+	backtestsretry "github.com/lerenn/cryptellation/svc/backtests/clients/go/retry"
 
 	candlesticks "github.com/lerenn/cryptellation/candlesticks/clients/go"
 	candlestickscache "github.com/lerenn/cryptellation/candlesticks/clients/go/cache"

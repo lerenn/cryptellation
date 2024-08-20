@@ -6,9 +6,9 @@ import (
 
 	"github.com/lerenn/cryptellation/pkg/config"
 
-	asyncapi "github.com/lerenn/cryptellation/client/api/asyncapi"
-	client "github.com/lerenn/cryptellation/client/clients/go"
-	backtestsnats "github.com/lerenn/cryptellation/client/clients/go/nats"
+	asyncapi "github.com/lerenn/cryptellation/svc/backtests/api/asyncapi"
+	client "github.com/lerenn/cryptellation/svc/backtests/clients/go"
+	backtestsnats "github.com/lerenn/cryptellation/svc/backtests/clients/go/nats"
 )
 
 type Adapter struct {

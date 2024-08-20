@@ -3,7 +3,7 @@ package entities
 import (
 	"time"
 
-	"github.com/lerenn/cryptellation/client/pkg/backtest"
+	"github.com/lerenn/cryptellation/svc/backtests/pkg/backtest"
 
 	"github.com/lerenn/cryptellation/candlesticks/pkg/candlestick"
 	"github.com/lerenn/cryptellation/candlesticks/pkg/period"

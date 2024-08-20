@@ -17,7 +17,8 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/lerenn/cryptellation/client/build/ci/dagger/internal/dagger"
+
+	"github.com/lerenn/cryptellation/svc/backtests/build/ci/dagger/internal/dagger"
 
 	"github.com/lerenn/cryptellation/internal/docker"
 )
