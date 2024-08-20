@@ -1,5 +1,8 @@
 #!/bin/sh
 
+# Exit if there is an error
+set -e
+
 # Check if git is available
 if ! command -v git &> /dev/null; then
     # Lazily install it as Alpine distribution (feel free to raise an issue if
