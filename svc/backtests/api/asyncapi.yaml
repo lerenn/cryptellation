@@ -215,7 +215,7 @@ components:
               description: Newly created backtest ID
         - properties:
             error:
-              $ref: '../../../../pkg/asyncapi/models.yaml#/components/schemas/Error'
+              $ref: '../../../../internal/asyncapi/models.yaml#/components/schemas/Error'
       traits:
         - $ref: "#/components/messageTraits/withCorrelationID"
 
@@ -241,7 +241,7 @@ components:
         type: object
         properties:
           error:
-            $ref: '../../../../pkg/asyncapi/models.yaml#/components/schemas/Error'
+            $ref: '../../../../internal/asyncapi/models.yaml#/components/schemas/Error'
       traits:
         - $ref: "#/components/messageTraits/withCorrelationID"
 
@@ -261,7 +261,7 @@ components:
         type: object
         properties:
           error:
-            $ref: '../../../../pkg/asyncapi/models.yaml#/components/schemas/Error'
+            $ref: '../../../../internal/asyncapi/models.yaml#/components/schemas/Error'
       traits:
         - $ref: "#/components/messageTraits/withCorrelationID"
 
@@ -284,7 +284,7 @@ components:
         type: object
         properties:
           error:
-            $ref: '../../../../pkg/asyncapi/models.yaml#/components/schemas/Error'
+            $ref: '../../../../internal/asyncapi/models.yaml#/components/schemas/Error'
       traits:
         - $ref: "#/components/messageTraits/withCorrelationID"
 
@@ -312,7 +312,7 @@ components:
                 $ref: '#/components/schemas/Order'
         - properties:
             error:
-              $ref: '../../../../pkg/asyncapi/models.yaml#/components/schemas/Error'
+              $ref: '../../../../internal/asyncapi/models.yaml#/components/schemas/Error'
       traits:
         - $ref: "#/components/messageTraits/withCorrelationID"
 
@@ -340,7 +340,7 @@ components:
                 $ref: '#/components/schemas/Account'
         - properties:
             error:
-              $ref: '../../../../pkg/asyncapi/models.yaml#/components/schemas/Error'
+              $ref: '../../../../internal/asyncapi/models.yaml#/components/schemas/Error'
       traits:
         - $ref: "#/components/messageTraits/withCorrelationID"
 

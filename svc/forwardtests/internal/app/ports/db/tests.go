@@ -2,6 +2,7 @@ package db
 
 import (
 	"context"
+	"time"
 
 	"cryptellation/pkg/models/account"
 
@@ -70,7 +71,8 @@ func (suite *ForwardTestSuite) TestListSuite() {
 }
 
 func (suite *ForwardTestSuite) TestUpdate() {
-	ft := forwardtest.ForwardTest{
+	// Create forward test
+	ft1 := forwardtest.ForwardTest{
 		ID: uuid.New(),
 		Accounts: map[string]account.Account{
 			"exchange": {
@@ -80,9 +82,16 @@ func (suite *ForwardTestSuite) TestUpdate() {
 			},
 		},
 	}
-	suite.Require().NoError(suite.DB.CreateForwardTest(context.TODO(), ft))
+	suite.Require().NoError(suite.DB.CreateForwardTest(context.TODO(), ft1))
+	rp1, err := suite.DB.ReadForwardTest(context.TODO(), ft1.ID)
+	suite.Require().NoError(err)
+
+	// Wait for 1 millisecond
+	time.Sleep(time.Millisecond)
+
+	// Update forward test
 	ft2 := forwardtest.ForwardTest{
-		ID: ft.ID,
+		ID: ft1.ID,
 		Accounts: map[string]account.Account{
 			"exchange2": {
 				Balances: map[string]float64{
@@ -91,16 +100,16 @@ func (suite *ForwardTestSuite) TestUpdate() {
 			},
 		},
 	}
-	// Should be changes here
 	suite.Require().NoError(suite.DB.UpdateForwardTest(context.TODO(), ft2))
-	rp, err := suite.DB.ReadForwardTest(context.TODO(), ft.ID)
+	rp2, err := suite.DB.ReadForwardTest(context.TODO(), ft1.ID)
 	suite.Require().NoError(err)
 
-	suite.Require().Equal(ft.ID, rp.ID)
-	suite.Require().Equal(ft2.ID, rp.ID)
-	suite.Require().Len(rp.Accounts, 1)
-	suite.Require().Len(rp.Accounts["exchange2"].Balances, 1)
-	suite.Require().Equal(ft2.Accounts["exchange2"].Balances["USDC"], rp.Accounts["exchange2"].Balances["USDC"])
+	suite.Require().Equal(ft1.ID, rp2.ID)
+	suite.Require().True(rp2.UpdatedAt.After(rp1.UpdatedAt), rp2.UpdatedAt.String()+" should be after "+rp1.UpdatedAt.String())
+	suite.Require().Equal(ft2.ID, rp2.ID)
+	suite.Require().Len(rp2.Accounts, 1)
+	suite.Require().Len(rp2.Accounts["exchange2"].Balances, 1)
+	suite.Require().Equal(ft2.Accounts["exchange2"].Balances["USDC"], rp2.Accounts["exchange2"].Balances["USDC"])
 }
 
 func (suite *ForwardTestSuite) TestDelete() {

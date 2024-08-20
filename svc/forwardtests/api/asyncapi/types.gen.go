@@ -674,8 +674,8 @@ type HeadersFromListResponseMessage struct {
 // ListResponseMessagePayload is a schema from the AsyncAPI specification required in messages
 type ListResponseMessagePayload struct {
 	// Description: Response to a failed call
-	Error *ErrorSchema          `json:"error"`
-	Ids   []ForwardTestIDSchema `json:"ids"`
+	Error        *ErrorSchema        `json:"error"`
+	Forwardtests []ForwardTestSchema `json:"forwardtests"`
 }
 
 // ListResponseMessage is the message expected for 'ListResponseMessage' channel.
@@ -1460,6 +1460,15 @@ type ErrorSchema struct {
 // ExchangeSchema is a schema from the AsyncAPI specification required in messages
 // Description: Exchange name
 type ExchangeSchema string
+
+// ForwardTestSchema is a schema from the AsyncAPI specification required in messages
+type ForwardTestSchema struct {
+	// Description: Targeted forwardtest ID
+	Id ForwardTestIDSchema `json:"id"`
+
+	// Description: Date-Time format according to RFC3339
+	UpdatedAt DateSchema `json:"updated_at"`
+}
 
 // ForwardTestIDSchema is a schema from the AsyncAPI specification required in messages
 // Description: Targeted forwardtest ID

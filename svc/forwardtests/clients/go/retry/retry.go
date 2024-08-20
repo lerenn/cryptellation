@@ -40,13 +40,13 @@ func (r retry) CreateForwardTest(ctx context.Context, payload forwardtest.NewPay
 	return id, err
 }
 
-func (r retry) ListForwardTests(ctx context.Context) ([]uuid.UUID, error) {
-	var ids []uuid.UUID
+func (r retry) ListForwardTests(ctx context.Context) ([]forwardtest.ForwardTest, error) {
+	var fts []forwardtest.ForwardTest
 	err := r.Retryable.Exec(ctx, func(ctx context.Context) (err error) {
-		ids, err = r.client.ListForwardTests(ctx)
+		fts, err = r.client.ListForwardTests(ctx)
 		return err
 	})
-	return ids, err
+	return fts, err
 }
 
 func (r retry) CreateOrder(ctx context.Context, payload common.OrderCreationPayload) error {

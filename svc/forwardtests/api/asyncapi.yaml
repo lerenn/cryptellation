@@ -172,7 +172,7 @@ components:
                 $ref: '#/components/schemas/Account'
         - properties:
             error:
-              $ref: '../../../../pkg/asyncapi/models.yaml#/components/schemas/Error'
+              $ref: '../../../../internal/asyncapi/models.yaml#/components/schemas/Error'
       traits:
         - $ref: "#/components/messageTraits/withCorrelationID"
 
@@ -201,7 +201,7 @@ components:
               description: Newly created forwardtest ID
         - properties:
             error:
-              $ref: '../../../../pkg/asyncapi/models.yaml#/components/schemas/Error'
+              $ref: '../../../../internal/asyncapi/models.yaml#/components/schemas/Error'
       traits:
         - $ref: "#/components/messageTraits/withCorrelationID"
 
@@ -216,13 +216,13 @@ components:
         type: object
         oneOf:
         - properties:
-            ids:
+            forwardtests:
               type: array
               items:
-                $ref: '#/components/schemas/ForwardTestID'
+                $ref: '#/components/schemas/ForwardTest'
         - properties:
             error:
-              $ref: '../../../../pkg/asyncapi/models.yaml#/components/schemas/Error'
+              $ref: '../../../../internal/asyncapi/models.yaml#/components/schemas/Error'
       traits:
         - $ref: "#/components/messageTraits/withCorrelationID"
 
@@ -245,7 +245,7 @@ components:
         type: object
         properties:
           error:
-            $ref: '../../../../pkg/asyncapi/models.yaml#/components/schemas/Error'
+            $ref: '../../../../internal/asyncapi/models.yaml#/components/schemas/Error'
       traits:
         - $ref: "#/components/messageTraits/withCorrelationID"
 
@@ -269,7 +269,7 @@ components:
               $ref: '#/components/schemas/ForwardTestStatus'
         - properties:
             error:
-              $ref: '../../../../pkg/asyncapi/models.yaml#/components/schemas/Error'
+              $ref: '../../../../internal/asyncapi/models.yaml#/components/schemas/Error'
       traits:
         - $ref: "#/components/messageTraits/withCorrelationID"
 
@@ -351,6 +351,16 @@ components:
           description: Main error reason
           examples:
             - "Invalid request: no time specified"
+    ForwardTest:
+      type: object
+      required:
+        - id
+        - updated_at
+      properties:
+        id:
+          $ref: '#/components/schemas/ForwardTestID'
+        updated_at:
+          $ref: '#/components/schemas/Date'
     ForwardTestID:
       type: string
       description: Targeted forwardtest ID

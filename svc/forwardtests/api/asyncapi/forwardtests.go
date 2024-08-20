@@ -1,12 +1,13 @@
 // ForwardTests
-//go:generate go run github.com/lerenn/asyncapi-codegen/cmd/asyncapi-codegen@v0.39.0 -g application -p asyncapi -i ../asyncapi.yaml,../../../../pkg/asyncapi/models.yaml -o ./app.gen.go
-//go:generate go run github.com/lerenn/asyncapi-codegen/cmd/asyncapi-codegen@v0.39.0 -g user        -p asyncapi -i ../asyncapi.yaml,../../../../pkg/asyncapi/models.yaml -o ./user.gen.go
-//go:generate go run github.com/lerenn/asyncapi-codegen/cmd/asyncapi-codegen@v0.39.0 -g types       -p asyncapi -i ../asyncapi.yaml,../../../../pkg/asyncapi/models.yaml -o ./types.gen.go
+//go:generate go run github.com/lerenn/asyncapi-codegen/cmd/asyncapi-codegen@v0.39.0 -g application -p asyncapi -i ../asyncapi.yaml,../../../../internal/asyncapi/models.yaml -o ./app.gen.go
+//go:generate go run github.com/lerenn/asyncapi-codegen/cmd/asyncapi-codegen@v0.39.0 -g user        -p asyncapi -i ../asyncapi.yaml,../../../../internal/asyncapi/models.yaml -o ./user.gen.go
+//go:generate go run github.com/lerenn/asyncapi-codegen/cmd/asyncapi-codegen@v0.39.0 -g types       -p asyncapi -i ../asyncapi.yaml,../../../../internal/asyncapi/models.yaml -o ./types.gen.go
 
 package asyncapi
 
 import (
 	"cryptellation/pkg/models/account"
+	"time"
 
 	"cryptellation/svc/forwardtests/pkg/forwardtest"
 
@@ -40,24 +41,31 @@ func (msg CreateRequestMessage) ToModel() (forwardtest.NewPayload, error) {
 
 func (msg *ListResponseMessage) Set(payload []forwardtest.ForwardTest) {
 	// Format forward tests
-	tests := make([]ForwardTestIDSchema, 0, len(payload))
+	tests := make([]ForwardTestSchema, 0, len(payload))
 	for _, test := range payload {
-		tests = append(tests, ForwardTestIDSchema(test.ID.String()))
+		tests = append(tests, ForwardTestSchema{
+			Id:        ForwardTestIDSchema(test.ID.String()),
+			UpdatedAt: DateSchema(test.UpdatedAt),
+		})
 	}
 
 	// Set forward tests
-	msg.Payload.Ids = tests
+	msg.Payload.Forwardtests = tests
 }
 
-func (msg ListResponseMessage) ToModel() ([]uuid.UUID, error) {
+func (msg ListResponseMessage) ToModel() ([]forwardtest.ForwardTest, error) {
 	// Format forward tests
-	tests := make([]uuid.UUID, 0, len(msg.Payload.Ids))
-	for _, id := range msg.Payload.Ids {
-		test, err := uuid.Parse(string(id))
+	tests := make([]forwardtest.ForwardTest, 0, len(msg.Payload.Forwardtests))
+	for _, ft := range msg.Payload.Forwardtests {
+		id, err := uuid.Parse(string(ft.Id))
 		if err != nil {
 			return nil, err
 		}
-		tests = append(tests, test)
+
+		tests = append(tests, forwardtest.ForwardTest{
+			ID:        id,
+			UpdatedAt: time.Time(ft.UpdatedAt),
+		})
 	}
 
 	// Return forward tests

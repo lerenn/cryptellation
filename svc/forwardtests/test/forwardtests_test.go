@@ -2,6 +2,7 @@ package test
 
 import (
 	"context"
+	"time"
 
 	common "cryptellation/pkg/client"
 	"cryptellation/pkg/models/account"
@@ -56,4 +57,35 @@ func (suite *EndToEndSuite) TestCreateOrder() {
 	suite.Require().NoError(err)
 	suite.Require().Equal(1.0, accounts["binance"].Balances["BTC"])
 	suite.Require().NotEqual(1000000, accounts["binance"].Balances["USDT"])
+}
+
+func (suite *EndToEndSuite) TestListForwardTests() {
+	// Create forwardtest
+	id, err := suite.client.CreateForwardTest(context.Background(), forwardtest.NewPayload{
+		Accounts: map[string]account.Account{
+			"binance": {
+				Balances: map[string]float64{
+					"BTC": 1,
+				},
+			},
+		},
+	})
+	suite.Require().NoError(err)
+
+	// List forwardtests
+	tests, err := suite.client.ListForwardTests(context.Background())
+	suite.Require().NoError(err)
+	suite.Require().True(len(tests) > 0)
+
+	// Get last updated forwardtest
+	var last forwardtest.ForwardTest
+	for _, t := range tests {
+		if t.UpdatedAt.After(last.UpdatedAt) {
+			last = t
+		}
+	}
+
+	// Check last forwardtest
+	suite.Require().Equal(id, last.ID)
+	suite.Require().WithinDuration(time.Now(), last.UpdatedAt, 5*time.Second)
 }

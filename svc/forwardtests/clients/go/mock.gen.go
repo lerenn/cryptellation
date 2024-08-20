@@ -110,10 +110,10 @@ func (mr *MockClientMockRecorder) GetStatus(ctx, forwardTestID interface{}) *gom
 }
 
 // ListForwardTests mocks base method.
-func (m *MockClient) ListForwardTests(ctx context.Context) ([]uuid.UUID, error) {
+func (m *MockClient) ListForwardTests(ctx context.Context) ([]forwardtest.ForwardTest, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ListForwardTests", ctx)
-	ret0, _ := ret[0].([]uuid.UUID)
+	ret0, _ := ret[0].([]forwardtest.ForwardTest)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }

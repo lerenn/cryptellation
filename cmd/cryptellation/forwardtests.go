@@ -39,8 +39,9 @@ var forwardtestsListCmd = &cobra.Command{
 			return err
 		}
 
-		for _, l := range list {
-			cmd.Println(l)
+		fmt.Printf("%-40s%-20s\n", "ID", "UpdatedAt")
+		for _, ft := range list {
+			fmt.Printf("%-40s%-20s\n", ft.ID, ft.UpdatedAt)
 		}
 		return nil
 	},

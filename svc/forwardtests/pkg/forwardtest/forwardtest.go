@@ -20,9 +20,10 @@ var (
 )
 
 type ForwardTest struct {
-	ID       uuid.UUID
-	Accounts map[string]account.Account
-	Orders   []order.Order
+	ID        uuid.UUID
+	UpdatedAt time.Time
+	Accounts  map[string]account.Account
+	Orders    []order.Order
 }
 
 type NewPayload struct {

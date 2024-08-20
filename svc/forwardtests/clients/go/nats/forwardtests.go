@@ -78,7 +78,7 @@ func (cl nats) CreateForwardTest(ctx context.Context, payload forwardtest.NewPay
 
 }
 
-func (cl nats) ListForwardTests(ctx context.Context) ([]uuid.UUID, error) {
+func (cl nats) ListForwardTests(ctx context.Context) ([]forwardtest.ForwardTest, error) {
 	// Set message
 	reqMsg := asyncapi.NewListRequestMessage()
 	reqMsg.Headers.ReplyTo = helpers.AddReplyToSuffix(asyncapi.ListRequestChannelPath, cl.name)

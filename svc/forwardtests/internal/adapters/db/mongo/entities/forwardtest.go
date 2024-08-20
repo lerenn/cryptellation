@@ -28,9 +28,10 @@ func (ft ForwardTest) ToModel() (forwardtest.ForwardTest, error) {
 	}
 
 	return forwardtest.ForwardTest{
-		ID:       id,
-		Accounts: ToAccountModels(ft.Accounts),
-		Orders:   orders,
+		ID:        id,
+		UpdatedAt: ft.UpdatedAt,
+		Accounts:  ToAccountModels(ft.Accounts),
+		Orders:    orders,
 	}, nil
 }
 
