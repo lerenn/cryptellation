@@ -52,11 +52,7 @@ func NewGit(ctx context.Context, srcDir *dagger.Directory, auth authParams) (Git
 
 	// Set authentication based on the provided parameters
 	if auth.SSHPrivateKeyFile != nil {
-		// Mount the SSH private key
-		container = container.WithMountedSecret("/root/.ssh/id_rsa", auth.SSHPrivateKeyFile)
-
-		// Set github repository requirements
-		container, err = setGithubRepositoryRequirements(ctx, container)
+		container, err = mountSSHPrivateKeyFile(ctx, container, auth)
 		if err != nil {
 			return Git{}, err
 		}
@@ -73,6 +69,12 @@ func NewGit(ctx context.Context, srcDir *dagger.Directory, auth authParams) (Git
 		if err != nil {
 			return Git{}, err
 		}
+	}
+
+	// Set Git author
+	container, err = setGitAuthor(ctx, container)
+	if err != nil {
+		return Git{}, err
 	}
 
 	return Git{
@@ -296,4 +298,46 @@ func (g *Git) PublishNewCommit(
 	}
 
 	return nil
+}
+
+func mountSSHPrivateKeyFile(
+	ctx context.Context,
+	container *dagger.Container,
+	auth authParams,
+) (*dagger.Container, error) {
+	// Mount key
+	if auth.SSHPrivateKeyFile != nil {
+		container = container.WithMountedSecret("/root/.ssh/id_rsa", auth.SSHPrivateKeyFile)
+	}
+
+	// Add SSH config for github
+	container, err := container.
+		WithExec([]string{"sh", "-c", "echo -e 'Host github.com\n\tStrictHostKeyChecking no\n' > /root/.ssh/config"}).
+		Sync(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return container, nil
+}
+
+func setGitAuthor(
+	ctx context.Context,
+	container *dagger.Container,
+) (*dagger.Container, error) {
+	// Add infos on author
+	container, err := container.
+		WithExec([]string{"git", "config", "--global", "user.email", "louis.fradin+cryptellation-ci@gmail.com"}).
+		Sync(ctx)
+	if err != nil {
+		return nil, err
+	}
+	container, err = container.
+		WithExec([]string{"git", "config", "--global", "user.name", "Cryptellation CI"}).
+		Sync(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return container, nil
 }

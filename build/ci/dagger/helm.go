@@ -64,25 +64,25 @@ func publishHelmChart(
 		}
 	}
 
-	// Install ssh
-	container, err = container.
-		WithExec([]string{"apk", "add", "openssh"}).
-		Sync(ctx)
-	if err != nil {
-		return err
-	}
-
-	// Clone the package repository
+	// Set git system
 	var url string
 	if auth.SSHPrivateKeyFile != nil {
-		// Set correct url
-		url = sshHelmPkgGitRepo
-
-		// Set github repository requirements
-		container, err = setGithubRepositoryRequirements(ctx, container)
+		// Install SSH
+		container, err = container.
+			WithExec([]string{"apk", "add", "openssh"}).
+			Sync(ctx)
 		if err != nil {
 			return err
 		}
+
+		// Mount SSH private key
+		container, err = mountSSHPrivateKeyFile(ctx, container, auth)
+		if err != nil {
+			return err
+		}
+
+		// Set correct url
+		url = sshHelmPkgGitRepo
 	} else if auth.GithubToken != nil {
 		// Set correct url
 		tokenPlainText, err := auth.GithubToken.Plaintext(ctx)
@@ -91,6 +91,12 @@ func publishHelmChart(
 		}
 		url = fmt.Sprintf(tokenHelmPkgGitRepo, tokenPlainText)
 	}
+	container, err = setGitAuthor(ctx, container)
+	if err != nil {
+		return err
+	}
+
+	// Clone the package repository
 	container, err = container.WithExec([]string{"git", "clone", url, "packages"}).Sync(ctx)
 	if err != nil {
 		return err
