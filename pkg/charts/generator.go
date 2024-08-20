@@ -4,13 +4,14 @@ import (
 	"context"
 	"time"
 
-	client "cryptellation/client"
-	"cryptellation/pkg/utils"
+	client "github.com/lerenn/cryptellation/clients/go"
 
-	cdksclient "cryptellation/svc/candlesticks/clients/go"
-	"cryptellation/svc/candlesticks/pkg/candlestick"
+	"github.com/lerenn/cryptellation/pkg/utils"
 
-	indclient "cryptellation/svc/indicators/clients/go"
+	cdksclient "github.com/lerenn/cryptellation/candlesticks/clients/go"
+	"github.com/lerenn/cryptellation/candlesticks/pkg/candlestick"
+
+	indclient "github.com/lerenn/cryptellation/indicators/clients/go"
 
 	"github.com/go-echarts/go-echarts/v2/charts"
 	"github.com/go-echarts/go-echarts/v2/opts"

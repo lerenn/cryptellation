@@ -3,9 +3,9 @@ package backtests
 import (
 	"testing"
 
-	"cryptellation/pkg/config"
+	"github.com/lerenn/cryptellation/pkg/config"
 
-	"cryptellation/svc/backtests/internal/app/ports/events"
+	"github.com/lerenn/cryptellation/client/internal/app/ports/events"
 
 	"github.com/stretchr/testify/suite"
 )

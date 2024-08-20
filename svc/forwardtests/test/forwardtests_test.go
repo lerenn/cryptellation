@@ -4,11 +4,11 @@ import (
 	"context"
 	"time"
 
-	common "cryptellation/pkg/client"
-	"cryptellation/pkg/models/account"
-	"cryptellation/pkg/models/order"
+	common "github.com/lerenn/cryptellation/pkg/client"
+	"github.com/lerenn/cryptellation/pkg/models/account"
+	"github.com/lerenn/cryptellation/pkg/models/order"
 
-	"cryptellation/svc/forwardtests/pkg/forwardtest"
+	"github.com/lerenn/cryptellation/forwardtests/pkg/forwardtest"
 
 	"github.com/google/uuid"
 )

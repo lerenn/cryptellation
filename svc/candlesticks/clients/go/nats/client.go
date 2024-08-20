@@ -4,14 +4,15 @@ import (
 	"context"
 	"time"
 
-	helpers "cryptellation/internal/asyncapi"
-	"cryptellation/pkg/adapters/telemetry"
-	common "cryptellation/pkg/client"
-	"cryptellation/pkg/config"
+	helpers "github.com/lerenn/cryptellation/internal/asyncapi"
 
-	asyncapi "cryptellation/svc/candlesticks/api/asyncapi"
-	client "cryptellation/svc/candlesticks/clients/go"
-	"cryptellation/svc/candlesticks/pkg/candlestick"
+	"github.com/lerenn/cryptellation/pkg/adapters/telemetry"
+	common "github.com/lerenn/cryptellation/pkg/client"
+	"github.com/lerenn/cryptellation/pkg/config"
+
+	asyncapi "github.com/lerenn/cryptellation/candlesticks/api/asyncapi"
+	client "github.com/lerenn/cryptellation/candlesticks/clients/go"
+	"github.com/lerenn/cryptellation/candlesticks/pkg/candlestick"
 
 	"github.com/lerenn/asyncapi-codegen/pkg/extensions"
 	natsextension "github.com/lerenn/asyncapi-codegen/pkg/extensions/brokers/nats"

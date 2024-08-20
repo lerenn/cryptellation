@@ -15,9 +15,10 @@
 package main
 
 import (
-	"cryptellation/internal/docker"
-	"cryptellation/svc/backtests/pkg/dagger/internal/dagger"
+	"github.com/lerenn/cryptellation/client/pkg/dagger/internal/dagger"
 	"runtime"
+
+	"github.com/lerenn/cryptellation/internal/docker"
 )
 
 type CryptellationBacktests struct{}

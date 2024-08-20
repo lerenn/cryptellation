@@ -4,11 +4,11 @@ import (
 	"context"
 	"net/http"
 
-	"cryptellation/pkg/adapters/telemetry"
-	"cryptellation/pkg/version"
+	"github.com/lerenn/cryptellation/pkg/adapters/telemetry"
+	"github.com/lerenn/cryptellation/pkg/version"
 
-	asyncapi "cryptellation/svc/candlesticks/api/asyncapi"
-	"cryptellation/svc/candlesticks/internal/app"
+	asyncapi "github.com/lerenn/cryptellation/candlesticks/api/asyncapi"
+	"github.com/lerenn/cryptellation/candlesticks/internal/app"
 )
 
 type candlesticksSubscriber struct {

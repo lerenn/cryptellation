@@ -8,16 +8,16 @@ package asyncapi
 import (
 	"time"
 
-	"cryptellation/pkg/models/account"
-	"cryptellation/pkg/models/event"
-	"cryptellation/pkg/utils"
+	"github.com/lerenn/cryptellation/pkg/models/account"
+	"github.com/lerenn/cryptellation/pkg/models/event"
+	"github.com/lerenn/cryptellation/pkg/utils"
 
-	client "cryptellation/svc/backtests/clients/go"
-	"cryptellation/svc/backtests/pkg/backtest"
+	client "github.com/lerenn/cryptellation/client/clients/go"
+	"github.com/lerenn/cryptellation/client/pkg/backtest"
 
-	"cryptellation/svc/candlesticks/pkg/period"
+	"github.com/lerenn/cryptellation/candlesticks/pkg/period"
 
-	"cryptellation/svc/ticks/pkg/tick"
+	"github.com/lerenn/cryptellation/ticks/pkg/tick"
 
 	"github.com/google/uuid"
 )

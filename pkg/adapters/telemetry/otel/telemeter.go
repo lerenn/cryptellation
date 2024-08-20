@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	"cryptellation/pkg/adapters/telemetry"
+	"github.com/lerenn/cryptellation/pkg/adapters/telemetry"
 
 	"go.opentelemetry.io/otel/metric"
 	"go.opentelemetry.io/otel/trace"

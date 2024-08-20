@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"cryptellation/pkg/adapters/telemetry"
+	"github.com/lerenn/cryptellation/pkg/adapters/telemetry"
 )
 
 type Telemeter struct{}

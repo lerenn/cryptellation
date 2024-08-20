@@ -1,7 +1,7 @@
 package asyncapi
 
 import (
-	"cryptellation/pkg/models/event"
+	"github.com/lerenn/cryptellation/pkg/models/event"
 )
 
 func (msg *ListeningNotificationMessage) FromModel(sub event.TickSubscription) {

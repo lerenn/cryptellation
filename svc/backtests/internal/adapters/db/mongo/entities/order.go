@@ -3,7 +3,7 @@ package entities
 import (
 	"time"
 
-	"cryptellation/pkg/models/order"
+	"github.com/lerenn/cryptellation/pkg/models/order"
 
 	"github.com/google/uuid"
 )

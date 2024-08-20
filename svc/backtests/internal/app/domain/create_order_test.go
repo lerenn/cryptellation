@@ -3,11 +3,11 @@ package domain
 import (
 	"testing"
 
-	"cryptellation/svc/backtests/internal/app"
-	"cryptellation/svc/backtests/internal/app/ports/db"
-	"cryptellation/svc/backtests/internal/app/ports/events"
+	"github.com/lerenn/cryptellation/client/internal/app"
+	"github.com/lerenn/cryptellation/client/internal/app/ports/db"
+	"github.com/lerenn/cryptellation/client/internal/app/ports/events"
 
-	candlesticks "cryptellation/svc/candlesticks/clients/go"
+	candlesticks "github.com/lerenn/cryptellation/candlesticks/clients/go"
 
 	"github.com/stretchr/testify/suite"
 	"go.uber.org/mock/gomock"

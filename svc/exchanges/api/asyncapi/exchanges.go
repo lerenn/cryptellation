@@ -5,7 +5,7 @@
 
 package asyncapi
 
-import "cryptellation/svc/exchanges/pkg/exchange"
+import "github.com/lerenn/cryptellation/exchanges/pkg/exchange"
 
 func (msg *ListRequestMessage) Set(names ...string) {
 	msg.Payload = make([]ExchangeNameSchema, 0, len(names))

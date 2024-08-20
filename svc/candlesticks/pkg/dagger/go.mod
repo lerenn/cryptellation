@@ -1,13 +1,13 @@
-module cryptellation/svc/candlesticks/dagger
+module github.com/lerenn/cryptellation/candlesticks/dagger
 
 go 1.22.4
 
-replace cryptellation/internal => ../../../../internal
+replace github.com/lerenn/cryptellation/internal => ../../../../internal
 
 require (
-	cryptellation/internal v0.0.0-00010101000000-000000000000
 	github.com/99designs/gqlgen v0.17.49
 	github.com/Khan/genqlient v0.7.0
+	github.com/lerenn/cryptellation/internal v0.0.0-00010101000000-000000000000
 	github.com/vektah/gqlparser/v2 v2.5.16
 	go.opentelemetry.io/otel v1.28.0
 	go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploggrpc v0.0.0-20240812163816-c609b12d9815

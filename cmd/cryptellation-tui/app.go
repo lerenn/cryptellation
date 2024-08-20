@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"cryptellation/cmd/cryptellation-tui/views"
+	"github.com/lerenn/cryptellation/cmd/cryptellation-tui/views"
 
 	tea "github.com/charmbracelet/bubbletea"
 )

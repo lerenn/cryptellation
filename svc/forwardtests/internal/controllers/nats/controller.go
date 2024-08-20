@@ -3,11 +3,12 @@ package nats
 import (
 	"context"
 
-	asyncapipkg "cryptellation/internal/asyncapi"
-	"cryptellation/pkg/config"
+	asyncapipkg "github.com/lerenn/cryptellation/internal/asyncapi"
 
-	asyncapi "cryptellation/svc/forwardtests/api/asyncapi"
-	"cryptellation/svc/forwardtests/internal/app"
+	"github.com/lerenn/cryptellation/pkg/config"
+
+	asyncapi "github.com/lerenn/cryptellation/forwardtests/api/asyncapi"
+	"github.com/lerenn/cryptellation/forwardtests/internal/app"
 
 	"github.com/lerenn/asyncapi-codegen/pkg/extensions"
 	"github.com/lerenn/asyncapi-codegen/pkg/extensions/brokers/nats"

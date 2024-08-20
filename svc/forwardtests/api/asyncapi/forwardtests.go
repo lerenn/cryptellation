@@ -6,10 +6,11 @@
 package asyncapi
 
 import (
-	"cryptellation/pkg/models/account"
 	"time"
 
-	"cryptellation/svc/forwardtests/pkg/forwardtest"
+	"github.com/lerenn/cryptellation/pkg/models/account"
+
+	"github.com/lerenn/cryptellation/forwardtests/pkg/forwardtest"
 
 	"github.com/google/uuid"
 )

@@ -4,11 +4,11 @@ import (
 	"context"
 	"fmt"
 
-	"cryptellation/pkg/adapters/telemetry"
+	"github.com/lerenn/cryptellation/pkg/adapters/telemetry"
 
-	"cryptellation/svc/backtests/internal/adapters/db/mongo/entities"
-	port "cryptellation/svc/backtests/internal/app/ports/db"
-	"cryptellation/svc/backtests/pkg/backtest"
+	"github.com/lerenn/cryptellation/client/internal/adapters/db/mongo/entities"
+	port "github.com/lerenn/cryptellation/client/internal/app/ports/db"
+	"github.com/lerenn/cryptellation/client/pkg/backtest"
 
 	"github.com/google/uuid"
 )

@@ -6,7 +6,7 @@ package exchanges
 import (
 	"context"
 
-	"cryptellation/svc/exchanges/pkg/exchange"
+	"github.com/lerenn/cryptellation/exchanges/pkg/exchange"
 )
 
 type Port interface {

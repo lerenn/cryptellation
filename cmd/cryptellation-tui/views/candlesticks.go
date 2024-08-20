@@ -6,18 +6,18 @@ import (
 	"strings"
 	"time"
 
-	"cryptellation/pkg/config"
-	"cryptellation/pkg/utils"
+	"github.com/lerenn/cryptellation/pkg/config"
+	"github.com/lerenn/cryptellation/pkg/utils"
 
-	cdsclient "cryptellation/svc/candlesticks/clients/go"
-	candlestickscache "cryptellation/svc/candlesticks/clients/go/cache"
-	candlesticksnats "cryptellation/svc/candlesticks/clients/go/nats"
-	candlesticksretry "cryptellation/svc/candlesticks/clients/go/retry"
-	"cryptellation/svc/candlesticks/pkg/candlestick"
-	"cryptellation/svc/candlesticks/pkg/period"
+	cdsclient "github.com/lerenn/cryptellation/candlesticks/clients/go"
+	candlestickscache "github.com/lerenn/cryptellation/candlesticks/clients/go/cache"
+	candlesticksnats "github.com/lerenn/cryptellation/candlesticks/clients/go/nats"
+	candlesticksretry "github.com/lerenn/cryptellation/candlesticks/clients/go/retry"
+	"github.com/lerenn/cryptellation/candlesticks/pkg/candlestick"
+	"github.com/lerenn/cryptellation/candlesticks/pkg/period"
 
-	"cryptellation/cmd/cryptellation-tui/charts"
-	"cryptellation/cmd/cryptellation-tui/charts/candlesticks"
+	"github.com/lerenn/cryptellation/cmd/cryptellation-tui/charts"
+	"github.com/lerenn/cryptellation/cmd/cryptellation-tui/charts/candlesticks"
 
 	"github.com/charmbracelet/bubbles/key"
 	tea "github.com/charmbracelet/bubbletea"

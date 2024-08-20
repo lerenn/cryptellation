@@ -5,8 +5,8 @@ import (
 	"sync"
 	"time"
 
-	"cryptellation/pkg/adapters/telemetry"
-	"cryptellation/pkg/models/event"
+	"github.com/lerenn/cryptellation/pkg/adapters/telemetry"
+	"github.com/lerenn/cryptellation/pkg/models/event"
 )
 
 type subscription struct {

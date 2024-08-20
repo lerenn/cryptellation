@@ -3,16 +3,17 @@ package daemon
 import (
 	"context"
 
-	asyncapipkg "cryptellation/internal/asyncapi"
-	"cryptellation/pkg/config"
+	asyncapipkg "github.com/lerenn/cryptellation/internal/asyncapi"
 
-	candlesticks "cryptellation/svc/candlesticks/clients/go"
-	candlestickscache "cryptellation/svc/candlesticks/clients/go/cache"
-	candlesticksnats "cryptellation/svc/candlesticks/clients/go/nats"
-	candlesticksretry "cryptellation/svc/candlesticks/clients/go/retry"
+	"github.com/lerenn/cryptellation/pkg/config"
 
-	mongo "cryptellation/svc/forwardtests/internal/adapters/db/mongo"
-	"cryptellation/svc/forwardtests/internal/app/ports/db"
+	candlesticks "github.com/lerenn/cryptellation/candlesticks/clients/go"
+	candlestickscache "github.com/lerenn/cryptellation/candlesticks/clients/go/cache"
+	candlesticksnats "github.com/lerenn/cryptellation/candlesticks/clients/go/nats"
+	candlesticksretry "github.com/lerenn/cryptellation/candlesticks/clients/go/retry"
+
+	mongo "github.com/lerenn/cryptellation/forwardtests/internal/adapters/db/mongo"
+	"github.com/lerenn/cryptellation/forwardtests/internal/app/ports/db"
 )
 
 type adapters struct {

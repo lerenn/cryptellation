@@ -1,8 +1,8 @@
 package domain
 
 import (
-	db "cryptellation/svc/candlesticks/internal/app/ports/db"
-	"cryptellation/svc/candlesticks/internal/app/ports/exchanges"
+	db "github.com/lerenn/cryptellation/candlesticks/internal/app/ports/db"
+	"github.com/lerenn/cryptellation/candlesticks/internal/app/ports/exchanges"
 )
 
 type Candlesticks struct {

@@ -5,16 +5,16 @@ import (
 	"testing"
 	"time"
 
-	"cryptellation/pkg/models/account"
-	"cryptellation/pkg/models/order"
+	"github.com/lerenn/cryptellation/pkg/models/account"
+	"github.com/lerenn/cryptellation/pkg/models/order"
 
-	candlesticks "cryptellation/svc/candlesticks/clients/go"
-	"cryptellation/svc/candlesticks/pkg/candlestick"
-	"cryptellation/svc/candlesticks/pkg/period"
+	candlesticks "github.com/lerenn/cryptellation/candlesticks/clients/go"
+	"github.com/lerenn/cryptellation/candlesticks/pkg/candlestick"
+	"github.com/lerenn/cryptellation/candlesticks/pkg/period"
 
-	"cryptellation/svc/forwardtests/internal/app"
-	"cryptellation/svc/forwardtests/internal/app/ports/db"
-	"cryptellation/svc/forwardtests/pkg/forwardtest"
+	"github.com/lerenn/cryptellation/forwardtests/internal/app"
+	"github.com/lerenn/cryptellation/forwardtests/internal/app/ports/db"
+	"github.com/lerenn/cryptellation/forwardtests/pkg/forwardtest"
 
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/suite"

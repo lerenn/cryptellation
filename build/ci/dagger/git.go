@@ -2,10 +2,11 @@ package main
 
 import (
 	"context"
-	"cryptellation/pkg/utils"
 	"dagger/cryptellation-ci/internal/dagger"
 	"fmt"
 	"strings"
+
+	"github.com/lerenn/cryptellation/pkg/utils"
 
 	"github.com/google/go-github/v63/github"
 )

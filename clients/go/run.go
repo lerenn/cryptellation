@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"time"
 
-	"cryptellation/pkg/client"
-	"cryptellation/pkg/models/account"
+	"github.com/lerenn/cryptellation/pkg/client"
+	"github.com/lerenn/cryptellation/pkg/models/account"
 
 	"github.com/google/uuid"
 )

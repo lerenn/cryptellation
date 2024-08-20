@@ -1,7 +1,7 @@
 package main
 
 import (
-	"cryptellation/svc/indicators/cmd/api/daemon"
+	"github.com/lerenn/cryptellation/indicators/cmd/api/daemon"
 
 	"github.com/spf13/cobra"
 )

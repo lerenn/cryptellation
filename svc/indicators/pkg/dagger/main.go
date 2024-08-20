@@ -15,9 +15,11 @@
 package main
 
 import (
-	"cryptellation/internal/docker"
-	"cryptellation/svc/indicators/pkg/dagger/internal/dagger"
 	"runtime"
+
+	"github.com/lerenn/cryptellation/indicators/pkg/dagger/internal/dagger"
+
+	"github.com/lerenn/cryptellation/internal/docker"
 )
 
 type CryptellationIndicators struct{}

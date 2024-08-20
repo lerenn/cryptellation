@@ -3,11 +3,11 @@ package domain
 import (
 	"context"
 
-	"cryptellation/pkg/adapters/telemetry"
+	"github.com/lerenn/cryptellation/pkg/adapters/telemetry"
 
-	"cryptellation/svc/forwardtests/internal/app"
-	"cryptellation/svc/forwardtests/internal/app/ports/db"
-	"cryptellation/svc/forwardtests/pkg/forwardtest"
+	"github.com/lerenn/cryptellation/forwardtests/internal/app"
+	"github.com/lerenn/cryptellation/forwardtests/internal/app/ports/db"
+	"github.com/lerenn/cryptellation/forwardtests/pkg/forwardtest"
 )
 
 func (ft ForwardTests) List(ctx context.Context, _ app.ListFilters) ([]forwardtest.ForwardTest, error) {

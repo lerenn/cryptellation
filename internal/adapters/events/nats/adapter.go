@@ -1,7 +1,7 @@
 package nats
 
 import (
-	"cryptellation/pkg/config"
+	"github.com/lerenn/cryptellation/pkg/config"
 
 	"github.com/lerenn/asyncapi-codegen/pkg/extensions"
 	"github.com/lerenn/asyncapi-codegen/pkg/extensions/brokers/nats"

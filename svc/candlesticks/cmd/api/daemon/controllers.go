@@ -1,9 +1,9 @@
 package daemon
 
 import (
-	"cryptellation/pkg/config"
+	"github.com/lerenn/cryptellation/pkg/config"
 
-	"cryptellation/svc/candlesticks/internal/controllers/nats"
+	"github.com/lerenn/cryptellation/candlesticks/internal/controllers/nats"
 )
 
 type controllers struct {

@@ -1,7 +1,7 @@
 package entities
 
 import (
-	"cryptellation/pkg/models/account"
+	"github.com/lerenn/cryptellation/pkg/models/account"
 )
 
 type Balance struct {

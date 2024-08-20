@@ -15,9 +15,11 @@
 package main
 
 import (
-	"cryptellation/internal/docker"
-	"cryptellation/svc/forwardtests/pkg/dagger/internal/dagger"
 	"runtime"
+
+	"github.com/lerenn/cryptellation/forwardtests/pkg/dagger/internal/dagger"
+
+	"github.com/lerenn/cryptellation/internal/docker"
 )
 
 type CryptellationForwardtests struct{}

@@ -1,7 +1,7 @@
 package asyncapi
 
 import (
-	"cryptellation/pkg/models/account"
+	"github.com/lerenn/cryptellation/pkg/models/account"
 
 	"github.com/google/uuid"
 )

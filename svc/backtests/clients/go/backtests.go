@@ -7,9 +7,9 @@ import (
 	"context"
 	"time"
 
-	client "cryptellation/pkg/client"
-	"cryptellation/pkg/models/account"
-	"cryptellation/pkg/models/event"
+	client "github.com/lerenn/cryptellation/pkg/client"
+	"github.com/lerenn/cryptellation/pkg/models/account"
+	"github.com/lerenn/cryptellation/pkg/models/event"
 
 	"github.com/google/uuid"
 )

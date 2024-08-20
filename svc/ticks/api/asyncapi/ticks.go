@@ -8,7 +8,7 @@ package asyncapi
 import (
 	"time"
 
-	"cryptellation/svc/ticks/pkg/tick"
+	"github.com/lerenn/cryptellation/ticks/pkg/tick"
 )
 
 func (msg *TickMessage) FromModel(t tick.Tick) {

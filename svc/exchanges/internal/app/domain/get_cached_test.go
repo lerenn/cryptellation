@@ -8,10 +8,10 @@ import (
 	"github.com/stretchr/testify/suite"
 	"go.uber.org/mock/gomock"
 
-	"cryptellation/svc/exchanges/internal/app"
-	"cryptellation/svc/exchanges/internal/app/ports/db"
-	"cryptellation/svc/exchanges/internal/app/ports/exchanges"
-	"cryptellation/svc/exchanges/pkg/exchange"
+	"github.com/lerenn/cryptellation/exchanges/internal/app"
+	"github.com/lerenn/cryptellation/exchanges/internal/app/ports/db"
+	"github.com/lerenn/cryptellation/exchanges/internal/app/ports/exchanges"
+	"github.com/lerenn/cryptellation/exchanges/pkg/exchange"
 )
 
 func TestGetCachedSuite(t *testing.T) {

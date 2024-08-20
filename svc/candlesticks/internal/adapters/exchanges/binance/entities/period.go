@@ -3,7 +3,7 @@ package entities
 import (
 	"fmt"
 
-	"cryptellation/svc/candlesticks/pkg/period"
+	"github.com/lerenn/cryptellation/candlesticks/pkg/period"
 )
 
 // Intervals represents every intervals supported by Binance API

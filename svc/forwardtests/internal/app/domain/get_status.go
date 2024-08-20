@@ -5,12 +5,12 @@ import (
 	"fmt"
 	"time"
 
-	"cryptellation/pkg/utils"
+	"github.com/lerenn/cryptellation/pkg/utils"
 
-	client "cryptellation/svc/candlesticks/clients/go"
-	"cryptellation/svc/candlesticks/pkg/period"
+	client "github.com/lerenn/cryptellation/candlesticks/clients/go"
+	"github.com/lerenn/cryptellation/candlesticks/pkg/period"
 
-	"cryptellation/svc/forwardtests/pkg/forwardtest"
+	"github.com/lerenn/cryptellation/forwardtests/pkg/forwardtest"
 
 	"github.com/google/uuid"
 )

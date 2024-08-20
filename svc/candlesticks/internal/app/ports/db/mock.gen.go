@@ -6,7 +6,7 @@ package db
 
 import (
 	context "context"
-	candlestick "cryptellation/svc/candlesticks/pkg/candlestick"
+	candlestick "github.com/lerenn/cryptellation/candlesticks/pkg/candlestick"
 	reflect "reflect"
 	time "time"
 

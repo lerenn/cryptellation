@@ -3,7 +3,7 @@ package domain
 import (
 	"context"
 
-	"cryptellation/svc/forwardtests/pkg/forwardtest"
+	"github.com/lerenn/cryptellation/forwardtests/pkg/forwardtest"
 
 	"github.com/google/uuid"
 )

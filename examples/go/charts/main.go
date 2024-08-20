@@ -6,17 +6,17 @@ import (
 	"net/http"
 	"time"
 
-	cryptellation "cryptellation/client"
+	cryptellation "github.com/lerenn/cryptellation/clients/go"
 
-	"cryptellation/pkg/charts"
-	"cryptellation/pkg/config"
-	"cryptellation/pkg/utils"
+	"github.com/lerenn/cryptellation/pkg/charts"
+	"github.com/lerenn/cryptellation/pkg/config"
+	"github.com/lerenn/cryptellation/pkg/utils"
 
-	candlesticks "cryptellation/svc/candlesticks/clients/go"
-	"cryptellation/svc/candlesticks/pkg/candlestick"
-	"cryptellation/svc/candlesticks/pkg/period"
+	candlesticks "github.com/lerenn/cryptellation/candlesticks/clients/go"
+	"github.com/lerenn/cryptellation/candlesticks/pkg/candlestick"
+	"github.com/lerenn/cryptellation/candlesticks/pkg/period"
 
-	indicators "cryptellation/svc/indicators/clients/go"
+	indicators "github.com/lerenn/cryptellation/indicators/clients/go"
 )
 
 func main() {

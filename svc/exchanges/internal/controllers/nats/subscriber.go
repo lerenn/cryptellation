@@ -4,11 +4,11 @@ import (
 	"context"
 	"net/http"
 
-	"cryptellation/pkg/adapters/telemetry"
-	"cryptellation/pkg/version"
+	"github.com/lerenn/cryptellation/pkg/adapters/telemetry"
+	"github.com/lerenn/cryptellation/pkg/version"
 
-	asyncapi "cryptellation/svc/exchanges/api/asyncapi"
-	exchanges "cryptellation/svc/exchanges/internal/app"
+	asyncapi "github.com/lerenn/cryptellation/exchanges/api/asyncapi"
+	exchanges "github.com/lerenn/cryptellation/exchanges/internal/app"
 )
 
 type subscriber struct {

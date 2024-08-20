@@ -3,8 +3,8 @@ package mongo
 import (
 	"context"
 
-	"cryptellation/svc/exchanges/internal/adapters/db/mongo/entities"
-	"cryptellation/svc/exchanges/pkg/exchange"
+	"github.com/lerenn/cryptellation/exchanges/internal/adapters/db/mongo/entities"
+	"github.com/lerenn/cryptellation/exchanges/pkg/exchange"
 
 	"go.mongodb.org/mongo-driver/bson"
 )

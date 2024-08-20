@@ -7,7 +7,7 @@ import (
 	"context"
 	"time"
 
-	"cryptellation/svc/backtests/pkg/backtest"
+	"github.com/lerenn/cryptellation/client/pkg/backtest"
 
 	"github.com/google/uuid"
 )

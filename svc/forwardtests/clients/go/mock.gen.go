@@ -6,9 +6,9 @@ package client
 
 import (
 	context "context"
-	client "cryptellation/pkg/client"
-	account "cryptellation/pkg/models/account"
-	forwardtest "cryptellation/svc/forwardtests/pkg/forwardtest"
+	client "github.com/lerenn/cryptellation/pkg/client"
+	account "github.com/lerenn/cryptellation/pkg/models/account"
+	forwardtest "github.com/lerenn/cryptellation/forwardtests/pkg/forwardtest"
 	reflect "reflect"
 
 	uuid "github.com/google/uuid"

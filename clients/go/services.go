@@ -5,35 +5,35 @@ import (
 	"errors"
 	"sync"
 
-	"cryptellation/pkg/client"
-	"cryptellation/pkg/config"
+	"github.com/lerenn/cryptellation/pkg/client"
+	"github.com/lerenn/cryptellation/pkg/config"
 
-	backtests "cryptellation/svc/backtests/clients/go"
-	backtestsnats "cryptellation/svc/backtests/clients/go/nats"
-	backtestsretry "cryptellation/svc/backtests/clients/go/retry"
+	backtests "github.com/lerenn/cryptellation/client/clients/go"
+	backtestsnats "github.com/lerenn/cryptellation/client/clients/go/nats"
+	backtestsretry "github.com/lerenn/cryptellation/client/clients/go/retry"
 
-	candlesticks "cryptellation/svc/candlesticks/clients/go"
-	candlestickscache "cryptellation/svc/candlesticks/clients/go/cache"
-	candlesticksnats "cryptellation/svc/candlesticks/clients/go/nats"
-	candlesticksretry "cryptellation/svc/candlesticks/clients/go/retry"
+	candlesticks "github.com/lerenn/cryptellation/candlesticks/clients/go"
+	candlestickscache "github.com/lerenn/cryptellation/candlesticks/clients/go/cache"
+	candlesticksnats "github.com/lerenn/cryptellation/candlesticks/clients/go/nats"
+	candlesticksretry "github.com/lerenn/cryptellation/candlesticks/clients/go/retry"
 
-	exchanges "cryptellation/svc/exchanges/clients/go"
-	exchangescache "cryptellation/svc/exchanges/clients/go/cache"
-	exchangesnats "cryptellation/svc/exchanges/clients/go/nats"
-	exchangesretry "cryptellation/svc/exchanges/clients/go/retry"
+	exchanges "github.com/lerenn/cryptellation/exchanges/clients/go"
+	exchangescache "github.com/lerenn/cryptellation/exchanges/clients/go/cache"
+	exchangesnats "github.com/lerenn/cryptellation/exchanges/clients/go/nats"
+	exchangesretry "github.com/lerenn/cryptellation/exchanges/clients/go/retry"
 
-	forwardtests "cryptellation/svc/forwardtests/clients/go"
-	forwardtestsnats "cryptellation/svc/forwardtests/clients/go/nats"
-	forwardtestsretry "cryptellation/svc/forwardtests/clients/go/retry"
+	forwardtests "github.com/lerenn/cryptellation/forwardtests/clients/go"
+	forwardtestsnats "github.com/lerenn/cryptellation/forwardtests/clients/go/nats"
+	forwardtestsretry "github.com/lerenn/cryptellation/forwardtests/clients/go/retry"
 
-	indicators "cryptellation/svc/indicators/clients/go"
-	indicatorscache "cryptellation/svc/indicators/clients/go/cache"
-	indicatorsnats "cryptellation/svc/indicators/clients/go/nats"
-	indicatorsretry "cryptellation/svc/indicators/clients/go/retry"
+	indicators "github.com/lerenn/cryptellation/indicators/clients/go"
+	indicatorscache "github.com/lerenn/cryptellation/indicators/clients/go/cache"
+	indicatorsnats "github.com/lerenn/cryptellation/indicators/clients/go/nats"
+	indicatorsretry "github.com/lerenn/cryptellation/indicators/clients/go/retry"
 
-	ticks "cryptellation/svc/ticks/clients/go"
-	ticksnats "cryptellation/svc/ticks/clients/go/nats"
-	ticksretry "cryptellation/svc/ticks/clients/go/retry"
+	ticks "github.com/lerenn/cryptellation/ticks/clients/go"
+	ticksnats "github.com/lerenn/cryptellation/ticks/clients/go/nats"
+	ticksretry "github.com/lerenn/cryptellation/ticks/clients/go/retry"
 )
 
 type Services struct {

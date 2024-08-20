@@ -3,9 +3,9 @@ package binance
 import (
 	"io"
 
-	"cryptellation/pkg/config"
+	"github.com/lerenn/cryptellation/pkg/config"
 
-	"cryptellation/svc/exchanges/pkg/exchange"
+	"github.com/lerenn/cryptellation/exchanges/pkg/exchange"
 
 	client "github.com/adshao/go-binance/v2"
 )

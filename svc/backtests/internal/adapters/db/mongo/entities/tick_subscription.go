@@ -1,6 +1,6 @@
 package entities
 
-import "cryptellation/pkg/models/event"
+import "github.com/lerenn/cryptellation/pkg/models/event"
 
 type TickSubscription struct {
 	Exchange string `bson:"exchange"`

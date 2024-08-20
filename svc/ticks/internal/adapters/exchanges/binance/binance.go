@@ -6,13 +6,14 @@ import (
 	"strconv"
 	"time"
 
-	"cryptellation/internal/adapters/exchanges/binance"
-	"cryptellation/pkg/adapters/telemetry"
-	"cryptellation/pkg/config"
+	"github.com/lerenn/cryptellation/internal/adapters/exchanges/binance"
 
-	"cryptellation/svc/candlesticks/pkg/pair"
+	"github.com/lerenn/cryptellation/pkg/adapters/telemetry"
+	"github.com/lerenn/cryptellation/pkg/config"
 
-	"cryptellation/svc/ticks/pkg/tick"
+	"github.com/lerenn/cryptellation/candlesticks/pkg/pair"
+
+	"github.com/lerenn/cryptellation/ticks/pkg/tick"
 
 	client "github.com/adshao/go-binance/v2"
 )

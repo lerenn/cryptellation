@@ -1,30 +1,29 @@
-module cryptellation/client
+module github.com/lerenn/cryptellation/clients/go
 
 go 1.22.4
 
 replace (
-	cryptellation/client => ../../clients/go
-	cryptellation/internal => ../../internal
-	cryptellation/pkg => ../../pkg
+	github.com/lerenn/cryptellation/candlesticks => ../../svc/candlesticks
 
-	cryptellation/svc/backtests => ../../svc/backtests
-	cryptellation/svc/candlesticks => ../../svc/candlesticks
-	cryptellation/svc/exchanges => ../../svc/exchanges
-	cryptellation/svc/forwardtests => ../../svc/forwardtests
-	cryptellation/svc/indicators => ../../svc/indicators
-	cryptellation/svc/ticks => ../../svc/ticks
+	github.com/lerenn/cryptellation/client => ../../svc/backtests
+	github.com/lerenn/cryptellation/clients/go => ../../clients/go
+	github.com/lerenn/cryptellation/exchanges => ../../svc/exchanges
+	github.com/lerenn/cryptellation/forwardtests => ../../svc/forwardtests
+	github.com/lerenn/cryptellation/indicators => ../../svc/indicators
+	github.com/lerenn/cryptellation/internal => ../../internal
+	github.com/lerenn/cryptellation/pkg => ../../pkg
+	github.com/lerenn/cryptellation/ticks => ../../svc/ticks
 )
 
 require (
-	cryptellation/internal v0.0.0-00010101000000-000000000000
-	cryptellation/pkg v0.0.0-00010101000000-000000000000
-	cryptellation/svc/backtests v0.0.0-00010101000000-000000000000
-	cryptellation/svc/candlesticks v0.0.0-00010101000000-000000000000
-	cryptellation/svc/exchanges v0.0.0-00010101000000-000000000000
-	cryptellation/svc/forwardtests v0.0.0-00010101000000-000000000000
-	cryptellation/svc/indicators v0.0.0-00010101000000-000000000000
-	cryptellation/svc/ticks v0.0.0-00010101000000-000000000000
 	github.com/google/uuid v1.6.0
+	github.com/lerenn/cryptellation/candlesticks v0.0.0-00010101000000-000000000000
+	github.com/lerenn/cryptellation/client v0.0.0-00010101000000-000000000000
+	github.com/lerenn/cryptellation/exchanges v0.0.0-00010101000000-000000000000
+	github.com/lerenn/cryptellation/forwardtests v0.0.0-00010101000000-000000000000
+	github.com/lerenn/cryptellation/indicators v0.0.0-00010101000000-000000000000
+	github.com/lerenn/cryptellation/pkg v0.0.0-00010101000000-000000000000
+	github.com/lerenn/cryptellation/ticks v0.0.0-00010101000000-000000000000
 )
 
 require (
@@ -32,6 +31,7 @@ require (
 	github.com/joho/godotenv v1.5.1 // indirect
 	github.com/klauspost/compress v1.17.9 // indirect
 	github.com/lerenn/asyncapi-codegen v0.43.0 // indirect
+	github.com/lerenn/cryptellation/internal v0.0.0-00010101000000-000000000000 // indirect
 	github.com/nats-io/nats.go v1.37.0 // indirect
 	github.com/nats-io/nkeys v0.4.7 // indirect
 	github.com/nats-io/nuid v1.0.1 // indirect

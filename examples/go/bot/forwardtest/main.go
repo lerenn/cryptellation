@@ -3,17 +3,17 @@ package main
 import (
 	"context"
 
-	cryptellation "cryptellation/client"
+	cryptellation "github.com/lerenn/cryptellation/clients/go"
 
-	"cryptellation/pkg/adapters/telemetry"
-	"cryptellation/pkg/adapters/telemetry/console"
-	"cryptellation/pkg/adapters/telemetry/otel"
-	"cryptellation/pkg/config"
-	"cryptellation/pkg/models/account"
+	"github.com/lerenn/cryptellation/pkg/adapters/telemetry"
+	"github.com/lerenn/cryptellation/pkg/adapters/telemetry/console"
+	"github.com/lerenn/cryptellation/pkg/adapters/telemetry/otel"
+	"github.com/lerenn/cryptellation/pkg/config"
+	"github.com/lerenn/cryptellation/pkg/models/account"
 
-	"cryptellation/svc/forwardtests/pkg/forwardtest"
+	"github.com/lerenn/cryptellation/forwardtests/pkg/forwardtest"
 
-	"cryptellation/examples/go/bot"
+	"github.com/lerenn/cryptellation/examples/go/bot"
 )
 
 func main() {

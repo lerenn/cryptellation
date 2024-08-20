@@ -3,10 +3,11 @@ package backtests
 import (
 	"context"
 
-	mongoutil "cryptellation/internal/adapters/db/mongo"
-	"cryptellation/pkg/config"
+	mongoutil "github.com/lerenn/cryptellation/internal/adapters/db/mongo"
 
-	port "cryptellation/svc/backtests/internal/app/ports/db"
+	"github.com/lerenn/cryptellation/pkg/config"
+
+	port "github.com/lerenn/cryptellation/client/internal/app/ports/db"
 )
 
 var _ port.Port = (*Adapter)(nil)

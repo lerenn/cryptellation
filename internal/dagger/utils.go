@@ -2,10 +2,12 @@ package main
 
 import (
 	"context"
-	"cryptellation/internal/dagger/internal/dagger"
-	"cryptellation/pkg/utils"
 	"fmt"
 	"strings"
+
+	"github.com/lerenn/cryptellation/internal/dagger/internal/dagger"
+
+	"github.com/lerenn/cryptellation/pkg/utils"
 
 	"github.com/joho/godotenv"
 )

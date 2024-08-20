@@ -5,13 +5,13 @@ import (
 	"errors"
 	"time"
 
-	common "cryptellation/pkg/client"
-	"cryptellation/pkg/models/timeserie"
+	common "github.com/lerenn/cryptellation/pkg/client"
+	"github.com/lerenn/cryptellation/pkg/models/timeserie"
 
-	"cryptellation/svc/candlesticks/pkg/candlestick"
-	"cryptellation/svc/candlesticks/pkg/period"
+	"github.com/lerenn/cryptellation/candlesticks/pkg/candlestick"
+	"github.com/lerenn/cryptellation/candlesticks/pkg/period"
 
-	client "cryptellation/svc/indicators/clients/go"
+	client "github.com/lerenn/cryptellation/indicators/clients/go"
 
 	"github.com/bluele/gcache"
 )

@@ -15,9 +15,11 @@
 package main
 
 import (
-	"cryptellation/internal/docker"
-	"cryptellation/svc/candlesticks/dagger/internal/dagger"
 	"runtime"
+
+	"github.com/lerenn/cryptellation/candlesticks/dagger/internal/dagger"
+
+	"github.com/lerenn/cryptellation/internal/docker"
 )
 
 type CryptellationCandlesticks struct{}

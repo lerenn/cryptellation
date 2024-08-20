@@ -6,9 +6,9 @@ package events
 import (
 	"context"
 
-	"cryptellation/pkg/models/event"
+	"github.com/lerenn/cryptellation/pkg/models/event"
 
-	"cryptellation/svc/ticks/pkg/tick"
+	"github.com/lerenn/cryptellation/ticks/pkg/tick"
 )
 
 type Port interface {

@@ -4,10 +4,10 @@ import (
 	"context"
 	"testing"
 
-	"cryptellation/pkg/config"
+	"github.com/lerenn/cryptellation/pkg/config"
 
-	client "cryptellation/svc/indicators/clients/go"
-	"cryptellation/svc/indicators/clients/go/nats"
+	client "github.com/lerenn/cryptellation/indicators/clients/go"
+	"github.com/lerenn/cryptellation/indicators/clients/go/nats"
 
 	"github.com/stretchr/testify/suite"
 )

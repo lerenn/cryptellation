@@ -6,7 +6,7 @@ package events
 
 import (
 	context "context"
-	event "cryptellation/pkg/models/event"
+	event "github.com/lerenn/cryptellation/pkg/models/event"
 	reflect "reflect"
 
 	uuid "github.com/google/uuid"

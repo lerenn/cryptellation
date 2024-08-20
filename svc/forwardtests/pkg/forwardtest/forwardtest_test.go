@@ -3,7 +3,7 @@ package forwardtest
 import (
 	"testing"
 
-	"cryptellation/pkg/models/account"
+	"github.com/lerenn/cryptellation/pkg/models/account"
 
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/go-cmp/cmp/cmpopts"

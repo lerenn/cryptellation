@@ -3,11 +3,11 @@ package nats
 import (
 	"context"
 
-	"cryptellation/pkg/adapters/telemetry"
-	"cryptellation/pkg/version"
+	"github.com/lerenn/cryptellation/pkg/adapters/telemetry"
+	"github.com/lerenn/cryptellation/pkg/version"
 
-	"cryptellation/svc/ticks/api/asyncapi"
-	"cryptellation/svc/ticks/internal/app"
+	"github.com/lerenn/cryptellation/ticks/api/asyncapi"
+	"github.com/lerenn/cryptellation/ticks/internal/app"
 )
 
 type subscriber struct {

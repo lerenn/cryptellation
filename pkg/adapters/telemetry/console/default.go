@@ -3,7 +3,7 @@ package console
 import (
 	"context"
 
-	"cryptellation/pkg/adapters/telemetry"
+	"github.com/lerenn/cryptellation/pkg/adapters/telemetry"
 )
 
 // Fallback to console telemeter if the given telemeter is nil or err is not nil.

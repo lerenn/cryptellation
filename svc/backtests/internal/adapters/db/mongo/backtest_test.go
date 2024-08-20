@@ -6,14 +6,14 @@ import (
 	"testing"
 	"time"
 
-	"cryptellation/pkg/config"
-	"cryptellation/pkg/models/account"
+	"github.com/lerenn/cryptellation/pkg/config"
+	"github.com/lerenn/cryptellation/pkg/models/account"
 
-	"cryptellation/svc/backtests/internal/app/ports/db"
-	"cryptellation/svc/backtests/pkg/backtest"
+	"github.com/lerenn/cryptellation/client/internal/app/ports/db"
+	"github.com/lerenn/cryptellation/client/pkg/backtest"
 
-	"cryptellation/svc/candlesticks/pkg/candlestick"
-	"cryptellation/svc/candlesticks/pkg/period"
+	"github.com/lerenn/cryptellation/candlesticks/pkg/candlestick"
+	"github.com/lerenn/cryptellation/candlesticks/pkg/period"
 
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/suite"

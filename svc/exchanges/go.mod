@@ -1,23 +1,23 @@
-module cryptellation/svc/exchanges
+module github.com/lerenn/cryptellation/exchanges
 
 go 1.22.4
 
 replace (
-	cryptellation/client => ../../clients/go
-	cryptellation/internal => ../../internal
-	cryptellation/pkg => ../../pkg
+	github.com/lerenn/cryptellation/clients/go => ../../clients/go
+	github.com/lerenn/cryptellation/internal => ../../internal
+	github.com/lerenn/cryptellation/pkg => ../../pkg
 
-	cryptellation/svc/backtests => ../backtests
-	cryptellation/svc/candlesticks => ../candlesticks
-	cryptellation/svc/exchanges => ../exchanges
-	cryptellation/svc/forwardtests => ../forwardtests
-	cryptellation/svc/indicators => ../indicators
-	cryptellation/svc/ticks => ../ticks
+	github.com/lerenn/cryptellation/client => ../backtests
+	github.com/lerenn/cryptellation/candlesticks => ../candlesticks
+	github.com/lerenn/cryptellation/exchanges => ../exchanges
+	github.com/lerenn/cryptellation/forwardtests => ../forwardtests
+	github.com/lerenn/cryptellation/indicators => ../indicators
+	github.com/lerenn/cryptellation/ticks => ../ticks
 )
 
 require (
-	cryptellation/internal v0.0.0-00010101000000-000000000000
-	cryptellation/pkg v0.0.0-00010101000000-000000000000
+	github.com/lerenn/cryptellation/internal v0.0.0-00010101000000-000000000000
+	github.com/lerenn/cryptellation/pkg v0.0.0-00010101000000-000000000000
 	github.com/bluele/gcache v0.0.2
 	github.com/google/uuid v1.6.0
 	github.com/lerenn/asyncapi-codegen v0.43.0

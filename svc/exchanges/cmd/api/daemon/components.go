@@ -1,8 +1,8 @@
 package daemon
 
 import (
-	exchanges "cryptellation/svc/exchanges/internal/app"
-	"cryptellation/svc/exchanges/internal/app/domain"
+	exchanges "github.com/lerenn/cryptellation/exchanges/internal/app"
+	"github.com/lerenn/cryptellation/exchanges/internal/app/domain"
 )
 
 type components struct {

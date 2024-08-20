@@ -1,7 +1,7 @@
 package main
 
 import (
-	"cryptellation/internal/dagger/internal/dagger"
+	"github.com/lerenn/cryptellation/internal/dagger/internal/dagger"
 )
 
 // NATS creates a new NATS service.

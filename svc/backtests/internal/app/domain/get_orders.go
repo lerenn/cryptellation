@@ -3,7 +3,7 @@ package domain
 import (
 	"context"
 
-	"cryptellation/pkg/models/order"
+	"github.com/lerenn/cryptellation/pkg/models/order"
 
 	"github.com/google/uuid"
 )

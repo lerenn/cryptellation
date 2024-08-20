@@ -4,9 +4,9 @@ import (
 	"context"
 	"testing"
 
-	"cryptellation/pkg/config"
+	"github.com/lerenn/cryptellation/pkg/config"
 
-	"cryptellation/svc/forwardtests/internal/app/ports/db"
+	"github.com/lerenn/cryptellation/forwardtests/internal/app/ports/db"
 
 	"github.com/stretchr/testify/suite"
 )

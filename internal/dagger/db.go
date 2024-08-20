@@ -1,6 +1,6 @@
 package main
 
-import "cryptellation/internal/dagger/internal/dagger"
+import "github.com/lerenn/cryptellation/internal/dagger/internal/dagger"
 
 func (mod *CryptellationInternal) Mongo() *dagger.Container {
 	return dag.Container().

@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"cryptellation/pkg/models/event"
+	"github.com/lerenn/cryptellation/pkg/models/event"
 
 	"github.com/spf13/cobra"
 )

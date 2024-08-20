@@ -4,9 +4,9 @@ import (
 	"errors"
 	"fmt"
 
-	"cryptellation/pkg/models/order"
+	"github.com/lerenn/cryptellation/pkg/models/order"
 
-	"cryptellation/svc/candlesticks/pkg/pair"
+	"github.com/lerenn/cryptellation/candlesticks/pkg/pair"
 )
 
 var (

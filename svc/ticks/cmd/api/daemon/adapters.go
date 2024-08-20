@@ -3,12 +3,12 @@ package daemon
 import (
 	"context"
 
-	"cryptellation/pkg/config"
+	"github.com/lerenn/cryptellation/pkg/config"
 
-	natsTicks "cryptellation/svc/ticks/internal/adapters/events/nats"
-	"cryptellation/svc/ticks/internal/adapters/exchanges"
-	"cryptellation/svc/ticks/internal/app/ports/events"
-	exchangesPort "cryptellation/svc/ticks/internal/app/ports/exchanges"
+	natsTicks "github.com/lerenn/cryptellation/ticks/internal/adapters/events/nats"
+	"github.com/lerenn/cryptellation/ticks/internal/adapters/exchanges"
+	"github.com/lerenn/cryptellation/ticks/internal/app/ports/events"
+	exchangesPort "github.com/lerenn/cryptellation/ticks/internal/app/ports/exchanges"
 )
 
 type adapters struct {

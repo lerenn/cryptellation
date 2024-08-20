@@ -1,8 +1,8 @@
 package domain
 
 import (
-	"cryptellation/svc/exchanges/internal/app/ports/db"
-	"cryptellation/svc/exchanges/internal/app/ports/exchanges"
+	"github.com/lerenn/cryptellation/exchanges/internal/app/ports/db"
+	"github.com/lerenn/cryptellation/exchanges/internal/app/ports/exchanges"
 )
 
 type Exchanges struct {

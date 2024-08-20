@@ -18,7 +18,7 @@ RUN mkdir -p /go/src/cryptellation
 COPY ./ /go/src/cryptellation
 
 # Set the workdir
-WORKDIR /go/src/cryptellation/svc/indicators
+WORKDIR /go/src/github.com/lerenn/cryptellation/indicators
 
 # Build everything in cmd/
 RUN --mount=type=cache,target=/root/.cache/go-build \

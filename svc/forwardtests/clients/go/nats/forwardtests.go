@@ -3,14 +3,15 @@ package nats
 import (
 	"context"
 
-	helpers "cryptellation/internal/asyncapi"
-	common "cryptellation/pkg/client"
-	"cryptellation/pkg/config"
-	"cryptellation/pkg/models/account"
+	helpers "github.com/lerenn/cryptellation/internal/asyncapi"
 
-	asyncapi "cryptellation/svc/forwardtests/api/asyncapi"
-	client "cryptellation/svc/forwardtests/clients/go"
-	"cryptellation/svc/forwardtests/pkg/forwardtest"
+	common "github.com/lerenn/cryptellation/pkg/client"
+	"github.com/lerenn/cryptellation/pkg/config"
+	"github.com/lerenn/cryptellation/pkg/models/account"
+
+	asyncapi "github.com/lerenn/cryptellation/forwardtests/api/asyncapi"
+	client "github.com/lerenn/cryptellation/forwardtests/clients/go"
+	"github.com/lerenn/cryptellation/forwardtests/pkg/forwardtest"
 
 	"github.com/google/uuid"
 	"github.com/lerenn/asyncapi-codegen/pkg/extensions"

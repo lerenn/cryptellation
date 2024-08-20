@@ -5,14 +5,14 @@ import (
 	"errors"
 	"time"
 
-	"cryptellation/pkg/adapters/telemetry"
-	"cryptellation/pkg/models/timeserie"
-	"cryptellation/pkg/utils"
+	"github.com/lerenn/cryptellation/pkg/adapters/telemetry"
+	"github.com/lerenn/cryptellation/pkg/models/timeserie"
+	"github.com/lerenn/cryptellation/pkg/utils"
 
-	"cryptellation/svc/candlesticks/internal/app"
-	"cryptellation/svc/candlesticks/internal/app/ports/exchanges"
-	"cryptellation/svc/candlesticks/pkg/candlestick"
-	"cryptellation/svc/candlesticks/pkg/period"
+	"github.com/lerenn/cryptellation/candlesticks/internal/app"
+	"github.com/lerenn/cryptellation/candlesticks/internal/app/ports/exchanges"
+	"github.com/lerenn/cryptellation/candlesticks/pkg/candlestick"
+	"github.com/lerenn/cryptellation/candlesticks/pkg/period"
 )
 
 const (

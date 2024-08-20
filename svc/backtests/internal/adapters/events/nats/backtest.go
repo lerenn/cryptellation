@@ -3,9 +3,9 @@ package backtests
 import (
 	"context"
 
-	"cryptellation/pkg/models/event"
+	"github.com/lerenn/cryptellation/pkg/models/event"
 
-	asyncapi "cryptellation/svc/backtests/api/asyncapi"
+	asyncapi "github.com/lerenn/cryptellation/client/api/asyncapi"
 
 	"github.com/google/uuid"
 )

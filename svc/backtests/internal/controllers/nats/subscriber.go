@@ -4,11 +4,11 @@ import (
 	"context"
 	"net/http"
 
-	"cryptellation/pkg/adapters/telemetry"
-	"cryptellation/pkg/version"
+	"github.com/lerenn/cryptellation/pkg/adapters/telemetry"
+	"github.com/lerenn/cryptellation/pkg/version"
 
-	asyncapi "cryptellation/svc/backtests/api/asyncapi"
-	"cryptellation/svc/backtests/internal/app"
+	asyncapi "github.com/lerenn/cryptellation/client/api/asyncapi"
+	"github.com/lerenn/cryptellation/client/internal/app"
 
 	"github.com/google/uuid"
 )

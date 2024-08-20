@@ -3,10 +3,10 @@ package app
 import (
 	"context"
 
-	"cryptellation/pkg/models/account"
-	"cryptellation/pkg/models/order"
+	"github.com/lerenn/cryptellation/pkg/models/account"
+	"github.com/lerenn/cryptellation/pkg/models/order"
 
-	"cryptellation/svc/forwardtests/pkg/forwardtest"
+	"github.com/lerenn/cryptellation/forwardtests/pkg/forwardtest"
 
 	"github.com/google/uuid"
 )

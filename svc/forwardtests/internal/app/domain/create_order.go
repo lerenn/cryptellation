@@ -5,11 +5,11 @@ import (
 	"fmt"
 	"time"
 
-	"cryptellation/pkg/adapters/telemetry"
-	"cryptellation/pkg/models/order"
+	"github.com/lerenn/cryptellation/pkg/adapters/telemetry"
+	"github.com/lerenn/cryptellation/pkg/models/order"
 
-	candlesticks "cryptellation/svc/candlesticks/clients/go"
-	"cryptellation/svc/candlesticks/pkg/period"
+	candlesticks "github.com/lerenn/cryptellation/candlesticks/clients/go"
+	"github.com/lerenn/cryptellation/candlesticks/pkg/period"
 
 	"github.com/google/uuid"
 )

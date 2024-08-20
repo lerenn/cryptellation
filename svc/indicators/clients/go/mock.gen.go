@@ -6,8 +6,8 @@ package client
 
 import (
 	context "context"
-	client "cryptellation/pkg/client"
-	timeserie "cryptellation/pkg/models/timeserie"
+	client "github.com/lerenn/cryptellation/pkg/client"
+	timeserie "github.com/lerenn/cryptellation/pkg/models/timeserie"
 	reflect "reflect"
 
 	gomock "go.uber.org/mock/gomock"

@@ -1,8 +1,8 @@
 package daemon
 
 import (
-	"cryptellation/svc/ticks/internal/app"
-	"cryptellation/svc/ticks/internal/app/domain"
+	"github.com/lerenn/cryptellation/ticks/internal/app"
+	"github.com/lerenn/cryptellation/ticks/internal/app/domain"
 )
 
 type components struct {

@@ -3,9 +3,9 @@ package mongo
 import (
 	"context"
 
-	"cryptellation/svc/forwardtests/internal/adapters/db/mongo/entities"
-	"cryptellation/svc/forwardtests/internal/app/ports/db"
-	"cryptellation/svc/forwardtests/pkg/forwardtest"
+	"github.com/lerenn/cryptellation/forwardtests/internal/adapters/db/mongo/entities"
+	"github.com/lerenn/cryptellation/forwardtests/internal/app/ports/db"
+	"github.com/lerenn/cryptellation/forwardtests/pkg/forwardtest"
 
 	"github.com/google/uuid"
 	"go.mongodb.org/mongo-driver/bson"

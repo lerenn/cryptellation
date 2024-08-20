@@ -4,10 +4,10 @@ import (
 	"testing"
 	"time"
 
-	adapter "cryptellation/internal/adapters/exchanges/binance"
+	adapter "github.com/lerenn/cryptellation/internal/adapters/exchanges/binance"
 
-	"cryptellation/svc/candlesticks/pkg/candlestick"
-	"cryptellation/svc/candlesticks/pkg/period"
+	"github.com/lerenn/cryptellation/candlesticks/pkg/candlestick"
+	"github.com/lerenn/cryptellation/candlesticks/pkg/period"
 
 	binance "github.com/adshao/go-binance/v2"
 )

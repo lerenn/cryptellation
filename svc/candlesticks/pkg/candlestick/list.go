@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"time"
 
-	"cryptellation/pkg/models/timeserie"
+	"github.com/lerenn/cryptellation/pkg/models/timeserie"
 
-	"cryptellation/svc/candlesticks/pkg/period"
+	"github.com/lerenn/cryptellation/candlesticks/pkg/period"
 )
 
 var (

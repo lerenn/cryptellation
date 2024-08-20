@@ -5,16 +5,17 @@ import (
 	"fmt"
 	"time"
 
-	helpers "cryptellation/internal/asyncapi"
-	common "cryptellation/pkg/client"
-	"cryptellation/pkg/config"
-	"cryptellation/pkg/models/account"
-	"cryptellation/pkg/models/event"
+	helpers "github.com/lerenn/cryptellation/internal/asyncapi"
 
-	asyncapi "cryptellation/svc/backtests/api/asyncapi"
-	client "cryptellation/svc/backtests/clients/go"
+	common "github.com/lerenn/cryptellation/pkg/client"
+	"github.com/lerenn/cryptellation/pkg/config"
+	"github.com/lerenn/cryptellation/pkg/models/account"
+	"github.com/lerenn/cryptellation/pkg/models/event"
 
-	"cryptellation/svc/ticks/pkg/tick"
+	asyncapi "github.com/lerenn/cryptellation/client/api/asyncapi"
+	client "github.com/lerenn/cryptellation/client/clients/go"
+
+	"github.com/lerenn/cryptellation/ticks/pkg/tick"
 
 	"github.com/google/uuid"
 	"github.com/lerenn/asyncapi-codegen/pkg/extensions"

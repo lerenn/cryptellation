@@ -7,11 +7,11 @@ import (
 	"context"
 	"time"
 
-	client "cryptellation/pkg/client"
-	"cryptellation/pkg/models/timeserie"
+	client "github.com/lerenn/cryptellation/pkg/client"
+	"github.com/lerenn/cryptellation/pkg/models/timeserie"
 
-	"cryptellation/svc/candlesticks/pkg/candlestick"
-	"cryptellation/svc/candlesticks/pkg/period"
+	"github.com/lerenn/cryptellation/candlesticks/pkg/candlestick"
+	"github.com/lerenn/cryptellation/candlesticks/pkg/period"
 )
 
 type Client interface {

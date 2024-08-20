@@ -2,7 +2,8 @@ package main
 
 import (
 	"context"
-	"cryptellation/internal/dagger/internal/dagger"
+
+	"github.com/lerenn/cryptellation/internal/dagger/internal/dagger"
 )
 
 func (mod *CryptellationInternal) AttachBinance(

@@ -4,12 +4,12 @@ import (
 	"context"
 	"fmt"
 
-	"cryptellation/pkg/adapters/telemetry"
-	"cryptellation/pkg/models/order"
+	"github.com/lerenn/cryptellation/pkg/adapters/telemetry"
+	"github.com/lerenn/cryptellation/pkg/models/order"
 
-	"cryptellation/svc/backtests/pkg/backtest"
+	"github.com/lerenn/cryptellation/client/pkg/backtest"
 
-	candlesticks "cryptellation/svc/candlesticks/clients/go"
+	candlesticks "github.com/lerenn/cryptellation/candlesticks/clients/go"
 
 	"github.com/google/uuid"
 )

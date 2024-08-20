@@ -5,12 +5,12 @@ import (
 	"fmt"
 	"time"
 
-	"cryptellation/pkg/models/account"
+	"github.com/lerenn/cryptellation/pkg/models/account"
 
-	"cryptellation/svc/backtests/pkg/backtest"
+	"github.com/lerenn/cryptellation/client/pkg/backtest"
 
-	"cryptellation/svc/candlesticks/pkg/candlestick"
-	"cryptellation/svc/candlesticks/pkg/period"
+	"github.com/lerenn/cryptellation/candlesticks/pkg/candlestick"
+	"github.com/lerenn/cryptellation/candlesticks/pkg/period"
 
 	uuid "github.com/google/uuid"
 	"github.com/stretchr/testify/suite"

@@ -16,9 +16,11 @@ package main
 
 import (
 	"context"
-	"cryptellation/internal/docker"
-	"cryptellation/svc/ticks/build/ci/dagger/internal/dagger"
 	"fmt"
+
+	"github.com/lerenn/cryptellation/ticks/build/ci/dagger/internal/dagger"
+
+	"github.com/lerenn/cryptellation/internal/docker"
 )
 
 const (

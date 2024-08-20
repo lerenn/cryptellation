@@ -6,7 +6,7 @@ package db
 
 import (
 	context "context"
-	forwardtest "cryptellation/svc/forwardtests/pkg/forwardtest"
+	forwardtest "github.com/lerenn/cryptellation/forwardtests/pkg/forwardtest"
 	reflect "reflect"
 
 	uuid "github.com/google/uuid"

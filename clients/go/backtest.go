@@ -3,12 +3,12 @@ package client
 import (
 	"context"
 
-	"cryptellation/pkg/adapters/telemetry"
-	"cryptellation/pkg/models/event"
+	"github.com/lerenn/cryptellation/pkg/adapters/telemetry"
+	"github.com/lerenn/cryptellation/pkg/models/event"
 
-	backtests "cryptellation/svc/backtests/clients/go"
+	backtests "github.com/lerenn/cryptellation/client/clients/go"
 
-	"cryptellation/svc/ticks/pkg/tick"
+	"github.com/lerenn/cryptellation/ticks/pkg/tick"
 )
 
 type Backtest struct {

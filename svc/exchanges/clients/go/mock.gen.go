@@ -6,8 +6,8 @@ package client
 
 import (
 	context "context"
-	client "cryptellation/pkg/client"
-	exchange "cryptellation/svc/exchanges/pkg/exchange"
+	client "github.com/lerenn/cryptellation/pkg/client"
+	exchange "github.com/lerenn/cryptellation/exchanges/pkg/exchange"
 	reflect "reflect"
 
 	gomock "go.uber.org/mock/gomock"

@@ -5,9 +5,9 @@ import (
 	"testing"
 	"time"
 
-	"cryptellation/pkg/models/timeserie"
+	"github.com/lerenn/cryptellation/pkg/models/timeserie"
 
-	"cryptellation/svc/candlesticks/pkg/candlestick"
+	"github.com/lerenn/cryptellation/candlesticks/pkg/candlestick"
 
 	"github.com/stretchr/testify/suite"
 )

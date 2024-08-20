@@ -3,11 +3,11 @@ package retry
 import (
 	"context"
 
-	common "cryptellation/pkg/client"
-	"cryptellation/pkg/models/event"
+	common "github.com/lerenn/cryptellation/pkg/client"
+	"github.com/lerenn/cryptellation/pkg/models/event"
 
-	client "cryptellation/svc/ticks/clients/go"
-	"cryptellation/svc/ticks/pkg/tick"
+	client "github.com/lerenn/cryptellation/ticks/clients/go"
+	"github.com/lerenn/cryptellation/ticks/pkg/tick"
 )
 
 type retry struct {

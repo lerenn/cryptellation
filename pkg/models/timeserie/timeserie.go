@@ -4,7 +4,7 @@ import (
 	"errors"
 	"time"
 
-	"cryptellation/pkg/utils"
+	"github.com/lerenn/cryptellation/pkg/utils"
 )
 
 var (

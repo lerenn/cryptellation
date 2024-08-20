@@ -1,13 +1,14 @@
 package backtests
 
 import (
-	adapter "cryptellation/internal/adapters/events/nats"
-	pkg "cryptellation/internal/asyncapi"
-	"cryptellation/pkg/config"
+	adapter "github.com/lerenn/cryptellation/internal/adapters/events/nats"
+	pkg "github.com/lerenn/cryptellation/internal/asyncapi"
 
-	asyncapi "cryptellation/svc/backtests/api/asyncapi"
-	client "cryptellation/svc/backtests/clients/go"
-	backtestsnats "cryptellation/svc/backtests/clients/go/nats"
+	"github.com/lerenn/cryptellation/pkg/config"
+
+	asyncapi "github.com/lerenn/cryptellation/client/api/asyncapi"
+	client "github.com/lerenn/cryptellation/client/clients/go"
+	backtestsnats "github.com/lerenn/cryptellation/client/clients/go/nats"
 )
 
 type Adapter struct {

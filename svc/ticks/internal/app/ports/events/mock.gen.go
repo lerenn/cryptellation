@@ -6,8 +6,8 @@ package events
 
 import (
 	context "context"
-	event "cryptellation/pkg/models/event"
-	tick "cryptellation/svc/ticks/pkg/tick"
+	event "github.com/lerenn/cryptellation/pkg/models/event"
+	tick "github.com/lerenn/cryptellation/ticks/pkg/tick"
 	reflect "reflect"
 
 	gomock "go.uber.org/mock/gomock"

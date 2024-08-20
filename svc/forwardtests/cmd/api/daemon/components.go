@@ -1,8 +1,8 @@
 package daemon
 
 import (
-	"cryptellation/svc/forwardtests/internal/app"
-	"cryptellation/svc/forwardtests/internal/app/domain"
+	"github.com/lerenn/cryptellation/forwardtests/internal/app"
+	"github.com/lerenn/cryptellation/forwardtests/internal/app/domain"
 )
 
 type components struct {

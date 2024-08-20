@@ -3,11 +3,11 @@ package retry
 import (
 	"context"
 
-	common "cryptellation/pkg/client"
-	"cryptellation/pkg/models/account"
-	"cryptellation/pkg/models/event"
+	common "github.com/lerenn/cryptellation/pkg/client"
+	"github.com/lerenn/cryptellation/pkg/models/account"
+	"github.com/lerenn/cryptellation/pkg/models/event"
 
-	client "cryptellation/svc/backtests/clients/go"
+	client "github.com/lerenn/cryptellation/client/clients/go"
 
 	"github.com/google/uuid"
 )

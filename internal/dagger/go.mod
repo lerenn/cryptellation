@@ -1,11 +1,24 @@
-module cryptellation/internal/dagger
+module github.com/lerenn/cryptellation/internal/dagger
 
 go 1.22.4
+
+replace (
+	github.com/lerenn/cryptellation/candlesticks => ../../svc/candlesticks
+
+	github.com/lerenn/cryptellation/client => ../../svc/backtests
+	github.com/lerenn/cryptellation/clients/go => ../../clients/go
+	github.com/lerenn/cryptellation/exchanges => ../../svc/exchanges
+	github.com/lerenn/cryptellation/forwardtests => ../../svc/forwardtests
+	github.com/lerenn/cryptellation/indicators => ../../svc/indicators
+	github.com/lerenn/cryptellation/pkg => ../../pkg
+	github.com/lerenn/cryptellation/ticks => ../../svc/ticks
+)
 
 require (
 	github.com/99designs/gqlgen v0.17.49
 	github.com/Khan/genqlient v0.7.0
 	github.com/joho/godotenv v1.5.1
+	github.com/lerenn/cryptellation/pkg v0.0.0-00010101000000-000000000000
 	github.com/vektah/gqlparser/v2 v2.5.16
 	go.opentelemetry.io/otel v1.28.0
 	go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploggrpc v0.0.0-20240812163816-c609b12d9815
@@ -28,7 +41,6 @@ require (
 	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.21.0 // indirect
-	github.com/sergi/go-diff v1.3.2-0.20230802210424-5b0b94c5c0d3 // indirect
 	github.com/sosodev/duration v1.3.1 // indirect
 	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.28.0 // indirect
 	go.opentelemetry.io/otel/metric v1.28.0 // indirect

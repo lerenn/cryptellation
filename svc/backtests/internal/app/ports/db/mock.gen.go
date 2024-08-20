@@ -6,7 +6,7 @@ package db
 
 import (
 	context "context"
-	backtest "cryptellation/svc/backtests/pkg/backtest"
+	backtest "github.com/lerenn/cryptellation/client/pkg/backtest"
 	reflect "reflect"
 
 	uuid "github.com/google/uuid"
