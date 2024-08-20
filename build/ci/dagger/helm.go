@@ -10,7 +10,7 @@ import (
 
 const (
 	sshHelmPkgGitRepo   = "git@github.com:lerenn/packages.git"
-	tokenHelmPkgGitRepo = "https://lerenn:%s@github.com/lerenn/cryptellation.git"
+	tokenHelmPkgGitRepo = "https://lerenn:%s@github.com/lerenn/packages.git"
 )
 
 func publishHelmChart(
@@ -91,6 +91,8 @@ func publishHelmChart(
 		}
 		url = fmt.Sprintf(tokenHelmPkgGitRepo, tokenPlainText)
 	}
+
+	// Set git author
 	container, err = setGitAuthor(ctx, container)
 	if err != nil {
 		return err
