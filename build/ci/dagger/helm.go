@@ -9,14 +9,15 @@ import (
 )
 
 const (
-	helmPkgGitRepo = "git@github.com:lerenn/packages.git"
+	sshHelmPkgGitRepo   = "git@github.com:lerenn/packages.git"
+	tokenHelmPkgGitRepo = "https://lerenn:%s@github.com/lerenn/cryptellation.git"
 )
 
 func publishHelmChart(
 	ctx context.Context,
 	sourceDir *dagger.Directory,
-	sshPrivateKeyFile *dagger.Secret,
 	repo *Git,
+	auth authParams,
 ) error {
 	// Stop here if this not main branch
 	if name, err := repo.GetActualBranch(ctx); err != nil {
@@ -30,8 +31,8 @@ func publishHelmChart(
 		WithoutEntrypoint().
 		WithMountedDirectory("/src", sourceDir).
 		WithWorkdir("/")
-	if sshPrivateKeyFile != nil {
-		container = container.WithMountedSecret("/root/.ssh/id_rsa", sshPrivateKeyFile)
+	if auth.SSHPrivateKeyFile != nil {
+		container = container.WithMountedSecret("/root/.ssh/id_rsa", auth.SSHPrivateKeyFile)
 	}
 
 	// Update dependencies
@@ -78,7 +79,17 @@ func publishHelmChart(
 	}
 
 	// Clone the package repository
-	container, err = container.WithExec([]string{"git", "clone", helmPkgGitRepo, "packages"}).Sync(ctx)
+	var url string
+	if auth.SSHPrivateKeyFile != nil {
+		url = sshHelmPkgGitRepo
+	} else if auth.GithubToken != nil {
+		tokenPlainText, err := auth.GithubToken.Plaintext(ctx)
+		if err != nil {
+			return err
+		}
+		url = fmt.Sprintf(tokenHelmPkgGitRepo, tokenPlainText)
+	}
+	container, err = container.WithExec([]string{"git", "clone", url, "packages"}).Sync(ctx)
 	if err != nil {
 		return err
 	}

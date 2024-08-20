@@ -4,6 +4,7 @@ import (
 	"context"
 	"cryptellation/pkg/utils"
 	"dagger/cryptellation-ci/internal/dagger"
+	"fmt"
 	"strings"
 
 	"github.com/google/go-github/v63/github"
@@ -11,6 +12,7 @@ import (
 
 type Git struct {
 	container *dagger.Container
+	auth      authParams
 
 	lastCommit struct {
 		title    string
@@ -22,20 +24,53 @@ type Git struct {
 	actualBranch string
 }
 
-func NewGit(srcDir *dagger.Directory, sshPrivateKeyFile *dagger.Secret) Git {
+type authParams struct {
+	SSHPrivateKeyFile *dagger.Secret
+	GithubToken       *dagger.Secret
+}
+
+func (ap authParams) Validate() error {
+	if ap.SSHPrivateKeyFile == nil && ap.GithubToken == nil {
+		return fmt.Errorf("either SSHPrivateKeyFile or GithubToken must be provided")
+	}
+	return nil
+}
+
+func NewGit(ctx context.Context, srcDir *dagger.Directory, auth authParams) (Git, error) {
+	// Check auth params
+	if err := auth.Validate(); err != nil {
+		return Git{}, err
+	}
+
+	// Create container
 	container := dag.Container().
 		From("alpine/git").
 		WithMountedDirectory("/git", srcDir).
 		WithWorkdir("/git").
 		WithoutEntrypoint()
 
-	if sshPrivateKeyFile != nil {
-		container = container.WithMountedSecret("/root/.ssh/id_rsa", sshPrivateKeyFile)
+	if auth.SSHPrivateKeyFile != nil {
+		container = container.WithMountedSecret("/root/.ssh/id_rsa", auth.SSHPrivateKeyFile)
+	}
+
+	if auth.GithubToken != nil {
+		token, err := auth.GithubToken.Plaintext(ctx)
+		if err != nil {
+			return Git{}, err
+		}
+
+		container, err = container.WithExec([]string{
+			"git", "remote", "set-url", "origin", "https://lerenn:" + token + "@github.com/lerenn/cryptellation.git",
+		}).Sync(ctx)
+		if err != nil {
+			return Git{}, err
+		}
 	}
 
 	return Git{
 		container: container,
-	}
+		auth:      auth,
+	}, nil
 }
 
 func (g *Git) UpdateSourceDir(srcDir *dagger.Directory) {
@@ -196,7 +231,6 @@ func (g *Git) PublishTagFromReleaseTitle(ctx context.Context) error {
 func (g *Git) PublishNewCommit(
 	ctx context.Context,
 	title string,
-	githubToken *dagger.Secret,
 ) error {
 	var err error
 
@@ -242,8 +276,8 @@ func (g *Git) PublishNewCommit(
 	}
 
 	// Create pull request
-	if githubToken != nil {
-		token, err := githubToken.Plaintext(ctx)
+	if g.auth.GithubToken != nil {
+		token, err := g.auth.GithubToken.Plaintext(ctx)
 		if err != nil {
 			return err
 		}

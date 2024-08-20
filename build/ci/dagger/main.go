@@ -152,10 +152,16 @@ func (ci *CryptellationCi) CreateRelease(
 	// +optional
 	githubToken *dagger.Secret,
 ) error {
-	repo := NewGit(sourceDir, sshPrivateKeyFile)
+	repo, err := NewGit(ctx, sourceDir, authParams{
+		SSHPrivateKeyFile: sshPrivateKeyFile,
+		GithubToken:       githubToken,
+	})
+	if err != nil {
+		return err
+	}
 
 	// Update Helm chart
-	sourceDir, err := updateHelmChart(ctx, sourceDir, &repo)
+	sourceDir, err = updateHelmChart(ctx, sourceDir, &repo)
 	if err != nil {
 		return err
 	}
@@ -170,7 +176,7 @@ func (ci *CryptellationCi) CreateRelease(
 	}
 
 	// Push new commit with tag
-	return repo.PublishNewCommit(ctx, "release: "+newSemVer, githubToken)
+	return repo.PublishNewCommit(ctx, "release: "+newSemVer)
 }
 
 // Publish a new release
@@ -179,8 +185,23 @@ func (ci *CryptellationCi) PublishRelease(
 	sourceDir *dagger.Directory,
 	// +optional
 	sshPrivateKeyFile *dagger.Secret,
+	// +optional
+	githubToken *dagger.Secret,
 ) error {
-	repo := NewGit(sourceDir, sshPrivateKeyFile)
+	// Create auth params
+	auth := authParams{
+		SSHPrivateKeyFile: sshPrivateKeyFile,
+		GithubToken:       githubToken,
+	}
+	if err := auth.Validate(); err != nil {
+		return err
+	}
+
+	// Create Git repo access
+	repo, err := NewGit(ctx, sourceDir, auth)
+	if err != nil {
+		return err
+	}
 
 	// Publish new tag
 	if err := repo.PublishTagFromReleaseTitle(ctx); err != nil {
@@ -193,5 +214,5 @@ func (ci *CryptellationCi) PublishRelease(
 	}
 
 	// Publish Helm chart
-	return publishHelmChart(ctx, sourceDir, sshPrivateKeyFile, &repo)
+	return publishHelmChart(ctx, sourceDir, &repo, auth)
 }

@@ -115,10 +115,9 @@ jobs:
       - uses: dagger/dagger-for-github@v6.5.0
         with:
           verb: call
-          args: -m build/ci create-release --source-dir=. --ssh-private-key-file=env:SSH_PRIVATE_KEY --github-token=env:GITHUB_TOKEN
+          args: -m build/ci create-release --source-dir=. --github-token=env:CRYPTELLATION_GITHUB_TOKEN
         env:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CRYPTELLATION_GITHUB_TOKEN: ${{ secrets.CRYPTELLATION_GITHUB_TOKEN }}
 
   publish-release:
     name: Publish the release of the new version
@@ -143,6 +142,6 @@ jobs:
       - uses: dagger/dagger-for-github@v6.5.0
         with:
           verb: call
-          args: -m build/ci publish-release --source-dir=. --ssh-private-key-file=env:SSH_PRIVATE_KEY
+          args: -m build/ci publish-release --source-dir=. --github-token=env:CRYPTELLATION_GITHUB_TOKEN
         env:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          CRYPTELLATION_GITHUB_TOKEN: ${{ secrets.CRYPTELLATION_GITHUB_TOKEN }}
