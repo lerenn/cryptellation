@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
       - name: indicators
-        image: {{ ((.Values.services).indicators).image.repository | default "lerenn/cryptellation-indicators" }}:{{ ((.Values.services).indicators).image.tag | default "latest" }}
+        image: {{ ((.Values.services).indicators).image.repository | default "lerenn/cryptellation-indicators" }}:{{ ((.Values.services).indicators).image.tag | default (printf "v%s" .Chart.AppVersion) }}
         imagePullPolicy: {{ ((.Values.services).indicators).image.pullPolicy | default "Always" }}
         livenessProbe:
           httpGet:

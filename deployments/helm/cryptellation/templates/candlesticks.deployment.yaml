@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
       - name: candlesticks
-        image: {{ ((.Values.services).candlesticks).image.repository | default "lerenn/cryptellation-candlesticks" }}:{{ ((.Values.services).candlesticks).image.tag | default "latest" }}
+        image: {{ ((.Values.services).candlesticks).image.repository | default "lerenn/cryptellation-candlesticks" }}:{{ ((.Values.services).candlesticks).image.tag | default (printf "v%s" .Chart.AppVersion) }}
         imagePullPolicy: {{ ((.Values.services).candlesticks).image.pullPolicy | default "Always" }}
         livenessProbe:
           httpGet:

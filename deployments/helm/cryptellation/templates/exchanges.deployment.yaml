@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
       - name: exchanges
-        image: {{ ((.Values.services).exchanges).image.repository | default "lerenn/cryptellation-exchanges" }}:{{ ((.Values.services).exchanges).image.tag | default "latest" }}
+        image: {{ ((.Values.services).exchanges).image.repository | default "lerenn/cryptellation-exchanges" }}:{{ ((.Values.services).exchanges).image.tag | default (printf "v%s" .Chart.AppVersion) }}
         imagePullPolicy: {{ ((.Values.services).exchanges).image.pullPolicy | default "Always" }}
         livenessProbe:
           httpGet:
