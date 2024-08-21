@@ -1,7 +1,6 @@
 package main
 
 import (
-	"context"
 	"fmt"
 	"time"
 
@@ -43,7 +42,7 @@ var ticksListenCmd = &cobra.Command{
 			Exchange: ticksExchange,
 			Pair:     ticksPair,
 		}
-		ch, err := globalClient.Ticks().SubscribeToTicks(context.TODO(), ts)
+		ch, err := globalClient.Ticks().SubscribeToTicks(cmd.Context(), ts)
 		if err != nil {
 			return err
 		}

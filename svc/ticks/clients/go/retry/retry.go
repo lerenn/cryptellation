@@ -30,12 +30,8 @@ func New(client client.Client, options ...option) client.Client {
 }
 
 func (r retry) SubscribeToTicks(ctx context.Context, sub event.TickSubscription) (<-chan tick.Tick, error) {
-	var ch <-chan tick.Tick
-	err := r.Retryable.Exec(ctx, func(ctx context.Context) (err error) {
-		ch, err = r.client.SubscribeToTicks(ctx, sub)
-		return err
-	})
-	return ch, err
+	// No need for retry here, as there is no response and subscription is done repeatedly
+	return r.client.SubscribeToTicks(ctx, sub)
 }
 
 func (r retry) ServiceInfo(ctx context.Context) (resp common.ServiceInfo, err error) {
