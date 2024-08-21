@@ -25,7 +25,7 @@ type CryptellationInternal struct{}
 // Linter returns a container that runs the linter.
 func (mod *CryptellationInternal) Linter(sourceDir *dagger.Directory, path string) *dagger.Container {
 	c := dag.Container().
-		From("golangci/golangci-lint:v1.59.1").
+		From("golangci/golangci-lint:v1.60.1").
 		WithMountedCache("/root/.cache/golangci-lint", dag.CacheVolume("golangci-lint"))
 
 	c = mod.WithGoCodeAndCacheAsWorkDirectory(c, sourceDir, path)
