@@ -2,9 +2,7 @@ module github.com/lerenn/cryptellation/build/ci/dagger
 
 go 1.22.5
 
-replace (
-	github.com/lerenn/cryptellation => ../../..
-)
+replace github.com/lerenn/cryptellation => ../../..
 
 require (
 	github.com/99designs/gqlgen v0.17.49
