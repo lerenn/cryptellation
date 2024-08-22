@@ -161,6 +161,23 @@ func (s subscriber) OrdersListOperationReceived(ctx context.Context, msg asyncap
 	})
 }
 
+func (s subscriber) ListOperationReceived(ctx context.Context, msg asyncapi.ListRequestMessage) error {
+	return s.controller.ReplyToListOperation(ctx, msg, func(replyMsg *asyncapi.ListResponseMessage) {
+		// Get list of backtests
+		list, err := s.backtests.List(context.Background())
+		if err != nil {
+			replyMsg.Payload.Error = &asyncapi.ErrorSchema{
+				Code:    http.StatusInternalServerError,
+				Message: err.Error(),
+			}
+			return
+		}
+
+		// Set message
+		replyMsg.Set(list)
+	})
+}
+
 func (s subscriber) SubscribeOperationReceived(ctx context.Context, msg asyncapi.SubscribeRequestMessage) error {
 	return s.controller.ReplyToSubscribeOperation(ctx, msg, func(replyMsg *asyncapi.SubscribeResponseMessage) {
 		// Parse backtest ID

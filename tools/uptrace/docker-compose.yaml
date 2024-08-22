@@ -6,7 +6,7 @@ services:
     depends_on:
       - uptrace
     volumes:
-      - ../../tools/uptrace/otel-collector.yaml:/etc/otelcol-contrib/config.yaml
+      - ../../tools/uptrace/otel-collector.yaml:/etc/otelcol/config.yaml
     expose:
       - "4317"
       - "4318"

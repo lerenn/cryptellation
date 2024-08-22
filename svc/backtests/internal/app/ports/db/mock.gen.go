@@ -64,6 +64,21 @@ func (mr *MockPortMockRecorder) DeleteBacktest(ctx, bt interface{}) *gomock.Call
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteBacktest", reflect.TypeOf((*MockPort)(nil).DeleteBacktest), ctx, bt)
 }
 
+// ListBacktests mocks base method.
+func (m *MockPort) ListBacktests(ctx context.Context) ([]backtest.Backtest, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ListBacktests", ctx)
+	ret0, _ := ret[0].([]backtest.Backtest)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ListBacktests indicates an expected call of ListBacktests.
+func (mr *MockPortMockRecorder) ListBacktests(ctx interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListBacktests", reflect.TypeOf((*MockPort)(nil).ListBacktests), ctx)
+}
+
 // LockedBacktest mocks base method.
 func (m *MockPort) LockedBacktest(ctx context.Context, id uuid.UUID, fn LockedBacktestCallback) error {
 	m.ctrl.T.Helper()

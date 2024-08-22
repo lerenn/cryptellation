@@ -12,6 +12,7 @@ import (
 	client "github.com/lerenn/cryptellation/pkg/client"
 	account "github.com/lerenn/cryptellation/pkg/models/account"
 	event "github.com/lerenn/cryptellation/pkg/models/event"
+	backtest "github.com/lerenn/cryptellation/svc/backtests/pkg/backtest"
 	gomock "go.uber.org/mock/gomock"
 )
 
@@ -106,6 +107,21 @@ func (m *MockClient) GetAccounts(ctx context.Context, backtestID uuid.UUID) (map
 func (mr *MockClientMockRecorder) GetAccounts(ctx, backtestID interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAccounts", reflect.TypeOf((*MockClient)(nil).GetAccounts), ctx, backtestID)
+}
+
+// List mocks base method.
+func (m *MockClient) List(ctx context.Context) ([]backtest.Backtest, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "List", ctx)
+	ret0, _ := ret[0].([]backtest.Backtest)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// List indicates an expected call of List.
+func (mr *MockClientMockRecorder) List(ctx interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "List", reflect.TypeOf((*MockClient)(nil).List), ctx)
 }
 
 // ListenEvents mocks base method.

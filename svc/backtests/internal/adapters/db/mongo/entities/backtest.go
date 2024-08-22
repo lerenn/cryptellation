@@ -1,6 +1,7 @@
 package entities
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/lerenn/cryptellation/svc/backtests/pkg/backtest"
@@ -26,7 +27,8 @@ type Backtest struct {
 func (bt Backtest) ToModel() (backtest.Backtest, error) {
 	priceType := candlestick.PriceType(bt.CurrentPriceType)
 	if err := priceType.Validate(); err != nil {
-		return backtest.Backtest{}, err
+		wrappedErr := fmt.Errorf("error when validating current price type, got %q: %w", bt.CurrentPriceType, err)
+		return backtest.Backtest{}, wrappedErr
 	}
 
 	periodBetweenEvents := period.Symbol(bt.PeriodBetweenEvents)

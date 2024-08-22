@@ -247,3 +247,34 @@ func (suite *EndToEndSuite) TestBacktestOrder() {
 	suite.Require().Equal(0.99933, utils.Round(accounts["binance"].Balances["BTC"], 5))
 	suite.Require().Equal(0.04, utils.Round(accounts["binance"].Balances["USDT"], 2))
 }
+
+func (suite *EndToEndSuite) TestBacktestList() {
+	// Create backtest
+	id, err := suite.client.Create(context.Background(), client.BacktestCreationPayload{
+		Accounts: map[string]account.Account{
+			"binance": {
+				Balances: map[string]float64{
+					"BTC": 1,
+				},
+			},
+		},
+		StartTime: utils.Must(time.Parse(time.RFC3339, "2023-02-26T12:00:00Z")),
+		EndTime:   utils.ToReference(utils.Must(time.Parse(time.RFC3339, "2023-02-26T12:30:00Z"))),
+	})
+	suite.Require().NoError(err)
+
+	// List backtests
+	backtests, err := suite.client.List(context.Background())
+	suite.Require().NoError(err)
+
+	found := false
+	for _, b := range backtests {
+		if b.ID == id {
+			found = true
+		}
+	}
+
+	if !found {
+		suite.Fail("Backtest not found")
+	}
+}

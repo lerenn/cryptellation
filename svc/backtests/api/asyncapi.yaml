@@ -65,6 +65,16 @@ channels:
       AccountsListResponse:
         $ref: "#/components/messages/AccountsListResponse"
 
+  ListRequest:
+    address: cryptellation.backtests.list
+    messages:
+      ListRequest:
+        $ref: "#/components/messages/ListRequest"
+  ListResponse:
+    messages:
+      ListResponse:
+        $ref: "#/components/messages/ListResponse"
+
   Events:
     parameters:
       id:
@@ -149,6 +159,16 @@ operations:
     action: send
     channel: 
       $ref: "#/channels/Events"
+
+  List:
+    action: receive
+    channel: 
+      $ref: "#/channels/ListRequest"
+    reply:
+      address:
+        location: "$message.header#/replyTo"
+      channel:
+        $ref: '#/channels/ListResponse'
 
   ServiceInfo:
     action: receive
@@ -362,6 +382,29 @@ components:
               - $ref: '#/components/schemas/Tick'
               - $ref: '#/components/schemas/Status'
 
+    ListRequest:
+      payload:
+        type: object
+      traits:
+        - $ref: "#/components/messageTraits/withReplyTo"
+        - $ref: "#/components/messageTraits/withCorrelationID"
+    ListResponse:
+      payload:
+        type: object
+        required:
+          - id
+        oneOf:
+        - properties:
+            backtests:
+              type: array
+              items:
+                $ref: '#/components/schemas/Backtest'
+        - properties:
+            error:
+              $ref: '../../../../internal/asyncapi/models.yaml#/components/schemas/Error'
+      traits:
+        - $ref: "#/components/messageTraits/withCorrelationID"
+
     ServiceInfoRequest:
       payload:
         type: object
@@ -416,6 +459,22 @@ components:
     BacktestID:
       type: string
       description: Targeted backtest ID
+    Backtest:
+      type: object
+      required:
+        - id
+        - start_time
+        - end_time
+        - period_between_events
+      properties:
+        id:
+          $ref: '#/components/schemas/BacktestID'
+        start_time:
+          $ref: '#/components/schemas/Date'
+        end_time:
+          $ref: '#/components/schemas/Date'
+        period_between_events:
+          $ref: '#/components/schemas/Period'
     Date:
       type: string
       format: date-time

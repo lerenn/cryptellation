@@ -17,5 +17,6 @@ type Backtests interface {
 	Create(ctx context.Context, req backtest.NewPayload) (id uuid.UUID, err error)
 	GetAccounts(ctx context.Context, backtestId uuid.UUID) (map[string]account.Account, error)
 	GetOrders(ctx context.Context, backtestId uuid.UUID) ([]order.Order, error)
+	List(ctx context.Context) ([]backtest.Backtest, error)
 	SubscribeToEvents(ctx context.Context, backtestId uuid.UUID, exchange, pair string) error
 }

@@ -51,6 +51,34 @@ func (a *Adapter) ReadBacktest(ctx context.Context, id uuid.UUID) (backtest.Back
 	return entity.ToModel()
 }
 
+func (a *Adapter) ListBacktests(ctx context.Context) ([]backtest.Backtest, error) {
+	var bts []backtest.Backtest
+
+	// Get objects from database
+	cursor, err := a.client.Collection(CollectionName).Find(ctx, map[string]any{})
+	if err != nil {
+		return nil, err
+	}
+	defer cursor.Close(ctx)
+
+	// Transform entities to models
+	for cursor.Next(ctx) {
+		var entity entities.Backtest
+		if err := cursor.Decode(&entity); err != nil {
+			return nil, err
+		}
+
+		bt, err := entity.ToModel()
+		if err != nil {
+			return nil, err
+		}
+
+		bts = append(bts, bt)
+	}
+
+	return bts, nil
+}
+
 func (a *Adapter) UpdateBacktest(ctx context.Context, bt backtest.Backtest) error {
 	// Check ID is not nil
 	if bt.ID == uuid.Nil {

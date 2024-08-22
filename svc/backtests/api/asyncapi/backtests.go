@@ -95,3 +95,39 @@ func (msg *EventMessage) Set(evt event.Event) error {
 
 	return nil
 }
+
+func (msg *ListRequestMessage) Set() error {
+	// No payload
+	return nil
+}
+
+func (msg *ListResponseMessage) Set(backtests []backtest.Backtest) {
+	msg.Payload.Backtests = make([]BacktestSchema, len(backtests))
+	for i, b := range backtests {
+		msg.Payload.Backtests[i] = BacktestSchema{
+			Id:                  BacktestIDSchema(b.ID.String()),
+			StartTime:           DateSchema(b.StartTime),
+			EndTime:             DateSchema(b.EndTime),
+			PeriodBetweenEvents: PeriodSchema(b.PeriodBetweenEvents),
+		}
+	}
+}
+
+func (msg *ListResponseMessage) ToModel() ([]backtest.Backtest, error) {
+	backtests := make([]backtest.Backtest, len(msg.Payload.Backtests))
+	for i, b := range msg.Payload.Backtests {
+		p, err := period.FromString(string(b.PeriodBetweenEvents))
+		if err != nil {
+			return nil, err
+		}
+
+		backtests[i] = backtest.Backtest{
+			ID:                  uuid.MustParse(string(b.Id)),
+			StartTime:           time.Time(b.StartTime),
+			EndTime:             time.Time(b.EndTime),
+			PeriodBetweenEvents: p,
+		}
+	}
+
+	return backtests, nil
+}

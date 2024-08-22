@@ -49,6 +49,53 @@ func (suite *BacktestSuite) TestCreateRead() {
 	suite.Require().Equal(bt.Accounts["exchange"].Balances["DAI"], rp.Accounts["exchange"].Balances["DAI"])
 }
 
+func (suite *BacktestSuite) TestList() {
+	bt1 := backtest.Backtest{
+		ID:        uuid.New(),
+		StartTime: time.Unix(0, 0),
+		CurrentCsTick: backtest.CurrentCsTick{
+			Time:      time.Unix(60, 0),
+			PriceType: candlestick.PriceTypeIsLow,
+		},
+		EndTime:             time.Unix(120, 0),
+		PeriodBetweenEvents: period.M1,
+		Accounts: map[string]account.Account{
+			"exchange": {
+				Balances: map[string]float64{
+					"DAI": 1000,
+				},
+			},
+		},
+	}
+	bt2 := backtest.Backtest{
+		ID:        uuid.New(),
+		StartTime: time.Unix(0, 0),
+		CurrentCsTick: backtest.CurrentCsTick{
+			Time:      time.Unix(60, 0),
+			PriceType: candlestick.PriceTypeIsLow,
+		},
+		EndTime:             time.Unix(120, 0),
+		PeriodBetweenEvents: period.M1,
+		Accounts: map[string]account.Account{
+			"exchange": {
+				Balances: map[string]float64{
+					"DAI": 1000,
+				},
+			},
+		},
+	}
+
+	suite.Require().NoError(suite.DB.CreateBacktest(context.TODO(), bt1))
+	suite.Require().NoError(suite.DB.CreateBacktest(context.TODO(), bt2))
+
+	bts, err := suite.DB.ListBacktests(context.TODO())
+	suite.Require().NoError(err)
+
+	suite.Require().Len(bts, 2)
+	suite.Require().Equal(bt1.ID, bts[0].ID)
+	suite.Require().Equal(bt2.ID, bts[1].ID)
+}
+
 func (suite *BacktestSuite) TestUpdate() {
 	bt := backtest.Backtest{
 		ID:        uuid.New(),

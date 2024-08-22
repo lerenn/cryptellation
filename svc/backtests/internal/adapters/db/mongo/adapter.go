@@ -25,3 +25,16 @@ func New(ctx context.Context, c config.Mongo) (*Adapter, error) {
 		client: db,
 	}, err
 }
+
+func (a *Adapter) CreateIndexes() error {
+	// No index
+	return nil
+}
+
+func (a *Adapter) Reset(ctx context.Context) error {
+	if err := a.client.DropDatabase(ctx); err != nil {
+		return err
+	}
+
+	return a.CreateIndexes()
+}

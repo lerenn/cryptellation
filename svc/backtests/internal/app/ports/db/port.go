@@ -23,6 +23,7 @@ type LockedBacktestCallback func(bt *backtest.Backtest) error
 type Port interface {
 	CreateBacktest(ctx context.Context, bt backtest.Backtest) error
 	ReadBacktest(ctx context.Context, id uuid.UUID) (backtest.Backtest, error)
+	ListBacktests(ctx context.Context) ([]backtest.Backtest, error)
 	UpdateBacktest(ctx context.Context, bt backtest.Backtest) error
 	DeleteBacktest(ctx context.Context, bt backtest.Backtest) error
 

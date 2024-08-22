@@ -14,6 +14,7 @@ import (
 
 	asyncapi "github.com/lerenn/cryptellation/svc/backtests/api/asyncapi"
 	client "github.com/lerenn/cryptellation/svc/backtests/clients/go"
+	"github.com/lerenn/cryptellation/svc/backtests/pkg/backtest"
 
 	"github.com/lerenn/cryptellation/svc/ticks/pkg/tick"
 
@@ -196,6 +197,20 @@ func (b nats) GetAccounts(ctx context.Context, backtestID uuid.UUID) (map[string
 
 	// Convert response to model
 	return respMsg.ToModel(), nil
+}
+
+func (b nats) List(ctx context.Context) ([]backtest.Backtest, error) {
+	// Set message
+	reqMsg := asyncapi.NewListRequestMessage()
+	reqMsg.Headers.ReplyTo = helpers.AddReplyToSuffix(asyncapi.ListRequestChannelPath, b.name)
+
+	// Send request
+	respMsg, err := b.ctrl.RequestToListOperation(ctx, reqMsg)
+	if err != nil {
+		return nil, err
+	}
+
+	return respMsg.ToModel()
 }
 
 func (b nats) ServiceInfo(ctx context.Context) (common.ServiceInfo, error) {

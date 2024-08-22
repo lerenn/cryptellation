@@ -1,7 +1,7 @@
 DOCKER_COMPOSE_CMD := docker compose -f ./deployments/docker-compose/cryptellation.docker-compose.yaml 
 
-.PHONE: all
-all: generate lint test ## Generate, lint and test the code
+.PHONE: check
+check: generate lint test ## Generate, lint and test the code
 
 .PHONY: clean
 clean: local/down ## Clean the project
