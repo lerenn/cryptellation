@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+
 	"github.com/spf13/cobra"
 )
 
@@ -17,6 +19,24 @@ var backtestsCmd = &cobra.Command{
 	},
 }
 
+var backtestsList = &cobra.Command{
+	Use:     "list",
+	Aliases: []string{"l", "ls"},
+	Short:   "List backtests",
+	RunE: func(cmd *cobra.Command, args []string) (err error) {
+		list, err := globalClient.Backtests().List(cmd.Context())
+		if err != nil {
+			return err
+		}
+
+		fmt.Printf("%-40s\n", "ID")
+		for _, bt := range list {
+			fmt.Printf("%-40s%-20s\n", bt.ID)
+		}
+		return nil
+	},
+}
+
 var backtestsInfoCmd = &cobra.Command{
 	Use:     "service",
 	Aliases: []string{"svc"},
@@ -27,6 +47,7 @@ var backtestsInfoCmd = &cobra.Command{
 }
 
 func initBacktests(rootCmd *cobra.Command) {
+	backtestsCmd.AddCommand(backtestsList)
 	backtestsCmd.AddCommand(backtestsInfoCmd)
 	rootCmd.AddCommand(backtestsCmd)
 }
