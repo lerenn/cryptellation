@@ -23,15 +23,21 @@ type Health struct {
 	readinessCounter telemetry.Counter
 }
 
-func NewHealth() (*Health, error) {
+func NewHealth(ctx context.Context) (*Health, error) {
 	var h Health
+	var err error
 
-	// Get health port
-	port, err := strconv.Atoi(os.Getenv(HeathPortEnvVar))
-	if err != nil {
-		return nil, fmt.Errorf("getting health port: %w", err)
+	// Use health port if set, otherwise default to 9000
+	healthPortEnv := os.Getenv(HeathPortEnvVar)
+	if healthPortEnv != "" {
+		h.port, err = strconv.Atoi(healthPortEnv)
+		if err != nil {
+			return nil, fmt.Errorf("getting health port: %w", err)
+		}
+	} else {
+		telemetry.L(ctx).Warning("HEALTH_PORT not set, defaulting to 9000")
+		h.port = 9000
 	}
-	h.port = port
 
 	// Readiness to false
 	h.isReady.Store(false)

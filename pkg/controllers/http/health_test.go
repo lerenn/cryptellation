@@ -1,6 +1,7 @@
 package http
 
 import (
+	"context"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -23,7 +24,7 @@ func (suite *HealthSuite) SetupTest() {
 	os.Setenv(HeathPortEnvVar, "1234")
 
 	// Create health
-	h, err := NewHealth()
+	h, err := NewHealth(context.Background())
 	suite.Require().NoError(err)
 	suite.health = h
 }
