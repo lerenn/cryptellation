@@ -23,12 +23,12 @@ type Candlestick struct {
 	Uncomplete bool      `bson:"uncomplete"`
 }
 
-func (c *Candlestick) FromModel(exchange, pair, period string, t time.Time, model candlestick.Candlestick) {
+func (c *Candlestick) FromModel(exchange, pair, period string, model candlestick.Candlestick) {
 	c.Exchange = exchange
 	c.Pair = pair
 	c.Period = period
-	c.Time = t
 
+	c.Time = model.Time
 	c.Open = model.Open
 	c.High = model.High
 	c.Low = model.Low
@@ -37,12 +37,12 @@ func (c *Candlestick) FromModel(exchange, pair, period string, t time.Time, mode
 	c.Uncomplete = model.Uncomplete
 }
 
-func (c Candlestick) ToModel() (exchange, pair, period string, t time.Time, model candlestick.Candlestick) {
+func (c Candlestick) ToModel() (exchange, pair, period string, model candlestick.Candlestick) {
 	return c.Exchange,
 		c.Pair,
 		c.Period,
-		c.Time,
 		candlestick.Candlestick{
+			Time:       c.Time,
 			Open:       c.Open,
 			High:       c.High,
 			Low:        c.Low,
@@ -54,9 +54,9 @@ func (c Candlestick) ToModel() (exchange, pair, period string, t time.Time, mode
 
 func FromModelListToEntityList(list *candlestick.List) []Candlestick {
 	entities := make([]Candlestick, 0, list.Len())
-	_ = list.Loop(func(t time.Time, cs candlestick.Candlestick) (bool, error) {
+	_ = list.Loop(func(cs candlestick.Candlestick) (bool, error) {
 		c := Candlestick{}
-		c.FromModel(list.Exchange, list.Pair, list.Period.String(), t, cs)
+		c.FromModel(list.Exchange, list.Pair, list.Period.String(), cs)
 		entities = append(entities, c)
 		return false, nil
 	})
@@ -93,7 +93,8 @@ func FromEntityListToModelList(entities []Candlestick) (*candlestick.List, error
 			return nil, xerrors.New(txt)
 		}
 
-		err := list.Set(e.Time, candlestick.Candlestick{
+		err := list.Set(candlestick.Candlestick{
+			Time:       e.Time,
 			Open:       e.Open,
 			High:       e.High,
 			Low:        e.Low,

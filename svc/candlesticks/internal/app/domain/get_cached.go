@@ -155,14 +155,14 @@ func (app Candlesticks) upsert(ctx context.Context, cl *candlestick.List) error 
 
 	csToInsert := candlestick.NewListFrom(cl)
 	csToUpdate := candlestick.NewListFrom(cl)
-	if err := cl.Loop(func(ts time.Time, cs candlestick.Candlestick) (bool, error) {
-		rcs, exists := rcl.Get(ts)
+	if err := cl.Loop(func(cs candlestick.Candlestick) (bool, error) {
+		rcs, exists := rcl.Get(cs.Time)
 		if !exists {
-			telemetry.L(ctx).Debugf("Inserting candlestick %s with %+v", ts, cs)
-			return false, csToInsert.Set(ts, cs)
+			telemetry.L(ctx).Debugf("Inserting candlestick %s with %+v", cs.Time, cs)
+			return false, csToInsert.Set(cs)
 		} else if !rcs.Equal(cs) {
-			telemetry.L(ctx).Debugf("Updating candlestick %s with %+v", ts, cs)
-			return false, csToUpdate.Set(ts, cs)
+			telemetry.L(ctx).Debugf("Updating candlestick %s with %+v", cs.Time, cs)
+			return false, csToUpdate.Set(cs)
 		}
 		return false, nil
 	}); err != nil {

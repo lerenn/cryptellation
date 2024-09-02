@@ -84,8 +84,8 @@ func (c nats) Read(ctx context.Context, payload client.ReadCandlesticksPayload) 
 	}
 
 	// Debug content
-	_ = m.Loop(func(t time.Time, cs candlestick.Candlestick) (bool, error) {
-		telemetry.L(ctx).Debugf("Got candlestick %s: %+v", t.Format(time.RFC3339), cs)
+	_ = m.Loop(func(cs candlestick.Candlestick) (bool, error) {
+		telemetry.L(ctx).Debugf("Got candlestick %s: %+v", cs.Time.Format(time.RFC3339), cs)
 		return false, nil
 	})
 

@@ -38,13 +38,13 @@ func (suite *SMASuite) SetupTest() {
 
 func (suite *SMASuite) TestAllExistWithNoneInDB() {
 	cs := candlestick.NewList("exchange", "ETC-USDT", period.M1)
-	cs.MustSet(time.Unix(0, 0), candlestick.Candlestick{Close: 5})
-	cs.MustSet(time.Unix(60, 0), candlestick.Candlestick{Close: 7})
-	cs.MustSet(time.Unix(120, 0), candlestick.Candlestick{Close: 10})
-	cs.MustSet(time.Unix(180, 0), candlestick.Candlestick{Close: 10})
-	cs.MustSet(time.Unix(240, 0), candlestick.Candlestick{Close: 25})
-	cs.MustSet(time.Unix(300, 0), candlestick.Candlestick{Close: 25})
-	cs.MustSet(time.Unix(360, 0), candlestick.Candlestick{Close: 25})
+	cs.MustSet(candlestick.Candlestick{Time: time.Unix(0, 0), Close: 5})
+	cs.MustSet(candlestick.Candlestick{Time: time.Unix(60, 0), Close: 7})
+	cs.MustSet(candlestick.Candlestick{Time: time.Unix(120, 0), Close: 10})
+	cs.MustSet(candlestick.Candlestick{Time: time.Unix(180, 0), Close: 10})
+	cs.MustSet(candlestick.Candlestick{Time: time.Unix(240, 0), Close: 25})
+	cs.MustSet(candlestick.Candlestick{Time: time.Unix(300, 0), Close: 25})
+	cs.MustSet(candlestick.Candlestick{Time: time.Unix(360, 0), Close: 25})
 
 	// Set expected calls
 	suite.db.EXPECT().GetSMA(context.Background(), db.ReadSMAPayload{

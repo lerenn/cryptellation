@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 
+	"github.com/lerenn/cryptellation/pkg/utils"
 	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/candlestick"
 	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/period"
 
@@ -17,9 +18,9 @@ type CandlesticksSuite struct {
 
 func (suite *CandlesticksSuite) TestCreate() {
 	list := candlestick.NewList("exchange", "ETH-USDC", period.M1)
-	t, err := time.Parse(time.RFC3339, "1993-11-15T11:29:00Z")
-	suite.Require().NoError(err)
-	suite.Require().NoError(list.Set(t, candlestick.Candlestick{
+	t := utils.Must(time.Parse(time.RFC3339, "1993-11-15T11:29:00Z"))
+	suite.Require().NoError(list.Set(candlestick.Candlestick{
+		Time:       t,
 		Open:       1,
 		Low:        0.5,
 		High:       2,
@@ -30,7 +31,7 @@ func (suite *CandlesticksSuite) TestCreate() {
 	recvList := candlestick.NewList("exchange", "ETH-USDC", period.M1)
 
 	suite.Require().NoError(suite.DB.CreateCandlesticks(context.Background(), list))
-	err = suite.DB.ReadCandlesticks(context.Background(), recvList, t.Add(-time.Hour), t.Add(time.Hour), 0)
+	err := suite.DB.ReadCandlesticks(context.Background(), recvList, t.Add(-time.Hour), t.Add(time.Hour), 0)
 	suite.Require().NoError(err)
 
 	suite.Require().Equal(1, recvList.Len())
@@ -42,9 +43,9 @@ func (suite *CandlesticksSuite) TestCreate() {
 
 func (suite *CandlesticksSuite) TestCreateTwice() {
 	list := candlestick.NewList("exchange", "ETH-USDC", period.M1)
-	t, err := time.Parse(time.RFC3339, "1993-11-15T11:29:00Z")
-	suite.Require().NoError(err)
-	suite.Require().NoError(list.Set(t, candlestick.Candlestick{
+	t := utils.Must(time.Parse(time.RFC3339, "1993-11-15T11:29:00Z"))
+	suite.Require().NoError(list.Set(candlestick.Candlestick{
+		Time:   t,
 		Open:   1,
 		Low:    0.5,
 		High:   2,
@@ -60,9 +61,9 @@ func (suite *CandlesticksSuite) TestRead() {
 	// Create targeted exchange, pair, period
 	list := candlestick.NewList("exchange", "ETH-USDC", period.M1)
 
-	t1, err := time.Parse(time.RFC3339, "1993-11-15T11:29:00Z")
-	suite.Require().NoError(err)
-	suite.Require().NoError(list.Set(t1, candlestick.Candlestick{
+	t1 := utils.Must(time.Parse(time.RFC3339, "1993-11-15T11:29:00Z"))
+	suite.Require().NoError(list.Set(candlestick.Candlestick{
+		Time:   t1,
 		Open:   1,
 		Low:    0.5,
 		High:   2,
@@ -70,9 +71,9 @@ func (suite *CandlesticksSuite) TestRead() {
 		Volume: 1000,
 	}))
 
-	t2, err := time.Parse(time.RFC3339, "1993-11-15T11:30:00Z")
-	suite.Require().NoError(err)
-	suite.Require().NoError(list.Set(t2, candlestick.Candlestick{
+	t2 := utils.Must(time.Parse(time.RFC3339, "1993-11-15T11:30:00Z"))
+	suite.Require().NoError(list.Set(candlestick.Candlestick{
+		Time:   t2,
 		Open:   2,
 		Low:    1,
 		High:   4,
@@ -80,9 +81,9 @@ func (suite *CandlesticksSuite) TestRead() {
 		Volume: 2000,
 	}))
 
-	t3, err := time.Parse(time.RFC3339, "1993-11-15T11:31:00Z")
-	suite.Require().NoError(err)
-	suite.Require().NoError(list.Set(t3, candlestick.Candlestick{
+	t3 := utils.Must(time.Parse(time.RFC3339, "1993-11-15T11:31:00Z"))
+	suite.Require().NoError(list.Set(candlestick.Candlestick{
+		Time:   t3,
 		Open:   3,
 		Low:    1.5,
 		High:   6,
@@ -90,9 +91,9 @@ func (suite *CandlesticksSuite) TestRead() {
 		Volume: 3000,
 	}))
 
-	t4, err := time.Parse(time.RFC3339, "1993-11-15T11:32:00Z")
-	suite.Require().NoError(err)
-	suite.Require().NoError(list.Set(t4, candlestick.Candlestick{
+	t4 := utils.Must(time.Parse(time.RFC3339, "1993-11-15T11:32:00Z"))
+	suite.Require().NoError(list.Set(candlestick.Candlestick{
+		Time:   t4,
 		Open:   4,
 		Low:    2,
 		High:   8,
@@ -104,8 +105,8 @@ func (suite *CandlesticksSuite) TestRead() {
 
 	// Create other exchange
 	otherExchangeList := candlestick.NewList("exchange2", "ETH-USDC", period.M1)
-	suite.Require().NoError(err)
-	suite.Require().NoError(otherExchangeList.Set(t2, candlestick.Candlestick{
+	suite.Require().NoError(otherExchangeList.Set(candlestick.Candlestick{
+		Time:   t2,
 		Open:   1,
 		Low:    1,
 		High:   1,
@@ -116,8 +117,8 @@ func (suite *CandlesticksSuite) TestRead() {
 
 	// Create other pair
 	otherPairList := candlestick.NewList("exchange", "BTC-USDC", period.M1)
-	suite.Require().NoError(err)
-	suite.Require().NoError(otherPairList.Set(t2, candlestick.Candlestick{
+	suite.Require().NoError(otherPairList.Set(candlestick.Candlestick{
+		Time:   t2,
 		Open:   2,
 		Low:    2,
 		High:   2,
@@ -128,8 +129,8 @@ func (suite *CandlesticksSuite) TestRead() {
 
 	// Create other period
 	otherPeriodList := candlestick.NewList("exchange", "ETH-USDC", period.M15)
-	suite.Require().NoError(err)
-	suite.Require().NoError(otherPeriodList.Set(t2, candlestick.Candlestick{
+	suite.Require().NoError(otherPeriodList.Set(candlestick.Candlestick{
+		Time:   t2,
 		Open:   3,
 		Low:    3,
 		High:   3,
@@ -179,9 +180,9 @@ func (suite *CandlesticksSuite) TestReadLimit() {
 	// Create targeted exchange, pair, period
 	list := candlestick.NewList("exchange", "ETH-USDC", period.M1)
 
-	t1, err := time.Parse(time.RFC3339, "1993-11-15T11:29:00Z")
-	suite.Require().NoError(err)
-	suite.Require().NoError(list.Set(t1, candlestick.Candlestick{
+	t1 := utils.Must(time.Parse(time.RFC3339, "1993-11-15T11:29:00Z"))
+	suite.Require().NoError(list.Set(candlestick.Candlestick{
+		Time:   t1,
 		Open:   1,
 		Low:    0.5,
 		High:   2,
@@ -189,9 +190,9 @@ func (suite *CandlesticksSuite) TestReadLimit() {
 		Volume: 1000,
 	}))
 
-	t2, err := time.Parse(time.RFC3339, "1993-11-15T11:30:00Z")
-	suite.Require().NoError(err)
-	suite.Require().NoError(list.Set(t2, candlestick.Candlestick{
+	t2 := utils.Must(time.Parse(time.RFC3339, "1993-11-15T11:30:00Z"))
+	suite.Require().NoError(list.Set(candlestick.Candlestick{
+		Time:   t2,
 		Open:   2,
 		Low:    1,
 		High:   4,
@@ -199,9 +200,9 @@ func (suite *CandlesticksSuite) TestReadLimit() {
 		Volume: 2000,
 	}))
 
-	t3, err := time.Parse(time.RFC3339, "1993-11-15T11:31:00Z")
-	suite.Require().NoError(err)
-	suite.Require().NoError(list.Set(t3, candlestick.Candlestick{
+	t3 := utils.Must(time.Parse(time.RFC3339, "1993-11-15T11:31:00Z"))
+	suite.Require().NoError(list.Set(candlestick.Candlestick{
+		Time:   t3,
 		Open:   3,
 		Low:    1.5,
 		High:   6,
@@ -209,9 +210,9 @@ func (suite *CandlesticksSuite) TestReadLimit() {
 		Volume: 3000,
 	}))
 
-	t4, err := time.Parse(time.RFC3339, "1993-11-15T11:32:00Z")
-	suite.Require().NoError(err)
-	suite.Require().NoError(list.Set(t4, candlestick.Candlestick{
+	t4 := utils.Must(time.Parse(time.RFC3339, "1993-11-15T11:32:00Z"))
+	suite.Require().NoError(list.Set(candlestick.Candlestick{
+		Time:   t4,
 		Open:   4,
 		Low:    2,
 		High:   8,
@@ -246,9 +247,9 @@ func (suite *CandlesticksSuite) TestReadEmpty() {
 
 func (suite *CandlesticksSuite) TestUpdate() {
 	list := candlestick.NewList("exchange", "ETH-USDC", period.M1)
-	t, err := time.Parse(time.RFC3339, "1993-11-15T11:29:00Z")
-	suite.Require().NoError(err)
-	suite.Require().NoError(list.Set(t, candlestick.Candlestick{
+	t := utils.Must(time.Parse(time.RFC3339, "1993-11-15T11:29:00Z"))
+	suite.Require().NoError(list.Set(candlestick.Candlestick{
+		Time:       t,
 		Open:       1,
 		Low:        0.5,
 		High:       2,
@@ -259,7 +260,8 @@ func (suite *CandlesticksSuite) TestUpdate() {
 	suite.Require().NoError(suite.DB.CreateCandlesticks(context.Background(), list))
 
 	update := candlestick.NewList("exchange", "ETH-USDC", period.M1)
-	suite.Require().NoError(update.Set(t, candlestick.Candlestick{
+	suite.Require().NoError(update.Set(candlestick.Candlestick{
+		Time:       t,
 		Open:       2,
 		Low:        1,
 		High:       4,
@@ -269,7 +271,7 @@ func (suite *CandlesticksSuite) TestUpdate() {
 	}))
 	suite.Require().NoError(suite.DB.UpdateCandlesticks(context.Background(), update))
 	receivedList := candlestick.NewList("exchange", "ETH-USDC", period.M1)
-	err = suite.DB.ReadCandlesticks(context.Background(), receivedList, t.Add(-time.Hour), t.Add(time.Hour), 0)
+	err := suite.DB.ReadCandlesticks(context.Background(), receivedList, t.Add(-time.Hour), t.Add(time.Hour), 0)
 	suite.Require().NoError(err)
 
 	suite.Require().Equal(1, receivedList.Len())
@@ -281,9 +283,9 @@ func (suite *CandlesticksSuite) TestUpdate() {
 
 func (suite *CandlesticksSuite) TestUpdateInexistantTwice() {
 	list := candlestick.NewList("exchange", "ETH-USDC", period.M1)
-	t, err := time.Parse(time.RFC3339, "1993-11-15T11:29:00Z")
-	suite.Require().NoError(err)
-	suite.Require().NoError(list.Set(t, candlestick.Candlestick{
+	t := utils.Must(time.Parse(time.RFC3339, "1993-11-15T11:29:00Z"))
+	suite.Require().NoError(list.Set(candlestick.Candlestick{
+		Time:   t,
 		Open:   1,
 		Low:    0.5,
 		High:   2,
@@ -298,7 +300,8 @@ func (suite *CandlesticksSuite) TestUpdateInexistantTwice() {
 func (suite *CandlesticksSuite) TestDelete() {
 	list := candlestick.NewList("exchange", "ETH-USDC", period.M1)
 	for i := 0; i < 10; i++ {
-		suite.Require().NoError(list.Set(time.Unix(int64(i*int(period.M1.Duration().Seconds())), 0), candlestick.Candlestick{
+		suite.Require().NoError(list.Set(candlestick.Candlestick{
+			Time:   time.Unix(int64(i*int(period.M1.Duration().Seconds())), 0),
 			Open:   1 + float64(i),
 			Low:    0.5 + float64(i),
 			High:   2 + float64(i),
@@ -310,11 +313,11 @@ func (suite *CandlesticksSuite) TestDelete() {
 
 	// Remove half the data
 	delete := candlestick.NewList("exchange", "ETH-USDC", period.M1)
-	suite.Require().NoError(delete.Set(time.Unix(int64(0*period.M1.Duration().Seconds()), 0), candlestick.Candlestick{}))
-	suite.Require().NoError(delete.Set(time.Unix(int64(1*period.M1.Duration().Seconds()), 0), candlestick.Candlestick{}))
-	suite.Require().NoError(delete.Set(time.Unix(int64(2*period.M1.Duration().Seconds()), 0), candlestick.Candlestick{}))
-	suite.Require().NoError(delete.Set(time.Unix(int64(3*period.M1.Duration().Seconds()), 0), candlestick.Candlestick{}))
-	suite.Require().NoError(delete.Set(time.Unix(int64(4*period.M1.Duration().Seconds()), 0), candlestick.Candlestick{}))
+	suite.Require().NoError(delete.Set(candlestick.Candlestick{Time: time.Unix(int64(0*period.M1.Duration().Seconds()), 0)}))
+	suite.Require().NoError(delete.Set(candlestick.Candlestick{Time: time.Unix(int64(1*period.M1.Duration().Seconds()), 0)}))
+	suite.Require().NoError(delete.Set(candlestick.Candlestick{Time: time.Unix(int64(2*period.M1.Duration().Seconds()), 0)}))
+	suite.Require().NoError(delete.Set(candlestick.Candlestick{Time: time.Unix(int64(3*period.M1.Duration().Seconds()), 0)}))
+	suite.Require().NoError(delete.Set(candlestick.Candlestick{Time: time.Unix(int64(4*period.M1.Duration().Seconds()), 0)}))
 	suite.Require().NoError(suite.DB.DeleteCandlesticks(context.Background(), delete))
 
 	// Check staying data
@@ -324,10 +327,10 @@ func (suite *CandlesticksSuite) TestDelete() {
 	err := suite.DB.ReadCandlesticks(context.Background(), receivedList, tStart, tEnd, 0)
 	suite.Require().NoError(err)
 	suite.Require().Equal(list.Len()-5, receivedList.Len())
-	suite.Require().NoError(receivedList.Loop(func(ts time.Time, cs candlestick.Candlestick) (bool, error) {
-		origCS, exists := list.Get(ts)
-		suite.True(exists)
-		suite.Require().Equal(origCS, cs)
+	suite.Require().NoError(receivedList.Loop(func(cs candlestick.Candlestick) (bool, error) {
+		origCS, exists := list.Get(cs.Time)
+		suite.Require().True(exists)
+		suite.Require().True(origCS.Equal(cs))
 		return false, nil
 	}))
 }

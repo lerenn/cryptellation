@@ -53,8 +53,8 @@ func (a *Adapter) ReadCandlesticks(ctx context.Context, cs *candlestick.List, st
 			return err
 		}
 
-		_, _, _, t, m := ce.ToModel()
-		if err := cs.Set(t, m); err != nil {
+		_, _, _, m := ce.ToModel()
+		if err := cs.Set(m); err != nil {
 			return err
 		}
 	}
@@ -91,8 +91,8 @@ func (a *Adapter) UpdateCandlesticks(ctx context.Context, cs *candlestick.List) 
 func (a *Adapter) DeleteCandlesticks(ctx context.Context, cs *candlestick.List) error {
 	// Get the times
 	times := make([]time.Time, 0, cs.Len())
-	_ = cs.Loop(func(t time.Time, _ candlestick.Candlestick) (bool, error) {
-		times = append(times, t)
+	_ = cs.Loop(func(cs candlestick.Candlestick) (bool, error) {
+		times = append(times, cs.Time)
 		return false, nil
 	})
 

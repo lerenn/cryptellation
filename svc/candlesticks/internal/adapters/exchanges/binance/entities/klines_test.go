@@ -15,28 +15,25 @@ import (
 var testCasesKLineToCandlestick = []struct {
 	KLine       binance.Kline
 	Candlestick candlestick.Candlestick
-	Time        time.Time
 }{
 	{
 		KLine:       binance.Kline{OpenTime: 0, Open: "1.0", High: "2.0", Low: "0.5", Close: "1.5", Volume: "1000"},
-		Candlestick: candlestick.Candlestick{Open: 1, High: 2, Low: 0.5, Close: 1.5, Volume: 1000, Uncomplete: false},
-		Time:        time.Unix(0, 0),
+		Candlestick: candlestick.Candlestick{Time: time.Unix(0, 0), Open: 1, High: 2, Low: 0.5, Close: 1.5, Volume: 1000, Uncomplete: false},
 	},
 	{
 		KLine:       binance.Kline{OpenTime: 60 * 1000, Open: "2.0", High: "4.0", Low: "1", Close: "3", Volume: "1500"},
-		Candlestick: candlestick.Candlestick{Open: 2, High: 4, Low: 1, Close: 3, Volume: 1500, Uncomplete: false},
-		Time:        time.Unix(60, 0),
+		Candlestick: candlestick.Candlestick{Time: time.Unix(60, 0), Open: 2, High: 4, Low: 1, Close: 3, Volume: 1500, Uncomplete: false},
 	},
 }
 
 func TestKLineToCandlestick(t *testing.T) {
 	for i, test := range testCasesKLineToCandlestick {
-		ts, cs, err := KLineToCandlestick(test.KLine, period.M1, time.Unix(120, 0))
+		cs, err := KLineToCandlestick(test.KLine, period.M1, time.Unix(120, 0))
 		if err != nil {
 			t.Error("There should be no error on Candlestick", i, ":", err)
 		} else if test.Candlestick != cs {
 			t.Error("Candlestick", i, "is not transformed correctly:", test.Candlestick, cs)
-		} else if !test.Time.Equal(ts) {
+		} else if !test.Candlestick.Time.Equal(cs.Time) {
 			t.Error("times should be equal")
 		}
 	}
@@ -44,28 +41,28 @@ func TestKLineToCandlestick(t *testing.T) {
 
 func TestKLineToCandlestick_IncorrectOpen(t *testing.T) {
 	c := binance.Kline{OpenTime: 0, Open: "error", High: "2.0", Low: "0.5", Close: "1.5"}
-	if _, _, err := KLineToCandlestick(c, period.M1, time.Unix(120, 0)); err == nil {
+	if _, err := KLineToCandlestick(c, period.M1, time.Unix(120, 0)); err == nil {
 		t.Error("There should be an error on open")
 	}
 }
 
 func TestKLineToCandlestick_IncorrectHigh(t *testing.T) {
 	c := binance.Kline{OpenTime: 0, Open: "1.0", High: "error", Low: "0.5", Close: "1.5"}
-	if _, _, err := KLineToCandlestick(c, period.M1, time.Unix(120, 0)); err == nil {
+	if _, err := KLineToCandlestick(c, period.M1, time.Unix(120, 0)); err == nil {
 		t.Error("There should be an error on high")
 	}
 }
 
 func TestKLineToCandlestick_IncorrectLow(t *testing.T) {
 	c := binance.Kline{OpenTime: 0, Open: "1.0", High: "2.0", Low: "error", Close: "1.5"}
-	if _, _, err := KLineToCandlestick(c, period.M1, time.Unix(120, 0)); err == nil {
+	if _, err := KLineToCandlestick(c, period.M1, time.Unix(120, 0)); err == nil {
 		t.Error("There should be an error on low")
 	}
 }
 
 func TestKLineToCandlestick_IncorrectClose(t *testing.T) {
 	c := binance.Kline{OpenTime: 0, Open: "1.0", High: "2.0", Low: "0.5", Close: "error"}
-	if _, _, err := KLineToCandlestick(c, period.M1, time.Unix(120, 0)); err == nil {
+	if _, err := KLineToCandlestick(c, period.M1, time.Unix(120, 0)); err == nil {
 		t.Error("There should be an error on close")
 	}
 }
@@ -94,7 +91,7 @@ func TestKLinesToCandlesticks(t *testing.T) {
 	}
 
 	for i, test := range testCasesKLineToCandlestick {
-		rc, _ := cs.Get(test.Time)
+		rc, _ := cs.Get(test.Candlestick.Time)
 		if test.Candlestick != rc {
 			t.Error("Candlestick", i, "is not transformed correctly:", test.Candlestick, rc)
 		}
@@ -163,7 +160,7 @@ func TestTimeToKLineTime(t *testing.T) {
 
 func TestKLineToCandlestick_Uncomplete(t *testing.T) {
 	c := binance.Kline{OpenTime: 120 * 1000, Open: "1.0", High: "2.0", Low: "0.5", Close: "1.5", Volume: "1000"}
-	_, cs, err := KLineToCandlestick(c, period.M1, time.Unix(130, 0))
+	cs, err := KLineToCandlestick(c, period.M1, time.Unix(130, 0))
 	if err != nil {
 		t.Error("There should be no error:", err.Error())
 	}

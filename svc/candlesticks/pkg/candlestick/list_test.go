@@ -26,17 +26,17 @@ func (suite *CandlestickListSuite) TestNewEmpty() {
 }
 
 func (suite *CandlestickListSuite) TestNew() {
-	t1 := time.Unix(0, 0)
 	cs1 := Candlestick{
+		Time: time.Unix(0, 0),
 		Open: 1.0,
 	}
-	t2 := time.Unix(60, 0)
 	cs2 := Candlestick{
+		Time: time.Unix(60, 0),
 		Open: 2.0,
 	}
 	l := NewList("exchange", "ETH-USDC", period.M1)
-	suite.Require().NoError(l.Set(t1, cs1))
-	suite.Require().NoError(l.Set(t2, cs2))
+	suite.Require().NoError(l.Set(cs1))
+	suite.Require().NoError(l.Set(cs2))
 
 	// Check list
 	suite.Require().Equal("exchange", l.Exchange)
@@ -46,22 +46,22 @@ func (suite *CandlestickListSuite) TestNew() {
 	// Check candlesticks
 	suite.Require().Equal(2, l.Len())
 
-	t, e := l.Get(t1)
+	t, e := l.Get(cs1.Time)
 	suite.Require().True(e)
 	suite.Require().Equal(cs1, t)
 
-	t, e = l.Get(t2)
+	t, e = l.Get(cs2.Time)
 	suite.Require().True(e)
 	suite.Require().Equal(cs2, t)
 }
 
 func (suite *CandlestickListSuite) TestNewWithUnalignedCandlestick() {
-	t := time.Unix(1, 0)
 	cs := Candlestick{
+		Time: time.Unix(1, 0),
 		Open: 1.0,
 	}
 	l := NewList("exchange", "ETH-USDC", period.M1)
-	suite.Require().Error(l.Set(t, cs))
+	suite.Require().Error(l.Set(cs))
 }
 
 func (suite *CandlestickListSuite) TestMustSet() {
@@ -72,10 +72,10 @@ func (suite *CandlestickListSuite) TestSet() {
 	p := "BTC-USDC"
 	csList := NewList("exchange", p, period.M1)
 
-	cs0 := Candlestick{Open: 1, High: 2, Low: 0.5, Close: 1.5}
-	suite.Require().NoError(csList.Set(time.Unix(0, 0), cs0))
-	cs0bis := Candlestick{Open: 10, High: 20, Low: 5, Close: 15}
-	suite.Require().NoError(csList.Set(time.Unix(0, 0), cs0bis))
+	cs0 := Candlestick{Time: time.Unix(0, 0), Open: 1, High: 2, Low: 0.5, Close: 1.5}
+	suite.Require().NoError(csList.Set(cs0))
+	cs0bis := Candlestick{Time: time.Unix(0, 0), Open: 10, High: 20, Low: 5, Close: 15}
+	suite.Require().NoError(csList.Set(cs0bis))
 
 	suite.Require().Equal(1, csList.Len())
 	rcs0, exists := csList.Get(time.Unix(0, 0))
@@ -86,24 +86,26 @@ func (suite *CandlestickListSuite) TestSet() {
 func (suite *CandlestickListSuite) TestSetWithWrongPeriod() {
 	l := NewList("exchange", "ETH-USDC", period.M1)
 	cs := Candlestick{
+		Time:  time.Unix(1, 0),
 		Open:  1,
 		High:  2,
 		Low:   0.5,
 		Close: 1.5,
 	}
-	suite.Require().Error(l.Set(time.Unix(1, 0), cs))
+	suite.Require().Error(l.Set(cs))
 }
 
 func (suite *CandlestickListSuite) TestMerge() {
 	l := NewList("exchange", "ETH-USDC", period.M1)
 	recvCSList := NewList("exchange", "ETH-USDC", period.M1)
 	cs := Candlestick{
+		Time:  time.Unix(0, 0),
 		Open:  1,
 		High:  2,
 		Low:   0.5,
 		Close: 1.5,
 	}
-	err := recvCSList.Set(time.Unix(0, 0), cs)
+	err := recvCSList.Set(cs)
 	suite.Require().NoError(err)
 	suite.Require().Equal(1, recvCSList.Len())
 
@@ -119,13 +121,14 @@ func (suite *CandlestickListSuite) TestExtract() {
 	l := NewList("exchange", "ETH-USDC", period.M1)
 	for i := int64(0); i < 4; i++ {
 		cs := Candlestick{
+			Time:  time.Unix(60*i, 0),
 			Open:  float64(i),
 			High:  0,
 			Low:   0,
 			Close: 0,
 		}
 
-		err := l.Set(time.Unix(60*i, 0), cs)
+		err := l.Set(cs)
 		suite.Require().NoError(err)
 	}
 
@@ -142,30 +145,84 @@ func (suite *CandlestickListSuite) TestExtract() {
 }
 
 func (suite *CandlestickListSuite) TestExtractWithLimit() {
-	// TODO
+	l := NewList("exchange", "ETH-USDC", period.M1)
+	for i := int64(0); i < 4; i++ {
+		cs := Candlestick{
+			Time:  time.Unix(60*i, 0),
+			Open:  float64(i),
+			High:  0,
+			Low:   0,
+			Close: 0,
+		}
+
+		err := l.Set(cs)
+		suite.Require().NoError(err)
+	}
+
+	nl := l.Extract(time.Unix(60, 0), time.Unix(180, 0), 2)
+	suite.Require().Equal(2, nl.Len())
+
+	cs, exists := nl.Get(time.Unix(60, 0))
+	suite.Require().True(exists)
+	suite.Require().Equal(1.0, cs.Open)
+
+	cs, exists = nl.Get(time.Unix(120, 0))
+	suite.Require().True(exists)
+	suite.Require().Equal(2.0, cs.Open)
 }
 
 func (suite *CandlestickListSuite) TestMergeWithNotCorrespondingLists() {
-	// TODO
+	l1 := NewList("exchange", "ETH-USDC", period.M1)
+	l2 := NewList("exchange", "ETH-USDC", period.M5)
+	err := l1.Merge(l2, nil)
+	suite.Require().Error(err)
 }
 
 func (suite *CandlestickListSuite) TestReplaceUncomplete() {
-	// TODO
+	// Create a list with one candlestick
+	completeList := NewList("exchange", "BTC-USDC", period.M1)
+	csComplete := Candlestick{Time: time.Unix(120, 0), Open: 1, High: 2, Low: 0.5, Close: 1.5}
+	suite.Require().NoError(completeList.Set(csComplete))
+
+	// Create a list with one uncomplete candlestick
+	uncompleteList := NewList("exchange", "BTC-USDC", period.M1)
+	csUncomplete := Candlestick{Time: time.Unix(120, 0), Open: 10, High: 20, Low: 5, Close: 15, Uncomplete: true}
+	suite.Require().NoError(uncompleteList.Set(csUncomplete))
+
+	// Replace uncomplete candlestick
+	uncompleteList.ReplaceUncomplete(completeList)
+
+	// Check that the uncomplete candlestick has been replaced
+	cs, exists := uncompleteList.Get(time.Unix(120, 0))
+	suite.Require().True(exists)
+	suite.Require().Equal(csComplete, cs)
 }
 
-func (suite *CandlestickListSuite) TestHasUncomplete() {
-	// TODO
-}
+func (suite *CandlestickListSuite) TestGetUncompleteTimes() {
+	// Create a list with one candlestick
+	csList := NewList("exchange", "BTC-USDC", period.M1)
+	cs0 := Candlestick{Time: time.Unix(60, 0), Open: 1, High: 2, Low: 0.5, Close: 1.5}
+	suite.Require().NoError(csList.Set(cs0))
 
-func (suite *CandlestickListSuite) TestMergeIntoOne() {
-	// TODO
+	// Get uncomplete times
+	times := csList.GetUncompleteTimes()
+	suite.Require().Empty(times)
+
+	// Add an uncomplete candlestick
+	cs1 := Candlestick{Time: time.Unix(120, 0), Open: 10, High: 20, Low: 5, Close: 15, Uncomplete: true}
+	suite.Require().NoError(csList.Set(cs1))
+
+	// Get uncomplete times
+	times = csList.GetUncompleteTimes()
+	suite.Require().Len(times, 1)
+	suite.Require().Equal(time.Unix(120, 0), times[0])
 }
 
 func (suite *CandlestickListSuite) TestFillMissing() {
 	// Create a list with one candlestick
 	csList := NewList("exchange", "BTC-USDC", period.M1)
-	cs0 := Candlestick{Open: 1, High: 2, Low: 0.5, Close: 1.5}
-	suite.Require().NoError(csList.Set(time.Unix(60, 0), cs0))
+	cs0 := Candlestick{Time: time.Unix(60, 0), Open: 1, High: 2, Low: 0.5, Close: 1.5}
+	suite.Require().NoError(csList.Set(cs0))
 
 	// Fill missing candlesticks
 	err := csList.FillMissing(time.Unix(0, 0), time.Unix(180, 0), Candlestick{Open: 10, High: 20, Low: 5, Close: 15})
@@ -174,20 +231,27 @@ func (suite *CandlestickListSuite) TestFillMissing() {
 	// Check that the existing one is not overwritten
 	cs, exists := csList.Get(time.Unix(60, 0))
 	suite.Require().True(exists)
-	suite.Require().Equal(Candlestick{Open: 1, High: 2, Low: 0.5, Close: 1.5}, cs)
+	suite.Require().Equal(Candlestick{Time: time.Unix(60, 0), Open: 1, High: 2, Low: 0.5, Close: 1.5}, cs)
 
 	// Check that missing candlesticks has been filled
 	for _, m := range []int64{0, 2, 3} {
-		cs, exists := csList.Get(time.Unix(m*60, 0))
+		t := time.Unix(m*60, 0)
+		cs, exists := csList.Get(t)
 		suite.Require().True(exists)
-		suite.Require().Equal(Candlestick{Open: 10, High: 20, Low: 5, Close: 15}, cs)
+		suite.Require().Equal(Candlestick{Time: t, Open: 10, High: 20, Low: 5, Close: 15}, cs)
 	}
 }
 
-func (suite *CandlestickListSuite) TestGetUncompleteTimes() {
-	// TODO
-}
-
 func (suite *CandlestickListSuite) TestGetMissingTimes() {
+	// Create a list with one candlestick
+	csList := NewList("exchange", "BTC-USDC", period.M1)
+	cs0 := Candlestick{Time: time.Unix(60, 0), Open: 1, High: 2, Low: 0.5, Close: 1.5}
+	suite.Require().NoError(csList.Set(cs0))
 
+	// Get missing times
+	times := csList.GetMissingTimes(time.Unix(0, 0), time.Unix(180, 0), 0)
+	suite.Require().Len(times, 3)
+	suite.Require().Equal(time.Unix(0, 0), times[0])
+	suite.Require().Equal(time.Unix(120, 0), times[1])
+	suite.Require().Equal(time.Unix(180, 0), times[2])
 }

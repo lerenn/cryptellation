@@ -142,7 +142,7 @@ func (cache *cache) presentAndmissingTimes(payload client.ReadCandlesticksPayloa
 		}
 
 		// Add to list
-		if err := list.Set(current, cd); err != nil {
+		if err := list.Set(cd); err != nil {
 			return nil, nil, err
 		}
 	}
@@ -194,14 +194,14 @@ func (cache *cache) downloadMissing(ctx context.Context, payload client.ReadCand
 
 	// Add missing times to cache
 	telemetry.L(ctx).Debugf("Adding %d missing times to cache", missing.Len())
-	if err := missing.Loop(func(t time.Time, c candlestick.Candlestick) (bool, error) {
+	if err := missing.Loop(func(cs candlestick.Candlestick) (bool, error) {
 		key := cacheKey{
 			Exchange:  payload.Exchange,
 			Pair:      payload.Pair,
 			Period:    payload.Period,
-			Timestamp: t.Unix(),
+			Timestamp: cs.Time.Unix(),
 		}
-		return false, cache.cache.Set(key, c)
+		return false, cache.cache.Set(key, cs)
 	}); err != nil {
 		return nil, err
 	}

@@ -29,10 +29,10 @@ func (suite *TimeSerieSuite) TestTimeSerieSuite() {
 		{
 			Payload: TimeSeriePayload{
 				Candlesticks: candlestick.NewList("exchange", "ETH-USDC", period.M1).
-					MustSet(time.Unix(0, 0), candlestick.Candlestick{Close: 1000}).
-					MustSet(time.Unix(60, 0), candlestick.Candlestick{Close: 1500}).
-					MustSet(time.Unix(120, 0), candlestick.Candlestick{Close: 1250}).
-					MustSet(time.Unix(180, 0), candlestick.Candlestick{Close: 1300}),
+					MustSet(candlestick.Candlestick{Time: time.Unix(0, 0), Close: 1000}).
+					MustSet(candlestick.Candlestick{Time: time.Unix(60, 0), Close: 1500}).
+					MustSet(candlestick.Candlestick{Time: time.Unix(120, 0), Close: 1250}).
+					MustSet(candlestick.Candlestick{Time: time.Unix(180, 0), Close: 1300}),
 				PriceType:    candlestick.PriceTypeIsClose,
 				Start:        time.Unix(120, 0),
 				End:          time.Unix(180, 0),

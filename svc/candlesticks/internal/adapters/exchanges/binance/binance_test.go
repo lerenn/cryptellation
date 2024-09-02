@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/lerenn/cryptellation/pkg/config"
+	"github.com/lerenn/cryptellation/pkg/utils"
 
 	"github.com/lerenn/cryptellation/svc/candlesticks/internal/app/ports/exchanges"
 	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/candlestick"
@@ -32,11 +33,8 @@ func (suite *BinanceSuite) SetupTest() {
 func (suite *BinanceSuite) TestGetCandlesticks() {
 	p := "BTC-USDC"
 
-	ts, err := time.Parse("2006/01/02 15:04:05", "2020/11/15 00:00:00")
-	suite.Require().NoError(err)
-
-	te, err := time.Parse("2006/01/02 15:04:05", "2020/11/15 00:05:00")
-	suite.Require().NoError(err)
+	ts := utils.Must(time.Parse("2006/01/02 15:04:05", "2020/11/15 00:00:00"))
+	te := utils.Must(time.Parse("2006/01/02 15:04:05", "2020/11/15 00:05:00"))
 
 	cs, err := suite.service.GetCandlesticks(context.TODO(),
 		exchanges.GetCandlesticksPayload{
@@ -51,6 +49,7 @@ func (suite *BinanceSuite) TestGetCandlesticks() {
 	suite.Require().Equal(period.M1, cs.Period)
 
 	expected := candlestick.Candlestick{
+		Time:   ts,
 		Open:   16084.16,
 		High:   16093.26,
 		Low:    16084.16,
@@ -61,7 +60,7 @@ func (suite *BinanceSuite) TestGetCandlesticks() {
 	suite.Require().Equal(2, cs.Len())
 	rc, exists := cs.Get(ts)
 	suite.Require().True(exists)
-	suite.Require().Equal(expected, rc)
+	suite.Require().True(expected.Equal(rc))
 }
 
 func (suite *BinanceSuite) TestGetCandlesticksWithZeroLimit() {

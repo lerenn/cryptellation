@@ -49,9 +49,9 @@ func (msg *ListRequestMessage) ToModel() (app.GetCachedPayload, error) {
 
 func (msg *ListResponseMessage) Set(list *candlestick.List) error {
 	respList := make(CandlestickListSchema, 0, list.Len())
-	if err := list.Loop(func(t time.Time, cs candlestick.Candlestick) (bool, error) {
+	if err := list.Loop(func(cs candlestick.Candlestick) (bool, error) {
 		respList = append(respList, CandlestickSchema{
-			Time:   DateSchema(t),
+			Time:   DateSchema(cs.Time),
 			Open:   cs.Open,
 			High:   cs.High,
 			Low:    cs.Low,
@@ -73,7 +73,8 @@ func (msg *ListResponseMessage) ToModel(exchange, pair string, symbol period.Sym
 
 	// Fill list
 	for _, c := range *msg.Payload.Candlesticks {
-		if err := list.Set(time.Time(c.Time), candlestick.Candlestick{
+		if err := list.Set(candlestick.Candlestick{
+			Time:   time.Time(c.Time),
 			Open:   c.Open,
 			High:   c.High,
 			Low:    c.Low,

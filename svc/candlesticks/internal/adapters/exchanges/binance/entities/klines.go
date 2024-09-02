@@ -23,7 +23,7 @@ func KLineTimeToTime(t int64) time.Time {
 }
 
 // KLineToCandlestick will convert KLine binance format for Candlestick
-func KLineToCandlestick(k binance.Kline, p period.Symbol, now time.Time) (time.Time, candlestick.Candlestick, error) {
+func KLineToCandlestick(k binance.Kline, p period.Symbol, now time.Time) (candlestick.Candlestick, error) {
 	var c candlestick.Candlestick
 
 	// Get time
@@ -32,31 +32,31 @@ func KLineToCandlestick(k binance.Kline, p period.Symbol, now time.Time) (time.T
 	// Convert Open
 	open, err := strconv.ParseFloat(k.Open, 64)
 	if err != nil {
-		return time.Unix(0, 0), c, WrapError(err)
+		return c, WrapError(err)
 	}
 
 	// Convert High
 	high, err := strconv.ParseFloat(k.High, 64)
 	if err != nil {
-		return time.Unix(0, 0), c, WrapError(err)
+		return c, WrapError(err)
 	}
 
 	// Convert Low
 	low, err := strconv.ParseFloat(k.Low, 64)
 	if err != nil {
-		return time.Unix(0, 0), c, WrapError(err)
+		return c, WrapError(err)
 	}
 
 	// Convert Close
 	close, err := strconv.ParseFloat(k.Close, 64)
 	if err != nil {
-		return time.Unix(0, 0), c, WrapError(err)
+		return c, WrapError(err)
 	}
 
 	// Convert Volume
 	volume, err := strconv.ParseFloat(k.Volume, 64)
 	if err != nil {
-		return time.Unix(0, 0), c, WrapError(err)
+		return c, WrapError(err)
 	}
 
 	// Check completness
@@ -67,6 +67,7 @@ func KLineToCandlestick(k binance.Kline, p period.Symbol, now time.Time) (time.T
 
 	// Instanciate Candle
 	c = candlestick.Candlestick{
+		Time:       t,
 		Open:       open,
 		High:       high,
 		Low:        low,
@@ -75,19 +76,19 @@ func KLineToCandlestick(k binance.Kline, p period.Symbol, now time.Time) (time.T
 		Uncomplete: uncomplete,
 	}
 
-	return t, c, nil
+	return c, nil
 }
 
 // KLinesToCandlesticks will transform a slice of binance format for Candlestick
 func KLinesToCandlesticks(pair string, period period.Symbol, kl []*binance.Kline, now time.Time) (*candlestick.List, error) {
 	cs := candlestick.NewList(adapter.Infos.Name, pair, period)
 	for _, k := range kl {
-		t, c, err := KLineToCandlestick(*k, period, now)
+		c, err := KLineToCandlestick(*k, period, now)
 		if err != nil {
 			return nil, WrapError(err)
 		}
 
-		if err := cs.Set(t, c); err != nil {
+		if err := cs.Set(c); err != nil {
 			return nil, WrapError(err)
 		}
 	}
