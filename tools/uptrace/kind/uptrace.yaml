@@ -1,0 +1,24 @@
+clickhouse:
+  persistence:
+    enabled: false
+
+postgresql:
+  persistence:
+    enabled: false
+
+otelcol:
+  enabled: false
+
+uptrace:
+  config:
+    projects:
+      - id: 1
+        name: Cryptellation
+        token: cryptellation_secret_token
+        pinned_attrs:
+          - service
+          - host_name
+          - deployment_environment
+        group_by_env: false
+        group_funcs_by_service: false
+        prom_compat: false

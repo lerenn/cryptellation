@@ -1,5 +1,5 @@
 include:
-    - ../../tools/uptrace/docker-compose.yaml
+    - ../../tools/uptrace/docker-compose/docker-compose.yaml
 
 services:
   mongo:

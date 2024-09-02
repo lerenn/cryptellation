@@ -24,7 +24,7 @@ credentials:
       secret_key:
   opentelemetry:
     grpc:
-      endpoint: lgtm-opentelemetry-collector.telemetry:4317
+      endpoint: otel-collector-opentelemetry-collector.telemetry.svc.cluster.local:4317
 
 ################################################################################
 # Services
