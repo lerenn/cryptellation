@@ -53,7 +53,7 @@ func (suite *GetCachedSuite) TestAllExistWithNoneInDB() {
 	dStart, dEnd := getStartEndDownload(start, end)
 	l := candlestick.NewList("exchange", "ETH-USDC", period.M1)
 	for i := dStart; i <= dEnd; i++ {
-		suite.Require().NoError(l.Set(time.Unix(i*60, 0), candlestick.Candlestick{Open: float64(60 * i)}))
+		suite.Require().NoError(l.Set(candlestick.Candlestick{Time: time.Unix(i*60, 0), Open: float64(60 * i)}))
 	}
 	suite.exchange.EXPECT().GetCandlesticks(
 		ctx,
@@ -94,9 +94,9 @@ func (suite *GetCachedSuite) TestAllExistWithNoneInDB() {
 	suite.Require().NoError(err)
 	suite.Require().Equal(int(end-start)+1, l.Len())
 	i := 0
-	_ = l.Loop(func(t time.Time, cs candlestick.Candlestick) (bool, error) {
+	_ = l.Loop(func(cs candlestick.Candlestick) (bool, error) {
 		suite.Require().Equal(float64(60*i), cs.Open)
-		suite.Require().WithinDuration(time.Unix(int64(60*i), 0), t, time.Millisecond)
+		suite.Require().WithinDuration(time.Unix(int64(60*i), 0), cs.Time, time.Millisecond)
 		i++
 
 		return false, nil
@@ -165,8 +165,8 @@ func (suite *GetCachedSuite) TestNoneExistWithNoneInDB() {
 
 	// And that all candlesticks are empty
 	suite.Require().Equal(int(end-start)+1, l.Len())
-	suite.Require().NoError(l.Loop(func(_ time.Time, c candlestick.Candlestick) (bool, error) {
-		suite.Require().Equal(c, candlestick.Candlestick{})
+	suite.Require().NoError(l.Loop(func(c candlestick.Candlestick) (bool, error) {
+		suite.Require().Equal(c, candlestick.Candlestick{Time: c.Time})
 		return false, nil
 	}))
 }
@@ -180,7 +180,7 @@ func (suite *GetCachedSuite) TestFromDBAndService() {
 	// Set call to get candlesticks in database
 	dbl := candlestick.NewList("exchange", "ETH-USDC", period.M1)
 	for i := start; i < start+50; i++ {
-		suite.Require().NoError(dbl.Set(time.Unix(i*60, 0), candlestick.Candlestick{Close: 4321}))
+		suite.Require().NoError(dbl.Set(candlestick.Candlestick{Time: time.Unix(i*60, 0), Close: 4321}))
 	}
 	suite.db.EXPECT().ReadCandlesticks(
 		ctx,
@@ -196,7 +196,7 @@ func (suite *GetCachedSuite) TestFromDBAndService() {
 	dStart, dEnd := getStartEndDownload(start+50, end)
 	exchl := candlestick.NewList("exchange", "ETH-USDC", period.M1)
 	for i := dStart; i <= dEnd; i++ {
-		suite.Require().NoError(exchl.Set(time.Unix(i*60, 0), candlestick.Candlestick{Close: 1234}))
+		suite.Require().NoError(exchl.Set(candlestick.Candlestick{Time: time.Unix(i*60, 0), Close: 1234}))
 	}
 	suite.exchange.EXPECT().GetCandlesticks(
 		ctx,
@@ -224,14 +224,14 @@ func (suite *GetCachedSuite) TestFromDBAndService() {
 	// Set call for creating candlesticks in database
 	created := candlestick.NewList("exchange", "ETH-USDC", period.M1)
 	for i := start + 50; i <= dEnd; i++ {
-		suite.Require().NoError(created.Set(time.Unix(i*60, 0), candlestick.Candlestick{Close: 1234}))
+		suite.Require().NoError(created.Set(candlestick.Candlestick{Time: time.Unix(i*60, 0), Close: 1234}))
 	}
 	suite.db.EXPECT().CreateCandlesticks(ctx, created).Return(nil)
 
 	// Set call for updating candlesticks in database
 	updated := candlestick.NewList("exchange", "ETH-USDC", period.M1)
 	for i := dStart; i < start+50; i++ {
-		suite.Require().NoError(updated.Set(time.Unix(i*60, 0), candlestick.Candlestick{Close: 1234}))
+		suite.Require().NoError(updated.Set(candlestick.Candlestick{Time: time.Unix(i*60, 0), Close: 1234}))
 	}
 	suite.db.EXPECT().UpdateCandlesticks(ctx, updated).Return(nil)
 
@@ -250,8 +250,8 @@ func (suite *GetCachedSuite) TestFromDBAndService() {
 	suite.Require().NoError(err)
 	suite.Require().Equal(int(end-start)+1, el.Len())
 	i := 0
-	_ = el.Loop(func(t time.Time, cs candlestick.Candlestick) (bool, error) {
-		suite.Require().WithinDuration(time.Unix(int64(60*i), 0), t, time.Millisecond)
+	_ = el.Loop(func(cs candlestick.Candlestick) (bool, error) {
+		suite.Require().WithinDuration(time.Unix(int64(60*i), 0), cs.Time, time.Millisecond)
 		if i < int(dStart) { // Present
 			suite.Require().Equal(float64(4321), cs.Close, i)
 		} else { // Updated + Non existant
@@ -272,9 +272,9 @@ func (suite *GetCachedSuite) TestFromDBAndServiceWithUncomplete() {
 	// Set call to db
 	dbl := candlestick.NewList("exchange", "ETH-USDC", period.M1)
 	for i := start; i <= end; i++ {
-		suite.Require().NoError(dbl.Set(time.Unix(i*60, 0), candlestick.Candlestick{Close: 4321}))
+		suite.Require().NoError(dbl.Set(candlestick.Candlestick{Time: time.Unix(i*60, 0), Close: 4321}))
 	}
-	suite.Require().NoError(dbl.Set(time.Unix(uncompletePos*60, 0), candlestick.Candlestick{Close: 4321, Uncomplete: true}))
+	suite.Require().NoError(dbl.Set(candlestick.Candlestick{Time: time.Unix(uncompletePos*60, 0), Close: 4321, Uncomplete: true}))
 	suite.db.EXPECT().ReadCandlesticks(
 		ctx,
 		candlestick.NewList("exchange", "ETH-USDC", period.M1),
@@ -289,7 +289,7 @@ func (suite *GetCachedSuite) TestFromDBAndServiceWithUncomplete() {
 	dStart, dEnd := getStartEndDownload(uncompletePos, uncompletePos)
 	exchl := candlestick.NewList("exchange", "ETH-USDC", period.M1)
 	for i := dStart; i <= dEnd; i++ {
-		suite.Require().NoError(exchl.Set(time.Unix(i*60, 0), candlestick.Candlestick{Close: 1234}))
+		suite.Require().NoError(exchl.Set(candlestick.Candlestick{Time: time.Unix(i*60, 0), Close: 1234}))
 	}
 	suite.exchange.EXPECT().GetCandlesticks(
 		ctx,
@@ -320,14 +320,14 @@ func (suite *GetCachedSuite) TestFromDBAndServiceWithUncomplete() {
 		if i >= start && i <= end {
 			continue
 		}
-		suite.Require().NoError(createdl.Set(time.Unix(i*60, 0), candlestick.Candlestick{Close: 1234}))
+		suite.Require().NoError(createdl.Set(candlestick.Candlestick{Time: time.Unix(i*60, 0), Close: 1234}))
 	}
 	suite.db.EXPECT().CreateCandlesticks(ctx, createdl).Return(nil)
 
 	// Set call for updating candlesticks in database
 	updated := candlestick.NewList("exchange", "ETH-USDC", period.M1)
 	for i := start; i <= end; i++ {
-		suite.Require().NoError(updated.Set(time.Unix(i*60, 0), candlestick.Candlestick{Close: 1234}))
+		suite.Require().NoError(updated.Set(candlestick.Candlestick{Time: time.Unix(i*60, 0), Close: 1234}))
 	}
 	suite.db.EXPECT().UpdateCandlesticks(ctx, updated).Return(nil)
 
@@ -346,8 +346,8 @@ func (suite *GetCachedSuite) TestFromDBAndServiceWithUncomplete() {
 	suite.Require().NoError(err)
 	suite.Require().Equal(int(end-start)+1, el.Len())
 	i := 0
-	_ = el.Loop(func(t time.Time, cs candlestick.Candlestick) (bool, error) {
-		suite.Require().WithinDuration(time.Unix(int64(60*i), 0), t, time.Millisecond)
+	_ = el.Loop(func(cs candlestick.Candlestick) (bool, error) {
+		suite.Require().WithinDuration(time.Unix(int64(60*i), 0), cs.Time, time.Millisecond)
 		suite.Require().Equal(float64(1234), cs.Close, i)
 		i++
 		return false, nil

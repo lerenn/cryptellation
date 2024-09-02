@@ -23,26 +23,35 @@ type Candlestick struct {
 	Uncomplete bool      `bson:"uncomplete"`
 }
 
-func (c *Candlestick) FromModel(exchange, pair, period string, t time.Time, model candlestick.Candlestick) {
+func (c *Candlestick) FromModel(exchange, pair, period string, model candlestick.Candlestick) error {
+	// Check that the time is not zero
+	if model.Time.IsZero() {
+		return fmt.Errorf("candlestick time is zero")
+	}
+
+	// List wise
 	c.Exchange = exchange
 	c.Pair = pair
 	c.Period = period
-	c.Time = t
 
+	// Candlestick wise
+	c.Time = model.Time
 	c.Open = model.Open
 	c.High = model.High
 	c.Low = model.Low
 	c.Close = model.Close
 	c.Volume = model.Volume
 	c.Uncomplete = model.Uncomplete
+
+	return nil
 }
 
-func (c Candlestick) ToModel() (exchange, pair, period string, t time.Time, model candlestick.Candlestick) {
+func (c Candlestick) ToModel() (exchange, pair, period string, model candlestick.Candlestick) {
 	return c.Exchange,
 		c.Pair,
 		c.Period,
-		c.Time,
 		candlestick.Candlestick{
+			Time:       c.Time,
 			Open:       c.Open,
 			High:       c.High,
 			Low:        c.Low,
@@ -52,16 +61,16 @@ func (c Candlestick) ToModel() (exchange, pair, period string, t time.Time, mode
 		}
 }
 
-func FromModelListToEntityList(list *candlestick.List) []Candlestick {
+func FromModelListToEntityList(list *candlestick.List) ([]Candlestick, error) {
 	entities := make([]Candlestick, 0, list.Len())
-	_ = list.Loop(func(t time.Time, cs candlestick.Candlestick) (bool, error) {
+	err := list.Loop(func(cs candlestick.Candlestick) (bool, error) {
 		c := Candlestick{}
-		c.FromModel(list.Exchange, list.Pair, list.Period.String(), t, cs)
+		err := c.FromModel(list.Exchange, list.Pair, list.Period.String(), cs)
 		entities = append(entities, c)
-		return false, nil
+		return false, err
 	})
 
-	return entities
+	return entities, err
 }
 
 func FromEntityListToModelList(entities []Candlestick) (*candlestick.List, error) {
@@ -93,7 +102,8 @@ func FromEntityListToModelList(entities []Candlestick) (*candlestick.List, error
 			return nil, xerrors.New(txt)
 		}
 
-		err := list.Set(e.Time, candlestick.Candlestick{
+		err := list.Set(candlestick.Candlestick{
+			Time:       e.Time,
 			Open:       e.Open,
 			High:       e.High,
 			Low:        e.Low,

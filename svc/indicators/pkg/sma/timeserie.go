@@ -28,9 +28,9 @@ func TimeSerie(payload TimeSeriePayload) *timeserie.TimeSerie[float64] {
 
 		// Get interesting candlesticks
 		candlesticks := timeserie.New[candlestick.Candlestick]()
-		_ = payload.Candlesticks.Loop(func(t time.Time, cs candlestick.Candlestick) (bool, error) {
-			if (t.Equal(first) || t.After(first)) && (t.Equal(last) || t.Before(last)) {
-				candlesticks.Set(t, cs)
+		_ = payload.Candlesticks.Loop(func(cs candlestick.Candlestick) (bool, error) {
+			if (cs.Time.Equal(first) || cs.Time.After(first)) && (cs.Time.Equal(last) || cs.Time.Before(last)) {
+				candlesticks.Set(cs.Time, cs)
 			}
 
 			return false, nil

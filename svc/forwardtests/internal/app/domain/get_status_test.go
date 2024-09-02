@@ -63,7 +63,8 @@ func (suite *GetStatusSuite) TestHappyPass() {
 			suite.Require().Equal(payload.Limit, 1)
 
 			return candlestick.NewList("exchange", "ETH-USDT", period.M1).
-				MustSet(time.Now(), candlestick.Candlestick{
+				MustSet(candlestick.Candlestick{
+					Time:  time.Now(),
 					Close: 100,
 				}), nil
 		})
@@ -79,7 +80,8 @@ func (suite *GetStatusSuite) TestHappyPass() {
 			suite.Require().Equal(payload.Limit, 1)
 
 			return candlestick.NewList("exchange", "BTC-USDT", period.M1).
-				MustSet(time.Now(), candlestick.Candlestick{
+				MustSet(candlestick.Candlestick{
+					Time:  time.Now(),
 					Close: 1000,
 				}), nil
 		})

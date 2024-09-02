@@ -52,24 +52,30 @@ func (suite *CacheSuite) TestRead() {
 			suite.Require().WithinDuration(expectedRequestedEnd, *payload.End, time.Second)
 
 			cl := candlestick.NewList("binance", "BTC-USDT", period.M1)
-			suite.Require().NoError(cl.Set(
-				utils.Must(time.Parse(time.RFC3339, "2020-12-31T23:59:00Z")),
-				candlestick.Candlestick{Close: 0}))
-			suite.Require().NoError(cl.Set(
-				utils.Must(time.Parse(time.RFC3339, "2021-01-01T00:00:00Z")),
-				candlestick.Candlestick{Close: 1}))
-			suite.Require().NoError(cl.Set(
-				utils.Must(time.Parse(time.RFC3339, "2021-01-01T00:01:00Z")),
-				candlestick.Candlestick{Close: 2}))
-			suite.Require().NoError(cl.Set(
-				utils.Must(time.Parse(time.RFC3339, "2021-01-01T00:02:00Z")),
-				candlestick.Candlestick{Close: 3}))
-			suite.Require().NoError(cl.Set(
-				utils.Must(time.Parse(time.RFC3339, "2021-01-01T00:03:00Z")),
-				candlestick.Candlestick{Close: 4}))
-			suite.Require().NoError(cl.Set(
-				utils.Must(time.Parse(time.RFC3339, "2021-01-01T00:05:00Z")),
-				candlestick.Candlestick{Close: 5}))
+			suite.Require().NoError(cl.Set(candlestick.Candlestick{
+				Time:  utils.Must(time.Parse(time.RFC3339, "2020-12-31T23:59:00Z")),
+				Close: 0,
+			}))
+			suite.Require().NoError(cl.Set(candlestick.Candlestick{
+				Time:  utils.Must(time.Parse(time.RFC3339, "2021-01-01T00:00:00Z")),
+				Close: 1,
+			}))
+			suite.Require().NoError(cl.Set(candlestick.Candlestick{
+				Time:  utils.Must(time.Parse(time.RFC3339, "2021-01-01T00:01:00Z")),
+				Close: 2,
+			}))
+			suite.Require().NoError(cl.Set(candlestick.Candlestick{
+				Time:  utils.Must(time.Parse(time.RFC3339, "2021-01-01T00:02:00Z")),
+				Close: 3,
+			}))
+			suite.Require().NoError(cl.Set(candlestick.Candlestick{
+				Time:  utils.Must(time.Parse(time.RFC3339, "2021-01-01T00:03:00Z")),
+				Close: 4,
+			}))
+			suite.Require().NoError(cl.Set(candlestick.Candlestick{
+				Time:  utils.Must(time.Parse(time.RFC3339, "2021-01-01T00:04:00Z")),
+				Close: 5,
+			}))
 
 			return cl, nil
 		})

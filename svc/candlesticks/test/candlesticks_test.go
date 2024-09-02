@@ -27,19 +27,23 @@ func (suite *EndToEndSuite) TestReadCandlesticks() {
 
 	// AND the response contains the proper candlesticks
 
+	t1 := utils.Must(time.Parse(time.RFC3339, "2022-01-01T00:00:00Z"))
+	t2 := utils.Must(time.Parse(time.RFC3339, "2022-01-01T01:00:00Z"))
 	suite.Require().Equal(2, list.Len())
-	_ = list.Loop(func(t time.Time, cs candlestick.Candlestick) (bool, error) {
+	_ = list.Loop(func(cs candlestick.Candlestick) (bool, error) {
 		switch {
-		case t.Equal(utils.Must(time.Parse(time.RFC3339, "2022-01-01T00:00:00Z"))):
+		case cs.Time.Equal(t1):
 			suite.Require().True(cs.Equal(candlestick.Candlestick{
+				Time:   t1,
 				Open:   3676.220000,
 				High:   3730.000000,
 				Low:    3676.220000,
 				Close:  3723.040000,
 				Volume: 9023.374,
 			}))
-		case t.Equal(utils.Must(time.Parse(time.RFC3339, "2022-01-01T01:00:00Z"))):
+		case cs.Time.Equal(t2):
 			suite.Require().True(cs.Equal(candlestick.Candlestick{
+				Time:   t2,
 				Open:   3723.040000,
 				High:   3748.450000,
 				Low:    3714.100000,
@@ -47,7 +51,7 @@ func (suite *EndToEndSuite) TestReadCandlesticks() {
 				Volume: 8997.7569,
 			}))
 		default:
-			suite.FailNow(cs.String()+"should not be there", t)
+			suite.FailNow(cs.String()+"should not be there", cs.Time)
 		}
 		return false, nil
 	})

@@ -59,7 +59,8 @@ func (suite *OrderCreationSuite) TestHappyPass() {
 			suite.Require().Equal(uint(1), payload.Limit)
 
 			cl := candlestick.NewList("binance", "BTC-USDT", period.M1)
-			err := cl.Set(time.Now().Round(time.Minute), candlestick.Candlestick{
+			err := cl.Set(candlestick.Candlestick{
+				Time:  time.Now().Round(time.Minute),
 				Open:  800,
 				Close: 1000,
 				High:  1200,
