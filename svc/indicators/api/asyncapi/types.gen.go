@@ -613,7 +613,7 @@ const (
 	// SMAResponseChannelPath is the constant representing the 'SMAResponseChannel' channel path.
 	SMAResponseChannelPath = ""
 	// ServiceInfoRequestChannelPath is the constant representing the 'ServiceInfoRequestChannel' channel path.
-	ServiceInfoRequestChannelPath = "cryptellation.indicators.info"
+	ServiceInfoRequestChannelPath = "cryptellation.indicators.service.info"
 	// ServiceInfoResponseChannelPath is the constant representing the 'ServiceInfoResponseChannel' channel path.
 	ServiceInfoResponseChannelPath = ""
 )

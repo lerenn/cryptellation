@@ -949,7 +949,7 @@ func (c *AppController) SubscribeToServiceInfoOperation(
 	fn func(ctx context.Context, msg ServiceInfoRequestMessage) error,
 ) error {
 	// Get channel address
-	addr := "cryptellation.backtests.info"
+	addr := "cryptellation.backtests.service.info"
 
 	// Set context
 	ctx = addAppContextValues(ctx, addr)
@@ -1044,7 +1044,7 @@ func (c *AppController) UnsubscribeFromServiceInfoOperation(
 	ctx context.Context,
 ) {
 	// Get channel address
-	addr := "cryptellation.backtests.info"
+	addr := "cryptellation.backtests.service.info"
 
 	// Check if there receivers for this channel
 	sub, exists := c.subscriptions[addr]

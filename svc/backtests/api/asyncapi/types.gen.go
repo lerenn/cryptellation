@@ -2119,7 +2119,7 @@ const (
 	// OrdersListResponseChannelPath is the constant representing the 'OrdersListResponseChannel' channel path.
 	OrdersListResponseChannelPath = ""
 	// ServiceInfoRequestChannelPath is the constant representing the 'ServiceInfoRequestChannel' channel path.
-	ServiceInfoRequestChannelPath = "cryptellation.backtests.info"
+	ServiceInfoRequestChannelPath = "cryptellation.backtests.service.info"
 	// ServiceInfoResponseChannelPath is the constant representing the 'ServiceInfoResponseChannel' channel path.
 	ServiceInfoResponseChannelPath = ""
 	// SubscribeRequestChannelPath is the constant representing the 'SubscribeRequestChannel' channel path.

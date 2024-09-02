@@ -775,7 +775,7 @@ func (c *UserController) SendToServiceInfoOperation(
 	msg ServiceInfoRequestMessage,
 ) error {
 	// Set channel address
-	addr := "cryptellation.forwardtests.info"
+	addr := "cryptellation.forwardtests.service.info"
 
 	// Set correlation ID if it does not exist
 	if id := msg.CorrelationID(); id == "" {

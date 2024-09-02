@@ -57,7 +57,7 @@ channels:
         $ref: "#/components/messages/StatusResponse"
 
   ServiceInfoRequest:
-    address: cryptellation.forwardtests.info
+    address: cryptellation.forwardtests.service.info
     messages:
       ServiceInfoRequest:
         $ref: "#/components/messages/ServiceInfoRequest"

@@ -18,7 +18,7 @@ channels:
         $ref: "#/components/messages/SMAResponse"
 
   ServiceInfoRequest:
-    address: cryptellation.indicators.info
+    address: cryptellation.indicators.service.info
     messages:
       ServiceInfoRequest:
         $ref: "#/components/messages/ServiceInfoRequest"

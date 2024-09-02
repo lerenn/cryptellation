@@ -18,7 +18,7 @@ channels:
         $ref: "#/components/messages/ListResponse"
 
   ServiceInfoRequest:
-    address: cryptellation.candlesticks.info
+    address: cryptellation.candlesticks.service.info
     messages:
       ServiceInfoRequest:
         $ref: "#/components/messages/ServiceInfoRequest"
