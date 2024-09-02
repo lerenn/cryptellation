@@ -31,7 +31,7 @@ var backtestsList = &cobra.Command{
 
 		fmt.Printf("%-40s\n", "ID")
 		for _, bt := range list {
-			fmt.Printf("%-40s%-20s\n", bt.ID)
+			fmt.Printf("%-40s\n", bt.ID)
 		}
 		return nil
 	},
