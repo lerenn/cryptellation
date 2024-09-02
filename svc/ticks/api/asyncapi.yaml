@@ -24,7 +24,7 @@ channels:
         $ref: "#/components/messages/Tick"
 
   ServiceInfoRequest:
-    address: cryptellation.ticks.info
+    address: cryptellation.ticks.service.info
     messages:
       ServiceInfoRequest:
         $ref: "#/components/messages/ServiceInfoRequest"

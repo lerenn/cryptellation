@@ -471,7 +471,7 @@ const (
 	// LiveChannelPath is the constant representing the 'LiveChannel' channel path.
 	LiveChannelPath = "cryptellation.ticks.live.{exchange}.{pair}"
 	// ServiceInfoRequestChannelPath is the constant representing the 'ServiceInfoRequestChannel' channel path.
-	ServiceInfoRequestChannelPath = "cryptellation.ticks.info"
+	ServiceInfoRequestChannelPath = "cryptellation.ticks.service.info"
 	// ServiceInfoResponseChannelPath is the constant representing the 'ServiceInfoResponseChannel' channel path.
 	ServiceInfoResponseChannelPath = ""
 )

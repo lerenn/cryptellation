@@ -85,7 +85,7 @@ channels:
         $ref: '#/components/messages/Event'
 
   ServiceInfoRequest:
-    address: cryptellation.backtests.info
+    address: cryptellation.backtests.service.info
     messages:
       ServiceInfoRequest:
         $ref: "#/components/messages/ServiceInfoRequest"
@@ -391,8 +391,6 @@ components:
     ListResponse:
       payload:
         type: object
-        required:
-          - id
         oneOf:
         - properties:
             backtests:

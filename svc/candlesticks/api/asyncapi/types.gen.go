@@ -611,7 +611,7 @@ const (
 	// ListResponseChannelPath is the constant representing the 'ListResponseChannel' channel path.
 	ListResponseChannelPath = ""
 	// ServiceInfoRequestChannelPath is the constant representing the 'ServiceInfoRequestChannel' channel path.
-	ServiceInfoRequestChannelPath = "cryptellation.candlesticks.info"
+	ServiceInfoRequestChannelPath = "cryptellation.candlesticks.service.info"
 	// ServiceInfoResponseChannelPath is the constant representing the 'ServiceInfoResponseChannel' channel path.
 	ServiceInfoResponseChannelPath = ""
 )
