@@ -7,7 +7,6 @@ check: generate lint test ## Generate, lint and test the code
 clean: local/down ## Clean the project
 	@$(MAKE) -C ./clients/go clean
 	@$(MAKE) -C ./cmd/cryptellation clean
-	@$(MAKE) -C ./cmd/cryptellation-tui clean
 	@$(MAKE) -C ./examples/go clean
 	@$(MAKE) -C ./pkg clean
 	@$(MAKE) -C ./svc/backtests clean
@@ -54,7 +53,6 @@ local/up: ## Start the local environment
 go/generate: ## Generate the golang code
 	@$(MAKE) -C ./clients/go go/generate
 	@$(MAKE) -C ./cmd/cryptellation go/generate
-	@$(MAKE) -C ./cmd/cryptellation-tui go/generate
 	@$(MAKE) -C ./examples/go go/generate
 	@$(MAKE) -C ./pkg go/generate
 	@$(MAKE) -C ./svc/backtests go/generate
@@ -71,7 +69,6 @@ generate: go/generate ## Generate the code
 go/lint: ## Lint the code
 	@$(MAKE) -C ./clients/go go/lint
 	@$(MAKE) -C ./cmd/cryptellation go/lint
-	@$(MAKE) -C ./cmd/cryptellation-tui go/lint
 	@$(MAKE) -C ./examples/go go/lint
 	@$(MAKE) -C ./pkg go/lint
 	@$(MAKE) -C ./svc/backtests go/lint
@@ -88,7 +85,6 @@ lint: go/lint ## Lint the golang code
 go/test/unit: ## Launch golang unit tests
 	@$(MAKE) -C ./clients/go go/test/unit
 	@$(MAKE) -C ./cmd/cryptellation go/test/unit
-	@$(MAKE) -C ./cmd/cryptellation-tui go/test/unit
 	@$(MAKE) -C ./examples/go go/test/unit
 	@$(MAKE) -C ./pkg go/test/unit
 	@$(MAKE) -C ./svc/backtests go/test/unit
