@@ -23,7 +23,7 @@ type Daemon struct {
 func New(ctx context.Context) (Daemon, error) {
 	// Init and serve health server
 	// NOTE: health OK, but not-ready yet
-	h, err := http.NewHealth()
+	h, err := http.NewHealth(ctx)
 	if err != nil {
 		return Daemon{}, err
 	}
