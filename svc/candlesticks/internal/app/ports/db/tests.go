@@ -57,6 +57,18 @@ func (suite *CandlesticksSuite) TestCreateTwice() {
 	suite.Require().Error(suite.DB.CreateCandlesticks(context.Background(), list))
 }
 
+func (suite *CandlesticksSuite) TestCreateWithNoTime() {
+	list := candlestick.NewList("exchange", "ETH-USDC", period.M1)
+	suite.Require().NoError(list.Set(candlestick.Candlestick{
+		Open:   1,
+		Low:    0.5,
+		High:   2,
+		Close:  1.5,
+		Volume: 1000,
+	}))
+	suite.Require().Error(suite.DB.CreateCandlesticks(context.Background(), list))
+}
+
 func (suite *CandlesticksSuite) TestRead() {
 	// Create targeted exchange, pair, period
 	list := candlestick.NewList("exchange", "ETH-USDC", period.M1)
@@ -294,6 +306,18 @@ func (suite *CandlesticksSuite) TestUpdateInexistantTwice() {
 	}))
 
 	suite.Require().Error(suite.DB.UpdateCandlesticks(context.Background(), list))
+	suite.Require().Error(suite.DB.UpdateCandlesticks(context.Background(), list))
+}
+
+func (suite *CandlesticksSuite) TestUpdateWithNoTime() {
+	list := candlestick.NewList("exchange", "ETH-USDC", period.M1)
+	suite.Require().NoError(list.Set(candlestick.Candlestick{
+		Open:   1,
+		Low:    0.5,
+		High:   2,
+		Close:  1.5,
+		Volume: 1000,
+	}))
 	suite.Require().Error(suite.DB.UpdateCandlesticks(context.Background(), list))
 }
 

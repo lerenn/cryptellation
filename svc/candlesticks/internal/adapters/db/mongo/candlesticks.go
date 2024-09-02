@@ -19,8 +19,12 @@ const (
 )
 
 func (a *Adapter) CreateCandlesticks(ctx context.Context, cs *candlestick.List) error {
-	listCE := entities.FromModelListToEntityList(cs)
-	_, err := a.client.
+	listCE, err := entities.FromModelListToEntityList(cs)
+	if err != nil {
+		return err
+	}
+
+	_, err = a.client.
 		Collection(CollectionName).
 		InsertMany(ctx, mongoutil.ToInterfaceList(listCE))
 	return err
@@ -63,7 +67,10 @@ func (a *Adapter) ReadCandlesticks(ctx context.Context, cs *candlestick.List, st
 }
 
 func (a *Adapter) UpdateCandlesticks(ctx context.Context, cs *candlestick.List) error {
-	listCE := entities.FromModelListToEntityList(cs)
+	listCE, err := entities.FromModelListToEntityList(cs)
+	if err != nil {
+		return err
+	}
 
 	for _, ce := range listCE {
 		res, err := a.client.
