@@ -56,7 +56,7 @@ func (b *Bot) OnTick(ctx context.Context, t tick.Tick) error {
 		PriceType:    candlestick.PriceTypeIsClose,
 	}
 	telemetry.L(ctx).Debugf("Request SMA with %+v", payload)
-	s, err := b.run.Services.Indicators().SMA(ctx, payload)
+	s, err := b.run.Services.IndicatorsClient().SMA(ctx, payload)
 	if err != nil {
 		return err
 	}

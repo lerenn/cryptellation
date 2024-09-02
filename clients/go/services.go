@@ -106,27 +106,27 @@ func NewServices(c config.NATS) (svc Services, err error) {
 	return
 }
 
-func (c Services) Backtests() backtests.Client {
+func (c Services) BacktestsClient() backtests.Client {
 	return c.backtests
 }
 
-func (c Services) Candlesticks() candlesticks.Client {
+func (c Services) CandlesticksClient() candlesticks.Client {
 	return c.candlesticks
 }
 
-func (c Services) Exchanges() exchanges.Client {
+func (c Services) ExchangesClient() exchanges.Client {
 	return c.exchanges
 }
 
-func (c Services) ForwardTests() forwardtests.Client {
+func (c Services) ForwardTestsClient() forwardtests.Client {
 	return c.forwardtests
 }
 
-func (c Services) Indicators() indicators.Client {
+func (c Services) IndicatorsClient() indicators.Client {
 	return c.indicators
 }
 
-func (c Services) Ticks() ticks.Client {
+func (c Services) TicksClient() ticks.Client {
 	return c.ticks
 }
 
