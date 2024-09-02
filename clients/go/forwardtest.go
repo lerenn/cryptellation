@@ -24,7 +24,7 @@ func NewForwardTest(
 	var run Run
 
 	// Create the forward test
-	id, err := services.ForwardTests().CreateForwardTest(ctx, parameters)
+	id, err := services.ForwardTestsClient().CreateForwardTest(ctx, parameters)
 	if err != nil {
 		return nil, err
 	}
@@ -51,7 +51,7 @@ func (ft *ForwardTest) Run(ctx context.Context) error {
 		ctx, cancel := context.WithCancel(ctx)
 		defer cancel()
 
-		ch, err := ft.run.Services.Ticks().SubscribeToTicks(ctx, ts)
+		ch, err := ft.run.Services.TicksClient().SubscribeToTicks(ctx, ts)
 		if err != nil {
 			return err
 		}

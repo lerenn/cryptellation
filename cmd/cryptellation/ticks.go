@@ -42,7 +42,7 @@ var ticksListenCmd = &cobra.Command{
 			Exchange: ticksExchange,
 			Pair:     ticksPair,
 		}
-		ch, err := globalClient.Ticks().SubscribeToTicks(cmd.Context(), ts)
+		ch, err := globalClient.TicksClient().SubscribeToTicks(cmd.Context(), ts)
 		if err != nil {
 			return err
 		}
@@ -63,7 +63,7 @@ var ticksInfoCmd = &cobra.Command{
 	Aliases: []string{"svc"},
 	Short:   "Read info from ticks service",
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		return displayServiceInfo(globalClient.Ticks())
+		return displayServiceInfo(globalClient.TicksClient())
 	},
 }
 
