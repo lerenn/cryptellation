@@ -21,6 +21,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/lerenn/asyncapi-codegen/pkg/extensions"
 	natsextension "github.com/lerenn/asyncapi-codegen/pkg/extensions/brokers/nats"
+	"github.com/lerenn/cryptellation/svc/backtests/clients/go/internal"
 )
 
 type nats struct {
@@ -61,7 +62,8 @@ func New(c config.NATS, options ...option) (client.Client, error) {
 	}
 	b.ctrl = ctrl
 
-	return &b, nil
+	// Add helpers
+	return internal.WrapWithHelpers(b), nil
 }
 
 func (b nats) ListenEvents(ctx context.Context, backtestID uuid.UUID) (<-chan event.Event, error) {

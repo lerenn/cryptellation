@@ -10,30 +10,21 @@ import (
 
 	backtests "github.com/lerenn/cryptellation/svc/backtests/clients/go"
 	backtestsnats "github.com/lerenn/cryptellation/svc/backtests/clients/go/nats"
-	backtestsretry "github.com/lerenn/cryptellation/svc/backtests/clients/go/retry"
 
 	candlesticks "github.com/lerenn/cryptellation/svc/candlesticks/clients/go"
-	candlestickscache "github.com/lerenn/cryptellation/svc/candlesticks/clients/go/cache"
 	candlesticksnats "github.com/lerenn/cryptellation/svc/candlesticks/clients/go/nats"
-	candlesticksretry "github.com/lerenn/cryptellation/svc/candlesticks/clients/go/retry"
 
 	exchanges "github.com/lerenn/cryptellation/svc/exchanges/clients/go"
-	exchangescache "github.com/lerenn/cryptellation/svc/exchanges/clients/go/cache"
 	exchangesnats "github.com/lerenn/cryptellation/svc/exchanges/clients/go/nats"
-	exchangesretry "github.com/lerenn/cryptellation/svc/exchanges/clients/go/retry"
 
 	forwardtests "github.com/lerenn/cryptellation/svc/forwardtests/clients/go"
 	forwardtestsnats "github.com/lerenn/cryptellation/svc/forwardtests/clients/go/nats"
-	forwardtestsretry "github.com/lerenn/cryptellation/svc/forwardtests/clients/go/retry"
 
 	indicators "github.com/lerenn/cryptellation/svc/indicators/clients/go"
-	indicatorscache "github.com/lerenn/cryptellation/svc/indicators/clients/go/cache"
 	indicatorsnats "github.com/lerenn/cryptellation/svc/indicators/clients/go/nats"
-	indicatorsretry "github.com/lerenn/cryptellation/svc/indicators/clients/go/retry"
 
 	ticks "github.com/lerenn/cryptellation/svc/ticks/clients/go"
 	ticksnats "github.com/lerenn/cryptellation/svc/ticks/clients/go/nats"
-	ticksretry "github.com/lerenn/cryptellation/svc/ticks/clients/go/retry"
 )
 
 type Services struct {
@@ -47,61 +38,46 @@ type Services struct {
 
 func NewServices(c config.NATS) (svc Services, err error) {
 	// Set backtests
-	backtests, err := backtestsnats.New(c)
+	svc.Backtests, err = backtestsnats.New(c)
 	if err != nil {
 		svc.Close(context.TODO())
 		return
 	}
-	backtests = backtestsretry.New(backtests)
-	svc.Backtests = backtests
 
 	// Set candlesticks
-	candlesticks, err := candlesticksnats.New(c)
+	svc.Candlesticks, err = candlesticksnats.New(c)
 	if err != nil {
 		svc.Close(context.TODO())
 		return
 	}
-	candlesticks = candlesticksretry.New(candlesticks)
-	candlesticks = candlestickscache.New(candlesticks)
-	svc.Candlesticks = candlesticks
 
 	// Set exchanges
-	exchanges, err := exchangesnats.New(c)
+	svc.Exchanges, err = exchangesnats.New(c)
 	if err != nil {
 		svc.Close(context.TODO())
 		return
 	}
-	exchanges = exchangesretry.New(exchanges)
-	exchanges = exchangescache.New(exchanges)
-	svc.Exchanges = exchanges
 
 	// Set forward tests
-	forwardtests, err := forwardtestsnats.New(c)
+	svc.Forwardtests, err = forwardtestsnats.New(c)
 	if err != nil {
 		svc.Close(context.TODO())
 		return
 	}
-	forwardtests = forwardtestsretry.New(forwardtests)
-	svc.Forwardtests = forwardtests
 
 	// Set indicators
-	indicators, err := indicatorsnats.New(c)
+	svc.Indicators, err = indicatorsnats.New(c)
 	if err != nil {
 		svc.Close(context.TODO())
 		return
 	}
-	indicators = indicatorscache.New(indicators)
-	indicators = indicatorsretry.New(indicators)
-	svc.Indicators = indicators
 
 	// Set ticks
-	ticks, err := ticksnats.New(c)
+	svc.Ticks, err = ticksnats.New(c)
 	if err != nil {
 		svc.Close(context.TODO())
 		return
 	}
-	ticks = ticksretry.New(ticks)
-	svc.Ticks = ticks
 
 	return
 }

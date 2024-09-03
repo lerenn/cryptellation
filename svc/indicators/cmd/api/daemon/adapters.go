@@ -8,9 +8,7 @@ import (
 	"github.com/lerenn/cryptellation/pkg/config"
 
 	candlesticks "github.com/lerenn/cryptellation/svc/candlesticks/clients/go"
-	candlestickscache "github.com/lerenn/cryptellation/svc/candlesticks/clients/go/cache"
 	candlesticksnats "github.com/lerenn/cryptellation/svc/candlesticks/clients/go/nats"
-	candlesticksretry "github.com/lerenn/cryptellation/svc/candlesticks/clients/go/retry"
 
 	"github.com/lerenn/cryptellation/svc/indicators/internal/adapters/db/mongo"
 	"github.com/lerenn/cryptellation/svc/indicators/internal/app/ports/db"
@@ -36,8 +34,6 @@ func newAdapters(ctx context.Context) (adapters, error) {
 	if err != nil {
 		return adapters{}, err
 	}
-	candlesticks = candlestickscache.New(candlesticks)
-	candlesticks = candlesticksretry.New(candlesticks)
 
 	return adapters{
 		db:           db,
