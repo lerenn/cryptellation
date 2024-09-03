@@ -255,3 +255,18 @@ func (suite *CandlestickListSuite) TestGetMissingTimes() {
 	suite.Require().Equal(time.Unix(120, 0), times[1])
 	suite.Require().Equal(time.Unix(180, 0), times[2])
 }
+
+func (suite *CandlestickListSuite) TestToArray() {
+	// Create a list with one candlestick
+	csList := NewList("exchange", "BTC-USDC", period.M1)
+	cs0 := Candlestick{Time: time.Unix(60, 0), Open: 1, High: 2, Low: 0.5, Close: 1.5}
+	suite.Require().NoError(csList.Set(cs0))
+	cs1 := Candlestick{Time: time.Unix(120, 0), Open: 2, High: 4, Low: 1, Close: 3}
+	suite.Require().NoError(csList.Set(cs1))
+
+	// Convert to array
+	arr := csList.ToArray()
+	suite.Require().Len(arr, 2)
+	suite.Require().Equal(cs0, arr[0])
+	suite.Require().Equal(cs1, arr[1])
+}

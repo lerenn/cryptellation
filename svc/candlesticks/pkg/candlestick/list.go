@@ -213,3 +213,12 @@ func (cl List) GetMissingRange(start, end time.Time, limit uint) []timeserie.Tim
 	// Get missing range from timeserie
 	return cl.TimeSerie.GetMissingRanges(start, end, cl.Period.Duration(), limit)
 }
+
+func (cl List) ToArray() []Candlestick {
+	cs := make([]Candlestick, 0, cl.Len())
+	_ = cl.Loop(func(c Candlestick) (bool, error) {
+		cs = append(cs, c)
+		return false, nil
+	})
+	return cs
+}
