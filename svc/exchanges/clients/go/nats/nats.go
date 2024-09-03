@@ -7,6 +7,7 @@ import (
 
 	asyncapi "github.com/lerenn/cryptellation/svc/exchanges/api/asyncapi"
 	client "github.com/lerenn/cryptellation/svc/exchanges/clients/go"
+	"github.com/lerenn/cryptellation/svc/exchanges/clients/go/internal"
 
 	"github.com/lerenn/asyncapi-codegen/pkg/extensions"
 	natsextension "github.com/lerenn/asyncapi-codegen/pkg/extensions/brokers/nats"
@@ -54,7 +55,8 @@ func New(c config.NATS, options ...option) (client.Client, error) {
 	}
 	e.ctrl = ctrl
 
-	return e, nil
+	// Add helpers
+	return internal.WrapWithHelpers(e), nil
 }
 
 func (c nats) Read(ctx context.Context, names ...string) ([]exchange.Exchange, error) {

@@ -11,6 +11,7 @@ import (
 
 	asyncapi "github.com/lerenn/cryptellation/svc/forwardtests/api/asyncapi"
 	client "github.com/lerenn/cryptellation/svc/forwardtests/clients/go"
+	"github.com/lerenn/cryptellation/svc/forwardtests/clients/go/internal"
 	"github.com/lerenn/cryptellation/svc/forwardtests/pkg/forwardtest"
 
 	"github.com/google/uuid"
@@ -55,7 +56,8 @@ func New(c config.NATS, options ...option) (client.Client, error) {
 	}
 	cl.ctrl = ctrl
 
-	return cl, nil
+	// Add helpers
+	return internal.WrapWithHelpers(cl), nil
 }
 
 func (cl nats) CreateForwardTest(ctx context.Context, payload forwardtest.NewPayload) (uuid.UUID, error) {

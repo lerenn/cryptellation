@@ -16,6 +16,7 @@ import (
 
 	"github.com/lerenn/asyncapi-codegen/pkg/extensions"
 	natsextension "github.com/lerenn/asyncapi-codegen/pkg/extensions/brokers/nats"
+	"github.com/lerenn/cryptellation/svc/candlesticks/clients/go/internal"
 )
 
 type nats struct {
@@ -55,7 +56,8 @@ func New(c config.NATS, options ...option) (client.Client, error) {
 	}
 	cds.ctrl = ctrl
 
-	return cds, nil
+	// Add helpers
+	return internal.WrapWithHelpers(cds), nil
 }
 
 func (c nats) Read(ctx context.Context, payload client.ReadCandlesticksPayload) (*candlestick.List, error) {

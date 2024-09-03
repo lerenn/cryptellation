@@ -11,6 +11,7 @@ import (
 
 	asyncapi "github.com/lerenn/cryptellation/svc/indicators/api/asyncapi"
 	client "github.com/lerenn/cryptellation/svc/indicators/clients/go"
+	"github.com/lerenn/cryptellation/svc/indicators/clients/go/internal"
 
 	"github.com/lerenn/asyncapi-codegen/pkg/extensions"
 	natsextension "github.com/lerenn/asyncapi-codegen/pkg/extensions/brokers/nats"
@@ -53,7 +54,8 @@ func New(c config.NATS, options ...option) (client.Client, error) {
 	}
 	i.ctrl = ctrl
 
-	return i, nil
+	// Add helpers
+	return internal.WrapWithHelpers(i), nil
 }
 
 func (ids nats) SMA(ctx context.Context, payload client.SMAPayload) (*timeserie.TimeSerie[float64], error) {
