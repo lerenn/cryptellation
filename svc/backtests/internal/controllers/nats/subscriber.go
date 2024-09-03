@@ -101,6 +101,33 @@ func (s subscriber) CreateOperationReceived(ctx context.Context, msg asyncapi.Cr
 	})
 }
 
+func (s subscriber) GetOperationReceived(ctx context.Context, msg asyncapi.GetRequestMessage) error {
+	return s.controller.ReplyToGetOperation(ctx, msg, func(replyMsg *asyncapi.GetResponseMessage) {
+		// Parse backtest ID
+		id, err := uuid.Parse(string(msg.Payload.Id))
+		if err != nil {
+			replyMsg.Payload.Error = &asyncapi.ErrorSchema{
+				Code:    http.StatusBadRequest,
+				Message: err.Error(),
+			}
+			return
+		}
+
+		// Get backtest
+		bt, err := s.backtests.Get(context.Background(), id)
+		if err != nil {
+			replyMsg.Payload.Error = &asyncapi.ErrorSchema{
+				Code:    http.StatusInternalServerError,
+				Message: err.Error(),
+			}
+			return
+		}
+
+		// Set message
+		replyMsg.Set(bt)
+	})
+}
+
 func (s subscriber) OrdersCreateOperationReceived(ctx context.Context, msg asyncapi.OrdersCreateRequestMessage) error {
 	return s.controller.ReplyToOrdersCreateOperation(ctx, msg, func(replyMsg *asyncapi.OrdersCreateResponseMessage) {
 		// Parse backtest ID

@@ -15,6 +15,31 @@ import (
 	"github.com/lerenn/cryptellation/svc/ticks/pkg/tick"
 )
 
+func (suite *EndToEndSuite) TestBacktestGet() {
+	// Create backtest
+	id, err := suite.client.Create(context.Background(), client.BacktestCreationPayload{
+		Accounts: map[string]account.Account{
+			"binance": {
+				Balances: map[string]float64{
+					"BTC": 1,
+				},
+			},
+		},
+		StartTime: utils.Must(time.Parse(time.RFC3339, "2023-02-26T12:00:00Z")),
+		EndTime:   utils.ToReference(utils.Must(time.Parse(time.RFC3339, "2023-02-26T12:02:00Z"))),
+	})
+	suite.Require().NoError(err)
+
+	// Get backtest
+	b, err := suite.client.Get(context.Background(), id)
+	suite.Require().NoError(err)
+
+	// Check backtest
+	suite.Require().Equal(id, b.ID)
+	suite.Require().Equal(utils.Must(time.Parse(time.RFC3339, "2023-02-26T12:00:00Z")), b.StartTime)
+	suite.Require().Equal(utils.Must(time.Parse(time.RFC3339, "2023-02-26T12:02:00Z")), b.EndTime)
+}
+
 func (suite *EndToEndSuite) TestBacktestAdvance() {
 	// Create backtest
 	id, err := suite.client.Create(context.Background(), client.BacktestCreationPayload{

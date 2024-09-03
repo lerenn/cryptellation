@@ -130,6 +130,26 @@ func (b nats) Create(ctx context.Context, payload client.BacktestCreationPayload
 	return uuid.Parse(respMsg.Payload.Id)
 }
 
+func (b nats) Get(ctx context.Context, backtestID uuid.UUID) (backtest.Backtest, error) {
+	// Set message
+	reqMsg := asyncapi.NewGetRequestMessage()
+	reqMsg.Headers.ReplyTo = helpers.AddReplyToSuffix(asyncapi.GetRequestChannelPath, b.name)
+	reqMsg.Set(backtestID)
+
+	// Send request
+	respMsg, err := b.ctrl.RequestToGetOperation(ctx, reqMsg)
+	if err != nil {
+		return backtest.Backtest{}, err
+	}
+
+	// Unwrap error from message
+	if err := helpers.UnwrapError(respMsg.Payload.Error); err != nil {
+		return backtest.Backtest{}, err
+	}
+
+	return respMsg.ToModel()
+}
+
 func (b nats) Subscribe(ctx context.Context, backtestID uuid.UUID, exchange, pair string) error {
 	// Set message
 	reqMsg := asyncapi.NewSubscribeRequestMessage()

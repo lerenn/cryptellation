@@ -94,6 +94,21 @@ func (mr *MockClientMockRecorder) CreateOrder(ctx, payload interface{}) *gomock.
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateOrder", reflect.TypeOf((*MockClient)(nil).CreateOrder), ctx, payload)
 }
 
+// Get mocks base method.
+func (m *MockClient) Get(ctx context.Context, backtestID uuid.UUID) (backtest.Backtest, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Get", ctx, backtestID)
+	ret0, _ := ret[0].(backtest.Backtest)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Get indicates an expected call of Get.
+func (mr *MockClientMockRecorder) Get(ctx, backtestID interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Get", reflect.TypeOf((*MockClient)(nil).Get), ctx, backtestID)
+}
+
 // GetAccounts mocks base method.
 func (m *MockClient) GetAccounts(ctx context.Context, backtestID uuid.UUID) (map[string]account.Account, error) {
 	m.ctrl.T.Helper()

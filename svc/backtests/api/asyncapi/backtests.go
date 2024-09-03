@@ -28,6 +28,35 @@ func (msg *CreateRequestMessage) Set(payload client.BacktestCreationPayload) {
 	msg.Payload.Accounts = accountModelsToAPI(payload.Accounts)
 }
 
+func (msg *GetRequestMessage) Set(backtestID uuid.UUID) {
+	msg.Payload.Id = BacktestIDSchema(backtestID.String())
+}
+
+func (msg *GetResponseMessage) Set(backtest backtest.Backtest) {
+	schema := BacktestSchema{
+		Id:                  BacktestIDSchema(backtest.ID.String()),
+		StartTime:           DateSchema(backtest.StartTime),
+		EndTime:             DateSchema(backtest.EndTime),
+		PeriodBetweenEvents: PeriodSchema(backtest.PeriodBetweenEvents),
+	}
+
+	msg.Payload.Backtest = &schema
+}
+
+func (msg *GetResponseMessage) ToModel() (backtest.Backtest, error) {
+	p, err := period.FromString(string(msg.Payload.Backtest.PeriodBetweenEvents))
+	if err != nil {
+		return backtest.Backtest{}, err
+	}
+
+	return backtest.Backtest{
+		ID:                  uuid.MustParse(string(msg.Payload.Backtest.Id)),
+		StartTime:           time.Time(msg.Payload.Backtest.StartTime),
+		EndTime:             time.Time(msg.Payload.Backtest.EndTime),
+		PeriodBetweenEvents: p,
+	}, nil
+}
+
 func (msg *SubscribeRequestMessage) Set(backtestID uuid.UUID, exchange, pair string) {
 	msg.Payload.Id = BacktestIDSchema(backtestID.String())
 	msg.Payload.Exchange = ExchangeSchema(exchange)

@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 
+	"github.com/google/uuid"
 	"github.com/spf13/cobra"
 )
 
@@ -37,7 +38,32 @@ var backtestsList = &cobra.Command{
 	},
 }
 
-var backtestsInfoCmd = &cobra.Command{
+var backtestsGetCmd = &cobra.Command{
+	Use:     "get <id>",
+	Aliases: []string{"s"},
+	Args:    cobra.ExactArgs(1),
+	Short:   "Get backtest",
+	RunE: func(cmd *cobra.Command, args []string) (err error) {
+		id, err := uuid.Parse(args[0])
+		if err != nil {
+			return err
+		}
+
+		bt, err := globalClient.BacktestsClient().Get(cmd.Context(), id)
+		if err != nil {
+			return err
+		}
+
+		fmt.Printf("ID:\t\t%s\n", bt.ID)
+		fmt.Printf("Start:\t\t%s\n", bt.StartTime)
+		fmt.Printf("End:\t\t%s\n", bt.EndTime)
+		fmt.Printf("Period:\t\t%s\n", bt.PeriodBetweenEvents)
+
+		return nil
+	},
+}
+
+var backtestsServiceInfoCmd = &cobra.Command{
 	Use:     "service",
 	Aliases: []string{"svc"},
 	Short:   "Read info from backtests service",
@@ -47,7 +73,8 @@ var backtestsInfoCmd = &cobra.Command{
 }
 
 func initBacktests(rootCmd *cobra.Command) {
+	backtestsCmd.AddCommand(backtestsGetCmd)
 	backtestsCmd.AddCommand(backtestsList)
-	backtestsCmd.AddCommand(backtestsInfoCmd)
+	backtestsCmd.AddCommand(backtestsServiceInfoCmd)
 	rootCmd.AddCommand(backtestsCmd)
 }

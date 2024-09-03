@@ -21,6 +21,9 @@ type AppSubscriber interface {
 	// CreateOperationReceived receive all CreateRequest messages from CreateRequest channel.
 	CreateOperationReceived(ctx context.Context, msg CreateRequestMessage) error
 
+	// GetOperationReceived receive all GetRequest messages from GetRequest channel.
+	GetOperationReceived(ctx context.Context, msg GetRequestMessage) error
+
 	// ListOperationReceived receive all ListRequest messages from ListRequest channel.
 	ListOperationReceived(ctx context.Context, msg ListRequestMessage) error
 
@@ -155,6 +158,9 @@ func (c *AppController) SubscribeToAllChannels(ctx context.Context, as AppSubscr
 	if err := c.SubscribeToCreateOperation(ctx, as.CreateOperationReceived); err != nil {
 		return err
 	}
+	if err := c.SubscribeToGetOperation(ctx, as.GetOperationReceived); err != nil {
+		return err
+	}
 	if err := c.SubscribeToListOperation(ctx, as.ListOperationReceived); err != nil {
 		return err
 	}
@@ -179,6 +185,7 @@ func (c *AppController) UnsubscribeFromAllChannels(ctx context.Context) {
 	c.UnsubscribeFromAccountsListOperation(ctx)
 	c.UnsubscribeFromAdvanceOperation(ctx)
 	c.UnsubscribeFromCreateOperation(ctx)
+	c.UnsubscribeFromGetOperation(ctx)
 	c.UnsubscribeFromListOperation(ctx)
 	c.UnsubscribeFromOrdersCreateOperation(ctx)
 	c.UnsubscribeFromOrdersListOperation(ctx)
@@ -545,6 +552,131 @@ func (c *AppController) UnsubscribeFromCreateOperation(
 ) {
 	// Get channel address
 	addr := "cryptellation.backtests.create"
+
+	// Check if there receivers for this channel
+	sub, exists := c.subscriptions[addr]
+	if !exists {
+		return
+	}
+
+	// Set context
+	ctx = addAppContextValues(ctx, addr)
+
+	// Stop the subscription
+	sub.Cancel(ctx)
+
+	// Remove if from the receivers
+	delete(c.subscriptions, addr)
+
+	c.logger.Info(ctx, "Unsubscribed from channel")
+} // SubscribeToGetOperation will receive GetRequest messages from GetRequest channel.
+// Callback function 'fn' will be called each time a new message is received.
+//
+// NOTE: for now, this only support the first message from AsyncAPI list.
+//
+// NOTE: for now, this only support the first message from AsyncAPI list.
+// If you need support for other messages, please raise an issue.
+func (c *AppController) SubscribeToGetOperation(
+	ctx context.Context,
+	fn func(ctx context.Context, msg GetRequestMessage) error,
+) error {
+	// Get channel address
+	addr := "cryptellation.backtests.get"
+
+	// Set context
+	ctx = addAppContextValues(ctx, addr)
+	ctx = context.WithValue(ctx, extensions.ContextKeyIsDirection, "reception")
+
+	// Check if the controller is already subscribed
+	_, exists := c.subscriptions[addr]
+	if exists {
+		err := fmt.Errorf("%w: controller is already subscribed on channel %q", extensions.ErrAlreadySubscribedChannel, addr)
+		c.logger.Error(ctx, err.Error())
+		return err
+	}
+
+	// Subscribe to broker channel
+	sub, err := c.broker.Subscribe(ctx, addr)
+	if err != nil {
+		c.logger.Error(ctx, err.Error())
+		return err
+	}
+	c.logger.Info(ctx, "Subscribed to channel")
+
+	// Asynchronously listen to new messages and pass them to app receiver
+	go func() {
+		for {
+			// Wait for next message
+			acknowledgeableBrokerMessage, open := <-sub.MessagesChannel()
+
+			// If subscription is closed and there is no more message
+			// (i.e. uninitialized message), then exit the function
+			if !open && acknowledgeableBrokerMessage.IsUninitialized() {
+				return
+			}
+
+			// Set broker message to context
+			ctx = context.WithValue(ctx, extensions.ContextKeyIsBrokerMessage, acknowledgeableBrokerMessage.String())
+
+			// Execute middlewares before handling the message
+			if err := c.executeMiddlewares(ctx, &acknowledgeableBrokerMessage.BrokerMessage, func(ctx context.Context) error {
+				// Process message
+				msg, err := brokerMessageToGetRequestMessage(acknowledgeableBrokerMessage.BrokerMessage)
+				if err != nil {
+					return err
+				}
+
+				// Add correlation ID to context if it exists
+				if id := msg.CorrelationID(); id != "" {
+					ctx = context.WithValue(ctx, extensions.ContextKeyIsCorrelationID, id)
+				}
+
+				// Execute the subscription function
+				if err := fn(ctx, msg); err != nil {
+					return err
+				}
+
+				acknowledgeableBrokerMessage.Ack()
+
+				return nil
+			}); err != nil {
+				c.errorHandler(ctx, addr, &acknowledgeableBrokerMessage, err)
+				// On error execute the acknowledgeableBrokerMessage nack() function and
+				// let the BrokerAcknowledgment decide what is the right nack behavior for the broker
+				acknowledgeableBrokerMessage.Nak()
+			}
+		}
+	}()
+
+	// Add the cancel channel to the inside map
+	c.subscriptions[addr] = sub
+
+	return nil
+}
+
+// ReplyToGetOperation is a helper function to
+// reply to a GetRequest message with a GetResponse message on GetResponse channel.
+func (c *AppController) ReplyToGetOperation(ctx context.Context, recvMsg GetRequestMessage, fn func(replyMsg *GetResponseMessage)) error {
+	// Create reply message
+	replyMsg := NewGetResponseMessage()
+	replyMsg.SetAsResponseFrom(&recvMsg)
+
+	// Execute callback function
+	fn(&replyMsg)
+
+	// Publish reply
+	chanAddr := recvMsg.Headers.ReplyTo
+
+	return c.SendAsReplyToGetOperation(ctx, chanAddr, replyMsg)
+}
+
+// UnsubscribeFromGetOperation will stop the reception of GetRequest messages from GetRequest channel.
+// A timeout can be set in context to avoid blocking operation, if needed.
+func (c *AppController) UnsubscribeFromGetOperation(
+	ctx context.Context,
+) {
+	// Get channel address
+	addr := "cryptellation.backtests.get"
 
 	// Check if there receivers for this channel
 	sub, exists := c.subscriptions[addr]
@@ -1321,6 +1453,45 @@ func (c *AppController) SendAsEventOperation(
 	// Set context
 	ctx = addAppContextValues(ctx, addr)
 	ctx = context.WithValue(ctx, extensions.ContextKeyIsDirection, "publication")
+
+	// Convert to BrokerMessage
+	brokerMsg, err := msg.toBrokerMessage()
+	if err != nil {
+		return err
+	}
+
+	// Set broker message to context
+	ctx = context.WithValue(ctx, extensions.ContextKeyIsBrokerMessage, brokerMsg.String())
+
+	// Send the message on event-broker through middlewares
+	return c.executeMiddlewares(ctx, &brokerMsg, func(ctx context.Context) error {
+		return c.broker.Publish(ctx, addr, brokerMsg)
+	})
+}
+
+// SendAsReplyToGetOperation will send a GetResponse message on GetResponse channel.
+//
+// NOTE: for now, this only support the first message from AsyncAPI list.
+// If you need support for other messages, please raise an issue.
+func (c *AppController) SendAsReplyToGetOperation(
+	ctx context.Context,
+	chanAddr string,
+	msg GetResponseMessage,
+) error {
+	// Set channel address
+	addr := chanAddr
+
+	// Set correlation ID if it does not exist
+	if id := msg.CorrelationID(); id == "" {
+		c.logger.Error(ctx, extensions.ErrNoCorrelationIDSet.Error())
+		return extensions.ErrNoCorrelationIDSet
+
+	}
+
+	// Set context
+	ctx = addAppContextValues(ctx, addr)
+	ctx = context.WithValue(ctx, extensions.ContextKeyIsDirection, "publication")
+	ctx = context.WithValue(ctx, extensions.ContextKeyIsCorrelationID, msg.CorrelationID())
 
 	// Convert to BrokerMessage
 	brokerMsg, err := msg.toBrokerMessage()
