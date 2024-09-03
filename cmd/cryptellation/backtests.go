@@ -49,12 +49,16 @@ var backtestsGetCmd = &cobra.Command{
 			return err
 		}
 
-		status, err := globalClient.BacktestsClient().Get(cmd.Context(), id)
+		bt, err := globalClient.BacktestsClient().Get(cmd.Context(), id)
 		if err != nil {
 			return err
 		}
 
-		fmt.Printf("%+v\n", status)
+		fmt.Printf("ID:\t\t%s\n", bt.ID)
+		fmt.Printf("Start:\t\t%s\n", bt.StartTime)
+		fmt.Printf("End:\t\t%s\n", bt.EndTime)
+		fmt.Printf("Period:\t\t%s\n", bt.PeriodBetweenEvents)
+
 		return nil
 	},
 }
@@ -69,6 +73,7 @@ var backtestsServiceInfoCmd = &cobra.Command{
 }
 
 func initBacktests(rootCmd *cobra.Command) {
+	backtestsCmd.AddCommand(backtestsGetCmd)
 	backtestsCmd.AddCommand(backtestsList)
 	backtestsCmd.AddCommand(backtestsServiceInfoCmd)
 	rootCmd.AddCommand(backtestsCmd)
