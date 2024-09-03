@@ -25,7 +25,7 @@ var forwardtestsInfoCmd = &cobra.Command{
 	Aliases: []string{"svc"},
 	Short:   "Read info from forwardtests service",
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		return displayServiceInfo(globalClient.ForwardTestsClient())
+		return displayServiceInfo(globalClient.Forwardtests)
 	},
 }
 
@@ -34,7 +34,7 @@ var forwardtestsListCmd = &cobra.Command{
 	Aliases: []string{"l"},
 	Short:   "List forward tests",
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		list, err := globalClient.ForwardTestsClient().ListForwardTests(cmd.Context())
+		list, err := globalClient.Forwardtests.ListForwardTests(cmd.Context())
 		if err != nil {
 			return err
 		}
@@ -58,7 +58,7 @@ var forwardtestsStatusCmd = &cobra.Command{
 			return err
 		}
 
-		status, err := globalClient.ForwardTestsClient().GetStatus(cmd.Context(), id)
+		status, err := globalClient.Forwardtests.GetStatus(cmd.Context(), id)
 		if err != nil {
 			return err
 		}

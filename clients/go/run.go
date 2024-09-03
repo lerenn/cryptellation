@@ -23,9 +23,9 @@ func (r Run) CreateOrder(ctx context.Context, payload client.OrderCreationPayloa
 
 	switch r.Mode {
 	case ModeIsBacktest:
-		return r.Services.BacktestsClient().CreateOrder(ctx, payload)
+		return r.Services.Backtests.CreateOrder(ctx, payload)
 	case ModeIsForwardTest:
-		return r.Services.ForwardTestsClient().CreateOrder(ctx, payload)
+		return r.Services.Forwardtests.CreateOrder(ctx, payload)
 	default:
 		return fmt.Errorf("%w for CreateOrder(): %q", ErrUnsupportedMode, r.Mode)
 	}
@@ -34,9 +34,9 @@ func (r Run) CreateOrder(ctx context.Context, payload client.OrderCreationPayloa
 func (r Run) GetAccounts(ctx context.Context) (map[string]account.Account, error) {
 	switch r.Mode {
 	case ModeIsBacktest:
-		return r.Services.BacktestsClient().GetAccounts(ctx, r.ID)
+		return r.Services.Backtests.GetAccounts(ctx, r.ID)
 	case ModeIsForwardTest:
-		return r.Services.ForwardTestsClient().GetAccounts(ctx, r.ID)
+		return r.Services.Forwardtests.GetAccounts(ctx, r.ID)
 	default:
 		return nil, fmt.Errorf("%w for GetAccounts(): %q", ErrUnsupportedMode, r.Mode)
 	}

@@ -32,7 +32,7 @@ var candlesticksReadCmd = &cobra.Command{
 	Aliases: []string{"r"},
 	Short:   "Read candlesticks from service",
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		list, err := globalClient.CandlesticksClient().Read(context.Background(), client.ReadCandlesticksPayload{
+		list, err := globalClient.Candlesticks.Read(context.Background(), client.ReadCandlesticksPayload{
 			Exchange: "binance",
 			Pair:     "ETH-USDT",
 			Period:   period.H1,
@@ -59,7 +59,7 @@ var candlesticksInfoCmd = &cobra.Command{
 	Aliases: []string{"svc"},
 	Short:   "Read info from candlesticks service",
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		return displayServiceInfo(globalClient.CandlesticksClient())
+		return displayServiceInfo(globalClient.Candlesticks)
 	},
 }
 
