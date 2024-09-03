@@ -2207,7 +2207,8 @@ type BacktestSchema struct {
 	PeriodBetweenEvents PeriodSchema `json:"period_between_events"`
 
 	// Description: Date-Time format according to RFC3339
-	StartTime DateSchema `json:"start_time"`
+	StartTime         DateSchema               `json:"start_time"`
+	TickSubscriptions []TickSubscriptionSchema `json:"tick_subscriptions"`
 }
 
 // BacktestIDSchema is a schema from the AsyncAPI specification required in messages
@@ -2313,6 +2314,15 @@ type TickSchema struct {
 
 	// Description: Date-Time format according to RFC3339
 	Time DateSchema `json:"time"`
+}
+
+// TickSubscriptionSchema is a schema from the AsyncAPI specification required in messages
+type TickSubscriptionSchema struct {
+	// Description: Exchange name
+	Exchange ExchangeSchema `json:"exchange"`
+
+	// Description: Pair symbol
+	Pair PairSchema `json:"pair"`
 }
 
 const (

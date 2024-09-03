@@ -6,6 +6,7 @@
 package asyncapi
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/lerenn/cryptellation/pkg/models/account"
@@ -33,11 +34,21 @@ func (msg *GetRequestMessage) Set(backtestID uuid.UUID) {
 }
 
 func (msg *GetResponseMessage) Set(backtest backtest.Backtest) {
+	tsub := make([]TickSubscriptionSchema, len(backtest.TickSubscriptions))
+	for i, ts := range backtest.TickSubscriptions {
+		tsub[i] = TickSubscriptionSchema{
+			Exchange: ExchangeSchema(ts.Exchange),
+			Pair:     PairSchema(ts.Pair),
+		}
+	}
+	fmt.Println(tsub)
+
 	schema := BacktestSchema{
 		Id:                  BacktestIDSchema(backtest.ID.String()),
 		StartTime:           DateSchema(backtest.StartTime),
 		EndTime:             DateSchema(backtest.EndTime),
 		PeriodBetweenEvents: PeriodSchema(backtest.PeriodBetweenEvents),
+		TickSubscriptions:   tsub,
 	}
 
 	msg.Payload.Backtest = &schema
@@ -49,11 +60,20 @@ func (msg *GetResponseMessage) ToModel() (backtest.Backtest, error) {
 		return backtest.Backtest{}, err
 	}
 
+	ts := make([]event.TickSubscription, len(msg.Payload.Backtest.TickSubscriptions))
+	for i, t := range msg.Payload.Backtest.TickSubscriptions {
+		ts[i] = event.TickSubscription{
+			Exchange: string(t.Exchange),
+			Pair:     string(t.Pair),
+		}
+	}
+
 	return backtest.Backtest{
 		ID:                  uuid.MustParse(string(msg.Payload.Backtest.Id)),
 		StartTime:           time.Time(msg.Payload.Backtest.StartTime),
 		EndTime:             time.Time(msg.Payload.Backtest.EndTime),
 		PeriodBetweenEvents: p,
+		TickSubscriptions:   ts,
 	}, nil
 }
 
