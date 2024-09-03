@@ -19,6 +19,7 @@ type Client interface {
 	Advance(ctx context.Context, backtestID uuid.UUID) error
 	Create(ctx context.Context, payload BacktestCreationPayload) (uuid.UUID, error)
 	CreateOrder(ctx context.Context, payload client.OrderCreationPayload) error
+	Get(ctx context.Context, backtestID uuid.UUID) (backtest.Backtest, error)
 	GetAccounts(ctx context.Context, backtestID uuid.UUID) (map[string]account.Account, error)
 	Subscribe(ctx context.Context, backtestID uuid.UUID, exchange, pair string) error
 	ListenEvents(ctx context.Context, backtestID uuid.UUID) (<-chan event.Event, error)

@@ -54,6 +54,15 @@ func (r retry) CreateOrder(ctx context.Context, payload common.OrderCreationPayl
 
 }
 
+func (r retry) Get(ctx context.Context, backtestID uuid.UUID) (backtest.Backtest, error) {
+	var bt backtest.Backtest
+	err := r.Retryable.Exec(ctx, func(ctx context.Context) (err error) {
+		bt, err = r.client.Get(ctx, backtestID)
+		return err
+	})
+	return bt, err
+}
+
 func (r retry) GetAccounts(ctx context.Context, backtestID uuid.UUID) (map[string]account.Account, error) {
 	var accounts map[string]account.Account
 	err := r.Retryable.Exec(ctx, func(ctx context.Context) (err error) {

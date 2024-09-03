@@ -15,6 +15,16 @@ channels:
       CreateResponse:
         $ref: "#/components/messages/CreateResponse"
 
+  GetRequest:
+    address: cryptellation.backtests.get
+    messages:
+      GetRequest:
+        $ref: "#/components/messages/GetRequest"
+  GetResponse:
+    messages:
+      GetResponse:
+        $ref: "#/components/messages/GetResponse"
+
   SubscribeRequest:
     address: cryptellation.backtests.subscribe
     messages:
@@ -104,6 +114,16 @@ operations:
         location: "$message.header#/replyTo"
       channel:
         $ref: '#/channels/CreateResponse'
+
+  Get:
+    action: receive
+    channel: 
+      $ref: "#/channels/GetRequest"
+    reply:
+      address:
+        location: "$message.header#/replyTo"
+      channel:
+        $ref: '#/channels/GetResponse'
 
   Subscribe:
     action: receive
@@ -233,6 +253,30 @@ components:
             id:
               type: string
               description: Newly created backtest ID
+        - properties:
+            error:
+              $ref: '../../../../internal/asyncapi/models.yaml#/components/schemas/Error'
+      traits:
+        - $ref: "#/components/messageTraits/withCorrelationID"
+
+    GetRequest:
+      payload:
+        type: object
+        required:
+          - id
+        properties:
+          id:
+            $ref: '#/components/schemas/BacktestID'
+      traits:
+        - $ref: "#/components/messageTraits/withReplyTo"
+        - $ref: "#/components/messageTraits/withCorrelationID"
+    GetResponse:
+      payload:
+        type: object
+        oneOf:
+        - properties:
+            backtest:
+              $ref: '#/components/schemas/Backtest'
         - properties:
             error:
               $ref: '../../../../internal/asyncapi/models.yaml#/components/schemas/Error'
