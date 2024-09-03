@@ -37,12 +37,12 @@ import (
 )
 
 type Services struct {
-	backtests    backtests.Client
-	candlesticks candlesticks.Client
-	exchanges    exchanges.Client
-	forwardtests forwardtests.Client
-	indicators   indicators.Client
-	ticks        ticks.Client
+	Backtests    backtests.Client
+	Candlesticks candlesticks.Client
+	Exchanges    exchanges.Client
+	Forwardtests forwardtests.Client
+	Indicators   indicators.Client
+	Ticks        ticks.Client
 }
 
 func NewServices(c config.NATS) (svc Services, err error) {
@@ -53,7 +53,7 @@ func NewServices(c config.NATS) (svc Services, err error) {
 		return
 	}
 	backtests = backtestsretry.New(backtests)
-	svc.backtests = backtests
+	svc.Backtests = backtests
 
 	// Set candlesticks
 	candlesticks, err := candlesticksnats.New(c)
@@ -63,7 +63,7 @@ func NewServices(c config.NATS) (svc Services, err error) {
 	}
 	candlesticks = candlesticksretry.New(candlesticks)
 	candlesticks = candlestickscache.New(candlesticks)
-	svc.candlesticks = candlesticks
+	svc.Candlesticks = candlesticks
 
 	// Set exchanges
 	exchanges, err := exchangesnats.New(c)
@@ -73,7 +73,7 @@ func NewServices(c config.NATS) (svc Services, err error) {
 	}
 	exchanges = exchangesretry.New(exchanges)
 	exchanges = exchangescache.New(exchanges)
-	svc.exchanges = exchanges
+	svc.Exchanges = exchanges
 
 	// Set forward tests
 	forwardtests, err := forwardtestsnats.New(c)
@@ -82,7 +82,7 @@ func NewServices(c config.NATS) (svc Services, err error) {
 		return
 	}
 	forwardtests = forwardtestsretry.New(forwardtests)
-	svc.forwardtests = forwardtests
+	svc.Forwardtests = forwardtests
 
 	// Set indicators
 	indicators, err := indicatorsnats.New(c)
@@ -92,7 +92,7 @@ func NewServices(c config.NATS) (svc Services, err error) {
 	}
 	indicators = indicatorscache.New(indicators)
 	indicators = indicatorsretry.New(indicators)
-	svc.indicators = indicators
+	svc.Indicators = indicators
 
 	// Set ticks
 	ticks, err := ticksnats.New(c)
@@ -101,33 +101,9 @@ func NewServices(c config.NATS) (svc Services, err error) {
 		return
 	}
 	ticks = ticksretry.New(ticks)
-	svc.ticks = ticks
+	svc.Ticks = ticks
 
 	return
-}
-
-func (c Services) BacktestsClient() backtests.Client {
-	return c.backtests
-}
-
-func (c Services) CandlesticksClient() candlesticks.Client {
-	return c.candlesticks
-}
-
-func (c Services) ExchangesClient() exchanges.Client {
-	return c.exchanges
-}
-
-func (c Services) ForwardTestsClient() forwardtests.Client {
-	return c.forwardtests
-}
-
-func (c Services) IndicatorsClient() indicators.Client {
-	return c.indicators
-}
-
-func (c Services) TicksClient() ticks.Client {
-	return c.ticks
 }
 
 func (c Services) ServicesInfo(ctx context.Context) (servicesInfo map[string]client.ServiceInfo, err error) {
@@ -153,12 +129,12 @@ func (c Services) ServicesInfo(ctx context.Context) (servicesInfo map[string]cli
 	}
 
 	wg.Add(6)
-	go cb("backtests", c.backtests)
-	go cb("candlesticks", c.candlesticks)
-	go cb("exchanges", c.exchanges)
-	go cb("forwardtests", c.forwardtests)
-	go cb("indicators", c.indicators)
-	go cb("ticks", c.ticks)
+	go cb("backtests", c.Backtests)
+	go cb("candlesticks", c.Candlesticks)
+	go cb("exchanges", c.Exchanges)
+	go cb("forwardtests", c.Forwardtests)
+	go cb("indicators", c.Indicators)
+	go cb("ticks", c.Ticks)
 
 	wg.Wait()
 
@@ -166,23 +142,23 @@ func (c Services) ServicesInfo(ctx context.Context) (servicesInfo map[string]cli
 }
 
 func (c *Services) Close(ctx context.Context) {
-	if c.backtests != nil {
-		c.backtests.Close(ctx)
+	if c.Backtests != nil {
+		c.Backtests.Close(ctx)
 	}
 
-	if c.candlesticks != nil {
-		c.candlesticks.Close(ctx)
+	if c.Candlesticks != nil {
+		c.Candlesticks.Close(ctx)
 	}
 
-	if c.exchanges != nil {
-		c.exchanges.Close(ctx)
+	if c.Exchanges != nil {
+		c.Exchanges.Close(ctx)
 	}
 
-	if c.indicators != nil {
-		c.indicators.Close(ctx)
+	if c.Indicators != nil {
+		c.Indicators.Close(ctx)
 	}
 
-	if c.ticks != nil {
-		c.ticks.Close(ctx)
+	if c.Ticks != nil {
+		c.Ticks.Close(ctx)
 	}
 }

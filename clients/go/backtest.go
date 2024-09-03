@@ -25,7 +25,7 @@ func NewBacktest(
 	var run Run
 
 	// Create the backtest
-	id, err := services.BacktestsClient().Create(ctx, parameters)
+	id, err := services.Backtests.Create(ctx, parameters)
 	if err != nil {
 		return nil, err
 	}
@@ -47,20 +47,20 @@ func NewBacktest(
 
 func (b *Backtest) Run(ctx context.Context) error {
 	// Listen to events
-	events, err := b.run.Services.BacktestsClient().ListenEvents(ctx, b.run.ID)
+	events, err := b.run.Services.Backtests.ListenEvents(ctx, b.run.ID)
 	if err != nil {
 		return err
 	}
 
 	// Subscribe to ticks
 	for _, ts := range b.bot.TicksToListen(ctx) {
-		if err := b.run.Services.BacktestsClient().Subscribe(ctx, b.run.ID, ts.Exchange, ts.Pair); err != nil {
+		if err := b.run.Services.Backtests.Subscribe(ctx, b.run.ID, ts.Exchange, ts.Pair); err != nil {
 			return err
 		}
 	}
 
 	for endBacktest := false; !endBacktest; {
-		err := b.run.Services.BacktestsClient().Advance(ctx, b.run.ID)
+		err := b.run.Services.Backtests.Advance(ctx, b.run.ID)
 		if err != nil {
 			return err
 		}

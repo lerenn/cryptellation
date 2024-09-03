@@ -25,7 +25,7 @@ var backtestsList = &cobra.Command{
 	Aliases: []string{"l", "ls"},
 	Short:   "List backtests",
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		list, err := globalClient.BacktestsClient().List(cmd.Context())
+		list, err := globalClient.Backtests.List(cmd.Context())
 		if err != nil {
 			return err
 		}
@@ -49,7 +49,7 @@ var backtestsGetCmd = &cobra.Command{
 			return err
 		}
 
-		bt, err := globalClient.BacktestsClient().Get(cmd.Context(), id)
+		bt, err := globalClient.Backtests.Get(cmd.Context(), id)
 		if err != nil {
 			return err
 		}
@@ -68,7 +68,7 @@ var backtestsServiceInfoCmd = &cobra.Command{
 	Aliases: []string{"svc"},
 	Short:   "Read info from backtests service",
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		return displayServiceInfo(globalClient.BacktestsClient())
+		return displayServiceInfo(globalClient.Backtests)
 	},
 }
 

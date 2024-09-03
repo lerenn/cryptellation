@@ -25,7 +25,7 @@ var exchangesReadCmd = &cobra.Command{
 	Aliases: []string{"r"},
 	Short:   "Read exchanges from service",
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		list, err := globalClient.ExchangesClient().Read(context.Background(), "binance")
+		list, err := globalClient.Exchanges.Read(context.Background(), "binance")
 		if err != nil {
 			return err
 		}
@@ -40,7 +40,7 @@ var exchangesInfoCmd = &cobra.Command{
 	Aliases: []string{"svc"},
 	Short:   "Read info from exchanges service",
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		return displayServiceInfo(globalClient.ExchangesClient())
+		return displayServiceInfo(globalClient.Exchanges)
 	},
 }
 

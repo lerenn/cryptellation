@@ -22,7 +22,7 @@ var indicatorsInfoCmd = &cobra.Command{
 	Aliases: []string{"service"},
 	Short:   "Read info from indicators service",
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		return displayServiceInfo(globalClient.IndicatorsClient())
+		return displayServiceInfo(globalClient.Indicators)
 	},
 }
 
