@@ -118,10 +118,17 @@ func (c Services) ExportBacktestsData(ctx context.Context, backtestID uuid.UUID)
 		csList[ts.Exchange][ts.Pair] = cs.ToArray()
 	}
 
+	// Get orders
+	orders, err := c.Backtests.ListOrders(ctx, backtestID)
+	if err != nil {
+		return RunDataExport{}, err
+	}
+
 	return RunDataExport{
 		ID:           backtestID,
-		Type:         "backtest",
+		Mode:         ModeIsBacktest,
 		Candlesticks: csList,
+		Orders:       orders,
 	}, nil
 }
 

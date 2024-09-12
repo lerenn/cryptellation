@@ -10,6 +10,7 @@ import (
 	client "github.com/lerenn/cryptellation/pkg/client"
 	"github.com/lerenn/cryptellation/pkg/models/account"
 	"github.com/lerenn/cryptellation/pkg/models/event"
+	"github.com/lerenn/cryptellation/pkg/models/order"
 	"github.com/lerenn/cryptellation/svc/backtests/pkg/backtest"
 
 	"github.com/google/uuid"
@@ -24,6 +25,7 @@ type Client interface {
 	Subscribe(ctx context.Context, backtestID uuid.UUID, exchange, pair string) error
 	ListenEvents(ctx context.Context, backtestID uuid.UUID) (<-chan event.Event, error)
 	List(ctx context.Context) ([]backtest.Backtest, error)
+	ListOrders(ctx context.Context, backtestID uuid.UUID) ([]order.Order, error)
 
 	ServiceInfo(ctx context.Context) (client.ServiceInfo, error)
 	Close(ctx context.Context)

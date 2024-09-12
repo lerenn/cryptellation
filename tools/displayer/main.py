@@ -13,10 +13,11 @@ class Displayer(object):
                 self._display_candlesticks(self.candlesticks[exchange][pair])
                 
     def _display_candlesticks(self, candlesticks):
-        df = pd.DataFrame(candlesticks)
-        df['time'] = pd.to_datetime(df['time'])
-        df.set_index('time', inplace=True)
-        mpf.plot(df, type='candle', warn_too_much_data=100000)
+        cds_dataframe = pd.DataFrame(candlesticks)
+        cds_dataframe['time'] = pd.to_datetime(cds_dataframe['time'])
+        cds_dataframe.set_index('time', inplace=True)
+
+        mpf.plot(cds_dataframe, type='candle', warn_too_much_data=100000)
 
 if __name__ == '__main__':
     with open(sys.argv[1]) as f:

@@ -275,6 +275,11 @@ func (suite *EndToEndSuite) TestBacktestOrder() {
 	suite.Require().NoError(err)
 	suite.Require().Equal(0.99933, utils.Round(accounts["binance"].Balances["BTC"], 5))
 	suite.Require().Equal(0.04, utils.Round(accounts["binance"].Balances["USDT"], 2))
+
+	// List orders
+	orders, err := suite.client.ListOrders(context.Background(), id)
+	suite.Require().NoError(err)
+	suite.Require().Len(orders, 2)
 }
 
 func (suite *EndToEndSuite) TestBacktestList() {

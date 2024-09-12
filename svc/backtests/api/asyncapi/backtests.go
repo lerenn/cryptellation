@@ -6,7 +6,6 @@
 package asyncapi
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/lerenn/cryptellation/pkg/models/account"
@@ -41,7 +40,6 @@ func (msg *GetResponseMessage) Set(backtest backtest.Backtest) {
 			Pair:     PairSchema(ts.Pair),
 		}
 	}
-	fmt.Println(tsub)
 
 	schema := BacktestSchema{
 		Id:                  BacktestIDSchema(backtest.ID.String()),

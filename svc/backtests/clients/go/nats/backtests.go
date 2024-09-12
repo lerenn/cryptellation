@@ -11,6 +11,7 @@ import (
 	"github.com/lerenn/cryptellation/pkg/config"
 	"github.com/lerenn/cryptellation/pkg/models/account"
 	"github.com/lerenn/cryptellation/pkg/models/event"
+	"github.com/lerenn/cryptellation/pkg/models/order"
 
 	asyncapi "github.com/lerenn/cryptellation/svc/backtests/api/asyncapi"
 	client "github.com/lerenn/cryptellation/svc/backtests/clients/go"
@@ -228,6 +229,21 @@ func (b nats) List(ctx context.Context) ([]backtest.Backtest, error) {
 
 	// Send request
 	respMsg, err := b.ctrl.RequestToListOperation(ctx, reqMsg)
+	if err != nil {
+		return nil, err
+	}
+
+	return respMsg.ToModel()
+}
+
+func (b nats) ListOrders(ctx context.Context, backtestID uuid.UUID) ([]order.Order, error) {
+	// Set message
+	reqMsg := asyncapi.NewOrdersListRequestMessage()
+	reqMsg.Headers.ReplyTo = helpers.AddReplyToSuffix(asyncapi.ListRequestChannelPath, b.name)
+	reqMsg.Set(backtestID)
+
+	// Send request
+	respMsg, err := b.ctrl.RequestToOrdersListOperation(ctx, reqMsg)
 	if err != nil {
 		return nil, err
 	}

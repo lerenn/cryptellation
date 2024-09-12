@@ -7,6 +7,7 @@ import (
 
 	"github.com/lerenn/cryptellation/pkg/client"
 	"github.com/lerenn/cryptellation/pkg/models/account"
+	"github.com/lerenn/cryptellation/pkg/models/order"
 	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/candlestick"
 
 	"github.com/google/uuid"
@@ -45,6 +46,7 @@ func (r Run) GetAccounts(ctx context.Context) (map[string]account.Account, error
 
 type RunDataExport struct {
 	ID           uuid.UUID                                       `json:"id"`
-	Type         string                                          `json:"type"`
+	Mode         Mode                                            `json:"mode"`
 	Candlesticks map[string]map[string][]candlestick.Candlestick `json:"candlesticks"`
+	Orders       []order.Order                                   `json:"orders"`
 }
