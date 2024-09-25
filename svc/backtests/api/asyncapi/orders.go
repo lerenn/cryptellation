@@ -10,11 +10,28 @@ import (
 	"github.com/google/uuid"
 )
 
+func (msg *OrdersListRequestMessage) Set(backtestId uuid.UUID) {
+	msg.Payload.Id = BacktestIDSchema(backtestId.String())
+}
+
 func (msg *OrdersListResponseMessage) Set(orders []order.Order) {
 	msg.Payload.Orders = make([]OrderSchema, len(orders))
 	for i, o := range orders {
 		msg.Payload.Orders[i] = orderModelToAPI(o)
 	}
+}
+
+func (msg *OrdersListResponseMessage) ToModel() ([]order.Order, error) {
+	orders := make([]order.Order, len(msg.Payload.Orders))
+	for i, o := range msg.Payload.Orders {
+		m, err := orderModelFromAPI(o)
+		if err != nil {
+			return nil, err
+		}
+		orders[i] = m
+	}
+
+	return orders, nil
 }
 
 func (msg *OrdersCreateRequestMessage) Set(payload common.OrderCreationPayload) {
