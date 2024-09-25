@@ -1,6 +1,6 @@
 services:
   uptrace-otelcollector:
-    image: otel/opentelemetry-collector-contrib:0.88.0
+    image: otel/opentelemetry-collector-contrib:0.110.0
     networks:
       - cryptellation
     depends_on:

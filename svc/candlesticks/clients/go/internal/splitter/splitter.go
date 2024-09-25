@@ -25,6 +25,19 @@ const (
 )
 
 func (s Splitter) Read(ctx context.Context, payload client.ReadCandlesticksPayload) (*candlestick.List, error) {
+	// If start and end are set, check if the request can be done in one request
+	if payload.Start != nil && payload.End != nil {
+		count := payload.Period.CountBetweenTimes(*payload.Start, *payload.End)
+		if count <= ReadPeriods || (payload.Limit > 0 && payload.Limit < ReadPeriods) {
+			return s.client.Read(ctx, payload)
+		}
+	}
+
+	// Otherwise, split the request
+	return s.readWithSplit(ctx, payload)
+}
+
+func (s Splitter) readWithSplit(ctx context.Context, payload client.ReadCandlesticksPayload) (*candlestick.List, error) {
 	// Set end if not set
 	end := time.Now()
 	if payload.End != nil {
