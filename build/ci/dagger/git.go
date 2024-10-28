@@ -28,12 +28,13 @@ type Git struct {
 
 type authParams struct {
 	SSHPrivateKeyFile *dagger.Secret
-	GithubToken       *dagger.Secret
+	GitToken          *dagger.Secret
+	PullRequestToken  *dagger.Secret
 }
 
 func (ap authParams) Validate() error {
-	if ap.SSHPrivateKeyFile == nil && ap.GithubToken == nil {
-		return fmt.Errorf("either SSHPrivateKeyFile or GithubToken must be provided")
+	if ap.SSHPrivateKeyFile == nil && (ap.PullRequestToken == nil || ap.GitToken == nil) {
+		return fmt.Errorf("either SSHPrivateKeyFile or PullRequestToken and GitToken must be provided")
 	}
 	return nil
 }
@@ -58,8 +59,8 @@ func NewGit(ctx context.Context, srcDir *dagger.Directory, auth authParams) (Git
 		if err != nil {
 			return Git{}, err
 		}
-	} else if auth.GithubToken != nil {
-		token, err := auth.GithubToken.Plaintext(ctx)
+	} else if auth.GitToken != nil {
+		token, err := auth.GitToken.Plaintext(ctx)
 		if err != nil {
 			return Git{}, err
 		}
@@ -282,8 +283,8 @@ func (g *Git) PublishNewCommit(
 	}
 
 	// Create pull request
-	if g.auth.GithubToken != nil {
-		token, err := g.auth.GithubToken.Plaintext(ctx)
+	if g.auth.PullRequestToken != nil {
+		token, err := g.auth.PullRequestToken.Plaintext(ctx)
 		if err != nil {
 			return err
 		}

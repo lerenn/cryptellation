@@ -84,9 +84,9 @@ func publishHelmChart(
 
 		// Set correct url
 		url = sshHelmPkgGitRepo
-	} else if auth.GithubToken != nil {
+	} else if auth.PullRequestToken != nil {
 		// Set correct url
-		tokenPlainText, err := auth.GithubToken.Plaintext(ctx)
+		tokenPlainText, err := auth.PullRequestToken.Plaintext(ctx)
 		if err != nil {
 			return err
 		}
