@@ -6,6 +6,7 @@ import (
 	common "github.com/lerenn/cryptellation/pkg/client"
 	"github.com/lerenn/cryptellation/pkg/models/account"
 	"github.com/lerenn/cryptellation/pkg/models/event"
+	"github.com/lerenn/cryptellation/pkg/models/order"
 
 	client "github.com/lerenn/cryptellation/svc/backtests/clients/go"
 	"github.com/lerenn/cryptellation/svc/backtests/pkg/backtest"
@@ -95,6 +96,15 @@ func (r retry) List(ctx context.Context) ([]backtest.Backtest, error) {
 		return err
 	})
 	return backtests, err
+}
+
+func (r retry) ListOrders(ctx context.Context, backtestID uuid.UUID) ([]order.Order, error) {
+	var orders []order.Order
+	err := r.Retryable.Exec(ctx, func(ctx context.Context) (err error) {
+		orders, err = r.client.ListOrders(ctx, backtestID)
+		return err
+	})
+	return orders, err
 }
 
 func (r retry) ServiceInfo(ctx context.Context) (resp common.ServiceInfo, err error) {

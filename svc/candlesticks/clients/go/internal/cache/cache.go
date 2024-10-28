@@ -75,7 +75,7 @@ func (cache *cache) Read(ctx context.Context, payload client.ReadCandlesticksPay
 	payload.End = utils.ToReference(payload.Period.RoundTime(*payload.End))
 
 	// Get present and missing times
-	list, tr, err := cache.presentAndmissingTimes(payload)
+	list, tr, err := cache.presentAndMissingTimes(payload)
 	if err != nil {
 		return nil, err
 	}
@@ -108,7 +108,7 @@ func (cache *cache) Read(ctx context.Context, payload client.ReadCandlesticksPay
 	return extract, nil
 }
 
-func (cache *cache) presentAndmissingTimes(payload client.ReadCandlesticksPayload) (present *candlestick.List, missing []timeserie.TimeRange, err error) {
+func (cache *cache) presentAndMissingTimes(payload client.ReadCandlesticksPayload) (present *candlestick.List, missing []timeserie.TimeRange, err error) {
 	list := candlestick.NewList(payload.Exchange, payload.Pair, payload.Period)
 
 	// Generate missing times slice
@@ -158,7 +158,7 @@ func (cache *cache) preemptiveAsyncLoading(ctx context.Context, payload client.R
 	payload.Limit = 0
 
 	// Get present and missing times
-	_, missingTimeRanges, err := cache.presentAndmissingTimes(payload)
+	_, missingTimeRanges, err := cache.presentAndMissingTimes(payload)
 	if err != nil {
 		telemetry.L(ctx).Errorf("Error while counting missing in preemptive loading: %v", err)
 		return

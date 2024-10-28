@@ -30,6 +30,9 @@ func (suite *EndToEndSuite) TestBacktestGet() {
 	})
 	suite.Require().NoError(err)
 
+	// Subscribe to pair
+	suite.Require().NoError(suite.client.Subscribe(context.Background(), id, "binance", "BTC-USDT"))
+
 	// Get backtest
 	b, err := suite.client.Get(context.Background(), id)
 	suite.Require().NoError(err)
@@ -38,6 +41,7 @@ func (suite *EndToEndSuite) TestBacktestGet() {
 	suite.Require().Equal(id, b.ID)
 	suite.Require().Equal(utils.Must(time.Parse(time.RFC3339, "2023-02-26T12:00:00Z")), b.StartTime)
 	suite.Require().Equal(utils.Must(time.Parse(time.RFC3339, "2023-02-26T12:02:00Z")), b.EndTime)
+	suite.Require().Equal([]event.TickSubscription{{Exchange: "binance", Pair: "BTC-USDT"}}, b.TickSubscriptions)
 }
 
 func (suite *EndToEndSuite) TestBacktestAdvance() {
@@ -271,6 +275,11 @@ func (suite *EndToEndSuite) TestBacktestOrder() {
 	suite.Require().NoError(err)
 	suite.Require().Equal(0.99933, utils.Round(accounts["binance"].Balances["BTC"], 5))
 	suite.Require().Equal(0.04, utils.Round(accounts["binance"].Balances["USDT"], 2))
+
+	// List orders
+	orders, err := suite.client.ListOrders(context.Background(), id)
+	suite.Require().NoError(err)
+	suite.Require().Len(orders, 2)
 }
 
 func (suite *EndToEndSuite) TestBacktestList() {

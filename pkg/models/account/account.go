@@ -16,7 +16,7 @@ var (
 )
 
 type Account struct {
-	Balances map[string]float64
+	Balances map[string]float64 `json:"balances"`
 }
 
 func (a Account) Validate() error {

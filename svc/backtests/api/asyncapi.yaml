@@ -508,6 +508,7 @@ components:
         - start_time
         - end_time
         - period_between_events
+        - tick_subscriptions
       properties:
         id:
           $ref: '#/components/schemas/BacktestID'
@@ -517,6 +518,10 @@ components:
           $ref: '#/components/schemas/Date'
         period_between_events:
           $ref: '#/components/schemas/Period'
+        tick_subscriptions:
+          type: array
+          items:
+            $ref: '#/components/schemas/TickSubscription'
     Date:
       type: string
       format: date-time
@@ -642,3 +647,13 @@ components:
             - 1.5
         exchange:
           $ref: '#/components/schemas/Exchange'
+    TickSubscription:
+      type: object
+      required:
+        - exchange
+        - pair
+      properties:
+        exchange:
+          $ref: '#/components/schemas/Exchange'
+        pair:
+          $ref: '#/components/schemas/Pair'

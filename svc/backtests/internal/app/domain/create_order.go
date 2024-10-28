@@ -15,6 +15,8 @@ import (
 )
 
 func (b Backtests) CreateOrder(ctx context.Context, backtestId uuid.UUID, order order.Order) error {
+	telemetry.L(ctx).Infof("Creating order on backtest %s: %+v", backtestId.String(), order)
+
 	if order.ID == uuid.Nil {
 		order.ID = uuid.New()
 	}
@@ -34,7 +36,7 @@ func (b Backtests) CreateOrder(ctx context.Context, backtestId uuid.UUID, order 
 
 		_, cs, notEmpty := list.First()
 		if !notEmpty {
-			return backtest.ErrNoDataForOrderValidation
+			return fmt.Errorf("%w: %d candlesticks retrieved", backtest.ErrNoDataForOrderValidation, list.Len())
 		}
 
 		telemetry.L(ctx).Infof("Adding %+v order to %q backtest", order, backtestId.String())

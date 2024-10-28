@@ -12,6 +12,7 @@ import (
 	client "github.com/lerenn/cryptellation/pkg/client"
 	account "github.com/lerenn/cryptellation/pkg/models/account"
 	event "github.com/lerenn/cryptellation/pkg/models/event"
+	order "github.com/lerenn/cryptellation/pkg/models/order"
 	backtest "github.com/lerenn/cryptellation/svc/backtests/pkg/backtest"
 	gomock "go.uber.org/mock/gomock"
 )
@@ -137,6 +138,21 @@ func (m *MockClient) List(ctx context.Context) ([]backtest.Backtest, error) {
 func (mr *MockClientMockRecorder) List(ctx interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "List", reflect.TypeOf((*MockClient)(nil).List), ctx)
+}
+
+// ListOrders mocks base method.
+func (m *MockClient) ListOrders(ctx context.Context, backtestID uuid.UUID) ([]order.Order, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ListOrders", ctx, backtestID)
+	ret0, _ := ret[0].([]order.Order)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ListOrders indicates an expected call of ListOrders.
+func (mr *MockClientMockRecorder) ListOrders(ctx, backtestID interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListOrders", reflect.TypeOf((*MockClient)(nil).ListOrders), ctx, backtestID)
 }
 
 // ListenEvents mocks base method.
