@@ -115,7 +115,12 @@ jobs:
       - uses: dagger/dagger-for-github@v6.14.0
         with:
           verb: call
-          args: -m build/ci create-release --source-dir=. --pull-request-token=env:CRYPTELLATION_PULL_REQUEST_RW_TOKEN
+          args: >
+            -m build/ci
+            create-release
+            --source-dir=.
+            --git-token=env:CRYPTELLATION_PULL_REQUEST_RW_TOKEN
+            --pull-request-token=env:CRYPTELLATION_PULL_REQUEST_RW_TOKEN
         env:
           CRYPTELLATION_PULL_REQUEST_RW_TOKEN: ${{ secrets.CRYPTELLATION_PULL_REQUEST_RW_TOKEN }}
 
@@ -142,6 +147,11 @@ jobs:
       - uses: dagger/dagger-for-github@v6.14.0
         with:
           verb: call
-          args: -m build/ci publish-release --source-dir=. --pull-request-token=env:CRYPTELLATION_PULL_REQUEST_RW_TOKEN
+          args: >
+            -m build/ci
+            publish-release
+            --source-dir=.
+            --git-token=env:CRYPTELLATION_PULL_REQUEST_RW_TOKEN
+            --pull-request-token=env:CRYPTELLATION_PULL_REQUEST_RW_TOKEN
         env:
           CRYPTELLATION_PULL_REQUEST_RW_TOKEN: ${{ secrets.CRYPTELLATION_PULL_REQUEST_RW_TOKEN }}
