@@ -115,9 +115,9 @@ jobs:
       - uses: dagger/dagger-for-github@v6.11.0
         with:
           verb: call
-          args: -m build/ci create-release --source-dir=. --github-token=env:CRYPTELLATION_GITHUB_TOKEN
+          args: -m build/ci create-release --source-dir=. --pull-request-token=env:CRYPTELLATION_PULL_REQUEST_RW_TOKEN
         env:
-          CRYPTELLATION_GITHUB_TOKEN: ${{ secrets.CRYPTELLATION_GITHUB_TOKEN }}
+          CRYPTELLATION_PULL_REQUEST_RW_TOKEN: ${{ secrets.CRYPTELLATION_PULL_REQUEST_RW_TOKEN }}
 
   publish-release:
     name: Publish the release of the new version
@@ -142,6 +142,6 @@ jobs:
       - uses: dagger/dagger-for-github@v6.11.0
         with:
           verb: call
-          args: -m build/ci publish-release --source-dir=. --github-token=env:CRYPTELLATION_GITHUB_TOKEN
+          args: -m build/ci publish-release --source-dir=. --pull-request-token=env:CRYPTELLATION_PULL_REQUEST_RW_TOKEN
         env:
-          CRYPTELLATION_GITHUB_TOKEN: ${{ secrets.CRYPTELLATION_GITHUB_TOKEN }}
+          CRYPTELLATION_PULL_REQUEST_RW_TOKEN: ${{ secrets.CRYPTELLATION_PULL_REQUEST_RW_TOKEN }}
