@@ -115,7 +115,7 @@ jobs:
       - uses: dagger/dagger-for-github@v6.14.0
         with:
           verb: call
-          args: >
+          args: >-
             -m build/ci
             create-release
             --source-dir=.
@@ -147,7 +147,7 @@ jobs:
       - uses: dagger/dagger-for-github@v6.14.0
         with:
           verb: call
-          args: >
+          args: >-
             -m build/ci
             publish-release
             --source-dir=.
