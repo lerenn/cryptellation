@@ -5,7 +5,6 @@ import (
 	"errors"
 	"sync"
 
-	"github.com/google/uuid"
 	"github.com/lerenn/cryptellation/pkg/client"
 	"github.com/lerenn/cryptellation/pkg/config"
 
@@ -14,7 +13,6 @@ import (
 
 	candlesticks "github.com/lerenn/cryptellation/svc/candlesticks/clients/go"
 	candlesticksnats "github.com/lerenn/cryptellation/svc/candlesticks/clients/go/nats"
-	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/candlestick"
 
 	exchanges "github.com/lerenn/cryptellation/svc/exchanges/clients/go"
 	exchangesnats "github.com/lerenn/cryptellation/svc/exchanges/clients/go/nats"
@@ -82,54 +80,6 @@ func NewServices(c config.NATS) (svc Services, err error) {
 	}
 
 	return
-}
-
-func (c Services) ExportBacktestsData(ctx context.Context, backtestID uuid.UUID) (RunDataExport, error) {
-	// Get backtest info
-	bt, err := c.Backtests.Get(ctx, backtestID)
-	if err != nil {
-		return RunDataExport{}, err
-	}
-
-	// Get candlesticks
-	csList := make(map[string]map[string][]candlestick.Candlestick)
-	for _, ts := range bt.TickSubscriptions {
-		cs, err := c.Candlesticks.Read(ctx, candlesticks.ReadCandlesticksPayload{
-			Exchange: ts.Exchange,
-			Pair:     ts.Pair,
-			Period:   bt.PeriodBetweenEvents,
-			Start:    &bt.StartTime,
-			End:      &bt.EndTime,
-		})
-		if err != nil {
-			return RunDataExport{}, err
-		}
-
-		// Check if the map for exchange is initialized
-		if _, ok := csList[ts.Exchange]; !ok {
-			csList[ts.Exchange] = make(map[string][]candlestick.Candlestick)
-		}
-
-		// Check if the map for pair is initialized
-		if _, ok := csList[ts.Exchange][ts.Pair]; !ok {
-			csList[ts.Exchange][ts.Pair] = make([]candlestick.Candlestick, 0)
-		}
-
-		csList[ts.Exchange][ts.Pair] = cs.ToArray()
-	}
-
-	// Get orders
-	orders, err := c.Backtests.ListOrders(ctx, backtestID)
-	if err != nil {
-		return RunDataExport{}, err
-	}
-
-	return RunDataExport{
-		ID:           backtestID,
-		Mode:         ModeIsBacktest,
-		Candlesticks: csList,
-		Orders:       orders,
-	}, nil
 }
 
 func (c Services) ServicesInfo(ctx context.Context) (servicesInfo map[string]client.ServiceInfo, err error) {

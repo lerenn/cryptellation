@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
 
@@ -14,6 +15,7 @@ import (
 
 var (
 	globalClient client.Services
+	jsonOutput   bool
 )
 
 var CryptellationCmd = &cobra.Command{
@@ -36,6 +38,10 @@ var CryptellationCmd = &cobra.Command{
 }
 
 func init() {
+	// Flags
+	CryptellationCmd.PersistentFlags().BoolVarP(&jsonOutput, "json", "j", false, "Set output to JSON format")
+
+	// Services
 	initBacktests(CryptellationCmd)
 	initCandlesticks(CryptellationCmd)
 	initExchanges(CryptellationCmd)
@@ -43,6 +49,7 @@ func init() {
 	initIndicators(CryptellationCmd)
 	initTicks(CryptellationCmd)
 
+	// Others
 	initStatuses(CryptellationCmd)
 }
 
@@ -60,4 +67,14 @@ func executeParentPersistentPreRuns(cmd *cobra.Command, args []string) error {
 		root = root.Parent()
 	}
 	return root.PersistentPreRunE(cmd, args)
+}
+
+func displayJSON(jsonObj any) error {
+	output, err := json.Marshal(jsonObj)
+	if err != nil {
+		return err
+	}
+
+	fmt.Println(string(output))
+	return nil
 }

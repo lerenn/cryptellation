@@ -31,14 +31,14 @@ type CurrentCsTick struct {
 }
 
 type Backtest struct {
-	ID                  uuid.UUID
-	StartTime           time.Time
-	CurrentCsTick       CurrentCsTick
-	EndTime             time.Time
-	Accounts            map[string]account.Account
-	PeriodBetweenEvents period.Symbol
-	TickSubscriptions   []event.TickSubscription
-	Orders              []order.Order
+	ID                  uuid.UUID                  `json:"id"`
+	StartTime           time.Time                  `json:"start_time"`
+	CurrentCsTick       CurrentCsTick              `json:"current_cs_tick"`
+	EndTime             time.Time                  `json:"end_time"`
+	Accounts            map[string]account.Account `json:"accounts"`
+	PeriodBetweenEvents period.Symbol              `json:"period_between_events"`
+	TickSubscriptions   []event.TickSubscription   `json:"tick_subscriptions"`
+	Orders              []order.Order              `json:"orders"`
 }
 
 type NewPayload struct {

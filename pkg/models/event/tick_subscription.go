@@ -1,6 +1,6 @@
 package event
 
 type TickSubscription struct {
-	Exchange string
-	Pair     string
+	Exchange string `json:"exchange"`
+	Pair     string `json:"pair"`
 }
