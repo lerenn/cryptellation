@@ -238,7 +238,9 @@ components:
             $ref: '#/components/schemas/Date'
           end_time:
             $ref: '#/components/schemas/Date'
-          period:
+          mode:
+            $ref: '#/components/schemas/Mode'
+          price_period:
             $ref: '#/components/schemas/Period'
       traits:
         - $ref: "#/components/messageTraits/withReplyTo"
@@ -521,13 +523,16 @@ components:
       required:
         - start_time
         - end_time
-        - period
+        - mode
+        - price_period
       properties:
         start_time:
           $ref: '#/components/schemas/Date'
         end_time:
           $ref: '#/components/schemas/Date'
-        period:
+        mode:
+          $ref: '#/components/schemas/Mode'
+        price_period:
           $ref: '#/components/schemas/Period'
     Date:
       type: string
@@ -556,6 +561,12 @@ components:
           description: Main error reason
           examples:
             - "Invalid request: no time specified"
+    Mode:
+      type: string
+      description: Mode of the backtest
+      enum:
+        - full_ohlc
+        - close_ohlc
     Order:
       type: object
       description: Order sent to the market

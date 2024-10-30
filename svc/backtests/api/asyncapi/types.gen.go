@@ -614,8 +614,11 @@ type CreateRequestMessagePayload struct {
 	// Description: Date-Time format according to RFC3339
 	EndTime *DateSchema `json:"end_time"`
 
+	// Description: Mode of the backtest
+	Mode *ModeSchema `json:"mode"`
+
 	// Description: Period symbol
-	Period *PeriodSchema `json:"period"`
+	PricePeriod *PeriodSchema `json:"price_period"`
 
 	// Description: Date-Time format according to RFC3339
 	StartTime DateSchema `json:"start_time"`
@@ -2212,8 +2215,11 @@ type BacktestParametersSchema struct {
 	// Description: Date-Time format according to RFC3339
 	EndTime DateSchema `json:"end_time"`
 
+	// Description: Mode of the backtest
+	Mode ModeSchema `json:"mode"`
+
 	// Description: Period symbol
-	Period PeriodSchema `json:"period"`
+	PricePeriod PeriodSchema `json:"price_period"`
 
 	// Description: Date-Time format according to RFC3339
 	StartTime DateSchema `json:"start_time"`
@@ -2252,6 +2258,10 @@ type ErrorSchema struct {
 // ExchangeSchema is a schema from the AsyncAPI specification required in messages
 // Description: Exchange name
 type ExchangeSchema string
+
+// ModeSchema is a schema from the AsyncAPI specification required in messages
+// Description: Mode of the backtest
+type ModeSchema string
 
 // OrderSchema is a schema from the AsyncAPI specification required in messages
 // Description: Order sent to the market

@@ -37,7 +37,7 @@ func (suite *EventsClientSuite) TestOnePubOneSubObject() {
 	ch, err := suite.Client.Subscribe(context.Background(), backtestID)
 	suite.Require().NoError(err)
 
-	suite.Require().NoError(suite.Client.Publish(context.Background(), backtestID, event.NewTickEvent(ts, t)))
+	suite.Require().NoError(suite.Client.Publish(context.Background(), backtestID, event.NewPriceEvent(ts, t)))
 	select {
 	case recvEvent := <-ch:
 		suite.checkTick(recvEvent, ts, t)
@@ -55,7 +55,7 @@ func (suite *EventsClientSuite) TestOnePubOneSubObject() {
 }
 
 func (suite *EventsClientSuite) checkTick(evt event.Event, t time.Time, ti tick.Tick) {
-	suite.Require().Equal(event.TypeIsTick, evt.Type)
+	suite.Require().Equal(event.TypeIsPrice, evt.Type)
 	suite.Require().Equal(t, evt.Time)
 	rt, ok := evt.Content.(tick.Tick)
 	suite.Require().True(ok)

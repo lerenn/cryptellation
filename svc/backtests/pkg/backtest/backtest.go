@@ -1,7 +1,6 @@
 package backtest
 
 import (
-	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -10,6 +9,7 @@ import (
 	"github.com/lerenn/cryptellation/pkg/models/account"
 	"github.com/lerenn/cryptellation/pkg/models/event"
 	"github.com/lerenn/cryptellation/pkg/models/order"
+	"github.com/lerenn/cryptellation/pkg/utils"
 
 	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/candlestick"
 	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/period"
@@ -22,6 +22,7 @@ var (
 	ErrInvalidExchange               = errors.New("invalid exchange")
 	ErrNoDataForOrderValidation      = errors.New("no data for order validation")
 	ErrStartAfterEnd                 = errors.New("start after end")
+	ErrInvalidPricePeriod            = errors.New("invalid price period")
 )
 
 // Current candlestick based on candlestick step
@@ -31,11 +32,10 @@ type CurrentCandlestick struct {
 }
 
 type Parameters struct {
-	StartTime time.Time
-	EndTime   time.Time
-	Mode      Mode
-	// Period between events (only in OHLC modes)
-	Period period.Symbol `json:"period"`
+	StartTime   time.Time     `json:"start_time"`
+	EndTime     time.Time     `json:"end_time"`
+	Mode        Mode          `json:"mode"`
+	PricePeriod period.Symbol `json:"price_period"`
 }
 
 type Backtest struct {
@@ -48,10 +48,12 @@ type Backtest struct {
 }
 
 type NewPayload struct {
-	Accounts              map[string]account.Account
-	StartTime             time.Time
-	EndTime               *time.Time
-	DurationBetweenEvents *time.Duration
+	Accounts  map[string]account.Account
+	StartTime time.Time
+	EndTime   *time.Time
+
+	Mode        *Mode
+	PricePeriod *period.Symbol
 }
 
 func (payload *NewPayload) EmptyFieldsToDefault() *NewPayload {
@@ -59,9 +61,12 @@ func (payload *NewPayload) EmptyFieldsToDefault() *NewPayload {
 		payload.EndTime = defaultEndTime()
 	}
 
-	if payload.DurationBetweenEvents == nil {
-		d := time.Minute
-		payload.DurationBetweenEvents = &d
+	if payload.PricePeriod == nil {
+		payload.PricePeriod = period.M1.Opt()
+	}
+
+	if payload.Mode == nil {
+		payload.Mode = utils.ToReference(ModeIsCloseOHLC)
 	}
 
 	return payload
@@ -70,6 +75,14 @@ func (payload *NewPayload) EmptyFieldsToDefault() *NewPayload {
 func (payload NewPayload) Validate() error {
 	if !payload.StartTime.Before(*payload.EndTime) {
 		return ErrStartAfterEnd
+	}
+
+	if payload.PricePeriod == nil {
+		return fmt.Errorf("%w: nil", ErrInvalidPricePeriod)
+	}
+
+	if payload.Mode == nil {
+		return ErrInvalidMode
 	}
 
 	for exchange, a := range payload.Accounts {
@@ -90,27 +103,32 @@ func defaultEndTime() *time.Time {
 	return &t
 }
 
-func New(ctx context.Context, payload NewPayload) (Backtest, error) {
+func New(payload NewPayload) (Backtest, error) {
+	// Set default fields payload and validate it
 	if err := payload.EmptyFieldsToDefault().Validate(); err != nil {
 		return Backtest{}, err
 	}
 
-	per, err := period.FromDuration(*payload.DurationBetweenEvents)
-	if err != nil {
-		return Backtest{}, fmt.Errorf("invalid duration between candlesticks: %w", err)
+	// Set current candlestick based on mode
+	cc := CurrentCandlestick{
+		Time: payload.StartTime,
+	}
+	switch *payload.Mode {
+	case ModeIsCloseOHLC:
+		cc.Price = candlestick.PriceIsClose
+	case ModeIsFullOHLC:
+		cc.Price = candlestick.PriceIsOpen
 	}
 
 	return Backtest{
 		ID: uuid.New(),
 		Parameters: Parameters{
-			StartTime: payload.StartTime,
-			EndTime:   *payload.EndTime,
-			Period:    per,
+			StartTime:   payload.StartTime,
+			EndTime:     *payload.EndTime,
+			Mode:        *payload.Mode,
+			PricePeriod: *payload.PricePeriod,
 		},
-		CurrentCandlestick: CurrentCandlestick{
-			Time:  payload.StartTime,
-			Price: candlestick.PriceIsOpen,
-		},
+		CurrentCandlestick:  cc,
 		Accounts:            payload.Accounts,
 		PricesSubscriptions: make([]event.PricesSubscription, 0),
 		Orders:              make([]order.Order, 0),
@@ -129,11 +147,24 @@ func (bt *Backtest) UnmarshalBinary(data []byte) error {
 	return json.Unmarshal(data, bt)
 }
 
-func (bt *Backtest) Advance() (done bool) {
-	return bt.advanceThroughTicks()
+func (bt *Backtest) Advance() (done bool, err error) {
+	switch bt.Parameters.Mode {
+	case ModeIsCloseOHLC:
+		bt.advanceWithModeIsCloseOHLC()
+	case ModeIsFullOHLC:
+		bt.advanceWithModeIsFullOHLC()
+	default:
+		return false, fmt.Errorf("error with backtest mode %q: %w", bt.Parameters.Mode, ErrInvalidMode)
+	}
+
+	return bt.Done(), nil
 }
 
-func (bt *Backtest) advanceThroughTicks() (done bool) {
+func (bt *Backtest) advanceWithModeIsCloseOHLC() {
+	bt.SetCurrentTime(bt.CurrentCandlestick.Time.Add(bt.Parameters.PricePeriod.Duration()))
+}
+
+func (bt *Backtest) advanceWithModeIsFullOHLC() {
 	switch bt.CurrentCandlestick.Price {
 	case candlestick.PriceIsOpen:
 		bt.CurrentCandlestick.Price = candlestick.PriceIsHigh
@@ -142,12 +173,10 @@ func (bt *Backtest) advanceThroughTicks() (done bool) {
 	case candlestick.PriceIsLow:
 		bt.CurrentCandlestick.Price = candlestick.PriceIsClose
 	case candlestick.PriceIsClose:
-		bt.SetCurrentTime(bt.CurrentCandlestick.Time.Add(bt.Parameters.Period.Duration()))
+		bt.SetCurrentTime(bt.CurrentCandlestick.Time.Add(bt.Parameters.PricePeriod.Duration()))
 	default:
 		bt.CurrentCandlestick.Price = candlestick.PriceIsOpen
 	}
-
-	return bt.Done()
 }
 
 func (bt Backtest) Done() bool {
@@ -155,8 +184,13 @@ func (bt Backtest) Done() bool {
 }
 
 func (bt *Backtest) SetCurrentTime(ts time.Time) {
+	// Set new time
 	bt.CurrentCandlestick.Time = ts
-	bt.CurrentCandlestick.Price = candlestick.PriceIsOpen
+
+	// Starting the time on open if mode is full OHLC
+	if bt.Parameters.Mode == ModeIsFullOHLC {
+		bt.CurrentCandlestick.Price = candlestick.PriceIsOpen
+	}
 }
 
 func (bt *Backtest) CreateTickSubscription(exchange string, pair string) (event.PricesSubscription, error) {

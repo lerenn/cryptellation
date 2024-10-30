@@ -43,9 +43,10 @@ func (suite *BacktestSuite) TestPanicLock() {
 	bt := backtest.Backtest{
 		ID: uuid.New(),
 		Parameters: backtest.Parameters{
-			StartTime: time.Unix(0, 0),
-			EndTime:   time.Unix(120, 0),
-			Period:    period.M1,
+			StartTime:   time.Unix(0, 0),
+			EndTime:     time.Unix(120, 0),
+			Mode:        backtest.ModeIsFullOHLC,
+			PricePeriod: period.M1,
 		},
 		CurrentCandlestick: backtest.CurrentCandlestick{
 			Time:  time.Unix(60, 0),

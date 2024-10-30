@@ -25,9 +25,10 @@ func (suite *BacktestSuite) TestCreateRead() {
 	bt := backtest.Backtest{
 		ID: uuid.New(),
 		Parameters: backtest.Parameters{
-			StartTime: time.Unix(0, 0),
-			EndTime:   time.Unix(120, 0),
-			Period:    period.M1,
+			StartTime:   time.Unix(0, 0),
+			EndTime:     time.Unix(120, 0),
+			Mode:        backtest.ModeIsFullOHLC,
+			PricePeriod: period.M1,
 		},
 		CurrentCandlestick: backtest.CurrentCandlestick{
 			Time:  time.Unix(60, 0),
@@ -49,15 +50,17 @@ func (suite *BacktestSuite) TestCreateRead() {
 	suite.Require().Len(rp.Accounts, 1)
 	suite.Require().Len(rp.Accounts["exchange"].Balances, 1)
 	suite.Require().Equal(bt.Accounts["exchange"].Balances["DAI"], rp.Accounts["exchange"].Balances["DAI"])
+	suite.Require().Equal(backtest.ModeIsFullOHLC, rp.Parameters.Mode)
 }
 
 func (suite *BacktestSuite) TestList() {
 	bt1 := backtest.Backtest{
 		ID: uuid.New(),
 		Parameters: backtest.Parameters{
-			StartTime: time.Unix(0, 0),
-			EndTime:   time.Unix(120, 0),
-			Period:    period.M1,
+			StartTime:   time.Unix(0, 0),
+			EndTime:     time.Unix(120, 0),
+			Mode:        backtest.ModeIsFullOHLC,
+			PricePeriod: period.M1,
 		},
 		CurrentCandlestick: backtest.CurrentCandlestick{
 			Time:  time.Unix(60, 0),
@@ -74,9 +77,10 @@ func (suite *BacktestSuite) TestList() {
 	bt2 := backtest.Backtest{
 		ID: uuid.New(),
 		Parameters: backtest.Parameters{
-			StartTime: time.Unix(0, 0),
-			EndTime:   time.Unix(120, 0),
-			Period:    period.M1,
+			StartTime:   time.Unix(0, 0),
+			EndTime:     time.Unix(120, 0),
+			Mode:        backtest.ModeIsFullOHLC,
+			PricePeriod: period.M1,
 		},
 		CurrentCandlestick: backtest.CurrentCandlestick{
 			Time:  time.Unix(60, 0),
@@ -106,9 +110,10 @@ func (suite *BacktestSuite) TestUpdate() {
 	bt := backtest.Backtest{
 		ID: uuid.New(),
 		Parameters: backtest.Parameters{
-			StartTime: time.Unix(0, 0),
-			EndTime:   time.Unix(120, 0),
-			Period:    period.M1,
+			StartTime:   time.Unix(0, 0),
+			EndTime:     time.Unix(120, 0),
+			Mode:        backtest.ModeIsFullOHLC,
+			PricePeriod: period.M1,
 		},
 		CurrentCandlestick: backtest.CurrentCandlestick{
 			Time:  time.Unix(60, 0),
@@ -126,9 +131,10 @@ func (suite *BacktestSuite) TestUpdate() {
 	bt2 := backtest.Backtest{
 		ID: bt.ID,
 		Parameters: backtest.Parameters{
-			StartTime: time.Unix(0, 0),
-			EndTime:   time.Unix(120, 0),
-			Period:    period.M1,
+			StartTime:   time.Unix(0, 0),
+			EndTime:     time.Unix(120, 0),
+			Mode:        backtest.ModeIsFullOHLC,
+			PricePeriod: period.M1,
 		},
 		CurrentCandlestick: backtest.CurrentCandlestick{
 			Time:  time.Unix(60, 0),
@@ -158,9 +164,10 @@ func (suite *BacktestSuite) TestDelete() {
 	bt := backtest.Backtest{
 		ID: uuid.New(),
 		Parameters: backtest.Parameters{
-			StartTime: time.Unix(0, 0),
-			EndTime:   time.Unix(120, 0),
-			Period:    period.M1,
+			StartTime:   time.Unix(0, 0),
+			EndTime:     time.Unix(120, 0),
+			Mode:        backtest.ModeIsFullOHLC,
+			PricePeriod: period.M1,
 		},
 		CurrentCandlestick: backtest.CurrentCandlestick{
 			Time:  time.Unix(60, 0),
@@ -184,9 +191,10 @@ func (suite *BacktestSuite) TestDeleteInexistant() {
 	bt := backtest.Backtest{
 		ID: uuid.New(),
 		Parameters: backtest.Parameters{
-			StartTime: time.Unix(0, 0),
-			EndTime:   time.Unix(120, 0),
-			Period:    period.M1,
+			StartTime:   time.Unix(0, 0),
+			EndTime:     time.Unix(120, 0),
+			Mode:        backtest.ModeIsFullOHLC,
+			PricePeriod: period.M1,
 		},
 		CurrentCandlestick: backtest.CurrentCandlestick{
 			Time:  time.Unix(60, 0),
@@ -209,9 +217,10 @@ func (suite *BacktestSuite) TestLock() {
 	bt := backtest.Backtest{
 		ID: uuid.New(),
 		Parameters: backtest.Parameters{
-			StartTime: time.Unix(0, 0),
-			EndTime:   time.Unix(120, 0),
-			Period:    period.M1,
+			StartTime:   time.Unix(0, 0),
+			EndTime:     time.Unix(120, 0),
+			Mode:        backtest.ModeIsFullOHLC,
+			PricePeriod: period.M1,
 		},
 		CurrentCandlestick: backtest.CurrentCandlestick{
 			Time:  time.Unix(60, 0),

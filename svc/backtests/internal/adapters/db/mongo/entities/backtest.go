@@ -13,9 +13,10 @@ import (
 )
 
 type Parameters struct {
-	StartTime time.Time `bson:"start_time"`
-	EndTime   time.Time `bson:"end_time"`
-	Period    string    `bson:"period"`
+	StartTime   time.Time `bson:"start_time"`
+	EndTime     time.Time `bson:"end_time"`
+	Mode        string    `bson:"mode"`
+	PricePeriod string    `bson:"price_period"`
 }
 
 type Backtest struct {
@@ -35,8 +36,13 @@ func (bt Backtest) ToModel() (backtest.Backtest, error) {
 		return backtest.Backtest{}, wrappedErr
 	}
 
-	periodBetweenEvents := period.Symbol(bt.Parameters.Period)
+	periodBetweenEvents := period.Symbol(bt.Parameters.PricePeriod)
 	if err := periodBetweenEvents.Validate(); err != nil {
+		return backtest.Backtest{}, err
+	}
+
+	mode := backtest.Mode(bt.Parameters.Mode)
+	if err := mode.Validate(); err != nil {
 		return backtest.Backtest{}, err
 	}
 
@@ -53,9 +59,10 @@ func (bt Backtest) ToModel() (backtest.Backtest, error) {
 	return backtest.Backtest{
 		ID: id,
 		Parameters: backtest.Parameters{
-			StartTime: bt.Parameters.StartTime,
-			EndTime:   bt.Parameters.EndTime,
-			Period:    periodBetweenEvents,
+			StartTime:   bt.Parameters.StartTime,
+			EndTime:     bt.Parameters.EndTime,
+			Mode:        mode,
+			PricePeriod: periodBetweenEvents,
 		},
 		CurrentCandlestick: backtest.CurrentCandlestick{
 			Time:  bt.CurrentTime,
@@ -71,9 +78,10 @@ func FromBacktestModel(bt backtest.Backtest) Backtest {
 	return Backtest{
 		ID: bt.ID.String(),
 		Parameters: Parameters{
-			StartTime: bt.Parameters.StartTime,
-			EndTime:   bt.Parameters.EndTime,
-			Period:    bt.Parameters.Period.String(),
+			StartTime:   bt.Parameters.StartTime,
+			EndTime:     bt.Parameters.EndTime,
+			Mode:        bt.Parameters.Mode.String(),
+			PricePeriod: bt.Parameters.PricePeriod.String(),
 		},
 		CurrentTime:       bt.CurrentCandlestick.Time,
 		CurrentPriceType:  bt.CurrentCandlestick.Price.String(),

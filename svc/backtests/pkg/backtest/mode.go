@@ -21,3 +21,11 @@ func (m Mode) Validate() error {
 		return ErrInvalidMode
 	}
 }
+
+func (m Mode) String() string {
+	return string(m)
+}
+
+func (m Mode) Opt() *Mode {
+	return &m
+}

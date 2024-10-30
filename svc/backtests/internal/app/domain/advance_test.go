@@ -55,8 +55,9 @@ func (suite *AdvanceSuite) TestWithoutAccount() {
 					Price: candlestick.PriceIsOpen,
 				},
 				Parameters: backtest.Parameters{
-					EndTime: time.Unix(120, 0),
-					Period:  period.M1,
+					EndTime:     time.Unix(120, 0),
+					Mode:        backtest.ModeIsFullOHLC,
+					PricePeriod: period.M1,
 				},
 				PricesSubscriptions: []event.PricesSubscription{
 					{
@@ -77,8 +78,9 @@ func (suite *AdvanceSuite) TestWithoutAccount() {
 					Price: candlestick.PriceIsOpen,
 				},
 				Parameters: backtest.Parameters{
-					EndTime: time.Unix(120, 0),
-					Period:  period.M1,
+					EndTime:     time.Unix(120, 0),
+					Mode:        backtest.ModeIsFullOHLC,
+					PricePeriod: period.M1,
 				},
 				PricesSubscriptions: []event.PricesSubscription{
 					{

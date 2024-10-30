@@ -8,6 +8,7 @@ import (
 	"github.com/lerenn/cryptellation/pkg/models/account"
 	"github.com/lerenn/cryptellation/pkg/models/event"
 	"github.com/lerenn/cryptellation/pkg/models/order"
+	"github.com/lerenn/cryptellation/pkg/utils"
 
 	"github.com/lerenn/cryptellation/svc/backtests/internal/app"
 	"github.com/lerenn/cryptellation/svc/backtests/internal/app/ports/db"
@@ -54,13 +55,14 @@ func (suite *CreationSuite) TestHappyPass() {
 			suite.Require().Equal(backtest.Backtest{
 				ID: bt.ID,
 				Parameters: backtest.Parameters{
-					StartTime: time.Unix(0, 0),
-					EndTime:   time.Unix(120, 0),
-					Period:    period.M1,
+					StartTime:   time.Unix(0, 0),
+					EndTime:     time.Unix(120, 0),
+					PricePeriod: period.M1,
+					Mode:        backtest.ModeIsCloseOHLC,
 				},
 				CurrentCandlestick: backtest.CurrentCandlestick{
 					Time:  time.Unix(0, 0),
-					Price: candlestick.PriceIsOpen,
+					Price: candlestick.PriceIsClose,
 				},
 				Accounts: map[string]account.Account{
 					"exchange": {
@@ -79,20 +81,12 @@ func (suite *CreationSuite) TestHappyPass() {
 				Balances: map[string]float64{"DAI": 1000},
 			},
 		},
-		StartTime:             time.Unix(0, 0),
-		EndTime:               TimeOpt(time.Unix(120, 0)),
-		DurationBetweenEvents: DurationOpt(time.Minute),
+		StartTime:   time.Unix(0, 0),
+		EndTime:     utils.ToReference(time.Unix(120, 0)),
+		PricePeriod: utils.ToReference(period.M1),
 	})
 
 	// Check that returned value is correct
 	suite.Require().Equal(appSetID, id)
 	suite.Require().NoError(err)
-}
-
-func TimeOpt(t time.Time) *time.Time {
-	return &t
-}
-
-func DurationOpt(t time.Duration) *time.Duration {
-	return &t
 }

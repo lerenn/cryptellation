@@ -66,7 +66,7 @@ var backtestsGetCmd = &cobra.Command{
 			fmt.Printf("ID:\t\t%s\n", bt.ID)
 			fmt.Printf("Start:\t\t%s\n", bt.Parameters.StartTime)
 			fmt.Printf("End:\t\t%s\n", bt.Parameters.EndTime)
-			fmt.Printf("Period:\t\t%s\n", bt.Parameters.Period)
+			fmt.Printf("Period:\t\t%s\n", bt.Parameters.PricePeriod)
 			fmt.Printf("Tick subs:\n")
 			for _, ts := range bt.PricesSubscriptions {
 				fmt.Printf("\t%s: %s\n", ts.Exchange, ts.Pair)

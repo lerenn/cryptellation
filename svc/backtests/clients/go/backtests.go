@@ -12,6 +12,7 @@ import (
 	"github.com/lerenn/cryptellation/pkg/models/event"
 	"github.com/lerenn/cryptellation/pkg/models/order"
 	"github.com/lerenn/cryptellation/svc/backtests/pkg/backtest"
+	"github.com/lerenn/cryptellation/svc/candlesticks/pkg/period"
 
 	"github.com/google/uuid"
 )
@@ -32,7 +33,9 @@ type Client interface {
 }
 
 type BacktestCreationPayload struct {
-	Accounts  map[string]account.Account
-	StartTime time.Time
-	EndTime   *time.Time
+	Accounts    map[string]account.Account
+	StartTime   time.Time
+	EndTime     *time.Time
+	Mode        *backtest.Mode
+	PricePeriod *period.Symbol
 }

@@ -84,7 +84,7 @@ func (b nats) ListenEvents(ctx context.Context, backtestID uuid.UUID) (<-chan ev
 			e.Content = event.Status{
 				Finished: msg.Payload.Content.Finished,
 			}
-		case event.TypeIsTick:
+		case event.TypeIsPrice:
 			e.Content = tick.Tick{
 				Time:     time.Time(msg.Payload.Content.Time),
 				Exchange: string(msg.Payload.Content.Exchange),

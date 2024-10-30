@@ -8,21 +8,21 @@ import (
 	"github.com/lerenn/cryptellation/svc/ticks/pkg/tick"
 )
 
-func NewTickEvent(t time.Time, content tick.Tick) Event {
+func NewPriceEvent(t time.Time, content tick.Tick) Event {
 	return Event{
-		Type:    TypeIsTick,
+		Type:    TypeIsPrice,
 		Time:    t,
 		Content: content,
 	}
 }
 
-func TickEventFromCandlestick(
+func PriceEventFromCandlestick(
 	exchange, pair string,
 	currentPriceType candlestick.Price,
 	t time.Time,
 	cs candlestick.Candlestick,
 ) (Event, error) {
-	return NewTickEvent(t, tick.Tick{
+	return NewPriceEvent(t, tick.Tick{
 		Time:     t,
 		Pair:     pair,
 		Price:    cs.Price(currentPriceType),

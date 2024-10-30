@@ -10,7 +10,6 @@ import (
 
 	"github.com/lerenn/cryptellation/pkg/models/account"
 	"github.com/lerenn/cryptellation/pkg/models/event"
-	"github.com/lerenn/cryptellation/pkg/utils"
 
 	client "github.com/lerenn/cryptellation/svc/backtests/clients/go"
 	"github.com/lerenn/cryptellation/svc/backtests/pkg/backtest"
@@ -26,6 +25,8 @@ func (msg *CreateRequestMessage) Set(payload client.BacktestCreationPayload) {
 	msg.Payload.StartTime = DateSchema(payload.StartTime)
 	msg.Payload.EndTime = (*DateSchema)(payload.EndTime)
 	msg.Payload.Accounts = accountModelsToAPI(payload.Accounts)
+	msg.Payload.Mode = (*ModeSchema)(payload.Mode)
+	msg.Payload.PricePeriod = (*PeriodSchema)(payload.PricePeriod)
 }
 
 func (msg *GetRequestMessage) Set(backtestID uuid.UUID) {
@@ -44,9 +45,10 @@ func (msg *GetResponseMessage) Set(backtest backtest.Backtest) {
 	schema := BacktestSchema{
 		Id: BacktestIDSchema(backtest.ID.String()),
 		Parameters: BacktestParametersSchema{
-			StartTime: DateSchema(backtest.Parameters.StartTime),
-			EndTime:   DateSchema(backtest.Parameters.EndTime),
-			Period:    PeriodSchema(backtest.Parameters.Period),
+			StartTime:   DateSchema(backtest.Parameters.StartTime),
+			EndTime:     DateSchema(backtest.Parameters.EndTime),
+			Mode:        ModeSchema(backtest.Parameters.Mode),
+			PricePeriod: PeriodSchema(backtest.Parameters.PricePeriod),
 		},
 		PricesSubscriptions: tsub,
 	}
@@ -55,7 +57,7 @@ func (msg *GetResponseMessage) Set(backtest backtest.Backtest) {
 }
 
 func (msg *GetResponseMessage) ToModel() (backtest.Backtest, error) {
-	p, err := period.FromString(string(msg.Payload.Backtest.Parameters.Period))
+	p, err := period.FromString(string(msg.Payload.Backtest.Parameters.PricePeriod))
 	if err != nil {
 		return backtest.Backtest{}, err
 	}
@@ -71,9 +73,10 @@ func (msg *GetResponseMessage) ToModel() (backtest.Backtest, error) {
 	return backtest.Backtest{
 		ID: uuid.MustParse(string(msg.Payload.Backtest.Id)),
 		Parameters: backtest.Parameters{
-			StartTime: time.Time(msg.Payload.Backtest.Parameters.StartTime),
-			EndTime:   time.Time(msg.Payload.Backtest.Parameters.EndTime),
-			Period:    p,
+			StartTime:   time.Time(msg.Payload.Backtest.Parameters.StartTime),
+			EndTime:     time.Time(msg.Payload.Backtest.Parameters.EndTime),
+			Mode:        backtest.Mode(msg.Payload.Backtest.Parameters.Mode),
+			PricePeriod: p,
 		},
 		PricesSubscriptions: ts,
 	}, nil
@@ -97,23 +100,23 @@ func (msg *CreateRequestMessage) ToModel() (backtest.NewPayload, error) {
 		accounts[name] = a
 	}
 
-	// Get duration between events
-	var duration *time.Duration
-	if msg.Payload.Period != nil {
-		symbol, err := period.FromString((string)(*msg.Payload.Period))
+	// Get period between prices
+	var per *period.Symbol
+	if msg.Payload.PricePeriod != nil {
+		s, err := period.FromString((string)(*msg.Payload.PricePeriod))
 		if err != nil {
 			return backtest.NewPayload{}, err
 		}
-
-		duration = utils.ToReference(symbol.Duration())
+		per = &s
 	}
 
 	// Return model
 	return backtest.NewPayload{
-		Accounts:              accounts,
-		StartTime:             time.Time(msg.Payload.StartTime),
-		EndTime:               (*time.Time)(msg.Payload.EndTime),
-		DurationBetweenEvents: duration,
+		Accounts:    accounts,
+		StartTime:   time.Time(msg.Payload.StartTime),
+		EndTime:     (*time.Time)(msg.Payload.EndTime),
+		Mode:        (*backtest.Mode)(msg.Payload.Mode),
+		PricePeriod: per,
 	}, nil
 }
 
@@ -130,7 +133,7 @@ func (msg *EventMessage) Set(evt event.Event) error {
 		}
 
 		msg.Payload.Content.Finished = statusEvt.Finished
-	case event.TypeIsTick:
+	case event.TypeIsPrice:
 		t, ok := evt.Content.(tick.Tick)
 		if !ok {
 			return event.ErrMismatchingType
@@ -158,9 +161,9 @@ func (msg *ListResponseMessage) Set(backtests []backtest.Backtest) {
 		msg.Payload.Backtests[i] = BacktestSchema{
 			Id: BacktestIDSchema(b.ID.String()),
 			Parameters: BacktestParametersSchema{
-				StartTime: DateSchema(b.Parameters.StartTime),
-				EndTime:   DateSchema(b.Parameters.EndTime),
-				Period:    PeriodSchema(b.Parameters.Period),
+				StartTime:   DateSchema(b.Parameters.StartTime),
+				EndTime:     DateSchema(b.Parameters.EndTime),
+				PricePeriod: PeriodSchema(b.Parameters.PricePeriod),
 			},
 		}
 	}
@@ -169,7 +172,7 @@ func (msg *ListResponseMessage) Set(backtests []backtest.Backtest) {
 func (msg *ListResponseMessage) ToModel() ([]backtest.Backtest, error) {
 	backtests := make([]backtest.Backtest, len(msg.Payload.Backtests))
 	for i, b := range msg.Payload.Backtests {
-		p, err := period.FromString(string(b.Parameters.Period))
+		p, err := period.FromString(string(b.Parameters.PricePeriod))
 		if err != nil {
 			return nil, err
 		}
@@ -177,9 +180,9 @@ func (msg *ListResponseMessage) ToModel() ([]backtest.Backtest, error) {
 		backtests[i] = backtest.Backtest{
 			ID: uuid.MustParse(string(b.Id)),
 			Parameters: backtest.Parameters{
-				StartTime: time.Time(b.Parameters.StartTime),
-				EndTime:   time.Time(b.Parameters.EndTime),
-				Period:    p,
+				StartTime:   time.Time(b.Parameters.StartTime),
+				EndTime:     time.Time(b.Parameters.EndTime),
+				PricePeriod: p,
 			},
 		}
 	}

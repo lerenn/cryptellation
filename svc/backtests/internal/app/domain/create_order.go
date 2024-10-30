@@ -25,7 +25,7 @@ func (b Backtests) CreateOrder(ctx context.Context, backtestId uuid.UUID, order 
 		list, err := b.candlesticks.Read(ctx, candlesticks.ReadCandlesticksPayload{
 			Exchange: order.Exchange,
 			Pair:     order.Pair,
-			Period:   bt.Parameters.Period,
+			Period:   bt.Parameters.PricePeriod,
 			Start:    &bt.CurrentCandlestick.Time,
 			End:      &bt.CurrentCandlestick.Time,
 			Limit:    0,

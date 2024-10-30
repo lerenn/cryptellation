@@ -17,7 +17,10 @@ import (
 func (b Backtests) Advance(ctx context.Context, backtestId uuid.UUID) error {
 	return b.db.LockedBacktest(ctx, backtestId, func(bt *backtest.Backtest) (err error) {
 		// Advance backtest
-		finished := bt.Advance()
+		finished, err := bt.Advance()
+		if err != nil {
+			return fmt.Errorf("cannot advance backtest: %w", err)
+		}
 		telemetry.L(ctx).Infof("Advancing backtest %s: %s", backtestId.String(), bt.CurrentTime())
 
 		// Get actual events
@@ -53,7 +56,7 @@ func (b Backtests) readActualEvents(ctx context.Context, bt backtest.Backtest) (
 		list, err := b.candlesticks.Read(ctx, candlesticks.ReadCandlesticksPayload{
 			Exchange: sub.Exchange,
 			Pair:     sub.Pair,
-			Period:   bt.Parameters.Period,
+			Period:   bt.Parameters.PricePeriod,
 			Start:    &bt.CurrentCandlestick.Time,
 			End:      &bt.Parameters.EndTime,
 			Limit:    1,
@@ -67,7 +70,7 @@ func (b Backtests) readActualEvents(ctx context.Context, bt backtest.Backtest) (
 			continue
 		}
 
-		evt, err := event.TickEventFromCandlestick(sub.Exchange, sub.Pair, bt.CurrentCandlestick.Price, t, cs)
+		evt, err := event.PriceEventFromCandlestick(sub.Exchange, sub.Pair, bt.CurrentCandlestick.Price, t, cs)
 		if err != nil {
 			return nil, fmt.Errorf("turning candlestick into event: %w", err)
 		}

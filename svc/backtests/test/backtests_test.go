@@ -11,6 +11,7 @@ import (
 	"github.com/lerenn/cryptellation/pkg/utils"
 
 	client "github.com/lerenn/cryptellation/svc/backtests/clients/go"
+	"github.com/lerenn/cryptellation/svc/backtests/pkg/backtest"
 
 	"github.com/lerenn/cryptellation/svc/ticks/pkg/tick"
 )
@@ -44,7 +45,7 @@ func (suite *EndToEndSuite) TestBacktestGet() {
 	suite.Require().Equal([]event.PricesSubscription{{Exchange: "binance", Pair: "BTC-USDT"}}, b.PricesSubscriptions)
 }
 
-func (suite *EndToEndSuite) TestBacktestAdvance() {
+func (suite *EndToEndSuite) TestBacktestAdvanceWithFullOHLC() {
 	// Create backtest
 	id, err := suite.client.Create(context.Background(), client.BacktestCreationPayload{
 		Accounts: map[string]account.Account{
@@ -56,6 +57,7 @@ func (suite *EndToEndSuite) TestBacktestAdvance() {
 		},
 		StartTime: utils.Must(time.Parse(time.RFC3339, "2023-02-26T12:00:00Z")),
 		EndTime:   utils.ToReference(utils.Must(time.Parse(time.RFC3339, "2023-02-26T12:02:00Z"))),
+		Mode:      backtest.ModeIsFullOHLC.Opt(),
 	})
 	suite.Require().NoError(err)
 
@@ -71,8 +73,8 @@ func (suite *EndToEndSuite) TestBacktestAdvance() {
 	err = suite.client.Advance(context.Background(), id)
 	suite.Require().NoError(err)
 
-	// Getting tick event
-	suite.checkTickEvent(t, tick.Tick{
+	// Getting price event
+	suite.checkPriceEvent(t, tick.Tick{
 		Time:     t,
 		Pair:     "BTC-USDT",
 		Price:    23255.54,
@@ -86,8 +88,8 @@ func (suite *EndToEndSuite) TestBacktestAdvance() {
 	err = suite.client.Advance(context.Background(), id)
 	suite.Require().NoError(err)
 
-	// Getting tick event
-	suite.checkTickEvent(t, tick.Tick{
+	// Getting price event
+	suite.checkPriceEvent(t, tick.Tick{
 		Time:     t,
 		Pair:     "BTC-USDT",
 		Price:    23248.96,
@@ -101,8 +103,8 @@ func (suite *EndToEndSuite) TestBacktestAdvance() {
 	err = suite.client.Advance(context.Background(), id)
 	suite.Require().NoError(err)
 
-	// Getting tick event
-	suite.checkTickEvent(t, tick.Tick{
+	// Getting price event
+	suite.checkPriceEvent(t, tick.Tick{
 		Time:     t,
 		Pair:     "BTC-USDT",
 		Price:    23253.8,
@@ -117,8 +119,8 @@ func (suite *EndToEndSuite) TestBacktestAdvance() {
 	err = suite.client.Advance(context.Background(), id)
 	suite.Require().NoError(err)
 
-	// Getting tick event
-	suite.checkTickEvent(t, tick.Tick{
+	// Getting price event
+	suite.checkPriceEvent(t, tick.Tick{
 		Time:     t,
 		Pair:     "BTC-USDT",
 		Price:    23254.26,
@@ -132,8 +134,8 @@ func (suite *EndToEndSuite) TestBacktestAdvance() {
 	err = suite.client.Advance(context.Background(), id)
 	suite.Require().NoError(err)
 
-	// Getting tick event
-	suite.checkTickEvent(t, tick.Tick{
+	// Getting price event
+	suite.checkPriceEvent(t, tick.Tick{
 		Time:     t,
 		Pair:     "BTC-USDT",
 		Price:    23272.86,
@@ -147,8 +149,8 @@ func (suite *EndToEndSuite) TestBacktestAdvance() {
 	err = suite.client.Advance(context.Background(), id)
 	suite.Require().NoError(err)
 
-	// Getting tick event
-	suite.checkTickEvent(t, tick.Tick{
+	// Getting price event
+	suite.checkPriceEvent(t, tick.Tick{
 		Time:     t,
 		Pair:     "BTC-USDT",
 		Price:    23250.65,
@@ -162,8 +164,8 @@ func (suite *EndToEndSuite) TestBacktestAdvance() {
 	err = suite.client.Advance(context.Background(), id)
 	suite.Require().NoError(err)
 
-	// Getting tick event
-	suite.checkTickEvent(t, tick.Tick{
+	// Getting price event
+	suite.checkPriceEvent(t, tick.Tick{
 		Time:     t,
 		Pair:     "BTC-USDT",
 		Price:    23272.77,
@@ -182,9 +184,49 @@ func (suite *EndToEndSuite) TestBacktestAdvance() {
 	suite.checkStatusEvent(t, true, <-ch)
 }
 
-func (suite *EndToEndSuite) checkTickEvent(expectedTime time.Time, expectedTick tick.Tick, receivedEvt event.Event) {
+func (suite *EndToEndSuite) TestBacktestAdvanceWithCloseOHLC() {
+	// Create backtest
+	id, err := suite.client.Create(context.Background(), client.BacktestCreationPayload{
+		Accounts: map[string]account.Account{
+			"binance": {
+				Balances: map[string]float64{
+					"BTC": 1,
+				},
+			},
+		},
+		StartTime: utils.Must(time.Parse(time.RFC3339, "2023-02-26T12:00:00Z")),
+		EndTime:   utils.ToReference(utils.Must(time.Parse(time.RFC3339, "2023-02-26T12:02:00Z"))),
+		Mode:      backtest.ModeIsCloseOHLC.Opt(),
+	})
+	suite.Require().NoError(err)
+
+	// Subscribe to pair
+	suite.Require().NoError(suite.client.Subscribe(context.Background(), id, "binance", "BTC-USDT"))
+
+	// Listen to events
+	ch, err := suite.client.ListenEvents(context.Background(), id)
+	suite.Require().NoError(err)
+
+	// Advance for 12:01 (Close price of candlestick)
+	err = suite.client.Advance(context.Background(), id)
+	suite.Require().NoError(err)
+
+	// Getting price event
+	t := utils.Must(time.Parse(time.RFC3339, "2023-02-26T12:01:00Z"))
+	suite.checkPriceEvent(t, tick.Tick{
+		Time:     t,
+		Pair:     "BTC-USDT",
+		Price:    23272.77,
+		Exchange: "binance",
+	}, <-ch)
+
+	// Getting status event
+	suite.checkStatusEvent(t, false, <-ch)
+}
+
+func (suite *EndToEndSuite) checkPriceEvent(expectedTime time.Time, expectedTick tick.Tick, receivedEvt event.Event) {
 	// Check type and time
-	suite.Require().Equal(event.TypeIsTick, receivedEvt.Type)
+	suite.Require().Equal(event.TypeIsPrice, receivedEvt.Type)
 	suite.Require().WithinDuration(expectedTime, receivedEvt.Time, time.Second)
 
 	// Check content
@@ -216,6 +258,7 @@ func (suite *EndToEndSuite) TestBacktestOrder() {
 		},
 		StartTime: utils.Must(time.Parse(time.RFC3339, "2023-02-26T12:00:00Z")),
 		EndTime:   utils.ToReference(utils.Must(time.Parse(time.RFC3339, "2023-02-26T12:30:00Z"))),
+		Mode:      backtest.ModeIsFullOHLC.Opt(),
 	})
 	suite.Require().NoError(err)
 
@@ -294,6 +337,7 @@ func (suite *EndToEndSuite) TestBacktestList() {
 		},
 		StartTime: utils.Must(time.Parse(time.RFC3339, "2023-02-26T12:00:00Z")),
 		EndTime:   utils.ToReference(utils.Must(time.Parse(time.RFC3339, "2023-02-26T12:30:00Z"))),
+		Mode:      backtest.ModeIsFullOHLC.Opt(),
 	})
 	suite.Require().NoError(err)
 
