@@ -45,8 +45,8 @@ func (suite *SubscribeSuite) TestHappyPath() {
 	suite.db.EXPECT().LockedBacktest(ctx, id, gomock.Any()).
 		DoAndReturn(func(ctx context.Context, id uuid.UUID, fn db.LockedBacktestCallback) error {
 			bt := backtest.Backtest{
-				ID:                uuid.New(),
-				TickSubscriptions: make([]event.TickSubscription, 0),
+				ID:                  uuid.New(),
+				PricesSubscriptions: make([]event.PricesSubscription, 0),
 			}
 
 			if err := fn(&bt); err != nil {
@@ -55,7 +55,7 @@ func (suite *SubscribeSuite) TestHappyPath() {
 
 			suite.Require().Equal(backtest.Backtest{
 				ID: bt.ID,
-				TickSubscriptions: []event.TickSubscription{
+				PricesSubscriptions: []event.PricesSubscription{
 					{
 						Exchange: "exchange",
 						Pair:     "ETH-USDT",

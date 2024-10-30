@@ -32,16 +32,16 @@ func (suite *EventSuite) TestOnlyKeepEarliestSameTimeEvents() {
 		},
 		{
 			In: []Event{
-				NewTickEvent(time.Unix(120, 0), tick.Tick{}),
-				NewTickEvent(time.Unix(60, 0), tick.Tick{}),
-				NewTickEvent(time.Unix(240, 0), tick.Tick{}),
-				NewTickEvent(time.Unix(60, 0), tick.Tick{}),
-				NewTickEvent(time.Unix(180, 0), tick.Tick{}),
+				NewPriceEvent(time.Unix(120, 0), tick.Tick{}),
+				NewPriceEvent(time.Unix(60, 0), tick.Tick{}),
+				NewPriceEvent(time.Unix(240, 0), tick.Tick{}),
+				NewPriceEvent(time.Unix(60, 0), tick.Tick{}),
+				NewPriceEvent(time.Unix(180, 0), tick.Tick{}),
 			},
 			InTime: time.Unix(1<<62, 0),
 			Out: []Event{
-				NewTickEvent(time.Unix(60, 0), tick.Tick{}),
-				NewTickEvent(time.Unix(60, 0), tick.Tick{}),
+				NewPriceEvent(time.Unix(60, 0), tick.Tick{}),
+				NewPriceEvent(time.Unix(60, 0), tick.Tick{}),
 			},
 			OutTime: time.Unix(60, 0),
 		},

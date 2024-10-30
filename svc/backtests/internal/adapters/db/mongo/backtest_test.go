@@ -41,14 +41,17 @@ func (suite *BacktestSuite) SetupTest() {
 
 func (suite *BacktestSuite) TestPanicLock() {
 	bt := backtest.Backtest{
-		ID:        uuid.New(),
-		StartTime: time.Unix(0, 0),
-		CurrentCsTick: backtest.CurrentCsTick{
-			Time:      time.Unix(60, 0),
-			PriceType: candlestick.PriceTypeIsLow,
+		ID: uuid.New(),
+		Parameters: backtest.Parameters{
+			StartTime:   time.Unix(0, 0),
+			EndTime:     time.Unix(120, 0),
+			Mode:        backtest.ModeIsFullOHLC,
+			PricePeriod: period.M1,
 		},
-		EndTime:             time.Unix(120, 0),
-		PeriodBetweenEvents: period.M1,
+		CurrentCandlestick: backtest.CurrentCandlestick{
+			Time:  time.Unix(60, 0),
+			Price: candlestick.PriceIsLow,
+		},
 		Accounts: map[string]account.Account{
 			"exchange": {
 				Balances: map[string]float64{

@@ -89,7 +89,7 @@ func (b *Backtest) loopOnEvents(ctx context.Context, events <-chan event.Event) 
 		case event.TypeIsStatus:
 			status := evt.Content.(event.Status)
 			return status.Finished, nil // Exit loop event with indication wether the backtest is finished
-		case event.TypeIsTick:
+		case event.TypeIsPrice:
 			t, ok := evt.Content.(tick.Tick)
 			if !ok {
 				telemetry.L(ctx).Error("tick event received but content is not a tick")

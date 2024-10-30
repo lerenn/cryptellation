@@ -28,7 +28,7 @@ func New() (Exchanges, error) {
 	}, nil
 }
 
-func (e Exchanges) ListenSymbol(ctx context.Context, sub event.TickSubscription) (chan tick.Tick, chan struct{}, error) {
+func (e Exchanges) ListenSymbol(ctx context.Context, sub event.PricesSubscription) (chan tick.Tick, chan struct{}, error) {
 	switch sub.Exchange {
 	case binancePkg.Infos.Name:
 		return e.binance.ListenSymbol(ctx, sub.Pair)

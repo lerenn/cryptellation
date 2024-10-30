@@ -10,7 +10,7 @@ import (
 func (suite *EndToEndSuite) TestListenTicks() {
 	// WHEN subscribing to ticks
 	cancelableCtx, cancel := context.WithCancel(context.Background())
-	ch, err := suite.client.SubscribeToTicks(cancelableCtx, event.TickSubscription{
+	ch, err := suite.client.SubscribeToTicks(cancelableCtx, event.PricesSubscription{
 		Exchange: "binance",
 		Pair:     "ETH-USDT",
 	})

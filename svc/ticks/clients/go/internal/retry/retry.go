@@ -29,7 +29,7 @@ func New(client client.Client, options ...option) client.Client {
 	return &r
 }
 
-func (r retry) SubscribeToTicks(ctx context.Context, sub event.TickSubscription) (<-chan tick.Tick, error) {
+func (r retry) SubscribeToTicks(ctx context.Context, sub event.PricesSubscription) (<-chan tick.Tick, error) {
 	// No need for retry here, as there is no response and subscription is done repeatedly
 	return r.client.SubscribeToTicks(ctx, sub)
 }

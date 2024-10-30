@@ -38,7 +38,7 @@ var ticksListenCmd = &cobra.Command{
 			return err
 		}
 
-		ts := event.TickSubscription{
+		ts := event.PricesSubscription{
 			Exchange: ticksExchange,
 			Pair:     ticksPair,
 		}

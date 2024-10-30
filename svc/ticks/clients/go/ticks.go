@@ -13,7 +13,7 @@ import (
 )
 
 type Client interface {
-	SubscribeToTicks(ctx context.Context, sub event.TickSubscription) (<-chan tick.Tick, error)
+	SubscribeToTicks(ctx context.Context, sub event.PricesSubscription) (<-chan tick.Tick, error)
 	ServiceInfo(ctx context.Context) (client.ServiceInfo, error)
 	Close(ctx context.Context)
 }

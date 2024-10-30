@@ -10,7 +10,7 @@ import (
 
 type TimeSeriePayload struct {
 	Candlesticks *candlestick.List
-	PriceType    candlestick.PriceType
+	PriceType    candlestick.Price
 	Start        time.Time
 	End          time.Time
 	PeriodNumber int

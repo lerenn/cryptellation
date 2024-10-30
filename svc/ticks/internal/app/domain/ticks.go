@@ -34,7 +34,7 @@ func New(exchanges exchanges.Port, events events.Port) *Ticks {
 	}
 }
 
-func (t *Ticks) ListeningNotificationReceived(ctx context.Context, ts event.TickSubscription) {
+func (t *Ticks) ListeningNotificationReceived(ctx context.Context, ts event.PricesSubscription) {
 	t.listenings.UpdateLastNotificationSeen(ts)
 }
 

@@ -23,7 +23,7 @@ type ReadSMAPayload struct {
 	Pair         string
 	Period       period.Symbol
 	PeriodNumber int
-	PriceType    candlestick.PriceType
+	PriceType    candlestick.Price
 	Start        time.Time
 	End          time.Time
 }
@@ -33,6 +33,6 @@ type WriteSMAPayload struct {
 	Pair         string
 	Period       period.Symbol
 	PeriodNumber int
-	PriceType    candlestick.PriceType
+	PriceType    candlestick.Price
 	TimeSerie    *timeserie.TimeSerie[float64]
 }

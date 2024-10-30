@@ -22,7 +22,7 @@ func (a *Adapter) PublishTick(ctx context.Context, tick tick.Tick) error {
 		}, msg)
 }
 
-func (a *Adapter) SubscribeToTicks(ctx context.Context, sub event.TickSubscription) (<-chan tick.Tick, error) {
+func (a *Adapter) SubscribeToTicks(ctx context.Context, sub event.PricesSubscription) (<-chan tick.Tick, error) {
 	ch := make(chan tick.Tick, 16)
 	err := a.user.SubscribeToSendNewTicksOperation(ctx, asyncapi.LiveChannelParameters{
 		Exchange: sub.Exchange,

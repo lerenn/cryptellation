@@ -10,7 +10,7 @@ import (
 
 type PointPayload struct {
 	Candlesticks *timeserie.TimeSerie[candlestick.Candlestick]
-	PriceType    candlestick.PriceType
+	PriceType    candlestick.Price
 }
 
 func Point(payload PointPayload) float64 {
@@ -21,7 +21,7 @@ func Point(payload PointPayload) float64 {
 
 	// Get total from the timeserie
 	_ = payload.Candlesticks.Loop(func(t time.Time, cs candlestick.Candlestick) (bool, error) {
-		price := cs.PriceByType(payload.PriceType)
+		price := cs.Price(payload.PriceType)
 
 		// Reduce the count if the price is 0
 		if price == 0 {

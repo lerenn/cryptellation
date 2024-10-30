@@ -10,7 +10,7 @@ import (
 )
 
 func (b Backtests) Create(ctx context.Context, req backtest.NewPayload) (id uuid.UUID, err error) {
-	bt, err := backtest.New(ctx, req)
+	bt, err := backtest.New(req)
 	if err != nil {
 		return uuid.Nil, fmt.Errorf("creating a new backtest from request: %w", err)
 	}

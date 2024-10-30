@@ -63,7 +63,7 @@ func (mr *MockPortMockRecorder) PublishTick(ctx, tick interface{}) *gomock.Call 
 }
 
 // SubscribeToTicks mocks base method.
-func (m *MockPort) SubscribeToTicks(ctx context.Context, sub event.TickSubscription) (<-chan tick.Tick, error) {
+func (m *MockPort) SubscribeToTicks(ctx context.Context, sub event.PricesSubscription) (<-chan tick.Tick, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "SubscribeToTicks", ctx, sub)
 	ret0, _ := ret[0].(<-chan tick.Tick)

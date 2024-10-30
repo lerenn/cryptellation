@@ -26,8 +26,17 @@ func (cs Candlestick) Equal(b Candlestick) bool {
 	return t && o && h && l && c && v && u
 }
 
-func (cs Candlestick) PriceByType(pt PriceType) float64 {
-	return PriceByType(cs.Open, cs.High, cs.Low, cs.Close, pt)
+func (cs Candlestick) Price(p Price) float64 {
+	switch p {
+	case PriceIsOpen:
+		return cs.Open
+	case PriceIsHigh:
+		return cs.High
+	case PriceIsLow:
+		return cs.Low
+	default:
+		return cs.Close
+	}
 }
 
 func (cs Candlestick) String() string {

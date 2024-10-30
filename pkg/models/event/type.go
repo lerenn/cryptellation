@@ -10,7 +10,7 @@ var (
 )
 
 const (
-	TypeIsTick Type = "tick"
+	TypeIsPrice Type = "price"
 	// Backtest specific
 	TypeIsStatus Type = "status"
 )

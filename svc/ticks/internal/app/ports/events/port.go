@@ -13,7 +13,7 @@ import (
 
 type Port interface {
 	PublishTick(ctx context.Context, tick tick.Tick) error
-	SubscribeToTicks(ctx context.Context, sub event.TickSubscription) (<-chan tick.Tick, error)
+	SubscribeToTicks(ctx context.Context, sub event.PricesSubscription) (<-chan tick.Tick, error)
 
 	Close(ctx context.Context)
 }

@@ -7,22 +7,22 @@ type TickSubscription struct {
 	Pair     string `bson:"pair"`
 }
 
-func (ts TickSubscription) ToModel() event.TickSubscription {
-	return event.TickSubscription{
+func (ts TickSubscription) ToModel() event.PricesSubscription {
+	return event.PricesSubscription{
 		Exchange: ts.Exchange,
 		Pair:     ts.Pair,
 	}
 }
 
-func ToTickSubscriptionModels(entities []TickSubscription) []event.TickSubscription {
-	models := make([]event.TickSubscription, len(entities))
+func ToTickSubscriptionModels(entities []TickSubscription) []event.PricesSubscription {
+	models := make([]event.PricesSubscription, len(entities))
 	for i, e := range entities {
 		models[i] = e.ToModel()
 	}
 	return models
 }
 
-func FromTickSubscriptionModels(models []event.TickSubscription) []TickSubscription {
+func FromTickSubscriptionModels(models []event.PricesSubscription) []TickSubscription {
 	entities := make([]TickSubscription, len(models))
 	for i, m := range models {
 		entities[i] = FromTickSubscriptionModel(m)
@@ -30,7 +30,7 @@ func FromTickSubscriptionModels(models []event.TickSubscription) []TickSubscript
 	return entities
 }
 
-func FromTickSubscriptionModel(m event.TickSubscription) TickSubscription {
+func FromTickSubscriptionModel(m event.PricesSubscription) TickSubscription {
 	return TickSubscription{
 		Exchange: m.Exchange,
 		Pair:     m.Pair,

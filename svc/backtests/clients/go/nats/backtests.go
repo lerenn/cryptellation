@@ -84,7 +84,7 @@ func (b nats) ListenEvents(ctx context.Context, backtestID uuid.UUID) (<-chan ev
 			e.Content = event.Status{
 				Finished: msg.Payload.Content.Finished,
 			}
-		case event.TypeIsTick:
+		case event.TypeIsPrice:
 			e.Content = tick.Tick{
 				Time:     time.Time(msg.Payload.Content.Time),
 				Exchange: string(msg.Payload.Content.Exchange),
@@ -233,6 +233,11 @@ func (b nats) List(ctx context.Context) ([]backtest.Backtest, error) {
 		return nil, err
 	}
 
+	// Unwrap error from message
+	if err := helpers.UnwrapError(respMsg.Payload.Error); err != nil {
+		return nil, err
+	}
+
 	return respMsg.ToModel()
 }
 
@@ -245,6 +250,11 @@ func (b nats) ListOrders(ctx context.Context, backtestID uuid.UUID) ([]order.Ord
 	// Send request
 	respMsg, err := b.ctrl.RequestToOrdersListOperation(ctx, reqMsg)
 	if err != nil {
+		return nil, err
+	}
+
+	// Unwrap error from message
+	if err := helpers.UnwrapError(respMsg.Payload.Error); err != nil {
 		return nil, err
 	}
 

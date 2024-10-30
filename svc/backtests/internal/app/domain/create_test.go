@@ -8,6 +8,7 @@ import (
 	"github.com/lerenn/cryptellation/pkg/models/account"
 	"github.com/lerenn/cryptellation/pkg/models/event"
 	"github.com/lerenn/cryptellation/pkg/models/order"
+	"github.com/lerenn/cryptellation/pkg/utils"
 
 	"github.com/lerenn/cryptellation/svc/backtests/internal/app"
 	"github.com/lerenn/cryptellation/svc/backtests/internal/app/ports/db"
@@ -52,20 +53,23 @@ func (suite *CreationSuite) TestHappyPass() {
 			appSetID = bt.ID
 
 			suite.Require().Equal(backtest.Backtest{
-				ID:        bt.ID,
-				StartTime: time.Unix(0, 0),
-				CurrentCsTick: backtest.CurrentCsTick{
-					Time:      time.Unix(0, 0),
-					PriceType: candlestick.PriceTypeIsOpen,
+				ID: bt.ID,
+				Parameters: backtest.Parameters{
+					StartTime:   time.Unix(0, 0),
+					EndTime:     time.Unix(120, 0),
+					PricePeriod: period.M1,
+					Mode:        backtest.ModeIsCloseOHLC,
 				},
-				EndTime: time.Unix(120, 0),
+				CurrentCandlestick: backtest.CurrentCandlestick{
+					Time:  time.Unix(0, 0),
+					Price: candlestick.PriceIsClose,
+				},
 				Accounts: map[string]account.Account{
 					"exchange": {
 						Balances: map[string]float64{"DAI": 1000},
 					},
 				},
-				PeriodBetweenEvents: period.M1,
-				TickSubscriptions:   make([]event.TickSubscription, 0),
+				PricesSubscriptions: make([]event.PricesSubscription, 0),
 				Orders:              make([]order.Order, 0)}, bt)
 		}).
 		Return(nil)
@@ -77,20 +81,12 @@ func (suite *CreationSuite) TestHappyPass() {
 				Balances: map[string]float64{"DAI": 1000},
 			},
 		},
-		StartTime:             time.Unix(0, 0),
-		EndTime:               TimeOpt(time.Unix(120, 0)),
-		DurationBetweenEvents: DurationOpt(time.Minute),
+		StartTime:   time.Unix(0, 0),
+		EndTime:     utils.ToReference(time.Unix(120, 0)),
+		PricePeriod: utils.ToReference(period.M1),
 	})
 
 	// Check that returned value is correct
 	suite.Require().Equal(appSetID, id)
 	suite.Require().NoError(err)
-}
-
-func TimeOpt(t time.Time) *time.Time {
-	return &t
-}
-
-func DurationOpt(t time.Duration) *time.Duration {
-	return &t
 }

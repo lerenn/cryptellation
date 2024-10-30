@@ -10,13 +10,13 @@ import (
 )
 
 type subscription struct {
-	TickSubscription event.TickSubscription
+	TickSubscription event.PricesSubscription
 	Adapters         adapters
 	LastRequest      time.Time
 	Cancel           context.CancelFunc
 }
 
-func (s *subscription) ListenTicks(ctx context.Context, ts event.TickSubscription) {
+func (s *subscription) ListenTicks(ctx context.Context, ts event.PricesSubscription) {
 	telemetry.L(ctx).Infof("subscribing to %q ticks", ts)
 	ticks, done, err := s.Adapters.Exchanges.ListenSymbol(ctx, ts)
 	if err != nil {
@@ -48,18 +48,18 @@ func (s *subscription) ListenTicks(ctx context.Context, ts event.TickSubscriptio
 
 type listenings struct {
 	adapters      adapters
-	subscriptions map[event.TickSubscription]*subscription
+	subscriptions map[event.PricesSubscription]*subscription
 	lock          sync.Mutex
 }
 
 func newListenings(adapters adapters) listenings {
 	return listenings{
 		adapters:      adapters,
-		subscriptions: make(map[event.TickSubscription]*subscription),
+		subscriptions: make(map[event.PricesSubscription]*subscription),
 	}
 }
 
-func (l *listenings) UpdateLastNotificationSeen(ts event.TickSubscription) {
+func (l *listenings) UpdateLastNotificationSeen(ts event.PricesSubscription) {
 	l.lock.Lock()
 	defer l.lock.Unlock()
 
@@ -103,7 +103,7 @@ func (l *listenings) watchNoListener(ctx context.Context, sub *subscription) {
 	}
 }
 
-func (l *listenings) removeSubscription(ts event.TickSubscription) {
+func (l *listenings) removeSubscription(ts event.PricesSubscription) {
 	l.lock.Lock()
 	defer l.lock.Unlock()
 

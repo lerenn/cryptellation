@@ -614,8 +614,11 @@ type CreateRequestMessagePayload struct {
 	// Description: Date-Time format according to RFC3339
 	EndTime *DateSchema `json:"end_time"`
 
+	// Description: Mode of the backtest
+	Mode *ModeSchema `json:"mode"`
+
 	// Description: Period symbol
-	Period *PeriodSchema `json:"period"`
+	PricePeriod *PeriodSchema `json:"price_period"`
 
 	// Description: Date-Time format according to RFC3339
 	StartTime DateSchema `json:"start_time"`
@@ -2197,23 +2200,30 @@ type AssetSchema struct {
 
 // BacktestSchema is a schema from the AsyncAPI specification required in messages
 type BacktestSchema struct {
-	// Description: Date-Time format according to RFC3339
-	EndTime DateSchema `json:"end_time"`
-
 	// Description: Targeted backtest ID
-	Id BacktestIDSchema `json:"id"`
-
-	// Description: Period symbol
-	PeriodBetweenEvents PeriodSchema `json:"period_between_events"`
-
-	// Description: Date-Time format according to RFC3339
-	StartTime         DateSchema               `json:"start_time"`
-	TickSubscriptions []TickSubscriptionSchema `json:"tick_subscriptions"`
+	Id                  BacktestIDSchema           `json:"id"`
+	Parameters          BacktestParametersSchema   `json:"parameters"`
+	PricesSubscriptions []PricesSubscriptionSchema `json:"prices_subscriptions"`
 }
 
 // BacktestIDSchema is a schema from the AsyncAPI specification required in messages
 // Description: Targeted backtest ID
 type BacktestIDSchema string
+
+// BacktestParametersSchema is a schema from the AsyncAPI specification required in messages
+type BacktestParametersSchema struct {
+	// Description: Date-Time format according to RFC3339
+	EndTime DateSchema `json:"end_time"`
+
+	// Description: Mode of the backtest
+	Mode ModeSchema `json:"mode"`
+
+	// Description: Period symbol
+	PricePeriod PeriodSchema `json:"price_period"`
+
+	// Description: Date-Time format according to RFC3339
+	StartTime DateSchema `json:"start_time"`
+}
 
 // DateSchema is a schema from the AsyncAPI specification required in messages
 // Description: Date-Time format according to RFC3339
@@ -2248,6 +2258,10 @@ type ErrorSchema struct {
 // ExchangeSchema is a schema from the AsyncAPI specification required in messages
 // Description: Exchange name
 type ExchangeSchema string
+
+// ModeSchema is a schema from the AsyncAPI specification required in messages
+// Description: Mode of the backtest
+type ModeSchema string
 
 // OrderSchema is a schema from the AsyncAPI specification required in messages
 // Description: Order sent to the market
@@ -2293,6 +2307,15 @@ type PairSchema string
 // Description: Period symbol
 type PeriodSchema string
 
+// PricesSubscriptionSchema is a schema from the AsyncAPI specification required in messages
+type PricesSubscriptionSchema struct {
+	// Description: Exchange name
+	Exchange ExchangeSchema `json:"exchange"`
+
+	// Description: Pair symbol
+	Pair PairSchema `json:"pair"`
+}
+
 // StatusSchema is a schema from the AsyncAPI specification required in messages
 // Description: Status event is happening when there is no more expected events.
 // An 'advance' message can be sent after this one.
@@ -2314,15 +2337,6 @@ type TickSchema struct {
 
 	// Description: Date-Time format according to RFC3339
 	Time DateSchema `json:"time"`
-}
-
-// TickSubscriptionSchema is a schema from the AsyncAPI specification required in messages
-type TickSubscriptionSchema struct {
-	// Description: Exchange name
-	Exchange ExchangeSchema `json:"exchange"`
-
-	// Description: Pair symbol
-	Pair PairSchema `json:"pair"`
 }
 
 const (

@@ -50,13 +50,16 @@ func (suite *AdvanceSuite) TestWithoutAccount() {
 		DoAndReturn(func(ctx context.Context, id uuid.UUID, fn db.LockedBacktestCallback) error {
 			bt := backtest.Backtest{
 				ID: id,
-				CurrentCsTick: backtest.CurrentCsTick{
-					Time:      time.Unix(0, 0),
-					PriceType: candlestick.PriceTypeIsOpen,
+				CurrentCandlestick: backtest.CurrentCandlestick{
+					Time:  time.Unix(0, 0),
+					Price: candlestick.PriceIsOpen,
 				},
-				EndTime:             time.Unix(120, 0),
-				PeriodBetweenEvents: period.M1,
-				TickSubscriptions: []event.TickSubscription{
+				Parameters: backtest.Parameters{
+					EndTime:     time.Unix(120, 0),
+					Mode:        backtest.ModeIsFullOHLC,
+					PricePeriod: period.M1,
+				},
+				PricesSubscriptions: []event.PricesSubscription{
 					{
 						Exchange: "exchange",
 						Pair:     "ETH-USDT",
@@ -70,13 +73,16 @@ func (suite *AdvanceSuite) TestWithoutAccount() {
 
 			suite.Require().Equal(backtest.Backtest{
 				ID: id,
-				CurrentCsTick: backtest.CurrentCsTick{
-					Time:      time.Unix(120, 0),
-					PriceType: candlestick.PriceTypeIsOpen,
+				CurrentCandlestick: backtest.CurrentCandlestick{
+					Time:  time.Unix(120, 0),
+					Price: candlestick.PriceIsOpen,
 				},
-				EndTime:             time.Unix(120, 0),
-				PeriodBetweenEvents: period.M1,
-				TickSubscriptions: []event.TickSubscription{
+				Parameters: backtest.Parameters{
+					EndTime:     time.Unix(120, 0),
+					Mode:        backtest.ModeIsFullOHLC,
+					PricePeriod: period.M1,
+				},
+				PricesSubscriptions: []event.PricesSubscription{
 					{
 						Exchange: "exchange",
 						Pair:     "ETH-USDT",

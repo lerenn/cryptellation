@@ -58,7 +58,7 @@ func New(c config.NATS, options ...option) (client.Client, error) {
 	return t, nil
 }
 
-func (t nats) sendSubscriptionRequest(ctx context.Context, sub event.TickSubscription) error {
+func (t nats) sendSubscriptionRequest(ctx context.Context, sub event.PricesSubscription) error {
 	// Create message
 	msg := asyncapi.NewListeningNotificationMessage()
 	msg.FromModel(sub)
@@ -67,7 +67,7 @@ func (t nats) sendSubscriptionRequest(ctx context.Context, sub event.TickSubscri
 	return t.ctrl.SendToListeningOperation(ctx, msg)
 }
 
-func (t nats) SubscribeToTicks(ctx context.Context, sub event.TickSubscription) (<-chan tick.Tick, error) {
+func (t nats) SubscribeToTicks(ctx context.Context, sub event.PricesSubscription) (<-chan tick.Tick, error) {
 	// Send subscription request periodically
 	go func() {
 		for {

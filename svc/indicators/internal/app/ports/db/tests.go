@@ -22,7 +22,7 @@ func (suite *IndicatorsSuite) TestGet() {
 	pair := "ETC-USDT"
 	per := period.M1
 	periodNumber := 3
-	priceType := candlestick.PriceTypeIsClose
+	priceType := candlestick.PriceIsClose
 	ts := timeserie.New[float64]().
 		Set(time.Unix(0, 0), 1).
 		Set(time.Unix(60, 0), 2).
@@ -55,7 +55,7 @@ func (suite *IndicatorsSuite) TestGet() {
 	p.PeriodNumber = 8
 	suite.Require().NoError(suite.DB.UpsertSMA(context.Background(), p))
 	p = writePayload
-	p.PriceType = candlestick.PriceTypeIsOpen
+	p.PriceType = candlestick.PriceIsOpen
 	suite.Require().NoError(suite.DB.UpsertSMA(context.Background(), p))
 
 	// Read data
@@ -88,7 +88,7 @@ func (suite *IndicatorsSuite) TestUpsert() {
 	pair := "ETC-USDT"
 	per := period.M1
 	periodNumber := 3
-	priceType := candlestick.PriceTypeIsClose
+	priceType := candlestick.PriceIsClose
 	ts := timeserie.New[float64]().
 		Set(time.Unix(0, 0), 1).
 		Set(time.Unix(60, 0), 2).

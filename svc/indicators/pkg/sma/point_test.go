@@ -32,7 +32,7 @@ func (suite *PointSuite) TestPoint() {
 					Set(time.Unix(0, 0), candlestick.Candlestick{Close: 1000}).
 					Set(time.Unix(60, 0), candlestick.Candlestick{Close: 1500}).
 					Set(time.Unix(120, 0), candlestick.Candlestick{Close: 1250}),
-				PriceType: candlestick.PriceTypeIsClose,
+				PriceType: candlestick.PriceIsClose,
 			},
 			ExpectedOutput: 1250,
 		},
@@ -43,7 +43,7 @@ func (suite *PointSuite) TestPoint() {
 					Set(time.Unix(0, 0), candlestick.Candlestick{Close: 1000}).
 					Set(time.Unix(60, 0), candlestick.Candlestick{Close: 0}).
 					Set(time.Unix(120, 0), candlestick.Candlestick{Close: 1250}),
-				PriceType: candlestick.PriceTypeIsClose,
+				PriceType: candlestick.PriceIsClose,
 			},
 			ExpectedOutput: 1125,
 		},
@@ -51,7 +51,7 @@ func (suite *PointSuite) TestPoint() {
 		{
 			Payload: PointPayload{
 				Candlesticks: timeserie.New[candlestick.Candlestick](),
-				PriceType:    candlestick.PriceTypeIsClose,
+				PriceType:    candlestick.PriceIsClose,
 			},
 			ExpectedOutput: math.NaN(),
 		},

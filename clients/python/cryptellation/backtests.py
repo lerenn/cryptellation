@@ -10,11 +10,11 @@ class Backtest(object):
     
     def _load_candlesticks(self):
         return cryptellation(['candlesticks', 'read',
-            '--exchange', self.data['tick_subscriptions'][0]['exchange'],
-            '--pair', self.data['tick_subscriptions'][0]['pair'],
-            '--period', self.data['period_between_events'],
-            '--start', self.data['start_time'],
-            '--end', self.data['end_time']
+            '--exchange', self.data['prices_subscriptions'][0]['exchange'],
+            '--pair', self.data['prices_subscriptions'][0]['pair'],
+            '--period', self.data['parameters']['price_period'],
+            '--start', self.data['parameters']['start_time'],
+            '--end', self.data['parameters']['end_time']
             ])
 
     def __init__(self, id):
