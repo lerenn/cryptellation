@@ -233,6 +233,11 @@ func (b nats) List(ctx context.Context) ([]backtest.Backtest, error) {
 		return nil, err
 	}
 
+	// Unwrap error from message
+	if err := helpers.UnwrapError(respMsg.Payload.Error); err != nil {
+		return nil, err
+	}
+
 	return respMsg.ToModel()
 }
 
@@ -245,6 +250,11 @@ func (b nats) ListOrders(ctx context.Context, backtestID uuid.UUID) ([]order.Ord
 	// Send request
 	respMsg, err := b.ctrl.RequestToOrdersListOperation(ctx, reqMsg)
 	if err != nil {
+		return nil, err
+	}
+
+	// Unwrap error from message
+	if err := helpers.UnwrapError(respMsg.Payload.Error); err != nil {
 		return nil, err
 	}
 
