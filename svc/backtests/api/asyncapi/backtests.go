@@ -33,45 +33,49 @@ func (msg *GetRequestMessage) Set(backtestID uuid.UUID) {
 }
 
 func (msg *GetResponseMessage) Set(backtest backtest.Backtest) {
-	tsub := make([]TickSubscriptionSchema, len(backtest.TickSubscriptions))
-	for i, ts := range backtest.TickSubscriptions {
-		tsub[i] = TickSubscriptionSchema{
+	tsub := make([]PricesSubscriptionSchema, len(backtest.PricesSubscriptions))
+	for i, ts := range backtest.PricesSubscriptions {
+		tsub[i] = PricesSubscriptionSchema{
 			Exchange: ExchangeSchema(ts.Exchange),
 			Pair:     PairSchema(ts.Pair),
 		}
 	}
 
 	schema := BacktestSchema{
-		Id:                  BacktestIDSchema(backtest.ID.String()),
-		StartTime:           DateSchema(backtest.StartTime),
-		EndTime:             DateSchema(backtest.EndTime),
-		PeriodBetweenEvents: PeriodSchema(backtest.PeriodBetweenEvents),
-		TickSubscriptions:   tsub,
+		Id: BacktestIDSchema(backtest.ID.String()),
+		Parameters: BacktestParametersSchema{
+			StartTime: DateSchema(backtest.Parameters.StartTime),
+			EndTime:   DateSchema(backtest.Parameters.EndTime),
+			Period:    PeriodSchema(backtest.Parameters.Period),
+		},
+		PricesSubscriptions: tsub,
 	}
 
 	msg.Payload.Backtest = &schema
 }
 
 func (msg *GetResponseMessage) ToModel() (backtest.Backtest, error) {
-	p, err := period.FromString(string(msg.Payload.Backtest.PeriodBetweenEvents))
+	p, err := period.FromString(string(msg.Payload.Backtest.Parameters.Period))
 	if err != nil {
 		return backtest.Backtest{}, err
 	}
 
-	ts := make([]event.TickSubscription, len(msg.Payload.Backtest.TickSubscriptions))
-	for i, t := range msg.Payload.Backtest.TickSubscriptions {
-		ts[i] = event.TickSubscription{
+	ts := make([]event.PricesSubscription, len(msg.Payload.Backtest.PricesSubscriptions))
+	for i, t := range msg.Payload.Backtest.PricesSubscriptions {
+		ts[i] = event.PricesSubscription{
 			Exchange: string(t.Exchange),
 			Pair:     string(t.Pair),
 		}
 	}
 
 	return backtest.Backtest{
-		ID:                  uuid.MustParse(string(msg.Payload.Backtest.Id)),
-		StartTime:           time.Time(msg.Payload.Backtest.StartTime),
-		EndTime:             time.Time(msg.Payload.Backtest.EndTime),
-		PeriodBetweenEvents: p,
-		TickSubscriptions:   ts,
+		ID: uuid.MustParse(string(msg.Payload.Backtest.Id)),
+		Parameters: backtest.Parameters{
+			StartTime: time.Time(msg.Payload.Backtest.Parameters.StartTime),
+			EndTime:   time.Time(msg.Payload.Backtest.Parameters.EndTime),
+			Period:    p,
+		},
+		PricesSubscriptions: ts,
 	}, nil
 }
 
@@ -152,10 +156,12 @@ func (msg *ListResponseMessage) Set(backtests []backtest.Backtest) {
 	msg.Payload.Backtests = make([]BacktestSchema, len(backtests))
 	for i, b := range backtests {
 		msg.Payload.Backtests[i] = BacktestSchema{
-			Id:                  BacktestIDSchema(b.ID.String()),
-			StartTime:           DateSchema(b.StartTime),
-			EndTime:             DateSchema(b.EndTime),
-			PeriodBetweenEvents: PeriodSchema(b.PeriodBetweenEvents),
+			Id: BacktestIDSchema(b.ID.String()),
+			Parameters: BacktestParametersSchema{
+				StartTime: DateSchema(b.Parameters.StartTime),
+				EndTime:   DateSchema(b.Parameters.EndTime),
+				Period:    PeriodSchema(b.Parameters.Period),
+			},
 		}
 	}
 }
@@ -163,16 +169,18 @@ func (msg *ListResponseMessage) Set(backtests []backtest.Backtest) {
 func (msg *ListResponseMessage) ToModel() ([]backtest.Backtest, error) {
 	backtests := make([]backtest.Backtest, len(msg.Payload.Backtests))
 	for i, b := range msg.Payload.Backtests {
-		p, err := period.FromString(string(b.PeriodBetweenEvents))
+		p, err := period.FromString(string(b.Parameters.Period))
 		if err != nil {
 			return nil, err
 		}
 
 		backtests[i] = backtest.Backtest{
-			ID:                  uuid.MustParse(string(b.Id)),
-			StartTime:           time.Time(b.StartTime),
-			EndTime:             time.Time(b.EndTime),
-			PeriodBetweenEvents: p,
+			ID: uuid.MustParse(string(b.Id)),
+			Parameters: backtest.Parameters{
+				StartTime: time.Time(b.Parameters.StartTime),
+				EndTime:   time.Time(b.Parameters.EndTime),
+				Period:    p,
+			},
 		}
 	}
 

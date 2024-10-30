@@ -13,5 +13,5 @@ type Bot interface {
 	OnTick(ctx context.Context, t tick.Tick) error
 	OnExit(ctx context.Context) error
 
-	TicksToListen(ctx context.Context) []event.TickSubscription
+	TicksToListen(ctx context.Context) []event.PricesSubscription
 }

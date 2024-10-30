@@ -23,7 +23,7 @@ func (s *SimpleMovingAverage) FromModel(
 	exchange, pair string,
 	period period.Symbol,
 	periodNb int,
-	priceType candlestick.PriceType,
+	priceType candlestick.Price,
 	t time.Time,
 	price float64,
 ) {
@@ -36,12 +36,12 @@ func (s *SimpleMovingAverage) FromModel(
 	s.Price = price
 }
 
-func (s SimpleMovingAverage) ToModel() (exchange, pair, period string, periodNb int, priceType candlestick.PriceType, t time.Time, price float64) {
+func (s SimpleMovingAverage) ToModel() (exchange, pair, period string, periodNb int, priceType candlestick.Price, t time.Time, price float64) {
 	return s.Exchange,
 		s.Pair,
 		s.Period,
 		s.PeriodNumber,
-		candlestick.PriceType(s.PriceType),
+		candlestick.Price(s.PriceType),
 		s.Time,
 		s.Price
 }
@@ -50,7 +50,7 @@ func FromModelListToEntityList(
 	exchange, pair string,
 	period period.Symbol,
 	periodNb int,
-	priceType candlestick.PriceType,
+	priceType candlestick.Price,
 	ts *timeserie.TimeSerie[float64],
 ) []SimpleMovingAverage {
 	entities := make([]SimpleMovingAverage, 0, ts.Len())

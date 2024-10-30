@@ -21,7 +21,7 @@ type cacheKey struct {
 	Pair         string
 	Period       period.Symbol
 	PeriodNumber uint
-	PriceType    candlestick.PriceType
+	PriceType    candlestick.Price
 	Timestamp    int64
 }
 

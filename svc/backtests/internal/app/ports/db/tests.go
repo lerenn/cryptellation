@@ -23,14 +23,16 @@ type BacktestSuite struct {
 
 func (suite *BacktestSuite) TestCreateRead() {
 	bt := backtest.Backtest{
-		ID:        uuid.New(),
-		StartTime: time.Unix(0, 0),
-		CurrentCsTick: backtest.CurrentCsTick{
-			Time:      time.Unix(60, 0),
-			PriceType: candlestick.PriceTypeIsLow,
+		ID: uuid.New(),
+		Parameters: backtest.Parameters{
+			StartTime: time.Unix(0, 0),
+			EndTime:   time.Unix(120, 0),
+			Period:    period.M1,
 		},
-		EndTime:             time.Unix(120, 0),
-		PeriodBetweenEvents: period.M1,
+		CurrentCandlestick: backtest.CurrentCandlestick{
+			Time:  time.Unix(60, 0),
+			Price: candlestick.PriceIsLow,
+		},
 		Accounts: map[string]account.Account{
 			"exchange": {
 				Balances: map[string]float64{
@@ -51,14 +53,16 @@ func (suite *BacktestSuite) TestCreateRead() {
 
 func (suite *BacktestSuite) TestList() {
 	bt1 := backtest.Backtest{
-		ID:        uuid.New(),
-		StartTime: time.Unix(0, 0),
-		CurrentCsTick: backtest.CurrentCsTick{
-			Time:      time.Unix(60, 0),
-			PriceType: candlestick.PriceTypeIsLow,
+		ID: uuid.New(),
+		Parameters: backtest.Parameters{
+			StartTime: time.Unix(0, 0),
+			EndTime:   time.Unix(120, 0),
+			Period:    period.M1,
 		},
-		EndTime:             time.Unix(120, 0),
-		PeriodBetweenEvents: period.M1,
+		CurrentCandlestick: backtest.CurrentCandlestick{
+			Time:  time.Unix(60, 0),
+			Price: candlestick.PriceIsLow,
+		},
 		Accounts: map[string]account.Account{
 			"exchange": {
 				Balances: map[string]float64{
@@ -68,14 +72,16 @@ func (suite *BacktestSuite) TestList() {
 		},
 	}
 	bt2 := backtest.Backtest{
-		ID:        uuid.New(),
-		StartTime: time.Unix(0, 0),
-		CurrentCsTick: backtest.CurrentCsTick{
-			Time:      time.Unix(60, 0),
-			PriceType: candlestick.PriceTypeIsLow,
+		ID: uuid.New(),
+		Parameters: backtest.Parameters{
+			StartTime: time.Unix(0, 0),
+			EndTime:   time.Unix(120, 0),
+			Period:    period.M1,
 		},
-		EndTime:             time.Unix(120, 0),
-		PeriodBetweenEvents: period.M1,
+		CurrentCandlestick: backtest.CurrentCandlestick{
+			Time:  time.Unix(60, 0),
+			Price: candlestick.PriceIsLow,
+		},
 		Accounts: map[string]account.Account{
 			"exchange": {
 				Balances: map[string]float64{
@@ -98,14 +104,16 @@ func (suite *BacktestSuite) TestList() {
 
 func (suite *BacktestSuite) TestUpdate() {
 	bt := backtest.Backtest{
-		ID:        uuid.New(),
-		StartTime: time.Unix(0, 0),
-		CurrentCsTick: backtest.CurrentCsTick{
-			Time:      time.Unix(60, 0),
-			PriceType: candlestick.PriceTypeIsLow,
+		ID: uuid.New(),
+		Parameters: backtest.Parameters{
+			StartTime: time.Unix(0, 0),
+			EndTime:   time.Unix(120, 0),
+			Period:    period.M1,
 		},
-		EndTime:             time.Unix(120, 0),
-		PeriodBetweenEvents: period.M1,
+		CurrentCandlestick: backtest.CurrentCandlestick{
+			Time:  time.Unix(60, 0),
+			Price: candlestick.PriceIsLow,
+		},
 		Accounts: map[string]account.Account{
 			"exchange": {
 				Balances: map[string]float64{
@@ -116,14 +124,16 @@ func (suite *BacktestSuite) TestUpdate() {
 	}
 	suite.Require().NoError(suite.DB.CreateBacktest(context.TODO(), bt))
 	bt2 := backtest.Backtest{
-		ID:        bt.ID,
-		StartTime: time.Unix(0, 0),
-		CurrentCsTick: backtest.CurrentCsTick{
-			Time:      time.Unix(60, 0),
-			PriceType: candlestick.PriceTypeIsClose,
+		ID: bt.ID,
+		Parameters: backtest.Parameters{
+			StartTime: time.Unix(0, 0),
+			EndTime:   time.Unix(120, 0),
+			Period:    period.M1,
 		},
-		EndTime:             time.Unix(120, 0),
-		PeriodBetweenEvents: period.M1,
+		CurrentCandlestick: backtest.CurrentCandlestick{
+			Time:  time.Unix(60, 0),
+			Price: candlestick.PriceIsClose,
+		},
 		Accounts: map[string]account.Account{
 			"exchange2": {
 				Balances: map[string]float64{
@@ -146,14 +156,16 @@ func (suite *BacktestSuite) TestUpdate() {
 
 func (suite *BacktestSuite) TestDelete() {
 	bt := backtest.Backtest{
-		ID:        uuid.New(),
-		StartTime: time.Unix(0, 0),
-		CurrentCsTick: backtest.CurrentCsTick{
-			Time:      time.Unix(60, 0),
-			PriceType: candlestick.PriceTypeIsLow,
+		ID: uuid.New(),
+		Parameters: backtest.Parameters{
+			StartTime: time.Unix(0, 0),
+			EndTime:   time.Unix(120, 0),
+			Period:    period.M1,
 		},
-		EndTime:             time.Unix(120, 0),
-		PeriodBetweenEvents: period.M1,
+		CurrentCandlestick: backtest.CurrentCandlestick{
+			Time:  time.Unix(60, 0),
+			Price: candlestick.PriceIsLow,
+		},
 		Accounts: map[string]account.Account{
 			"exchange": {
 				Balances: map[string]float64{
@@ -170,14 +182,16 @@ func (suite *BacktestSuite) TestDelete() {
 
 func (suite *BacktestSuite) TestDeleteInexistant() {
 	bt := backtest.Backtest{
-		ID:        uuid.New(),
-		StartTime: time.Unix(0, 0),
-		CurrentCsTick: backtest.CurrentCsTick{
-			Time:      time.Unix(60, 0),
-			PriceType: candlestick.PriceTypeIsLow,
+		ID: uuid.New(),
+		Parameters: backtest.Parameters{
+			StartTime: time.Unix(0, 0),
+			EndTime:   time.Unix(120, 0),
+			Period:    period.M1,
 		},
-		EndTime:             time.Unix(120, 0),
-		PeriodBetweenEvents: period.M1,
+		CurrentCandlestick: backtest.CurrentCandlestick{
+			Time:  time.Unix(60, 0),
+			Price: candlestick.PriceIsLow,
+		},
 		Accounts: map[string]account.Account{
 			"exchange": {
 				Balances: map[string]float64{
@@ -193,14 +207,16 @@ func (suite *BacktestSuite) TestDeleteInexistant() {
 
 func (suite *BacktestSuite) TestLock() {
 	bt := backtest.Backtest{
-		ID:        uuid.New(),
-		StartTime: time.Unix(0, 0),
-		CurrentCsTick: backtest.CurrentCsTick{
-			Time:      time.Unix(60, 0),
-			PriceType: candlestick.PriceTypeIsLow,
+		ID: uuid.New(),
+		Parameters: backtest.Parameters{
+			StartTime: time.Unix(0, 0),
+			EndTime:   time.Unix(120, 0),
+			Period:    period.M1,
 		},
-		EndTime:             time.Unix(120, 0),
-		PeriodBetweenEvents: period.M1,
+		CurrentCandlestick: backtest.CurrentCandlestick{
+			Time:  time.Unix(60, 0),
+			Price: candlestick.PriceIsLow,
+		},
 		Accounts: map[string]account.Account{
 			"exchange": {
 				Balances: map[string]float64{

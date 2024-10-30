@@ -505,23 +505,30 @@ components:
       type: object
       required:
         - id
-        - start_time
-        - end_time
-        - period_between_events
-        - tick_subscriptions
+        - parameters
+        - prices_subscriptions
       properties:
         id:
           $ref: '#/components/schemas/BacktestID'
+        parameters:
+          $ref: '#/components/schemas/BacktestParameters'
+        prices_subscriptions:
+          type: array
+          items:
+            $ref: '#/components/schemas/PricesSubscription'
+    BacktestParameters:
+      type: object
+      required:
+        - start_time
+        - end_time
+        - period
+      properties:
         start_time:
           $ref: '#/components/schemas/Date'
         end_time:
           $ref: '#/components/schemas/Date'
-        period_between_events:
+        period:
           $ref: '#/components/schemas/Period'
-        tick_subscriptions:
-          type: array
-          items:
-            $ref: '#/components/schemas/TickSubscription'
     Date:
       type: string
       format: date-time
@@ -647,7 +654,7 @@ components:
             - 1.5
         exchange:
           $ref: '#/components/schemas/Exchange'
-    TickSubscription:
+    PricesSubscription:
       type: object
       required:
         - exchange

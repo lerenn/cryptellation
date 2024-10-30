@@ -30,7 +30,7 @@ func (suite *EventsClientSuite) TestPublishTick() {
 		Price:    float64(time.Now().UnixNano()),
 	}
 
-	ch, err := suite.Client.SubscribeToTicks(context.Background(), event.TickSubscription{
+	ch, err := suite.Client.SubscribeToTicks(context.Background(), event.PricesSubscription{
 		Exchange: t.Exchange,
 		Pair:     t.Pair,
 	})

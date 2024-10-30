@@ -33,7 +33,7 @@ func (suite *TimeSerieSuite) TestTimeSerieSuite() {
 					MustSet(candlestick.Candlestick{Time: time.Unix(60, 0), Close: 1500}).
 					MustSet(candlestick.Candlestick{Time: time.Unix(120, 0), Close: 1250}).
 					MustSet(candlestick.Candlestick{Time: time.Unix(180, 0), Close: 1300}),
-				PriceType:    candlestick.PriceTypeIsClose,
+				PriceType:    candlestick.PriceIsClose,
 				Start:        time.Unix(120, 0),
 				End:          time.Unix(180, 0),
 				PeriodNumber: 3,

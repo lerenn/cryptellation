@@ -19,11 +19,13 @@ type BacktestSuite struct {
 
 func (suite *BacktestSuite) TestMarshalUnMarshalBinary() {
 	bt := Backtest{
-		StartTime: time.Unix(0, 0).UTC(),
-		CurrentCsTick: CurrentCsTick{
+		Parameters: Parameters{
+			StartTime: time.Unix(0, 0).UTC(),
+			EndTime:   time.Unix(200, 0).UTC(),
+		},
+		CurrentCandlestick: CurrentCandlestick{
 			Time: time.Unix(100, 0).UTC(),
 		},
-		EndTime: time.Unix(200, 0).UTC(),
 		Accounts: map[string]account.Account{
 			"exchange": {
 				Balances: map[string]float64{

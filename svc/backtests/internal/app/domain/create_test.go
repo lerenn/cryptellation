@@ -52,20 +52,22 @@ func (suite *CreationSuite) TestHappyPass() {
 			appSetID = bt.ID
 
 			suite.Require().Equal(backtest.Backtest{
-				ID:        bt.ID,
-				StartTime: time.Unix(0, 0),
-				CurrentCsTick: backtest.CurrentCsTick{
-					Time:      time.Unix(0, 0),
-					PriceType: candlestick.PriceTypeIsOpen,
+				ID: bt.ID,
+				Parameters: backtest.Parameters{
+					StartTime: time.Unix(0, 0),
+					EndTime:   time.Unix(120, 0),
+					Period:    period.M1,
 				},
-				EndTime: time.Unix(120, 0),
+				CurrentCandlestick: backtest.CurrentCandlestick{
+					Time:  time.Unix(0, 0),
+					Price: candlestick.PriceIsOpen,
+				},
 				Accounts: map[string]account.Account{
 					"exchange": {
 						Balances: map[string]float64{"DAI": 1000},
 					},
 				},
-				PeriodBetweenEvents: period.M1,
-				TickSubscriptions:   make([]event.TickSubscription, 0),
+				PricesSubscriptions: make([]event.PricesSubscription, 0),
 				Orders:              make([]order.Order, 0)}, bt)
 		}).
 		Return(nil)

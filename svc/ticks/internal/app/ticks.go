@@ -7,6 +7,6 @@ import (
 )
 
 type Ticks interface {
-	ListeningNotificationReceived(ctx context.Context, ts event.TickSubscription)
+	ListeningNotificationReceived(ctx context.Context, ts event.PricesSubscription)
 	Close(ctx context.Context)
 }

@@ -32,10 +32,10 @@ func (b *Bot) OnInit(ctx context.Context, run *cryptellation.Run) {
 	b.run = run
 }
 
-func (b *Bot) TicksToListen(ctx context.Context) []event.TickSubscription {
+func (b *Bot) TicksToListen(ctx context.Context) []event.PricesSubscription {
 	telemetry.L(ctx).Debug("TicksToListen() called")
 
-	return []event.TickSubscription{
+	return []event.PricesSubscription{
 		{
 			Exchange: "binance",
 			Pair:     "BTC-USDT",
@@ -53,7 +53,7 @@ func (b *Bot) OnTick(ctx context.Context, t tick.Tick) error {
 		Start:        t.Time.Add(-period.M1.Duration() * 2),
 		End:          t.Time.Add(-period.M1.Duration()),
 		PeriodNumber: 20,
-		PriceType:    candlestick.PriceTypeIsClose,
+		PriceType:    candlestick.PriceIsClose,
 	}
 	telemetry.L(ctx).Debugf("Request SMA with %+v", payload)
 	s, err := b.run.Services.Indicators.SMA(ctx, payload)

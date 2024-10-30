@@ -21,7 +21,7 @@ type GetCachedSMAPayload struct {
 	Start        time.Time
 	End          time.Time
 	PeriodNumber int
-	PriceType    candlestick.PriceType
+	PriceType    candlestick.Price
 }
 
 func (payload *GetCachedSMAPayload) Process() {

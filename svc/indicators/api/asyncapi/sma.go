@@ -30,7 +30,7 @@ func (msg *SMARequestMessage) ToModel() (app.GetCachedSMAPayload, error) {
 		return app.GetCachedSMAPayload{}, err
 	}
 
-	pt := candlestick.PriceType(*msg.Payload.PriceType)
+	pt := candlestick.Price(*msg.Payload.PriceType)
 	if err := pt.Validate(); err != nil {
 		return app.GetCachedSMAPayload{}, err
 	}

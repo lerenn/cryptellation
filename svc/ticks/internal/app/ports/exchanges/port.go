@@ -12,5 +12,5 @@ import (
 )
 
 type Port interface {
-	ListenSymbol(ctx context.Context, sub event.TickSubscription) (chan tick.Tick, chan struct{}, error)
+	ListenSymbol(ctx context.Context, sub event.PricesSubscription) (chan tick.Tick, chan struct{}, error)
 }

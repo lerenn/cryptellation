@@ -24,20 +24,26 @@ var (
 	ErrStartAfterEnd                 = errors.New("start after end")
 )
 
-// Current tick based on candlestick step
-type CurrentCsTick struct {
-	Time      time.Time
-	PriceType candlestick.PriceType
+// Current candlestick based on candlestick step
+type CurrentCandlestick struct {
+	Time  time.Time
+	Price candlestick.Price
+}
+
+type Parameters struct {
+	StartTime time.Time
+	EndTime   time.Time
+	Mode      Mode
+	// Period between events (only in OHLC modes)
+	Period period.Symbol `json:"period"`
 }
 
 type Backtest struct {
 	ID                  uuid.UUID                  `json:"id"`
-	StartTime           time.Time                  `json:"start_time"`
-	CurrentCsTick       CurrentCsTick              `json:"current_cs_tick"`
-	EndTime             time.Time                  `json:"end_time"`
+	Parameters          Parameters                 `json:"parameters"`
+	CurrentCandlestick  CurrentCandlestick         `json:"current_candlestick"`
 	Accounts            map[string]account.Account `json:"accounts"`
-	PeriodBetweenEvents period.Symbol              `json:"period_between_events"`
-	TickSubscriptions   []event.TickSubscription   `json:"tick_subscriptions"`
+	PricesSubscriptions []event.PricesSubscription `json:"prices_subscriptions"`
 	Orders              []order.Order              `json:"orders"`
 }
 
@@ -91,26 +97,28 @@ func New(ctx context.Context, payload NewPayload) (Backtest, error) {
 
 	per, err := period.FromDuration(*payload.DurationBetweenEvents)
 	if err != nil {
-		return Backtest{}, fmt.Errorf("invalid duration between events: %w", err)
+		return Backtest{}, fmt.Errorf("invalid duration between candlesticks: %w", err)
 	}
 
 	return Backtest{
-		ID:        uuid.New(),
-		StartTime: payload.StartTime,
-		CurrentCsTick: CurrentCsTick{
-			Time:      payload.StartTime,
-			PriceType: candlestick.PriceTypeIsOpen,
+		ID: uuid.New(),
+		Parameters: Parameters{
+			StartTime: payload.StartTime,
+			EndTime:   *payload.EndTime,
+			Period:    per,
 		},
-		EndTime:             *payload.EndTime,
+		CurrentCandlestick: CurrentCandlestick{
+			Time:  payload.StartTime,
+			Price: candlestick.PriceIsOpen,
+		},
 		Accounts:            payload.Accounts,
-		PeriodBetweenEvents: per,
-		TickSubscriptions:   make([]event.TickSubscription, 0),
+		PricesSubscriptions: make([]event.PricesSubscription, 0),
 		Orders:              make([]order.Order, 0),
 	}, nil
 }
 
 func (bt Backtest) CurrentTime() string {
-	return fmt.Sprintf("%s [%s]", bt.CurrentCsTick.Time, bt.CurrentCsTick.PriceType)
+	return fmt.Sprintf("%s [%s]", bt.CurrentCandlestick.Time, bt.CurrentCandlestick.Price)
 }
 
 func (bt Backtest) MarshalBinary() ([]byte, error) {
@@ -126,43 +134,43 @@ func (bt *Backtest) Advance() (done bool) {
 }
 
 func (bt *Backtest) advanceThroughTicks() (done bool) {
-	switch bt.CurrentCsTick.PriceType {
-	case candlestick.PriceTypeIsOpen:
-		bt.CurrentCsTick.PriceType = candlestick.PriceTypeIsHigh
-	case candlestick.PriceTypeIsHigh:
-		bt.CurrentCsTick.PriceType = candlestick.PriceTypeIsLow
-	case candlestick.PriceTypeIsLow:
-		bt.CurrentCsTick.PriceType = candlestick.PriceTypeIsClose
-	case candlestick.PriceTypeIsClose:
-		bt.SetCurrentTime(bt.CurrentCsTick.Time.Add(bt.PeriodBetweenEvents.Duration()))
+	switch bt.CurrentCandlestick.Price {
+	case candlestick.PriceIsOpen:
+		bt.CurrentCandlestick.Price = candlestick.PriceIsHigh
+	case candlestick.PriceIsHigh:
+		bt.CurrentCandlestick.Price = candlestick.PriceIsLow
+	case candlestick.PriceIsLow:
+		bt.CurrentCandlestick.Price = candlestick.PriceIsClose
+	case candlestick.PriceIsClose:
+		bt.SetCurrentTime(bt.CurrentCandlestick.Time.Add(bt.Parameters.Period.Duration()))
 	default:
-		bt.CurrentCsTick.PriceType = candlestick.PriceTypeIsOpen
+		bt.CurrentCandlestick.Price = candlestick.PriceIsOpen
 	}
 
 	return bt.Done()
 }
 
 func (bt Backtest) Done() bool {
-	return !bt.CurrentCsTick.Time.Before(bt.EndTime)
+	return !bt.CurrentCandlestick.Time.Before(bt.Parameters.EndTime)
 }
 
 func (bt *Backtest) SetCurrentTime(ts time.Time) {
-	bt.CurrentCsTick.Time = ts
-	bt.CurrentCsTick.PriceType = candlestick.PriceTypeIsOpen
+	bt.CurrentCandlestick.Time = ts
+	bt.CurrentCandlestick.Price = candlestick.PriceIsOpen
 }
 
-func (bt *Backtest) CreateTickSubscription(exchange string, pair string) (event.TickSubscription, error) {
-	for _, ts := range bt.TickSubscriptions {
+func (bt *Backtest) CreateTickSubscription(exchange string, pair string) (event.PricesSubscription, error) {
+	for _, ts := range bt.PricesSubscriptions {
 		if ts.Exchange == exchange && ts.Pair == pair {
-			return event.TickSubscription{}, ErrTickSubscriptionAlreadyExists
+			return event.PricesSubscription{}, ErrTickSubscriptionAlreadyExists
 		}
 	}
 
-	s := event.TickSubscription{
+	s := event.PricesSubscription{
 		Exchange: exchange,
 		Pair:     pair,
 	}
-	bt.TickSubscriptions = append(bt.TickSubscriptions, s)
+	bt.PricesSubscriptions = append(bt.PricesSubscriptions, s)
 
 	return s, nil
 }
@@ -175,14 +183,14 @@ func (bt *Backtest) AddOrder(ord order.Order, cs candlestick.Candlestick) error 
 	}
 
 	// Execute the order
-	price := cs.PriceByType(bt.CurrentCsTick.PriceType)
+	price := cs.Price(bt.CurrentCandlestick.Price)
 	if err := exchangeAccount.ApplyOrder(price, ord); err != nil {
 		return err
 	}
 	bt.Accounts[ord.Exchange] = exchangeAccount
 
 	// Update and save the order
-	ord.ExecutionTime = &bt.CurrentCsTick.Time
+	ord.ExecutionTime = &bt.CurrentCandlestick.Time
 	ord.Price = price
 	bt.Orders = append(bt.Orders, ord)
 

@@ -50,7 +50,7 @@ func (suite *CachedClientSuite) TestSMA() {
 			suite.Require().Equal("BTC-USDT", payload.Pair)
 			suite.Require().Equal(period.M1, payload.Period)
 			suite.Require().Equal(uint(14), payload.PeriodNumber)
-			suite.Require().Equal(candlestick.PriceTypeIsClose, payload.PriceType)
+			suite.Require().Equal(candlestick.PriceIsClose, payload.PriceType)
 			suite.Require().WithinDuration(expectedRequestedStart, payload.Start, time.Second)
 			suite.Require().WithinDuration(expectedRequestedEnd, payload.End, time.Second)
 
@@ -73,7 +73,7 @@ func (suite *CachedClientSuite) TestSMA() {
 			Start:        start.Add(time.Nanosecond), // Check nanosecond is not a problem
 			End:          end.Add(time.Nanosecond),   // Check nanosecond is not a problem
 			PeriodNumber: 14,
-			PriceType:    candlestick.PriceTypeIsClose,
+			PriceType:    candlestick.PriceIsClose,
 		})
 		suite.Require().NoError(err)
 		suite.Require().Equal(4, ts.Len())

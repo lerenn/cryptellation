@@ -64,11 +64,11 @@ var backtestsGetCmd = &cobra.Command{
 			return displayJSON(bt)
 		default:
 			fmt.Printf("ID:\t\t%s\n", bt.ID)
-			fmt.Printf("Start:\t\t%s\n", bt.StartTime)
-			fmt.Printf("End:\t\t%s\n", bt.EndTime)
-			fmt.Printf("Period:\t\t%s\n", bt.PeriodBetweenEvents)
+			fmt.Printf("Start:\t\t%s\n", bt.Parameters.StartTime)
+			fmt.Printf("End:\t\t%s\n", bt.Parameters.EndTime)
+			fmt.Printf("Period:\t\t%s\n", bt.Parameters.Period)
 			fmt.Printf("Tick subs:\n")
-			for _, ts := range bt.TickSubscriptions {
+			for _, ts := range bt.PricesSubscriptions {
 				fmt.Printf("\t%s: %s\n", ts.Exchange, ts.Pair)
 			}
 		}

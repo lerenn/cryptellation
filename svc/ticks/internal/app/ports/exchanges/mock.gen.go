@@ -37,7 +37,7 @@ func (m *MockPort) EXPECT() *MockPortMockRecorder {
 }
 
 // ListenSymbol mocks base method.
-func (m *MockPort) ListenSymbol(ctx context.Context, sub event.TickSubscription) (chan tick.Tick, chan struct{}, error) {
+func (m *MockPort) ListenSymbol(ctx context.Context, sub event.PricesSubscription) (chan tick.Tick, chan struct{}, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ListenSymbol", ctx, sub)
 	ret0, _ := ret[0].(chan tick.Tick)

@@ -21,7 +21,7 @@ func (suite *EndToEndSuite) TestGetSMA() {
 		Start:        utils.Must(time.Parse(time.RFC3339, "2023-02-26T12:00:00Z")),
 		End:          utils.Must(time.Parse(time.RFC3339, "2023-02-26T12:02:00Z")),
 		PeriodNumber: 3,
-		PriceType:    candlestick.PriceTypeIsClose,
+		PriceType:    candlestick.PriceIsClose,
 	})
 
 	// THEN response is adequate

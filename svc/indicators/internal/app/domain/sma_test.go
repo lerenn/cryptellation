@@ -54,7 +54,7 @@ func (suite *SMASuite) TestAllExistWithNoneInDB() {
 		Start:        time.Unix(180, 0),
 		End:          time.Unix(360, 0),
 		PeriodNumber: 3,
-		PriceType:    candlestick.PriceTypeIsClose,
+		PriceType:    candlestick.PriceIsClose,
 	}).Return(timeserie.New[float64](), nil)
 
 	suite.candlesticks.EXPECT().Read(context.Background(), candlesticks.ReadCandlesticksPayload{
@@ -70,7 +70,7 @@ func (suite *SMASuite) TestAllExistWithNoneInDB() {
 		Pair:         "ETC-USDT",
 		Period:       period.M1,
 		PeriodNumber: 3,
-		PriceType:    candlestick.PriceTypeIsClose,
+		PriceType:    candlestick.PriceIsClose,
 		TimeSerie: timeserie.New[float64]().
 			Set(time.Unix(180, 0), 9).
 			Set(time.Unix(240, 0), 15).
@@ -86,7 +86,7 @@ func (suite *SMASuite) TestAllExistWithNoneInDB() {
 		Start:        time.Unix(181, 0),
 		End:          time.Unix(365, 0),
 		PeriodNumber: 3,
-		PriceType:    candlestick.PriceTypeIsClose,
+		PriceType:    candlestick.PriceIsClose,
 	})
 	suite.Require().NoError(err)
 

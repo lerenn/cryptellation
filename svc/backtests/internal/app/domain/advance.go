@@ -28,17 +28,17 @@ func (b Backtests) Advance(ctx context.Context, backtestId uuid.UUID) error {
 				return fmt.Errorf("cannot read actual events: %w", err)
 			}
 			if len(evts) == 0 {
-				telemetry.L(ctx).Info(fmt.Sprint("WARNING: no event detected for", bt.CurrentCsTick.Time))
-				bt.SetCurrentTime(bt.EndTime)
+				telemetry.L(ctx).Info(fmt.Sprint("WARNING: no event detected for", bt.CurrentCandlestick.Time))
+				bt.SetCurrentTime(bt.Parameters.EndTime)
 				finished = true
-			} else if !evts[0].Time.Equal(bt.CurrentCsTick.Time) {
-				telemetry.L(ctx).Info(fmt.Sprint("WARNING: no event between", bt.CurrentCsTick.Time, "and", evts[0].Time))
+			} else if !evts[0].Time.Equal(bt.CurrentCandlestick.Time) {
+				telemetry.L(ctx).Info(fmt.Sprint("WARNING: no event between", bt.CurrentCandlestick.Time, "and", evts[0].Time))
 				bt.SetCurrentTime(evts[0].Time)
 			}
 		}
 
 		// Add backtest status event
-		evts = append(evts, event.NewStatusEvent(bt.CurrentCsTick.Time, event.Status{
+		evts = append(evts, event.NewStatusEvent(bt.CurrentCandlestick.Time, event.Status{
 			Finished: finished,
 		}))
 		b.broadcastEvents(ctx, backtestId, evts)
@@ -48,14 +48,14 @@ func (b Backtests) Advance(ctx context.Context, backtestId uuid.UUID) error {
 }
 
 func (b Backtests) readActualEvents(ctx context.Context, bt backtest.Backtest) ([]event.Event, error) {
-	evts := make([]event.Event, 0, len(bt.TickSubscriptions))
-	for _, sub := range bt.TickSubscriptions {
+	evts := make([]event.Event, 0, len(bt.PricesSubscriptions))
+	for _, sub := range bt.PricesSubscriptions {
 		list, err := b.candlesticks.Read(ctx, candlesticks.ReadCandlesticksPayload{
 			Exchange: sub.Exchange,
 			Pair:     sub.Pair,
-			Period:   bt.PeriodBetweenEvents,
-			Start:    &bt.CurrentCsTick.Time,
-			End:      &bt.EndTime,
+			Period:   bt.Parameters.Period,
+			Start:    &bt.CurrentCandlestick.Time,
+			End:      &bt.Parameters.EndTime,
 			Limit:    1,
 		})
 		if err != nil {
@@ -67,14 +67,14 @@ func (b Backtests) readActualEvents(ctx context.Context, bt backtest.Backtest) (
 			continue
 		}
 
-		evt, err := event.TickEventFromCandlestick(sub.Exchange, sub.Pair, bt.CurrentCsTick.PriceType, t, cs)
+		evt, err := event.TickEventFromCandlestick(sub.Exchange, sub.Pair, bt.CurrentCandlestick.Price, t, cs)
 		if err != nil {
 			return nil, fmt.Errorf("turning candlestick into event: %w", err)
 		}
 		evts = append(evts, evt)
 	}
 
-	_, evts = event.OnlyKeepEarliestSameTimeEvents(evts, bt.EndTime)
+	_, evts = event.OnlyKeepEarliestSameTimeEvents(evts, bt.Parameters.EndTime)
 	telemetry.L(ctx).Infof("%d events for ticks on backtest %s", len(evts), bt.ID.String())
 	return evts, nil
 }

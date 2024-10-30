@@ -70,3 +70,27 @@ func (suite *CandlestickSuite) TestCandlestickNotEqualTime() {
 
 	suite.Require().False(a.Equal(b))
 }
+
+func (suite *CandlestickSuite) TestCandlestickPrice() {
+	c := Candlestick{time.Unix(0, 0), 0, 1, 2, 3, 1000, false}
+
+	v := c.Price(PriceIsOpen)
+	if v != 0 {
+		suite.Require().FailNow("Wrong value:", v)
+	}
+
+	v = c.Price(PriceIsHigh)
+	if v != 1 {
+		suite.Require().FailNow("Wrong value:", v)
+	}
+
+	v = c.Price(PriceIsLow)
+	if v != 2 {
+		suite.Require().FailNow("Wrong value:", v)
+	}
+
+	v = c.Price(PriceIsClose)
+	if v != 3 {
+		suite.Require().FailNow("Wrong value:", v)
+	}
+}
