@@ -119,8 +119,8 @@ jobs:
             -m build/ci
             create-release
             --source-dir=.
-            --git-token=env:CRYPTELLATION_PULL_REQUEST_RW_TOKEN
-            --pull-request-token=env:CRYPTELLATION_PULL_REQUEST_RW_TOKEN
+            --cryptellation-git-token=env:CRYPTELLATION_PULL_REQUEST_RW_TOKEN
+            --cryptellation-pull-request-token=env:CRYPTELLATION_PULL_REQUEST_RW_TOKEN
         env:
           CRYPTELLATION_PULL_REQUEST_RW_TOKEN: ${{ secrets.CRYPTELLATION_PULL_REQUEST_RW_TOKEN }}
 
@@ -151,7 +151,7 @@ jobs:
             -m build/ci
             publish-release
             --source-dir=.
-            --git-token=env:CRYPTELLATION_PULL_REQUEST_RW_TOKEN
-            --pull-request-token=env:CRYPTELLATION_PULL_REQUEST_RW_TOKEN
+            --cryptellation-git-token=env:CRYPTELLATION_PULL_REQUEST_RW_TOKEN
+            --packages-git-token=env:PACKAGES_GITHUB_TOKEN
         env:
           CRYPTELLATION_PULL_REQUEST_RW_TOKEN: ${{ secrets.CRYPTELLATION_PULL_REQUEST_RW_TOKEN }}

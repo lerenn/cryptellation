@@ -27,24 +27,16 @@ type Git struct {
 }
 
 type authParams struct {
+	// SSH Private Key File mode (ie. access to everything)
 	SSHPrivateKeyFile *dagger.Secret
-	GitToken          *dagger.Secret
-	PullRequestToken  *dagger.Secret
-}
-
-func (ap authParams) Validate() error {
-	if ap.SSHPrivateKeyFile == nil && (ap.PullRequestToken == nil || ap.GitToken == nil) {
-		return fmt.Errorf("either SSHPrivateKeyFile or PullRequestToken and GitToken must be provided")
-	}
-	return nil
+	// Token mode (ie. ine grained access)
+	CryptellationGitToken         *dagger.Secret
+	CryptellationPullRequestToken *dagger.Secret
+	PackagesGitToken              *dagger.Secret
 }
 
 func NewGit(ctx context.Context, srcDir *dagger.Directory, auth authParams) (Git, error) {
-	// Check auth params
-	err := auth.Validate()
-	if err != nil {
-		return Git{}, err
-	}
+	var err error
 
 	// Create container
 	container := dag.Container().
@@ -59,8 +51,8 @@ func NewGit(ctx context.Context, srcDir *dagger.Directory, auth authParams) (Git
 		if err != nil {
 			return Git{}, err
 		}
-	} else if auth.GitToken != nil {
-		token, err := auth.GitToken.Plaintext(ctx)
+	} else if auth.CryptellationGitToken != nil {
+		token, err := auth.CryptellationGitToken.Plaintext(ctx)
 		if err != nil {
 			return Git{}, err
 		}
@@ -72,6 +64,8 @@ func NewGit(ctx context.Context, srcDir *dagger.Directory, auth authParams) (Git
 		if err != nil {
 			return Git{}, err
 		}
+	} else {
+		return Git{}, fmt.Errorf("no auth method provided")
 	}
 
 	// Set Git author
@@ -283,8 +277,8 @@ func (g *Git) PublishNewCommit(
 	}
 
 	// Create pull request
-	if g.auth.PullRequestToken != nil {
-		token, err := g.auth.PullRequestToken.Plaintext(ctx)
+	if g.auth.CryptellationPullRequestToken != nil {
+		token, err := g.auth.CryptellationPullRequestToken.Plaintext(ctx)
 		if err != nil {
 			return err
 		}
