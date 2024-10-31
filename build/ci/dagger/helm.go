@@ -84,13 +84,15 @@ func publishHelmChart(
 
 		// Set correct url
 		url = sshHelmPkgGitRepo
-	} else if auth.PullRequestToken != nil {
+	} else if auth.PackagesGitToken != nil {
 		// Set correct url
-		tokenPlainText, err := auth.PullRequestToken.Plaintext(ctx)
+		tokenPlainText, err := auth.PackagesGitToken.Plaintext(ctx)
 		if err != nil {
 			return err
 		}
 		url = fmt.Sprintf(tokenHelmPkgGitRepo, tokenPlainText)
+	} else {
+		return fmt.Errorf("no auth method provided")
 	}
 
 	// Set git author

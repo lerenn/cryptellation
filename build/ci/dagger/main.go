@@ -148,14 +148,14 @@ func (ci *CryptellationCi) CreateRelease(
 	// +optional
 	sshPrivateKeyFile *dagger.Secret,
 	// +optional
-	gitToken *dagger.Secret,
+	cryptellationGitToken *dagger.Secret,
 	// +optional
-	pullRequestToken *dagger.Secret,
+	cryptellationPullRequestToken *dagger.Secret,
 ) error {
 	repo, err := NewGit(ctx, sourceDir, authParams{
-		SSHPrivateKeyFile: sshPrivateKeyFile,
-		PullRequestToken:  pullRequestToken,
-		GitToken:          gitToken,
+		SSHPrivateKeyFile:             sshPrivateKeyFile,
+		CryptellationPullRequestToken: cryptellationPullRequestToken,
+		CryptellationGitToken:         cryptellationGitToken,
 	})
 	if err != nil {
 		return err
@@ -187,18 +187,15 @@ func (ci *CryptellationCi) PublishRelease(
 	// +optional
 	sshPrivateKeyFile *dagger.Secret,
 	// +optional
-	gitToken *dagger.Secret,
+	cryptellationGitToken *dagger.Secret,
 	// +optional
-	pullRequestToken *dagger.Secret,
+	packagesGitToken *dagger.Secret,
 ) error {
 	// Create auth params
 	auth := authParams{
-		SSHPrivateKeyFile: sshPrivateKeyFile,
-		PullRequestToken:  pullRequestToken,
-		GitToken:          gitToken,
-	}
-	if err := auth.Validate(); err != nil {
-		return err
+		SSHPrivateKeyFile:     sshPrivateKeyFile,
+		PackagesGitToken:      packagesGitToken,
+		CryptellationGitToken: cryptellationGitToken,
 	}
 
 	// Create Git repo access
