@@ -17,8 +17,6 @@ jobs:
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
-      - name: Create a go.work file
-        run: cp go.work.example go.work
       - uses: dagger/dagger-for-github@v7
         with:
           version: latest
@@ -33,8 +31,6 @@ jobs:
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
-      - name: Create a go.work file
-        run: cp go.work.example go.work
       - uses: dagger/dagger-for-github@v7
         with:
           version: latest
@@ -50,51 +46,11 @@ jobs:
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
-      - name: Create a go.work file
-        run: cp go.work.example go.work
       - uses: dagger/dagger-for-github@v7
         with:
           version: latest
           verb: call
           args: -m build/ci -s unit-tests --source-dir=. stdout 
-
-  # integration-tests:
-  #   name: Run integration tests
-  #   needs: ["unit-tests"]
-  #   runs-on: ubuntu-latest
-  #   timeout-minutes: 5
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #     - name: Create a go.work file
-  #       run: cp go.work.example go.work
-  #     - name: Create a credentials file
-  #       run: |
-  #         echo "BINANCE_API_KEY=${{ secrets.BINANCE_API_KEY }}" > ./.credentials.env
-  #         echo "BINANCE_SECRET_KEY=${{ secrets.BINANCE_SECRET_KEY }}" >> ./.credentials.env
-  #     - uses: dagger/dagger-for-github@v7
-  #       with:
-  #         version: latest
-  #         verb: call
-  #         args: -m build/ci -s integration-tests --source-dir=. --secrets-file=file:./.credentials.env stdout 
-
-  # end-to-end-tests:
-  #   name: Run end-to-end tests
-  #   needs: ["integration-tests"]
-  #   runs-on: ubuntu-latest
-  #   timeout-minutes: 5
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #     - name: Create a go.work file
-  #       run: cp go.work.example go.work
-  #     - name: Create a credentials file
-  #       run: |
-  #         echo "BINANCE_API_KEY=${{ secrets.BINANCE_API_KEY }}" > ./.credentials.env
-  #         echo "BINANCE_SECRET_KEY=${{ secrets.BINANCE_SECRET_KEY }}" >> ./.credentials.env
-  #     - uses: dagger/dagger-for-github@v7
-  #       with:
-  #         version: latest
-  #         verb: call
-  #         args: -m build/ci -s end-to-end-tests --source-dir=. --secrets-file=file:./.credentials.env stdout 
 
   create-release:
     name: Create a release of the new version
@@ -115,8 +71,6 @@ jobs:
         with:
           username: lerenn
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-      - name: Create a go.work file
-        run: cp go.work.example go.work
       - uses: dagger/dagger-for-github@v7
         with:
           version: latest
@@ -148,8 +102,6 @@ jobs:
         with:
           username: lerenn
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-      - name: Create a go.work file
-        run: cp go.work.example go.work
       - uses: dagger/dagger-for-github@v7
         with:
           version: latest
