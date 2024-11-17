@@ -1,0 +1,9 @@
+# Ignore credentials env file for development
+.credentials.env
+
+# Ignore temporary files
+tmp/
+
+# Ignore go specific files
+go.work
+go.work.sum

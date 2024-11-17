@@ -1,0 +1,38 @@
+include:
+  - ./mongo.docker-compose.yaml
+  - ./temporal.docker-compose.yaml
+  - ./uptrace.docker-compose.yaml
+
+services:
+  cryptellation:
+    image: cosmtrek/air
+    depends_on:
+      - mongo
+      - temporal
+      - uptrace-otelcollector
+    networks:
+      - cryptellation
+    working_dir: /go/src/github.com/lerenn/cryptellation/v1
+    environment:
+      DEV_MODE: true
+      HEALTH_PORT: 9000
+      LOG_LEVEL: DEBUG
+      MONGO_CONNECTION_STRING: mongodb://mongo:27017
+      MONGO_DATABASE: cryptellation
+      OPENTELEMETRY_GRPC_ENDPOINT: uptrace-otelcollector:4317
+      TEMPORAL_ADDRESS: temporal:7233
+    env_file:
+      - path: ../../.credentials.env
+        required: true
+    command: ["-c", ".air.toml"]
+    volumes:
+      - gocache:/go/pkg/mod
+      - gobuild:/root/.cache/go-build
+      - ../../:/go/src/github.com/lerenn/cryptellation/v1
+
+volumes:
+  gocache:
+  gobuild:
+
+networks:
+  cryptellation:
