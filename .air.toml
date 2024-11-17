@@ -1,0 +1,6 @@
+root = "."
+
+[build]
+  cmd = "go install -buildvcs=false ./cmd/*"
+  full_bin = "worker serve"
+  include_dir = ["cmd/worker", "internal", "pkg"]

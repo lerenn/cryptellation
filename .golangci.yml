@@ -1,0 +1,61 @@
+# More infos: https://golangci-lint.run/usage/linters/
+linters:
+  enable:
+    - asasalint
+    - asciicheck
+    - bidichk
+    - containedctx
+    - contextcheck
+    - cyclop
+    - decorder
+    - dupword
+    - errchkjson
+    - errname
+    - errorlint
+    - exhaustive
+    - exportloopref
+    - funlen
+    - gci
+    - gochecknoinits
+    - gocognit
+    - goconst
+    - gocritic
+    - gocyclo
+    - godot
+    - gofmt
+    - goimports
+    - goprintffuncname
+    - gosmopolitan
+    - importas
+    # - ireturn # Disabled because no problem with returning interfaces
+    - lll
+    - maintidx
+    - makezero
+    - mirror
+    - misspell
+    - nakedret
+    - nestif
+    - nilerr
+    - nolintlint
+    - reassign
+    - revive
+    - stylecheck
+    - tenv
+    - thelper
+    - unconvert
+    - unparam
+    - usestdlibvars
+    - wastedassign
+    - whitespace
+
+linters-settings:
+  revive:
+    rules:
+      - name: exported
+        arguments:
+          - disableStutteringCheck
+
+issues:
+  include:
+    - EXC0012  # EXC0012 revive: Annoying issue about not having a comment. The rare codebase has such comments
+    - EXC0014  # EXC0014 revive: Annoying issue about not having a comment. The rare codebase has such comments
