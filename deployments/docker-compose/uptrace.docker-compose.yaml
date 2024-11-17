@@ -1,0 +1,48 @@
+services:
+  uptrace-otelcollector:
+    image: otel/opentelemetry-collector-contrib:0.110.0
+    networks:
+      - cryptellation
+    depends_on:
+      - uptrace
+    volumes:
+      - ../../../tools/uptrace/docker-compose/otel-collector.yaml:/etc/otelcol/config.yaml
+    expose:
+      - "4317"
+      - "4318"
+
+  uptrace-postgres:
+    image: postgres:15.3
+    networks:
+      - cryptellation
+    environment:
+      POSTGRES_USER: uptrace
+      POSTGRES_PASSWORD: uptrace
+      POSTGRES_DB: uptrace
+    expose:
+      - "5432"
+
+  uptrace-clickhouse:
+    image: clickhouse/clickhouse-server:23.7
+    networks:
+      - cryptellation
+    environment:
+      CLICKHOUSE_DB: uptrace
+    expose:
+      - "8123"
+      - "9000"
+
+  uptrace:
+    image: uptrace/uptrace:1.6.2
+    networks:
+      - cryptellation
+    ports:
+      - 4318:4318
+    depends_on:
+      - uptrace-postgres
+      - uptrace-clickhouse
+    volumes:
+      - ../../../tools/uptrace/docker-compose/uptrace.yaml:/etc/uptrace/uptrace.yml
+    expose:
+      - "4317"
+      - "4318"

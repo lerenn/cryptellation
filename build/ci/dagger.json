@@ -1,0 +1,13 @@
+{
+  "name": "cryptellation-ci",
+  "engineVersion": "v0.14.0",
+  "sdk": "go",
+  "dependencies": [
+    {
+      "name": "cryptellation",
+      "source": "../../.",
+      "pin": ""
+    }
+  ],
+  "source": "dagger"
+}
