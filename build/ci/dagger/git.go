@@ -59,7 +59,7 @@ func NewGit(ctx context.Context, srcDir *dagger.Directory, auth authParams) (Git
 
 		// Change the url to use the token
 		container, err = container.WithExec([]string{
-			"git", "remote", "set-url", "origin", "https://lerenn:" + token + "@github.com/lerenn/cryptellation/v1.git",
+			"git", "remote", "set-url", "origin", "https://lerenn:" + token + "@github.com/lerenn/cryptellation.git",
 		}).Sync(ctx)
 		if err != nil {
 			return Git{}, err

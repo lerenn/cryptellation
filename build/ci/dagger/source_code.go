@@ -26,6 +26,10 @@ func updateSourceCode(ctx context.Context, sourceDir *dagger.Directory, repo *Gi
 	}
 
 	// Update version package
+	sourceDir, err = updateVersionPackage(ctx, sourceDir, repo)
+	if err != nil {
+		return sourceDir, err
+	}
 
 	// Update source code based on specific change
 	switch change {
