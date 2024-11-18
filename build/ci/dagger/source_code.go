@@ -53,9 +53,9 @@ func updateVersionPackage(ctx context.Context, sourceDir *dagger.Directory, repo
 	}
 
 	// Update version package
-	cmd := fmt.Sprintf("sed -i 's/^	DefaultVersion = .*/	DefaultVersion = %s/g' src/pkg/version/version.go", ver)
+	cmd := fmt.Sprintf("sed -i 's/DefaultVersion = .*/DefaultVersion = \"%s\"/g' /src/pkg/version/version.go", ver)
 	c, err := dag.Container().From("alpine").
-		WithMountedDirectory("src", sourceDir).
+		WithMountedDirectory("/src", sourceDir).
 		WithExec([]string{"sh", "-c", cmd}).
 		Sync(ctx)
 	if err != nil {
