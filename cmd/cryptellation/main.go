@@ -10,11 +10,9 @@ import (
 	"github.com/lerenn/cryptellation/v1/pkg/telemetry/otel"
 	"github.com/lerenn/cryptellation/v1/pkg/version"
 	"github.com/spf13/cobra"
-	"go.temporal.io/sdk/client"
 )
 
 var (
-	temporalClient      client.Client
 	cryptellationClient cryptellationclient.Client
 )
 
@@ -29,7 +27,7 @@ var RootCmd = &cobra.Command{
 		return err
 	},
 	PersistentPostRun: func(cmd *cobra.Command, args []string) {
-		temporalClient.Close()
+		cryptellationClient.Close(cmd.Context())
 	},
 }
 

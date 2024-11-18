@@ -10,6 +10,7 @@ check: generate lint test ## Generate, lint and test the code
 .PHONY: clean 
 clean: local/down ## Clean the project
 	@$(DOCKER_COMPOSE_CMD) rm
+	@$(MAKE) -C deployments clean
 
 .PHONY: dagger/check-generation
 dagger/check-generation: ## Run all checks for generated code through Dagger
