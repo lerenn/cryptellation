@@ -14,11 +14,11 @@ FROM --platform=${BUILDPLATFORM:-linux/amd64} ${BUILDBASEIMAGE} AS build
 ENV CGO_ENABLED=0
 
 # Get all remaining code
-RUN mkdir -p /go/src/github.com/lerenn/cryptellation/v1
-COPY ./ /go/src/github.com/lerenn/cryptellation/v1
+RUN mkdir -p /go/src/github.com/lerenn/cryptellation
+COPY ./ /go/src/github.com/lerenn/cryptellation
 
 # Set the workdir
-WORKDIR /go/src/github.com/lerenn/cryptellation/v1
+WORKDIR /go/src/github.com/lerenn/cryptellation
 
 # Build everything in cmd/
 RUN --mount=type=cache,target=/root/.cache/go-build \

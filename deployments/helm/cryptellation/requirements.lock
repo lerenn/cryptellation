@@ -1,0 +1,9 @@
+dependencies:
+- name: mongodb
+  repository: https://charts.bitnami.com/bitnami
+  version: 13.12.0
+- name: temporal-dev
+  repository: https://lerenn.github.io/packages/helm/temporal-dev
+  version: 0.1.0
+digest: sha256:b44b5aed879962aa8bdfbb3fbc1d110a2f0f7461a36f49cf9e63336dd966342d
+generated: "2024-11-18T16:15:18.652308+01:00"

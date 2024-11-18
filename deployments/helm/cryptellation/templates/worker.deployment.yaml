@@ -1,0 +1,74 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: worker
+  name: worker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: worker
+  strategy: {}
+  template:
+    metadata:
+      annotations:
+        {{if (.Values.debug).forceDeployment }}timestamp: {{ now | quote }}{{end}}
+      labels:
+        app: worker
+    spec:
+      containers:
+      - name: worker
+        image: {{ ((.Values.services).worker).image.repository | default "lerenn/cryptellation" }}:{{ ((.Values.services).worker).image.tag | default (printf "v%s" .Chart.AppVersion) }}
+        imagePullPolicy: {{ ((.Values.services).worker).image.pullPolicy | default "Always" }}
+        livenessProbe:
+          httpGet:
+            path: /liveness
+            port: {{ (((.Values.services).worker).health).port | default 9000 }}
+        readinessProbe:
+          httpGet:
+            path: /readiness
+            port: {{ (((.Values.services).worker).health).port | default 9000 }}
+        env:
+        # Binance
+        - name: "BINANCE_API_KEY"
+          valueFrom:
+            configMapKeyRef:
+              key: binance.api_key
+              name: cryptellation-credentials
+        - name: "BINANCE_SECRET_KEY"
+          valueFrom:
+            configMapKeyRef:
+              key: binance.secret_key
+              name: cryptellation-credentials
+        # Health
+        - name: "HEALTH_PORT"
+          valueFrom:
+            configMapKeyRef:
+              key:  worker.health.port
+              name: cryptellation-config
+        # MongoDB
+        - name: "MONGO_CONNECTION_STRING"
+          valueFrom:
+            configMapKeyRef:
+              key: mongodb.connection_string
+              name: cryptellation-credentials
+        - name: "MONGO_DATABASE"
+          valueFrom:
+            configMapKeyRef:
+              key: worker.mongodb.database
+              name: cryptellation-config
+        # Opentelemetry
+        - name: "OPENTELEMETRY_GRPC_ENDPOINT"
+          valueFrom:
+            configMapKeyRef:
+              key: opentelemetry.grpc.endpoint
+              name: cryptellation-credentials
+        # Temporal
+        - name: "TEMPORAL_ADDRESS"
+          valueFrom:
+            configMapKeyRef:
+              key: temporal.address
+              name: cryptellation-credentials
+        resources: {}
+status: {}

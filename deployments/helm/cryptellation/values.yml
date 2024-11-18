@@ -1,0 +1,58 @@
+# Specific section for dependencies
+
+mongodb:
+  enabled: true
+  image:
+    repository: zcube/bitnami-compat-mongodb
+    tag: latest
+  auth:
+    enabled: false
+temporal:
+  enabled: true
+  server:
+    replicaCount: 1
+  cassandra:
+    config:
+      cluster_size: 1
+  elasticsearch:
+    enabled: false
+  prometheus:
+    enabled: false
+  grafana:
+    enabled: false
+
+# Specific section for credentials
+credentials:
+  exchanges:
+    binance:
+      api_key:
+      secret_key:
+  event_br"okers:
+    nats:
+      host: "{{ .Release.Name }}-nats.{{ .Release.Namespace }}.svc.cluster.local"
+      port: 4222
+  datastores:
+    mongodb:
+      connection_string: "mongodb://{{ .Release.Name }}-mongodb.{{ .Release.Namespace }}.svc.cluster.local:27017"
+  opentelemetry:
+    grpc:
+      endpoint:
+  temporal:
+    address: "temporal.{{ .Release.Namespace }}.svc.cluster.local:7233"
+
+# Specific section for services
+services:
+  worker:
+    image:
+      repository: lerenn/cryptellation
+      tag: v{{ .Chart.AppVersion }}
+      pullPolicy: Always
+    mongodb:
+      database: cryptellation
+    health:
+      port: 9000
+
+# Specific section for debug
+
+debug:
+  forceDeployment: false
