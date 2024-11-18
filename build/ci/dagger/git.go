@@ -215,6 +215,7 @@ func (g *Git) PublishTagFromReleaseTitle(ctx context.Context) error {
 		return err
 	}
 	title = strings.TrimPrefix(title, "release: ")
+	title = strings.TrimSuffix(title, "\n")
 	semver := strings.Split(title, " ")[0]
 
 	// Tag commit
