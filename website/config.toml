@@ -1,0 +1,13 @@
+baseURL = 'https://cryptellation.dev/'
+languageCode = 'en-us'
+title = 'Cryptellation'
+
+theme = "relearn"
+
+[params]
+themeVariant = "blue-dark"
+titleSeparator = "|"
+customMermaidURL = "" # Custom loading on custom-footer.html
+
+[outputs]
+home = [ "HTML", "RSS", "SEARCH"]
