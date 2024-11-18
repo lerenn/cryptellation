@@ -3,7 +3,7 @@
 
 .PHONY: serve
 serve: ## Serve the documentation website locally
-	@go run github.com/gohugoio/hugo@v0.117.0 server
+	@go run github.com/gohugoio/hugo@v0.126.0 server
 
 .PHONY: help
 help: ## Display this help message

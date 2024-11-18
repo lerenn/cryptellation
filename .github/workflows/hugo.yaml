@@ -36,7 +36,7 @@ jobs:
     if: |
       startsWith(github.event.head_commit.message, 'release:')
     env:
-      HUGO_VERSION: 0.111.3
+      HUGO_VERSION: 0.126.0
     steps:
       - name: Install Hugo CLI
         run: |

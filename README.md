@@ -1,4 +1,4 @@
-![Cryptellation Logo](assets/title.png)
+![Cryptellation Logo](website/static/images/title.png)
 
 Cryptellation is a **scalable cryptocurrency investment system**.
 
