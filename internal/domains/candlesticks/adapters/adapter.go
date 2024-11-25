@@ -1,3 +1,0 @@
-package adapters
-
-// Just for tests to run...

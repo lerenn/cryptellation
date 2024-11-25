@@ -9,7 +9,7 @@ var infoCmd = &cobra.Command{
 	Use:     "info",
 	Aliases: []string{"i"},
 	Short:   "Read info from worker",
-	RunE: func(cmd *cobra.Command, args []string) error {
+	RunE: func(cmd *cobra.Command, _ []string) error {
 		res, err := cryptellationClient.Info(cmd.Context())
 		if err != nil {
 			return err

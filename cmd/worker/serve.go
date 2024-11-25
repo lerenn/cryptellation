@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"time"
 
 	"github.com/lerenn/cryptellation/v1/api"
@@ -17,7 +18,7 @@ var serveCmd = &cobra.Command{
 	Use:     "serve",
 	Aliases: []string{"s"},
 	Short:   "Launch the service",
-	RunE: func(cmd *cobra.Command, args []string) error {
+	RunE: func(cmd *cobra.Command, _ []string) error {
 		// Init and serve health server
 		// NOTE: health OK, but not-ready yet
 		h, err := health.NewHealth(cmd.Context())
@@ -37,7 +38,7 @@ var serveCmd = &cobra.Command{
 			HostPort: temporalConfig.Address,
 		})
 		if err != nil {
-			panic(err)
+			return err
 		}
 		defer temporalClient.Close()
 
@@ -45,9 +46,9 @@ var serveCmd = &cobra.Command{
 		w := worker.New(temporalClient, api.WorkerTaskQueueName, worker.Options{})
 
 		// Register workflows
-		w.RegisterWorkflowWithOptions(ServiceInfoWorkflow, workflow.RegisterOptions{
-			Name: api.ServiceInfoWorkflowName,
-		})
+		if err := registerWorflowsAndActivities(cmd.Context(), w); err != nil {
+			return err
+		}
 
 		// Mark as ready
 		// TODO: improve this
@@ -62,9 +63,23 @@ var serveCmd = &cobra.Command{
 	},
 }
 
-// ServiceInfoWorkflow returns the service information.
-func ServiceInfoWorkflow(ctx workflow.Context) (api.ServiceInfoWorkflowResult, error) {
-	return api.ServiceInfoWorkflowResult{
+func registerWorflowsAndActivities(ctx context.Context, w worker.Worker) error {
+	// Register candlesticks workflows
+	if err := registerCandlesticksWorkflowsAndActivities(ctx, w); err != nil {
+		return err
+	}
+
+	// Register the service information workflow
+	w.RegisterWorkflowWithOptions(ServiceInfo, workflow.RegisterOptions{
+		Name: api.ServiceInfoWorkflowName,
+	})
+
+	return nil
+}
+
+// ServiceInfo returns the service information.
+func ServiceInfo(_ workflow.Context, _ api.ServiceInfoParams) (api.ServiceInfoResult, error) {
+	return api.ServiceInfoResult{
 		Version: version.Version(),
 	}, nil
 }

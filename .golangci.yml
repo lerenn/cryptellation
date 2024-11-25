@@ -6,6 +6,7 @@ linters:
     - bidichk
     - containedctx
     - contextcheck
+    - copyloopvar
     - cyclop
     - decorder
     - dupword
@@ -13,7 +14,6 @@ linters:
     - errname
     - errorlint
     - exhaustive
-    - exportloopref
     - funlen
     - gci
     - gochecknoinits
@@ -49,11 +49,15 @@ linters:
     - whitespace
 
 linters-settings:
-  revive:
-    rules:
-      - name: exported
-        arguments:
-          - disableStutteringCheck
+  # revive:
+  #   rules:
+  #     - name: exported
+  #       arguments:
+  #         - disableStutteringCheck
+  nolintlint:
+    allow-unused: true
+    require-explanation: false
+    require-specific: false
 
 issues:
   include:
