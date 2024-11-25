@@ -69,6 +69,11 @@ func registerWorflowsAndActivities(ctx context.Context, w worker.Worker) error {
 		return err
 	}
 
+	// Register exchanges workflows
+	if err := registerExchangesWorkflowsAndActivities(ctx, w); err != nil {
+		return err
+	}
+
 	// Register the service information workflow
 	w.RegisterWorkflowWithOptions(ServiceInfo, workflow.RegisterOptions{
 		Name: api.ServiceInfoWorkflowName,

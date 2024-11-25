@@ -11,22 +11,22 @@ import (
 )
 
 func registerCandlesticksWorkflowsAndActivities(ctx context.Context, w worker.Worker) error {
-	// Create database activity
-	dbAdapter, err := mongo.New(ctx, config.LoadMongo(nil))
+	// Create database activities
+	dbActivities, err := mongo.New(ctx, config.LoadMongo(nil))
 	if err != nil {
 		return err
 	}
-	dbAdapter.Register(w)
+	dbActivities.Register(w)
 
-	// Create exchange activity
-	exchangesAdapter, err := live.New()
+	// Create exchange activities
+	exchangesActivities, err := live.New()
 	if err != nil {
 		return err
 	}
-	exchangesAdapter.Register(w)
+	exchangesActivities.Register(w)
 
 	// Create candlesticks domain
-	candlesticks := workflows.New(dbAdapter, exchangesAdapter)
+	candlesticks := workflows.New(dbActivities, exchangesActivities)
 
 	// Register workflows
 	candlesticks.Register(w)
