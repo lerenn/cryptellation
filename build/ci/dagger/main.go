@@ -26,7 +26,7 @@ type CryptellationCi struct{}
 // Linter returns a container that runs the linter.
 func (mod *CryptellationCi) Linter(sourceDir *dagger.Directory) *dagger.Container {
 	c := dag.Container().
-		From("golangci/golangci-lint:v1.60.1").
+		From("golangci/golangci-lint:v1.62.0").
 		WithMountedCache("/root/.cache/golangci-lint", dag.CacheVolume("golangci-lint"))
 
 	c = mod.withGoCodeAndCacheAsWorkDirectory(c, sourceDir)
@@ -44,7 +44,7 @@ func (mod *CryptellationCi) CheckGeneration(
 func (mod *CryptellationCi) UnitTests(sourceDir *dagger.Directory) *dagger.Container {
 	return mod.cryptellationGoCodeContainer(sourceDir).
 		WithExec([]string{"sh", "-c",
-			"go test $(go list ./... | grep -v -e /adapters -e /test)",
+			"go test $(go list ./... | grep -v -e /activities -e /test)",
 		})
 }
 

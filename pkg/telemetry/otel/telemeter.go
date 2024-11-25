@@ -21,7 +21,7 @@ type telemeter struct {
 }
 
 // NewTelemeter creates a new telemeter based on OpenTelemetry.
-func NewTelemeter(ctx context.Context, serviceName string) (telemeter, error) {
+func NewTelemeter(ctx context.Context, serviceName string) (telemetry.Telemeter, error) {
 	// Get exporter URL
 	otelEndpoint := os.Getenv("OPENTELEMETRY_GRPC_ENDPOINT")
 
@@ -63,7 +63,7 @@ func (c counterInt) Add(ctx context.Context, value int64) {
 // CounterInt creates a new integer counter.
 func (tel telemeter) CounterInt(meter, name, description string) (telemetry.Counter, error) {
 	desc := metric.WithDescription(description)
-	c, err := tel.Metrics.provider.Meter("health").Int64Counter("liveness_calls", desc)
+	c, err := tel.Metrics.provider.Meter(meter).Int64Counter(name, desc)
 
 	return counterInt{
 		counter: c,
@@ -116,7 +116,7 @@ func (l Logger) Errorf(format string, a ...any) {
 }
 
 // Logger returns a new logger.
-func (tel telemeter) Logger(ctx context.Context) telemetry.Logger {
+func (tel telemeter) Logger(_ context.Context) telemetry.Logger {
 	return Logger{
 		logger: tel.Logs.logger,
 	}

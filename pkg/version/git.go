@@ -31,7 +31,7 @@ func CommitHashFromGit(path string) (string, error) {
 
 // SetVersionFromGit sets the version from the last git.
 func SetVersionFromGit(path, appName string) error {
-	version, err := VersionFromGit(path, appName)
+	version, err := FromGit(path, appName)
 	if err != nil {
 		return err
 	}
@@ -40,14 +40,14 @@ func SetVersionFromGit(path, appName string) error {
 	return nil
 }
 
-// VersionFromGit returns the version from the last git.
-func VersionFromGit(path, appName string) (string, error) {
+// FromGit returns the version from the last git.
+func FromGit(path, appName string) (string, error) {
 	return git.LastModuleVersionFromCurrentBranch(path, appName)
 }
 
 // FullVersionFromGit returns the full version from the last git.
 func FullVersionFromGit(path, appName string) (string, error) {
-	version, err := VersionFromGit(path, appName)
+	version, err := FromGit(path, appName)
 	if err != nil {
 		return "", err
 	}

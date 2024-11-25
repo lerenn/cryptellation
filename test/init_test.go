@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/lerenn/cryptellation/v1/pkg/client"
+	client "github.com/lerenn/cryptellation/v1/clients/go"
 	"github.com/stretchr/testify/suite"
 )
 

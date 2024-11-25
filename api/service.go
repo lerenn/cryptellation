@@ -11,8 +11,11 @@ const (
 )
 
 type (
-	// ServiceInfoWorkflowResult contains the result of the service info workflow.
-	ServiceInfoWorkflowResult struct {
+	// ServiceInfoParams contains the parameters of the service info workflow.
+	ServiceInfoParams struct{}
+
+	// ServiceInfoResult contains the result of the service info workflow.
+	ServiceInfoResult struct {
 		Version string
 	}
 )

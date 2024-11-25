@@ -12,20 +12,20 @@ import (
 type Telemeter struct{}
 
 // Close closes the console telemeter.
-func (t Telemeter) Close(ctx context.Context) {}
+func (t Telemeter) Close(_ context.Context) {}
 
 // Logger returns a console logger.
-func (t Telemeter) Logger(ctx context.Context) telemetry.Logger {
+func (t Telemeter) Logger(_ context.Context) telemetry.Logger {
 	return consoleLogger{}
 }
 
 // CounterInt returns a console integer counter.
-func (t Telemeter) CounterInt(meter, name, description string) (telemetry.Counter, error) {
+func (t Telemeter) CounterInt(_, _, _ string) (telemetry.Counter, error) {
 	return consoleIntCounter{}, nil
 }
 
 // Trace returns a console tracer.
-func (t Telemeter) Trace(ctx context.Context, tracer, name string) (context.Context, telemetry.Tracer) {
+func (t Telemeter) Trace(ctx context.Context, _, _ string) (context.Context, telemetry.Tracer) {
 	return ctx, consoleTracer{}
 }
 
@@ -79,7 +79,7 @@ func (cl consoleLogger) Errorf(format string, a ...any) {
 type consoleIntCounter struct{}
 
 // Add adds a value to the console integer counter.
-func (cl consoleIntCounter) Add(ctx context.Context, value int64) {}
+func (cl consoleIntCounter) Add(_ context.Context, _ int64) {}
 
 type consoleTracer struct{}
 
