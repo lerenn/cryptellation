@@ -3,6 +3,8 @@ package exchange
 import (
 	"time"
 
+	"github.com/google/go-cmp/cmp"
+	"github.com/google/go-cmp/cmp/cmpopts"
 	"github.com/lerenn/cryptellation/v1/pkg/utils"
 )
 
@@ -13,6 +15,27 @@ type Exchange struct {
 	Pairs        []string
 	Fees         float64
 	LastSyncTime time.Time
+}
+
+// Equals checks if two exchanges are equal.
+func (e Exchange) Equals(e2 Exchange) bool {
+	less := func(x, y any) bool {
+		switch xv := x.(type) {
+		case string:
+			yv := y.(string)
+			return xv < yv
+		case float64:
+			yv := y.(float64)
+			return xv < yv
+		case time.Time:
+			yv := y.(time.Time)
+			return xv.Before(yv)
+		default:
+			return false
+		}
+	}
+	diff := cmp.Diff(e, e2, cmpopts.SortSlices(less))
+	return diff == ""
 }
 
 // Merge merges two exchanges into one.
