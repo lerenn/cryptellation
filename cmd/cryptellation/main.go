@@ -44,6 +44,7 @@ func main() {
 
 	// Set commands
 	addCandlesticksCommands()
+	addExchangesCommands()
 	rootCmd.AddCommand(infoCmd)
 
 	// Execute command

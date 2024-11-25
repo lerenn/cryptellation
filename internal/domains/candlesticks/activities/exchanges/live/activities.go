@@ -12,7 +12,7 @@ import (
 	"go.temporal.io/sdk/worker"
 )
 
-// Activities is the live activities.
+// Activities is the live exchanges activities, regrouping all exchanges activities.
 type Activities struct {
 	binance exchanges.Interface
 }
@@ -30,18 +30,18 @@ func New() (Activities, error) {
 }
 
 // Register will register the activities.
-func (e Activities) Register(w worker.Worker) {
-	w.RegisterActivityWithOptions(e.GetCandlesticks, activity.RegisterOptions{Name: exchanges.GetCandlesticksActivityName})
+func (a Activities) Register(w worker.Worker) {
+	w.RegisterActivityWithOptions(a.GetCandlesticks, activity.RegisterOptions{Name: exchanges.GetCandlesticksActivityName})
 }
 
 // GetCandlesticks will get the candlesticks.
-func (e Activities) GetCandlesticks(
+func (a Activities) GetCandlesticks(
 	ctx context.Context,
 	params exchanges.GetCandlesticksParams,
 ) (exchanges.GetCandlesticksResult, error) {
 	switch params.Exchange {
 	case binancePkg.BinanceInfos.Name:
-		res, err := e.binance.GetCandlesticks(ctx, params)
+		res, err := a.binance.GetCandlesticks(ctx, params)
 		return res, err
 	default:
 		return exchanges.GetCandlesticksResult{}, fmt.Errorf("%w: %q", exchanges.ErrInexistantExchange, params.Exchange)

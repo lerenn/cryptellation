@@ -2,11 +2,13 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/lerenn/cryptellation/v1/api"
 	"github.com/lerenn/cryptellation/v1/pkg/config"
 	"github.com/lerenn/cryptellation/v1/pkg/health"
+	"github.com/lerenn/cryptellation/v1/pkg/telemetry"
 	"github.com/lerenn/cryptellation/v1/pkg/version"
 	"github.com/spf13/cobra"
 	"go.temporal.io/sdk/client"
@@ -34,11 +36,18 @@ var serveCmd = &cobra.Command{
 		}
 
 		// Load temporal client
-		temporalClient, err := client.Dial(client.Options{
-			HostPort: temporalConfig.Address,
-		})
-		if err != nil {
-			return err
+		var temporalClient client.Client
+		for {
+			temporalClient, err = client.Dial(client.Options{
+				HostPort: temporalConfig.Address,
+			})
+			if err != nil {
+				msg := fmt.Sprintf("cannot connect to temporal: %s", err)
+				telemetry.L(cmd.Context()).Warning(msg)
+				time.Sleep(3 * time.Second)
+			} else {
+				break
+			}
 		}
 		defer temporalClient.Close()
 
@@ -66,6 +75,11 @@ var serveCmd = &cobra.Command{
 func registerWorflowsAndActivities(ctx context.Context, w worker.Worker) error {
 	// Register candlesticks workflows
 	if err := registerCandlesticksWorkflowsAndActivities(ctx, w); err != nil {
+		return err
+	}
+
+	// Register exchanges workflows
+	if err := registerExchangesWorkflowsAndActivities(ctx, w); err != nil {
 		return err
 	}
 

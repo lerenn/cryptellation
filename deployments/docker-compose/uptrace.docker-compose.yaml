@@ -6,7 +6,7 @@ services:
     depends_on:
       - uptrace
     volumes:
-      - ../../../tools/uptrace/docker-compose/otel-collector.yaml:/etc/otelcol/config.yaml
+      - ./uptrace/otel-collector.yaml:/etc/otelcol/config.yaml
     expose:
       - "4317"
       - "4318"
@@ -42,7 +42,7 @@ services:
       - uptrace-postgres
       - uptrace-clickhouse
     volumes:
-      - ../../../tools/uptrace/docker-compose/uptrace.yaml:/etc/uptrace/uptrace.yml
+      - ./uptrace/uptrace.yaml:/etc/uptrace/uptrace.yml
     expose:
       - "4317"
       - "4318"
