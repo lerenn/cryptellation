@@ -41,7 +41,7 @@ help: ## Display this help message
 
 .PHONY: lint
 lint: ## Lint the code
-	@go run github.com/golangci/golangci-lint/cmd/golangci-lint@v1.60.1 run ./...
+	@go run github.com/golangci/golangci-lint/cmd/golangci-lint@v1.62.0 run ./...
 
 .PHONY: local/down
 local/down: ## Stop the local environment
@@ -60,11 +60,11 @@ test: test/unit test/integration test/end-to-end ## Launch all tests
 
 .PHONY: test/unit
 test/unit: ## Launch unit tests
-	@go test $$(go list ./... | grep -v -e /adapters -e /test)
+	@go test $$(go list ./... | grep -v -e /activities -e /test)
 
 .PHONY: test/integration
 test/integration: local/up ## Launch integration tests
-	@go test ./internal/domains/candlesticks/adapters/...
+	@go test ./internal/domains/candlesticks/activities/...
 
 .PHONY: test/end-to-end
 test/end-to-end: local/up ## Launch end-to-end tests

@@ -4,37 +4,37 @@ import "context"
 
 type dummy struct{}
 
-func (d dummy) Close(ctx context.Context) {}
+func (d dummy) Close(_ context.Context) {}
 
-func (d dummy) Logger(ctx context.Context) Logger {
+func (d dummy) Logger(_ context.Context) Logger {
 	return dummyLogger{}
 }
 
-func (d dummy) CounterInt(meter, name, description string) (Counter, error) {
+func (d dummy) CounterInt(_, _, _ string) (Counter, error) {
 	return dummyCounter{}, nil
 }
 
-func (d dummy) Trace(ctx context.Context, tracer, name string) (context.Context, Tracer) {
+func (d dummy) Trace(ctx context.Context, _, _ string) (context.Context, Tracer) {
 	return ctx, dummyTracer{}
 }
 
 type dummyLogger struct{}
 
-func (dl dummyLogger) Debug(text string)              {}
-func (dl dummyLogger) Debugf(format string, a ...any) {}
+func (dl dummyLogger) Debug(_ string)            {}
+func (dl dummyLogger) Debugf(_ string, _ ...any) {}
 
-func (dl dummyLogger) Info(text string)              {}
-func (dl dummyLogger) Infof(format string, a ...any) {}
+func (dl dummyLogger) Info(_ string)            {}
+func (dl dummyLogger) Infof(_ string, _ ...any) {}
 
-func (dl dummyLogger) Warning(text string)              {}
-func (dl dummyLogger) Warningf(format string, a ...any) {}
+func (dl dummyLogger) Warning(_ string)            {}
+func (dl dummyLogger) Warningf(_ string, _ ...any) {}
 
-func (dl dummyLogger) Error(text string)              {}
-func (dl dummyLogger) Errorf(format string, a ...any) {}
+func (dl dummyLogger) Error(_ string)            {}
+func (dl dummyLogger) Errorf(_ string, _ ...any) {}
 
 type dummyCounter struct{}
 
-func (dl dummyCounter) Add(ctx context.Context, value int64) {}
+func (dl dummyCounter) Add(_ context.Context, _ int64) {}
 
 type dummyTracer struct{}
 
