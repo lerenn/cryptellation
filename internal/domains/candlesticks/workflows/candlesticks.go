@@ -30,7 +30,7 @@ func New(db db.Interface, exchanges exchanges.Interface) Candlesticks {
 }
 
 // Register registers the candlesticks workflows to the worker.
-func (c *candlesticks) Register(w worker.Worker) {
+func (c candlesticks) Register(w worker.Worker) {
 	w.RegisterWorkflowWithOptions(c.ListCandlesticks, workflow.RegisterOptions{
 		Name: api.ListCandlesticksWorkflowName,
 	})
