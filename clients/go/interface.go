@@ -12,6 +12,7 @@ type Client interface {
 	ListCandlesticks(ctx context.Context, params api.ListCandlesticksParams) (res api.ListCandlesticksResults, err error)
 
 	// Exchanges
+	GetExchange(ctx context.Context, params api.GetExchangeParams) (res api.GetExchangeResults, err error)
 	ListExchanges(ctx context.Context, params api.ListExchangesParams) (res api.ListExchangesResults, err error)
 
 	// Service

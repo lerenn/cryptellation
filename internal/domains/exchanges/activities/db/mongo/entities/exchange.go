@@ -6,6 +6,7 @@ import (
 	"github.com/lerenn/cryptellation/v1/pkg/models/exchange"
 )
 
+// Exchange is the exchange entity.
 type Exchange struct {
 	Name         string
 	Pairs        []string
@@ -14,6 +15,7 @@ type Exchange struct {
 	LastSyncTime time.Time
 }
 
+// ExchangeFromModel will convert the model to an entity.
 func ExchangeFromModel(model exchange.Exchange) Exchange {
 	return Exchange{
 		Name:         model.Name,
@@ -24,6 +26,7 @@ func ExchangeFromModel(model exchange.Exchange) Exchange {
 	}
 }
 
+// ToModel will convert the entity to a model.
 func (e Exchange) ToModel() exchange.Exchange {
 	m := exchange.Exchange{
 		Name:         e.Name,

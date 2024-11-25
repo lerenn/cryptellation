@@ -13,6 +13,7 @@ type exchanges struct {
 	exchanges exchangesadapter.Interface
 }
 
+// New creates a new exchanges workflows.
 func New(db db.Interface, exchs exchangesadapter.Interface) Exchanges {
 	if db == nil {
 		panic("nil db")
@@ -30,6 +31,9 @@ func New(db db.Interface, exchs exchangesadapter.Interface) Exchanges {
 
 // Register registers the candlesticks workflows to the worker.
 func (e exchanges) Register(w worker.Worker) {
+	w.RegisterWorkflowWithOptions(e.GetExchange, workflow.RegisterOptions{
+		Name: api.GetExchangeWorkflowName,
+	})
 	w.RegisterWorkflowWithOptions(e.ListExchanges, workflow.RegisterOptions{
 		Name: api.ListExchangesWorkflowName,
 	})

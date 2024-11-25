@@ -7,6 +7,26 @@ import (
 	temporalclient "go.temporal.io/sdk/client"
 )
 
+// GetExchange calls the exchange get workflow.
+func (c client) GetExchange(
+	ctx context.Context,
+	params api.GetExchangeParams,
+) (res api.GetExchangeResults, err error) {
+	workflowOptions := temporalclient.StartWorkflowOptions{
+		TaskQueue: api.WorkerTaskQueueName,
+	}
+
+	// Execute workflow
+	exec, err := c.temporal.ExecuteWorkflow(ctx, workflowOptions, api.GetExchangeWorkflowName, params)
+	if err != nil {
+		return api.GetExchangeResults{}, err
+	}
+
+	// Get result and return
+	err = exec.Get(ctx, &res)
+	return res, err
+}
+
 // ListExchanges calls the exchanges list workflow.
 func (c client) ListExchanges(
 	ctx context.Context,

@@ -10,6 +10,19 @@ import (
 	"go.temporal.io/sdk/worker"
 )
 
+// ListExchangesNamesActivityName is the name of the ListExchangesNames activity.
+const ListExchangesNamesActivityName = "ListExchangesNamesActivity"
+
+type (
+	// ListExchangesNamesParams is the parameters for the ListExchangesNames activity.
+	ListExchangesNamesParams struct{}
+
+	// ListExchangesNamesResult is the result for the ListExchangesNames activity.
+	ListExchangesNamesResult struct {
+		List []string
+	}
+)
+
 // GetExchangeInfoActivityName is the name of the GetExchangeInfo activity.
 const GetExchangeInfoActivityName = "GetExchangeInfoActivity"
 
@@ -29,5 +42,6 @@ type (
 type Interface interface {
 	Register(w worker.Worker)
 
+	ListExchangesNames(ctx context.Context, params ListExchangesNamesParams) (ListExchangesNamesResult, error)
 	GetExchangeInfo(ctx context.Context, params GetExchangeInfoParams) (GetExchangeInfoResult, error)
 }

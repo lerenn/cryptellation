@@ -46,3 +46,10 @@ func checkPairExistance(list []string, pair string) bool {
 
 	return false
 }
+
+func (suite *BinanceSuite) TestExchangeNames() {
+	r, err := suite.service.ListExchangesNames(context.TODO(), exchanges.ListExchangesNamesParams{})
+	suite.NoError(err)
+
+	suite.Require().Contains(r.List, "Binance")
+}

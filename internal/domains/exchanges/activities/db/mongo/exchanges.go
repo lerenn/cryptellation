@@ -3,20 +3,22 @@ package mongo
 import (
 	"context"
 
-	"github.com/lerenn/cryptellation/v1/pkg/models/exchange"
-
 	"github.com/lerenn/cryptellation/v1/internal/domains/exchanges/activities/db"
 	"github.com/lerenn/cryptellation/v1/internal/domains/exchanges/activities/db/mongo/entities"
-
+	"github.com/lerenn/cryptellation/v1/pkg/models/exchange"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
 const (
-	// CollectionName is the name of the collection in the database
+	// CollectionName is the name of the collection in the database.
 	CollectionName = "exchanges"
 )
 
-func (a *Activities) CreateExchanges(ctx context.Context, params db.CreateExchangesParams) (db.CreateExchangesResult, error) {
+// CreateExchanges will create the exchanges in the database.
+func (a *Activities) CreateExchanges(
+	ctx context.Context,
+	params db.CreateExchangesParams,
+) (db.CreateExchangesResult, error) {
 	ents := make([]interface{}, len(params.Exchanges))
 	for i, e := range params.Exchanges {
 		ents[i] = entities.ExchangeFromModel(e)
@@ -26,7 +28,11 @@ func (a *Activities) CreateExchanges(ctx context.Context, params db.CreateExchan
 	return db.CreateExchangesResult{}, err
 }
 
-func (a *Activities) ReadExchanges(ctx context.Context, params db.ReadExchangesParams) (db.ReadExchangesResult, error) {
+// ReadExchanges will read the exchanges from the database.
+func (a *Activities) ReadExchanges(
+	ctx context.Context,
+	params db.ReadExchangesParams,
+) (db.ReadExchangesResult, error) {
 	filter := bson.M{}
 	if len(params.Names) > 0 {
 		filter["name"] = bson.M{"$in": params.Names}
@@ -53,7 +59,11 @@ func (a *Activities) ReadExchanges(ctx context.Context, params db.ReadExchangesP
 	}, nil
 }
 
-func (a *Activities) UpdateExchanges(ctx context.Context, params db.UpdateExchangesParams) (db.UpdateExchangesResult, error) {
+// UpdateExchanges will update the exchanges in the database.
+func (a *Activities) UpdateExchanges(
+	ctx context.Context,
+	params db.UpdateExchangesParams,
+) (db.UpdateExchangesResult, error) {
 	ents := make([]interface{}, len(params.Exchanges))
 	for i, e := range params.Exchanges {
 		ents[i] = entities.ExchangeFromModel(e)
@@ -70,7 +80,11 @@ func (a *Activities) UpdateExchanges(ctx context.Context, params db.UpdateExchan
 	return db.UpdateExchangesResult{}, nil
 }
 
-func (a *Activities) DeleteExchanges(ctx context.Context, params db.DeleteExchangesParams) (db.DeleteExchangesResult, error) {
+// DeleteExchanges will delete the exchanges from the database.
+func (a *Activities) DeleteExchanges(
+	ctx context.Context,
+	params db.DeleteExchangesParams,
+) (db.DeleteExchangesResult, error) {
 	filter := bson.M{"name": bson.M{"$in": params.Names}}
 	_, err := a.client.Collection(CollectionName).DeleteMany(ctx, filter)
 	return db.DeleteExchangesResult{}, err

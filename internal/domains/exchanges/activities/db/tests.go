@@ -5,15 +5,16 @@ import (
 	"time"
 
 	"github.com/lerenn/cryptellation/v1/pkg/models/exchange"
-
 	"github.com/stretchr/testify/suite"
 )
 
+// ExchangesSuite is the test suite for the exchanges database.
 type ExchangesSuite struct {
 	suite.Suite
 	DB Interface
 }
 
+// TestCreateRead will test the creation and reading of an exchange.
 func (suite *ExchangesSuite) TestCreateRead() {
 	// Given a exchange
 	p := exchange.Exchange{
@@ -46,6 +47,7 @@ func (suite *ExchangesSuite) TestCreateRead() {
 	suite.Require().WithinDuration(time.Now().UTC(), r.Exchanges[0].LastSyncTime, time.Second)
 }
 
+// TestCreateReadInexistant will test the reading of an inexistant exchange.
 func (suite *ExchangesSuite) TestCreateReadInexistant() {
 	// When we read an inexistant exchange
 	r, err := suite.DB.ReadExchanges(context.Background(), ReadExchangesParams{
@@ -57,6 +59,7 @@ func (suite *ExchangesSuite) TestCreateReadInexistant() {
 	suite.Require().Len(r.Exchanges, 0)
 }
 
+// TestReadAll will test the reading of all exchanges.
 func (suite *ExchangesSuite) TestReadAll() {
 	// Given 3 created exchanges
 	p1 := exchange.Exchange{
@@ -109,6 +112,7 @@ func (suite *ExchangesSuite) TestReadAll() {
 	}
 }
 
+// TestUpdate will test the update of an exchange.
 func (suite *ExchangesSuite) TestUpdate() {
 	// Given a created exchange
 	p1 := exchange.Exchange{
@@ -154,6 +158,7 @@ func (suite *ExchangesSuite) TestUpdate() {
 	suite.Require().WithinDuration(time.Now().UTC(), r.Exchanges[0].LastSyncTime, time.Second)
 }
 
+// TestDelete will test the deletion of an exchange.
 func (suite *ExchangesSuite) TestDelete() {
 	// Given twp created exchange
 	p1 := exchange.Exchange{

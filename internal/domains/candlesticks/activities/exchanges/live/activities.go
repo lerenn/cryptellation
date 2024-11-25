@@ -35,13 +35,13 @@ func (a Activities) Register(w worker.Worker) {
 }
 
 // GetCandlesticks will get the candlesticks.
-func (e Activities) GetCandlesticks(
+func (a Activities) GetCandlesticks(
 	ctx context.Context,
 	params exchanges.GetCandlesticksParams,
 ) (exchanges.GetCandlesticksResult, error) {
 	switch params.Exchange {
 	case binancePkg.BinanceInfos.Name:
-		res, err := e.binance.GetCandlesticks(ctx, params)
+		res, err := a.binance.GetCandlesticks(ctx, params)
 		return res, err
 	default:
 		return exchanges.GetCandlesticksResult{}, fmt.Errorf("%w: %q", exchanges.ErrInexistantExchange, params.Exchange)

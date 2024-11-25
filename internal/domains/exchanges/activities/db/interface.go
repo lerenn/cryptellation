@@ -63,7 +63,7 @@ type (
 	DeleteExchangesResult struct{}
 )
 
-// Interface is the interface that the database activities must implement
+// Interface is the interface that the database activities must implement.
 type Interface interface {
 	CreateExchanges(ctx context.Context, params CreateExchangesParams) (CreateExchangesResult, error)
 	ReadExchanges(ctx context.Context, params ReadExchangesParams) (ReadExchangesResult, error)

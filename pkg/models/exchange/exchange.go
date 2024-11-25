@@ -103,3 +103,8 @@ func (e Exchange) String() string {
 	return fmt.Sprintf("Exchange{Name: %s, Periods: %v, Pairs: %v, Fees: %f, LastSyncTime: %s}",
 		e.Name, e.Periods, e.Pairs, e.Fees, e.LastSyncTime)
 }
+
+// IsOutdated checks if the exchange is outdated.
+func (e Exchange) IsOutdated(expirationDuration time.Duration) bool {
+	return time.Now().After(e.LastSyncTime.Add(expirationDuration))
+}

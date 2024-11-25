@@ -10,5 +10,6 @@ import (
 type Exchanges interface {
 	Register(w worker.Worker)
 
+	GetExchange(ctx workflow.Context, params api.GetExchangeParams) (api.GetExchangeResults, error)
 	ListExchanges(ctx workflow.Context, params api.ListExchangesParams) (api.ListExchangesResults, error)
 }
