@@ -3,33 +3,31 @@ package main
 import (
 	"context"
 
-	"github.com/lerenn/cryptellation/v1/internal/domains/exchanges/activities/db/mongo"
-	"github.com/lerenn/cryptellation/v1/internal/domains/exchanges/activities/exchanges/live"
-	"github.com/lerenn/cryptellation/v1/internal/domains/exchanges/workflows"
 	"github.com/lerenn/cryptellation/v1/pkg/config"
+	"github.com/lerenn/cryptellation/v1/pkg/domains/exchanges/activities/db/mongo"
+	"github.com/lerenn/cryptellation/v1/pkg/domains/exchanges/activities/exchanges/live"
+	"github.com/lerenn/cryptellation/v1/pkg/domains/exchanges/workflows"
 	"go.temporal.io/sdk/worker"
 )
 
 func registerExchangesWorkflowsAndActivities(ctx context.Context, w worker.Worker) error {
-	// Create database activities
-	dbActivities, err := mongo.New(ctx, config.LoadMongo(nil))
+	// Create database adapter
+	db, err := mongo.New(ctx, config.LoadMongo(nil))
 	if err != nil {
 		return err
 	}
-	dbActivities.Register(w)
+	db.Register(w)
 
-	// Create exchange activities
-	exchangesActivities, err := live.New()
+	// Create exchange adapter
+	exchanges, err := live.New()
 	if err != nil {
 		return err
 	}
-	exchangesActivities.Register(w)
-
-	// Create exchanges domain
-	exchanges := workflows.New(dbActivities, exchangesActivities)
-
-	// Register workflows
 	exchanges.Register(w)
+
+	// Create domain core
+	domain := workflows.New(db, exchanges)
+	domain.Register(w)
 
 	return nil
 }

@@ -9,13 +9,16 @@ import (
 // Client is the client interface.
 type Client interface {
 	// Candlesticks
-	ListCandlesticks(ctx context.Context, params api.ListCandlesticksParams) (res api.ListCandlesticksResults, err error)
+	ListCandlesticks(ctx context.Context, params api.ListCandlesticksWorkflowParams) (res api.ListCandlesticksWorkflowResults, err error)
 
 	// Exchanges
-	GetExchange(ctx context.Context, params api.GetExchangeParams) (res api.GetExchangeResults, err error)
-	ListExchanges(ctx context.Context, params api.ListExchangesParams) (res api.ListExchangesResults, err error)
+	GetExchange(ctx context.Context, params api.GetExchangeWorkflowParams) (res api.GetExchangeWorkflowResults, err error)
+	ListExchanges(ctx context.Context, params api.ListExchangesWorkflowParams) (res api.ListExchangesWorkflowResults, err error)
 
 	// Service
-	Info(ctx context.Context) (api.ServiceInfoResult, error)
+	Info(ctx context.Context) (api.ServiceInfoResults, error)
 	Close(ctx context.Context)
+
+	// Ticks
+	ListenToTicks(ctx context.Context, params api.RegisterForTicksListeningWorkflowParams) (res api.RegisterForTicksListeningWorkflowResults, err error)
 }

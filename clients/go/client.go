@@ -27,10 +27,8 @@ func New(temporalConfig ...config.Temporal) (Client, error) {
 		return client{}, err
 	}
 
-	// Load temporal client
-	c, err := temporalclient.Dial(temporalclient.Options{
-		HostPort: t.Address,
-	})
+	// Create temporal client
+	c, err := t.CreateTemporalClient()
 	if err != nil {
 		return client{}, err
 	}
@@ -39,7 +37,7 @@ func New(temporalConfig ...config.Temporal) (Client, error) {
 }
 
 // Info calls the service info.
-func (c client) Info(ctx context.Context) (res api.ServiceInfoResult, err error) {
+func (c client) Info(ctx context.Context) (res api.ServiceInfoResults, err error) {
 	workflowOptions := temporalclient.StartWorkflowOptions{
 		TaskQueue: api.WorkerTaskQueueName,
 	}
@@ -47,7 +45,7 @@ func (c client) Info(ctx context.Context) (res api.ServiceInfoResult, err error)
 	// Execute workflow
 	exec, err := c.temporal.ExecuteWorkflow(ctx, workflowOptions, api.ServiceInfoWorkflowName)
 	if err != nil {
-		return api.ServiceInfoResult{}, err
+		return api.ServiceInfoResults{}, err
 	}
 
 	// Get result and return

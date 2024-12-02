@@ -10,8 +10,8 @@ import (
 // ListCandlesticks calls the candlesticks list workflow.
 func (c client) ListCandlesticks(
 	ctx context.Context,
-	params api.ListCandlesticksParams,
-) (res api.ListCandlesticksResults, err error) {
+	params api.ListCandlesticksWorkflowParams,
+) (res api.ListCandlesticksWorkflowResults, err error) {
 	workflowOptions := temporalclient.StartWorkflowOptions{
 		TaskQueue: api.WorkerTaskQueueName,
 	}
@@ -19,7 +19,7 @@ func (c client) ListCandlesticks(
 	// Execute workflow
 	exec, err := c.temporal.ExecuteWorkflow(ctx, workflowOptions, api.ListCandlesticksWorkflowName, params)
 	if err != nil {
-		return api.ListCandlesticksResults{}, err
+		return api.ListCandlesticksWorkflowResults{}, err
 	}
 
 	// Get result and return

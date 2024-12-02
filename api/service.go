@@ -14,8 +14,8 @@ type (
 	// ServiceInfoParams contains the parameters of the service info workflow.
 	ServiceInfoParams struct{}
 
-	// ServiceInfoResult contains the result of the service info workflow.
-	ServiceInfoResult struct {
+	// ServiceInfoResults contains the result of the service info workflow.
+	ServiceInfoResults struct {
 		Version string
 	}
 )

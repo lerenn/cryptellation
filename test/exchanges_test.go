@@ -9,7 +9,7 @@ import (
 func (suite *EndToEndSuite) TestListExchanges() {
 	// WHEN requesting the exchanges list
 
-	res, err := suite.client.ListExchanges(context.Background(), api.ListExchangesParams{})
+	res, err := suite.client.ListExchanges(context.Background(), api.ListExchangesWorkflowParams{})
 
 	// THEN the request is successful
 
@@ -23,7 +23,7 @@ func (suite *EndToEndSuite) TestListExchanges() {
 func (suite *EndToEndSuite) TestGetExchange() {
 	// WHEN requesting an exchange
 
-	res, err := suite.client.GetExchange(context.Background(), api.GetExchangeParams{
+	res, err := suite.client.GetExchange(context.Background(), api.GetExchangeWorkflowParams{
 		Name: "binance",
 	})
 
