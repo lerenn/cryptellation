@@ -1,5 +1,5 @@
 // Generate code for mock
-//go:generate go run go.uber.org/mock/mockgen@v0.2.0 -source=interface.go -destination=mock.gen.go -package exchanges
+//go:generate go run go.uber.org/mock/mockgen@v0.2.0 -source=exchanges.go -destination=mock.gen.go -package exchanges
 
 package exchanges
 
