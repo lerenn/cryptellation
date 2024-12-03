@@ -13,8 +13,8 @@ const (
 )
 
 type (
-	// ListCandlesticksParams is the parameters of the ListCandlesticks activity.
-	ListCandlesticksParams struct {
+	// ListCandlesticksWorkflowParams is the parameters of the ListCandlesticks workflow.
+	ListCandlesticksWorkflowParams struct {
 		Exchange string
 		Pair     string
 		Period   period.Symbol
@@ -23,8 +23,8 @@ type (
 		Limit    uint
 	}
 
-	// ListCandlesticksResults is the result of the ListCandlesticks activity.
-	ListCandlesticksResults struct {
+	// ListCandlesticksWorkflowResults is the result of the ListCandlesticks workflow.
+	ListCandlesticksWorkflowResults struct {
 		List *candlestick.List
 	}
 )

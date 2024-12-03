@@ -64,7 +64,7 @@ test/unit: ## Launch unit tests
 
 .PHONY: test/integration
 test/integration: local/up ## Launch integration tests
-	@go test ./internal/domains/candlesticks/activities/...
+	@go test $$(go list ./pkg/domains/... | grep /activities)
 
 .PHONY: test/end-to-end
 test/end-to-end: local/up ## Launch end-to-end tests

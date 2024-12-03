@@ -47,7 +47,7 @@ var candlesticksListCmd = &cobra.Command{
 		}
 
 		// Execute call
-		res, err := cryptellationClient.ListCandlesticks(cmd.Context(), api.ListCandlesticksParams{
+		res, err := cryptellationClient.ListCandlesticks(cmd.Context(), api.ListCandlesticksWorkflowParams{
 			Exchange: candlesticksListExchangeFlag,
 			Pair:     candlesticksListPairFlag,
 			Period:   per,

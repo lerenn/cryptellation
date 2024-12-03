@@ -10,8 +10,8 @@ import (
 // GetExchange calls the exchange get workflow.
 func (c client) GetExchange(
 	ctx context.Context,
-	params api.GetExchangeParams,
-) (res api.GetExchangeResults, err error) {
+	params api.GetExchangeWorkflowParams,
+) (res api.GetExchangeWorkflowResults, err error) {
 	workflowOptions := temporalclient.StartWorkflowOptions{
 		TaskQueue: api.WorkerTaskQueueName,
 	}
@@ -19,7 +19,7 @@ func (c client) GetExchange(
 	// Execute workflow
 	exec, err := c.temporal.ExecuteWorkflow(ctx, workflowOptions, api.GetExchangeWorkflowName, params)
 	if err != nil {
-		return api.GetExchangeResults{}, err
+		return api.GetExchangeWorkflowResults{}, err
 	}
 
 	// Get result and return
@@ -30,8 +30,8 @@ func (c client) GetExchange(
 // ListExchanges calls the exchanges list workflow.
 func (c client) ListExchanges(
 	ctx context.Context,
-	params api.ListExchangesParams,
-) (res api.ListExchangesResults, err error) {
+	params api.ListExchangesWorkflowParams,
+) (res api.ListExchangesWorkflowResults, err error) {
 	workflowOptions := temporalclient.StartWorkflowOptions{
 		TaskQueue: api.WorkerTaskQueueName,
 	}
@@ -39,7 +39,7 @@ func (c client) ListExchanges(
 	// Execute workflow
 	exec, err := c.temporal.ExecuteWorkflow(ctx, workflowOptions, api.ListExchangesWorkflowName, params)
 	if err != nil {
-		return api.ListExchangesResults{}, err
+		return api.ListExchangesWorkflowResults{}, err
 	}
 
 	// Get result and return

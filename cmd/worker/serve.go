@@ -9,6 +9,7 @@ import (
 	"github.com/lerenn/cryptellation/v1/pkg/config"
 	"github.com/lerenn/cryptellation/v1/pkg/health"
 	"github.com/lerenn/cryptellation/v1/pkg/telemetry"
+	"github.com/lerenn/cryptellation/v1/pkg/temporal/activities"
 	"github.com/lerenn/cryptellation/v1/pkg/version"
 	"github.com/spf13/cobra"
 	"go.temporal.io/sdk/client"
@@ -54,8 +55,11 @@ var serveCmd = &cobra.Command{
 		// Create a worker
 		w := worker.New(temporalClient, api.WorkerTaskQueueName, worker.Options{})
 
+		// Register common activities
+		w.RegisterActivity(activities.NewActivities(temporalClient))
+
 		// Register workflows
-		if err := registerWorflowsAndActivities(cmd.Context(), w); err != nil {
+		if err := registerWorflowsAndActivities(cmd.Context(), w, temporalClient); err != nil {
 			return err
 		}
 
@@ -72,7 +76,7 @@ var serveCmd = &cobra.Command{
 	},
 }
 
-func registerWorflowsAndActivities(ctx context.Context, w worker.Worker) error {
+func registerWorflowsAndActivities(ctx context.Context, w worker.Worker, temporalClient client.Client) error {
 	// Register candlesticks workflows
 	if err := registerCandlesticksWorkflowsAndActivities(ctx, w); err != nil {
 		return err
@@ -88,12 +92,13 @@ func registerWorflowsAndActivities(ctx context.Context, w worker.Worker) error {
 		Name: api.ServiceInfoWorkflowName,
 	})
 
-	return nil
+	// Register the ticks workflows
+	return registerTicksWorkflowsAndActivities(w, temporalClient)
 }
 
 // ServiceInfo returns the service information.
-func ServiceInfo(_ workflow.Context, _ api.ServiceInfoParams) (api.ServiceInfoResult, error) {
-	return api.ServiceInfoResult{
+func ServiceInfo(_ workflow.Context, _ api.ServiceInfoParams) (api.ServiceInfoResults, error) {
+	return api.ServiceInfoResults{
 		Version: version.Version(),
 	}, nil
 }

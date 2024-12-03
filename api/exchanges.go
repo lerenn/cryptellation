@@ -8,13 +8,13 @@ const (
 )
 
 type (
-	// GetExchangeParams is the parameters of the GetExchange activity.
-	GetExchangeParams struct {
+	// GetExchangeWorkflowParams is the parameters of the GetExchange workflow.
+	GetExchangeWorkflowParams struct {
 		Name string
 	}
 
-	// GetExchangeResults is the result of the GetExchange activity.
-	GetExchangeResults struct {
+	// GetExchangeWorkflowResults is the result of the GetExchange workflow.
+	GetExchangeWorkflowResults struct {
 		Exchange exchange.Exchange
 	}
 )
@@ -25,11 +25,11 @@ const (
 )
 
 type (
-	// ListExchangesParams is the parameters of the ListExchanges activity.
-	ListExchangesParams struct{}
+	// ListExchangesWorkflowParams is the parameters of the ListExchanges workflow.
+	ListExchangesWorkflowParams struct{}
 
-	// ListExchangesResults is the result of the ListExchanges activity.
-	ListExchangesResults struct {
+	// ListExchangesWorkflowResults is the result of the ListExchanges workflow.
+	ListExchangesWorkflowResults struct {
 		List []string
 	}
 )

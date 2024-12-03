@@ -19,7 +19,7 @@ var exchangesShowCmd = &cobra.Command{
 	Short:   "Show exchange",
 	Args:    cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
-		res, err := cryptellationClient.GetExchange(cmd.Context(), api.GetExchangeParams{
+		res, err := cryptellationClient.GetExchange(cmd.Context(), api.GetExchangeWorkflowParams{
 			Name: args[0],
 		})
 		if err != nil {
@@ -42,7 +42,7 @@ var exchangesListCmd = &cobra.Command{
 	Aliases: []string{"l"},
 	Short:   "List exchanges",
 	RunE: func(cmd *cobra.Command, _ []string) error {
-		res, err := cryptellationClient.ListExchanges(cmd.Context(), api.ListExchangesParams{})
+		res, err := cryptellationClient.ListExchanges(cmd.Context(), api.ListExchangesWorkflowParams{})
 		if err != nil {
 			return err
 		}
