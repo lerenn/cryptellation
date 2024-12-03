@@ -87,9 +87,9 @@ func (s *Activities) ListenSymbolActivity(
 	}
 }
 
-func (s *Activities) handleNewTickSignalError(ctx context.Context, err error, params exchanges.ListenSymbolParams) {
+func (s *Activities) handleNewTickSignalError(ctx context.Context, ntsErr error, params exchanges.ListenSymbolParams) {
 	// Context was cancelled, this will stop listener
-	if errors.Is(err, context.Canceled) {
+	if errors.Is(ntsErr, context.Canceled) {
 		return
 	}
 

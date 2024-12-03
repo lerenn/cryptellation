@@ -51,5 +51,5 @@ func (suite *BinanceSuite) TestExchangeNames() {
 	r, err := suite.service.ListExchangesActivity(context.TODO(), exchanges.ListExchangesActivityParams{})
 	suite.NoError(err)
 
-	suite.Require().Contains(r.List, "Binance")
+	suite.Require().Contains(r.List, "binance")
 }
