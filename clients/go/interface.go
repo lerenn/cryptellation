@@ -13,11 +13,20 @@ type Client interface {
 	Close(ctx context.Context)
 
 	// Candlesticks
-	ListCandlesticks(ctx context.Context, params api.ListCandlesticksWorkflowParams) (res api.ListCandlesticksWorkflowResults, err error)
+	ListCandlesticks(
+		ctx context.Context,
+		params api.ListCandlesticksWorkflowParams,
+	) (res api.ListCandlesticksWorkflowResults, err error)
 
 	// Exchanges
-	GetExchange(ctx context.Context, params api.GetExchangeWorkflowParams) (res api.GetExchangeWorkflowResults, err error)
-	ListExchanges(ctx context.Context, params api.ListExchangesWorkflowParams) (res api.ListExchangesWorkflowResults, err error)
+	GetExchange(
+		ctx context.Context,
+		params api.GetExchangeWorkflowParams,
+	) (res api.GetExchangeWorkflowResults, err error)
+	ListExchanges(
+		ctx context.Context,
+		params api.ListExchangesWorkflowParams,
+	) (res api.ListExchangesWorkflowResults, err error)
 
 	// Service
 	Info(ctx context.Context) (api.ServiceInfoResults, error)

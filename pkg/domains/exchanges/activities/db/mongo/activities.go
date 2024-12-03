@@ -46,10 +46,22 @@ func New(ctx context.Context, c config.Mongo) (*Activities, error) {
 
 // Register registers the activities.
 func (a *Activities) Register(w worker.Worker) {
-	w.RegisterActivityWithOptions(a.CreateExchangesActivity, activity.RegisterOptions{Name: db.CreateExchangesActivityName})
-	w.RegisterActivityWithOptions(a.ReadExchangesActivity, activity.RegisterOptions{Name: db.ReadExchangesActivityName})
-	w.RegisterActivityWithOptions(a.UpdateExchangesActivity, activity.RegisterOptions{Name: db.UpdateExchangesActivityName})
-	w.RegisterActivityWithOptions(a.DeleteExchangesActivity, activity.RegisterOptions{Name: db.DeleteExchangesActivityName})
+	w.RegisterActivityWithOptions(
+		a.CreateExchangesActivity,
+		activity.RegisterOptions{Name: db.CreateExchangesActivityName},
+	)
+	w.RegisterActivityWithOptions(
+		a.ReadExchangesActivity,
+		activity.RegisterOptions{Name: db.ReadExchangesActivityName},
+	)
+	w.RegisterActivityWithOptions(
+		a.UpdateExchangesActivity,
+		activity.RegisterOptions{Name: db.UpdateExchangesActivityName},
+	)
+	w.RegisterActivityWithOptions(
+		a.DeleteExchangesActivity,
+		activity.RegisterOptions{Name: db.DeleteExchangesActivityName},
+	)
 }
 
 // CreateIndexes creates the indexes.

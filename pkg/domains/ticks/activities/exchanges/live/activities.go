@@ -6,18 +6,19 @@ import (
 
 	binancePkg "github.com/lerenn/cryptellation/v1/pkg/activities"
 	"github.com/lerenn/cryptellation/v1/pkg/config"
+	"github.com/lerenn/cryptellation/v1/pkg/domains/ticks/activities/exchanges"
+	"github.com/lerenn/cryptellation/v1/pkg/domains/ticks/activities/exchanges/live/binance"
 	"go.temporal.io/sdk/activity"
 	temporalclient "go.temporal.io/sdk/client"
 	"go.temporal.io/sdk/worker"
-
-	"github.com/lerenn/cryptellation/v1/pkg/domains/ticks/activities/exchanges"
-	"github.com/lerenn/cryptellation/v1/pkg/domains/ticks/activities/exchanges/live/binance"
 )
 
+// Activities is the struct that will handle the activities.
 type Activities struct {
 	binance *binance.Activities
 }
 
+// New will create a new exchanges activities.
 func New(temporal temporalclient.Client) (exchanges.Exchanges, error) {
 	// Load temporal configuration
 	t := config.LoadTemporal(nil)
@@ -43,10 +44,14 @@ func (a *Activities) Register(w worker.Worker) {
 		activity.RegisterOptions{Name: exchanges.ListenSymbolActivityName})
 }
 
-func (e Activities) ListenSymbolActivity(ctx context.Context, params exchanges.ListenSymbolParams) (exchanges.ListenSymbolResults, error) {
+// ListenSymbolActivity will listen to the symbol activity.
+func (a Activities) ListenSymbolActivity(
+	ctx context.Context,
+	params exchanges.ListenSymbolParams,
+) (exchanges.ListenSymbolResults, error) {
 	switch params.Exchange {
 	case binancePkg.BinanceInfos.Name:
-		return e.binance.ListenSymbol(ctx, params)
+		return a.binance.ListenSymbolActivity(ctx, params)
 	default:
 		return exchanges.ListenSymbolResults{}, fmt.Errorf("%w: %q", exchanges.ErrInexistantExchange, params.Exchange)
 	}

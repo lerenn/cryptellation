@@ -21,7 +21,7 @@ func (suite *EndToEndSuite) TestListenToTicks() {
 	// Create the worker
 	tq := fmt.Sprintf("E2E-Run-%s", uuid.New().String())
 	w := worker.New(suite.client.Temporal(), tq, worker.Options{})
-	w.RegisterWorkflowWithOptions(func(ctx workflow.Context, params api.ListenToTicksCallbackWorkflowParams) error {
+	w.RegisterWorkflowWithOptions(func(_ workflow.Context, params api.ListenToTicksCallbackWorkflowParams) error {
 		suite.Require().Equal(exchange, params.Tick.Exchange)
 		suite.Require().Equal(pair, params.Tick.Pair)
 		count++
@@ -32,7 +32,9 @@ func (suite *EndToEndSuite) TestListenToTicks() {
 
 	// Start worker
 	irq := worker.InterruptCh()
-	go w.Run(irq)
+	go func() {
+		suite.Require().NoError(w.Run(irq))
+	}()
 
 	// WHEN registering for ticks listening
 

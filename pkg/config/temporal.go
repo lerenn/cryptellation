@@ -36,6 +36,7 @@ func LoadTemporal(defaultValues *Temporal) (c Temporal) {
 	return c
 }
 
+// CreateTemporalClient creates a new temporal client from the configuration.
 func (c Temporal) CreateTemporalClient() (temporalclient.Client, error) {
 	return temporalclient.Dial(temporalclient.Options{
 		HostPort: c.Address,

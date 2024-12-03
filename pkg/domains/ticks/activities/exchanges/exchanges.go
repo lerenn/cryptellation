@@ -9,18 +9,22 @@ import (
 	"go.temporal.io/sdk/worker"
 )
 
+// ListenSymbolActivityName is the name of the activity to listen to a symbol.
 const ListenSymbolActivityName = "ListenSymbolActivity"
 
 type (
+	// ListenSymbolParams is the parameters for the ListenSymbolActivity.
 	ListenSymbolParams struct {
 		ParentWorkflowID string
 		Exchange         string
 		Symbol           string
 	}
 
+	// ListenSymbolResults is the results for the ListenSymbolActivity.
 	ListenSymbolResults struct{}
 )
 
+// Exchanges is the exchanges activities for ticks.
 type Exchanges interface {
 	Register(w worker.Worker)
 

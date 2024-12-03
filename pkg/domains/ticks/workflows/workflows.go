@@ -5,7 +5,6 @@ import (
 	"github.com/lerenn/cryptellation/v1/pkg/domains/ticks"
 	"github.com/lerenn/cryptellation/v1/pkg/domains/ticks/activities/exchanges"
 	"github.com/lerenn/cryptellation/v1/pkg/domains/ticks/internal"
-	temporalclient "go.temporal.io/sdk/client"
 	"go.temporal.io/sdk/worker"
 	"go.temporal.io/sdk/workflow"
 )
@@ -26,7 +25,7 @@ func New(exchanges exchanges.Exchanges) ticks.Ticks {
 	}
 }
 
-func (wf *workflows) Register(w worker.Worker, temporalClient temporalclient.Client) {
+func (wf *workflows) Register(w worker.Worker) {
 	// Register internal workflows
 	w.RegisterWorkflowWithOptions(wf.TicksSentryWorkflow, workflow.RegisterOptions{
 		Name: internal.TicksSentryWorkflowName,

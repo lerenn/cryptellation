@@ -15,16 +15,18 @@ import (
 	"github.com/lerenn/cryptellation/v1/pkg/models/pair"
 	"github.com/lerenn/cryptellation/v1/pkg/models/tick"
 	"github.com/lerenn/cryptellation/v1/pkg/telemetry"
+	"github.com/lerenn/cryptellation/v1/pkg/temporal"
 	"go.temporal.io/api/enums/v1"
-	"go.temporal.io/sdk/activity"
 	temporalclient "go.temporal.io/sdk/client"
 )
 
+// Activities is the struct that will handle the activities.
 type Activities struct {
 	temporal temporalclient.Client
 	*activities.Binance
 }
 
+// New will create a new binance activities.
 func New(temporal temporalclient.Client) (*Activities, error) {
 	s, err := activities.NewBinance(config.LoadBinanceTest())
 	return &Activities{
@@ -33,23 +35,18 @@ func New(temporal temporalclient.Client) (*Activities, error) {
 	}, err
 }
 
-func (s *Activities) ListenSymbol(ctx context.Context, params exchanges.ListenSymbolParams) (exchanges.ListenSymbolResults, error) {
+// ListenSymbolActivity will listen to the symbol activity.
+func (s *Activities) ListenSymbolActivity(
+	ctx context.Context,
+	params exchanges.ListenSymbolParams,
+) (exchanges.ListenSymbolResults, error) {
 	binanceSymbol, err := toBinanceSymbol(params.Symbol)
 	if err != nil {
 		return exchanges.ListenSymbolResults{}, err
 	}
 
 	// Start heartbeat on activity
-	go func(ctx context.Context) {
-		for {
-			select {
-			case <-ctx.Done():
-				return
-			case <-time.After(300 * time.Millisecond):
-				activity.RecordHeartbeat(ctx, nil)
-			}
-		}
-	}(ctx)
+	temporal.AsyncActivityHeartbeat(ctx, 300*time.Millisecond)
 
 	// Listen to binance book ticker
 	var lastBid, lastAsk string
@@ -70,24 +67,8 @@ func (s *Activities) ListenSymbol(ctx context.Context, params exchanges.ListenSy
 
 		// Send it to main workflow through Signal
 		err = s.temporal.SignalWorkflow(ctx, params.ParentWorkflowID, "", internal.NewTickReceivedSignalName, t)
-		switch {
-		case err == nil:
-			// There is no error
-		case errors.Is(err, context.Canceled):
-			// Context was cancelled, stop listener
-		default:
-			// Check if parent workflow is still running
-			desc, err := s.temporal.DescribeWorkflowExecution(ctx, params.ParentWorkflowID, "")
-			if err != nil {
-				telemetry.L(ctx).Errorf("Failed to describe parent workflow: %v", err)
-				return
-			} else if desc.WorkflowExecutionInfo.Status == enums.WORKFLOW_EXECUTION_STATUS_COMPLETED {
-				// Workflow is already completed
-				return
-			}
-
-			// That shouldn't happen, log error
-			telemetry.L(ctx).Errorf("Failed to signal binance tick: %v", err)
+		if err != nil {
+			s.handleNewTickSignalError(ctx, err, params)
 		}
 	}, nil)
 	if err != nil {
@@ -104,6 +85,26 @@ func (s *Activities) ListenSymbol(ctx context.Context, params exchanges.ListenSy
 		cancel <- struct{}{}
 		return exchanges.ListenSymbolResults{}, nil
 	}
+}
+
+func (s *Activities) handleNewTickSignalError(ctx context.Context, err error, params exchanges.ListenSymbolParams) {
+	// Context was cancelled, this will stop listener
+	if errors.Is(err, context.Canceled) {
+		return
+	}
+
+	// Check if parent workflow is still running
+	desc, err := s.temporal.DescribeWorkflowExecution(ctx, params.ParentWorkflowID, "")
+	if err != nil {
+		telemetry.L(ctx).Errorf("Failed to describe parent workflow: %v", err)
+		return
+	} else if desc.WorkflowExecutionInfo.Status == enums.WORKFLOW_EXECUTION_STATUS_COMPLETED {
+		// Workflow is already completed
+		return
+	}
+
+	// That shouldn't happen, log error
+	telemetry.L(ctx).Errorf("Failed to signal binance tick: %v", err)
 }
 
 func toTick(symbol, ask, bid string) (tick.Tick, error) {

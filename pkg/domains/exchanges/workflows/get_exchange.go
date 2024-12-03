@@ -15,7 +15,10 @@ import (
 const DefaultExpirationDuration = time.Hour
 
 // GetExchangeWorkflow will get a specific exchange.
-func (wf *workflows) GetExchangeWorkflow(ctx workflow.Context, params api.GetExchangeWorkflowParams) (api.GetExchangeWorkflowResults, error) {
+func (wf *workflows) GetExchangeWorkflow(
+	ctx workflow.Context,
+	params api.GetExchangeWorkflowParams,
+) (api.GetExchangeWorkflowResults, error) {
 	// Log the start of the workflow
 	workflow.GetLogger(ctx).Info(
 		"Requested exchange started",

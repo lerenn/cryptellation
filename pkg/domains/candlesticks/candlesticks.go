@@ -24,5 +24,8 @@ var (
 type Candlesticks interface {
 	Register(w worker.Worker)
 
-	ListCandlesticksWorkflow(ctx workflow.Context, payload api.ListCandlesticksWorkflowParams) (api.ListCandlesticksWorkflowResults, error)
+	ListCandlesticksWorkflow(
+		ctx workflow.Context,
+		payload api.ListCandlesticksWorkflowParams,
+	) (api.ListCandlesticksWorkflowResults, error)
 }

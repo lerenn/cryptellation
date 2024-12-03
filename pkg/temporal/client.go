@@ -7,6 +7,7 @@ import (
 	temporalclient "go.temporal.io/sdk/client"
 )
 
+// Client is the client interface from temporal library.
 type Client interface {
 	temporalclient.Client
 }

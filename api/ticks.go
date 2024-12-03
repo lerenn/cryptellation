@@ -14,6 +14,8 @@ const (
 )
 
 type (
+	// ListenToTicksCallbackWorkflow is the parameters of the callback workflow
+	// for RegisterForTicksListeningWorkflow.
 	ListenToTicksCallbackWorkflow struct {
 		Name             string
 		TaskQueueName    string

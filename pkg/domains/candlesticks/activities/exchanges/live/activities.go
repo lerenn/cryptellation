@@ -31,7 +31,10 @@ func New() (*Activities, error) {
 
 // Register will register the activities.
 func (a *Activities) Register(w worker.Worker) {
-	w.RegisterActivityWithOptions(a.GetCandlesticksActivity, activity.RegisterOptions{Name: exchanges.GetCandlesticksActivityName})
+	w.RegisterActivityWithOptions(
+		a.GetCandlesticksActivity,
+		activity.RegisterOptions{Name: exchanges.GetCandlesticksActivityName},
+	)
 }
 
 // GetCandlesticksActivity will get the candlesticks.
@@ -44,6 +47,7 @@ func (a *Activities) GetCandlesticksActivity(
 		res, err := a.binance.GetCandlesticksActivity(ctx, params)
 		return res, err
 	default:
-		return exchanges.GetCandlesticksActivityResults{}, fmt.Errorf("%w: %q", exchanges.ErrInexistantExchange, params.Exchange)
+		err := fmt.Errorf("%w: %q", exchanges.ErrInexistantExchange, params.Exchange)
+		return exchanges.GetCandlesticksActivityResults{}, err
 	}
 }

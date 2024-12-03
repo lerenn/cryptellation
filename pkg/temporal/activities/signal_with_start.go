@@ -29,6 +29,7 @@ func ExecuteSignalWithStart(
 }
 
 type (
+	// SignalWithStartActivityParams is the params for the SignalWithStartActivity activity.
 	SignalWithStartActivityParams struct {
 		SignalName     string
 		SignalParams   any
@@ -38,9 +39,12 @@ type (
 		TaskQueue      string
 	}
 
+	// SignalWithStartActivityResults is the results from the SignalWithStartActivity activity.
 	SignalWithStartActivityResults struct{}
 )
 
+// SignalWithStartActivity is an activity that will signal a workflow and start
+// if before if it does not exist.
 func (a *Activities) SignalWithStartActivity(
 	ctx context.Context,
 	params SignalWithStartActivityParams,

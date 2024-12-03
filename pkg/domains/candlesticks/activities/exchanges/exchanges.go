@@ -38,5 +38,8 @@ type (
 type Exchanges interface {
 	Register(w worker.Worker)
 
-	GetCandlesticksActivity(ctx context.Context, payload GetCandlesticksActivityParams) (GetCandlesticksActivityResults, error)
+	GetCandlesticksActivity(
+		ctx context.Context,
+		payload GetCandlesticksActivityParams,
+	) (GetCandlesticksActivityResults, error)
 }

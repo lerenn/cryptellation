@@ -17,7 +17,7 @@ func registerTicksWorkflowsAndActivities(w worker.Worker, temporalClient client.
 
 	// Create domain core
 	domain := workflows.New(exchanges)
-	domain.Register(w, temporalClient)
+	domain.Register(w)
 
 	return nil
 }

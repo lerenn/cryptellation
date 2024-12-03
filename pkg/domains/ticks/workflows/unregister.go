@@ -5,9 +5,10 @@ import (
 	"go.temporal.io/sdk/workflow"
 )
 
+// UnregisterFromTicksListeningWorkflow will unregister a workflow from listening to ticks.
 func (wf *workflows) UnregisterFromTicksListeningWorkflow(
-	ctx workflow.Context,
-	params api.UnregisterFromTicksListeningWorkflowParams,
+	_ workflow.Context,
+	_ api.UnregisterFromTicksListeningWorkflowParams,
 ) (api.UnregisterFromTicksListeningWorkflowResults, error) {
 	// TODO
 	return api.UnregisterFromTicksListeningWorkflowResults{}, nil

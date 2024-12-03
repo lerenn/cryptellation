@@ -35,7 +35,11 @@ var ticksListenCmd = &cobra.Command{
 
 		// Start worker
 		irq := worker.InterruptCh()
-		go w.Run(irq)
+		go func() {
+			if err := w.Run(irq); err != nil {
+				panic(err)
+			}
+		}()
 
 		// Listen to ticks
 		_, err := cryptellationClient.ListenToTicks(cmd.Context(),
@@ -61,7 +65,7 @@ var ticksListenCmd = &cobra.Command{
 	},
 }
 
-func ticksListenCallbackWorkflow(ctx workflow.Context, params api.ListenToTicksCallbackWorkflowParams) error {
+func ticksListenCallbackWorkflow(_ workflow.Context, params api.ListenToTicksCallbackWorkflowParams) error {
 	fmt.Println(params.Tick.String())
 	return nil
 }

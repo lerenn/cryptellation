@@ -9,6 +9,7 @@ type Activities struct {
 	temporal temporalclient.Client
 }
 
+// NewActivities will create new common activities.
 func NewActivities(temporal temporalclient.Client) *Activities {
 	return &Activities{
 		temporal: temporal,

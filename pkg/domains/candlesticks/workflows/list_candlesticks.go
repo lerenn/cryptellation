@@ -137,7 +137,7 @@ func getDownloadStartEndTimes(
 	return p.RoundInterval(&start, &end)
 }
 
-func (c workflows) download(ctx workflow.Context, cl *candlestick.List, start, end time.Time, limit uint) error {
+func (wf workflows) download(ctx workflow.Context, cl *candlestick.List, start, end time.Time, limit uint) error {
 	logger := workflow.GetLogger(ctx)
 
 	// Set params for download
@@ -152,7 +152,7 @@ func (c workflows) download(ctx workflow.Context, cl *candlestick.List, start, e
 	for {
 		// Download candlesticks
 		var exchangeRes exchanges.GetCandlesticksActivityResults
-		err := workflow.ExecuteActivity(ctx, c.exchanges.GetCandlesticksActivity, params).Get(ctx, &exchangeRes)
+		err := workflow.ExecuteActivity(ctx, wf.exchanges.GetCandlesticksActivity, params).Get(ctx, &exchangeRes)
 		if err != nil {
 			return err
 		}
@@ -232,7 +232,7 @@ func validateCandlesticksParams(
 // TODO: Refactor this function
 //
 //nolint:funlen,cyclop
-func (c workflows) upsert(ctx workflow.Context, cl *candlestick.List) error {
+func (wf workflows) upsert(ctx workflow.Context, cl *candlestick.List) error {
 	logger := workflow.GetLogger(ctx)
 
 	// Get the first and last candlestick
@@ -245,7 +245,7 @@ func (c workflows) upsert(ctx workflow.Context, cl *candlestick.List) error {
 
 	// Read candlesticks from database
 	var dbRes db.ReadCandlesticksActivityResults
-	err := workflow.ExecuteActivity(ctx, c.db.ReadCandlesticksActivity, db.ReadCandlesticksActivityParams{
+	err := workflow.ExecuteActivity(ctx, wf.db.ReadCandlesticksActivity, db.ReadCandlesticksActivityParams{
 		Exchange: cl.Metadata.Exchange,
 		Pair:     cl.Metadata.Pair,
 		Period:   cl.Metadata.Period,
@@ -280,7 +280,7 @@ func (c workflows) upsert(ctx workflow.Context, cl *candlestick.List) error {
 	// Insert candlesticks
 	var insertErr error
 	if csToInsert.Data.Len() > 0 {
-		err := workflow.ExecuteActivity(ctx, c.db.CreateCandlesticksActivity, db.CreateCandlesticksActivityParams{
+		err := workflow.ExecuteActivity(ctx, wf.db.CreateCandlesticksActivity, db.CreateCandlesticksActivityParams{
 			List: csToInsert,
 		}).Get(ctx, nil)
 		if err != nil {
@@ -291,7 +291,7 @@ func (c workflows) upsert(ctx workflow.Context, cl *candlestick.List) error {
 	// Update candlesticks
 	var updateErr error
 	if csToUpdate.Data.Len() > 0 {
-		err := workflow.ExecuteActivity(ctx, c.db.UpdateCandlesticksActivity, db.UpdateCandlesticksActivityParams{
+		err := workflow.ExecuteActivity(ctx, wf.db.UpdateCandlesticksActivity, db.UpdateCandlesticksActivityParams{
 			List: csToUpdate,
 		}).Get(ctx, nil)
 		if err != nil {
