@@ -39,6 +39,19 @@ func (s *Activities) ListenSymbol(ctx context.Context, params exchanges.ListenSy
 		return exchanges.ListenSymbolResults{}, err
 	}
 
+	// Start heartbeat on activity
+	go func(ctx context.Context) {
+		for {
+			select {
+			case <-ctx.Done():
+				return
+			case <-time.After(300 * time.Millisecond):
+				activity.RecordHeartbeat(ctx, nil)
+			}
+		}
+	}(ctx)
+
+	// Listen to binance book ticker
 	var lastBid, lastAsk string
 	done, cancel, err := client.WsBookTickerServe(binanceSymbol, func(event *client.WsBookTickerEvent) {
 		// Skip if same price as last tick
@@ -76,9 +89,6 @@ func (s *Activities) ListenSymbol(ctx context.Context, params exchanges.ListenSy
 			// That shouldn't happen, log error
 			telemetry.L(ctx).Errorf("Failed to signal binance tick: %v", err)
 		}
-
-		// Send heartbeat from activity
-		activity.RecordHeartbeat(ctx, t)
 	}, nil)
 	if err != nil {
 		return exchanges.ListenSymbolResults{}, err
