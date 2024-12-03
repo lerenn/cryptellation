@@ -27,7 +27,7 @@ var ticksListenCmd = &cobra.Command{
 	Short:   "Listen to ticks",
 	RunE: func(cmd *cobra.Command, _ []string) error {
 		// Create temporary worker
-		tq := fmt.Sprintf("cryptellation-cli-ticks-listen-%s", uuid.New().String())
+		tq := fmt.Sprintf("CryptellationCliTicksListen-%s", uuid.New().String())
 		w := worker.New(cryptellationClient.Temporal(), tq, worker.Options{})
 		w.RegisterWorkflowWithOptions(ticksListenCallbackWorkflow, workflow.RegisterOptions{
 			Name: tq,

@@ -124,7 +124,7 @@ func sendToTickListenerRoutine(
 	opts := workflow.ChildWorkflowOptions{
 		TaskQueue:                callback.TaskQueueName,            // Execute in the client queue
 		ParentClosePolicy:        enums.PARENT_CLOSE_POLICY_ABANDON, // Do not close if the parent workflow closes
-		WorkflowExecutionTimeout: time.Second * 10,                  // Timeout after 10 seconds if the child workflow does not complete
+		WorkflowExecutionTimeout: time.Second * 30,                  // Timeout after 30 seconds if the child workflow does not complete
 	}
 
 	// Check if the timeout is set

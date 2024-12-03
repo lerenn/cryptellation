@@ -2,6 +2,7 @@ package workflows
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/lerenn/cryptellation/v1/api"
 	"github.com/lerenn/cryptellation/v1/pkg/domains/ticks/internal"
@@ -24,6 +25,7 @@ func (wf *workflows) RegisterForTicksListeningWorkflow(
 		SignalParams: internal.RegisterToTicksListeningSignalParams{
 			CallbackWorkflow: params.CallbackWorkflow,
 		},
+		WorkflowID:   fmt.Sprintf("%s-%s", strings.ToTitle(params.Exchange), params.Pair),
 		WorkflowName: internal.TicksSentryWorkflowName,
 		WorkflowParams: internal.TicksSentryWorkflowParams{
 			Exchange: params.Exchange,
