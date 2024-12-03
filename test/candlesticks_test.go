@@ -13,7 +13,7 @@ import (
 func (suite *EndToEndSuite) TestReadCandlesticks() {
 	// WHEN requesting a candlesticks list
 
-	res, err := suite.client.ListCandlesticks(context.Background(), api.ListCandlesticksParams{
+	res, err := suite.client.ListCandlesticks(context.Background(), api.ListCandlesticksWorkflowParams{
 		Exchange: "binance",
 		Pair:     "ETH-USDT",
 		Period:   period.H1,

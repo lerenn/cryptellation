@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/joho/godotenv"
+	temporalclient "go.temporal.io/sdk/client"
 )
 
 const (
@@ -33,6 +34,13 @@ func LoadTemporal(defaultValues *Temporal) (c Temporal) {
 	c.overrideFromEnv()
 
 	return c
+}
+
+// CreateTemporalClient creates a new temporal client from the configuration.
+func (c Temporal) CreateTemporalClient() (temporalclient.Client, error) {
+	return temporalclient.Dial(temporalclient.Options{
+		HostPort: c.Address,
+	})
 }
 
 func (c *Temporal) setDefault() {

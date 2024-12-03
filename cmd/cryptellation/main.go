@@ -46,6 +46,7 @@ func main() {
 	addCandlesticksCommands()
 	addExchangesCommands()
 	rootCmd.AddCommand(infoCmd)
+	addTicksCommands()
 
 	// Execute command
 	if err := rootCmd.Execute(); err != nil {
