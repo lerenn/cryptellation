@@ -1,12 +1,12 @@
 package internal
 
-const ListenToTicksWorkflowName = "ListenToTicksWorkflow"
+const TicksSentryWorkflowName = "TicksSentryWorkflow"
 
 type (
-	ListenToTicksWorkflowParams struct {
+	TicksSentryWorkflowParams struct {
 		Exchange string
 		Symbol   string
 	}
 
-	ListenToTicksWorkflowResults struct{}
+	TicksSentryWorkflowResults struct{}
 )

@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/lerenn/cryptellation/v1/pkg/models/tick"
+	"go.temporal.io/sdk/worker"
 )
 
 const (
@@ -13,29 +14,31 @@ const (
 )
 
 type (
-	RegisterForTicksCallbackWorkflow struct {
+	ListenToTicksCallbackWorkflow struct {
 		Name             string
 		TaskQueueName    string
 		ExecutionTimeout time.Duration
 	}
 
 	// RegisterForTicksListeningWorkflowParams is the parameters of the
-	// RegisterForTicksReception workflow.
+	// RegisterForTicksListening workflow.
 	RegisterForTicksListeningWorkflowParams struct {
 		Exchange         string
 		Pair             string
-		CallbackWorkflow RegisterForTicksCallbackWorkflow
+		CallbackWorkflow ListenToTicksCallbackWorkflow
 	}
 
-	// RegisterForTicksListeningWorkflowCallbackParams is the parameters of the
-	// RegisterForTicksReception callback workflow.
-	RegisterForTicksListeningWorkflowCallbackParams struct {
+	// ListenToTicksCallbackWorkflowParams is the parameters of the
+	// RegisterForTicksListening callback workflow.
+	ListenToTicksCallbackWorkflowParams struct {
 		Tick tick.Tick
 	}
 
 	// RegisterForTicksListeningWorkflowResults is the results of the
-	// RegisterForTicksReception workflow.
-	RegisterForTicksListeningWorkflowResults struct{}
+	// RegisterForTicksListening workflow.
+	RegisterForTicksListeningWorkflowResults struct {
+		Worker worker.Worker
+	}
 )
 
 const (
@@ -46,12 +49,12 @@ const (
 
 type (
 	// UnregisterFromTicksListeningWorkflowParams is the parameters of the
-	// UnregisterFromTicksReception workflow.
+	// UnregisterFromTicksListening workflow.
 	UnregisterFromTicksListeningWorkflowParams struct {
 		CallbackWorkflowName string
 	}
 
 	// UnregisterFromTicksListeningWorkflowResults is the results of the
-	// UnregisterFromTicksReception workflow.
+	// UnregisterFromTicksListening workflow.
 	UnregisterFromTicksListeningWorkflowResults struct{}
 )

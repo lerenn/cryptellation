@@ -2,6 +2,7 @@ package binance
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"strconv"
 	"time"
@@ -14,6 +15,8 @@ import (
 	"github.com/lerenn/cryptellation/v1/pkg/models/pair"
 	"github.com/lerenn/cryptellation/v1/pkg/models/tick"
 	"github.com/lerenn/cryptellation/v1/pkg/telemetry"
+	"go.temporal.io/api/enums/v1"
+	"go.temporal.io/sdk/activity"
 	temporalclient "go.temporal.io/sdk/client"
 )
 
@@ -37,7 +40,7 @@ func (s *Activities) ListenSymbol(ctx context.Context, params exchanges.ListenSy
 	}
 
 	var lastBid, lastAsk string
-	_, _, err = client.WsBookTickerServe(binanceSymbol, func(event *client.WsBookTickerEvent) {
+	done, cancel, err := client.WsBookTickerServe(binanceSymbol, func(event *client.WsBookTickerEvent) {
 		// Skip if same price as last tick
 		if event.BestAskPrice == lastAsk && event.BestBidPrice == lastBid {
 			return
@@ -54,15 +57,43 @@ func (s *Activities) ListenSymbol(ctx context.Context, params exchanges.ListenSy
 
 		// Send it to main workflow through Signal
 		err = s.temporal.SignalWorkflow(ctx, params.ParentWorkflowID, "", internal.NewTickReceivedSignalName, t)
-		if err != nil {
+		switch {
+		case err == nil:
+			// There is no error
+		case errors.Is(err, context.Canceled):
+			// Context was cancelled, stop listener
+		default:
+			// Check if parent workflow is still running
+			desc, err := s.temporal.DescribeWorkflowExecution(ctx, params.ParentWorkflowID, "")
+			if err != nil {
+				telemetry.L(ctx).Errorf("Failed to describe parent workflow: %v", err)
+				return
+			} else if desc.WorkflowExecutionInfo.Status == enums.WORKFLOW_EXECUTION_STATUS_COMPLETED {
+				// Workflow is already completed
+				return
+			}
+
+			// That shouldn't happen, log error
 			telemetry.L(ctx).Errorf("Failed to signal binance tick: %v", err)
-			return
 		}
+
+		// Send heartbeat from activity
+		activity.RecordHeartbeat(ctx, t)
 	}, nil)
+	if err != nil {
+		return exchanges.ListenSymbolResults{}, err
+	}
 
-	// TODO: manage when error or done
-
-	return exchanges.ListenSymbolResults{}, err
+	// Wait for context to be done or cancelled
+	select {
+	case <-done:
+		// If done, return error as listener stopped
+		return exchanges.ListenSymbolResults{}, fmt.Errorf("binance listener stopped")
+	case <-ctx.Done():
+		// If context is done, cancel listener and return
+		cancel <- struct{}{}
+		return exchanges.ListenSymbolResults{}, nil
+	}
 }
 
 func toTick(symbol, ask, bid string) (tick.Tick, error) {

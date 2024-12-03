@@ -4,10 +4,14 @@ import (
 	"context"
 
 	"github.com/lerenn/cryptellation/v1/api"
+	temporalclient "go.temporal.io/sdk/client"
 )
 
 // Client is the client interface.
 type Client interface {
+	Temporal() temporalclient.Client
+	Close(ctx context.Context)
+
 	// Candlesticks
 	ListCandlesticks(ctx context.Context, params api.ListCandlesticksWorkflowParams) (res api.ListCandlesticksWorkflowResults, err error)
 
@@ -17,8 +21,10 @@ type Client interface {
 
 	// Service
 	Info(ctx context.Context) (api.ServiceInfoResults, error)
-	Close(ctx context.Context)
 
 	// Ticks
-	ListenToTicks(ctx context.Context, params api.RegisterForTicksListeningWorkflowParams) (res api.RegisterForTicksListeningWorkflowResults, err error)
+	ListenToTicks(
+		ctx context.Context,
+		registerParams api.RegisterForTicksListeningWorkflowParams,
+	) (res api.RegisterForTicksListeningWorkflowResults, err error)
 }

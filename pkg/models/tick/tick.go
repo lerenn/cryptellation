@@ -23,8 +23,8 @@ func (t *Tick) UnmarshalBinary(data []byte) error {
 
 func (t Tick) String() string {
 	return fmt.Sprintf(
-		"[%s|%s|%s] %f",
-		t.Time.Format(time.RFC3339),
+		"[%-20s|%s|%s] %f",
+		t.Time.Format(time.RFC3339Nano),
 		t.Exchange,
 		t.Pair,
 		t.Price,

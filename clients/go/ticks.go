@@ -7,16 +7,18 @@ import (
 	temporalclient "go.temporal.io/sdk/client"
 )
 
+// ListenToTicks listens to ticks.
 func (c client) ListenToTicks(
 	ctx context.Context,
-	params api.RegisterForTicksListeningWorkflowParams,
+	registerParams api.RegisterForTicksListeningWorkflowParams,
 ) (res api.RegisterForTicksListeningWorkflowResults, err error) {
-	workflowOptions := temporalclient.StartWorkflowOptions{
-		TaskQueue: api.WorkerTaskQueueName,
-	}
-
-	// Execute workflow
-	exec, err := c.temporal.ExecuteWorkflow(ctx, workflowOptions, api.RegisterForTicksListeningWorkflowName, params)
+	// Execute register workflow
+	exec, err := c.temporal.ExecuteWorkflow(ctx,
+		temporalclient.StartWorkflowOptions{
+			TaskQueue: api.WorkerTaskQueueName,
+		},
+		api.RegisterForTicksListeningWorkflowName,
+		registerParams)
 	if err != nil {
 		return api.RegisterForTicksListeningWorkflowResults{}, err
 	}

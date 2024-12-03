@@ -5,11 +5,19 @@ import (
 	"github.com/lerenn/cryptellation/v1/pkg/models/tick"
 )
 
-const RegisterToTicksReceptionSignalName = "RegisterToTicksReceptionSignal"
+const RegisterToTicksListeningSignalName = "RegisterToTicksListeningSignal"
 
 type (
-	RegisterToTicksReceptionSignalParams struct {
-		CallbackWorkflow api.RegisterForTicksCallbackWorkflow
+	RegisterToTicksListeningSignalParams struct {
+		CallbackWorkflow api.ListenToTicksCallbackWorkflow
+	}
+)
+
+const UnregisterFromTicksListeningSignalName = "UnregisterFromTicksListeningSignal"
+
+type (
+	UnregisterFromTicksListeningSignalParams struct {
+		CallbackWorkflowName string
 	}
 )
 

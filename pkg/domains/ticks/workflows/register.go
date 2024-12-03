@@ -20,12 +20,12 @@ func (wf *workflows) RegisterForTicksListeningWorkflow(
 
 	// Send signal-with-start to listen for ticks
 	if err := activities.ExecuteSignalWithStart(ctx, activities.SignalWithStartActivityParams{
-		SignalName: internal.RegisterToTicksReceptionSignalName,
-		SignalParams: internal.RegisterToTicksReceptionSignalParams{
+		SignalName: internal.RegisterToTicksListeningSignalName,
+		SignalParams: internal.RegisterToTicksListeningSignalParams{
 			CallbackWorkflow: params.CallbackWorkflow,
 		},
-		WorkflowName: internal.ListenToTicksWorkflowName,
-		WorkflowParams: internal.ListenToTicksWorkflowParams{
+		WorkflowName: internal.TicksSentryWorkflowName,
+		WorkflowParams: internal.TicksSentryWorkflowParams{
 			Exchange: params.Exchange,
 			Symbol:   params.Pair,
 		},

@@ -28,8 +28,8 @@ func New(exchanges exchanges.Exchanges) ticks.Ticks {
 
 func (wf *workflows) Register(w worker.Worker, temporalClient temporalclient.Client) {
 	// Register internal workflows
-	w.RegisterWorkflowWithOptions(wf.ListenToTicksWorkflow, workflow.RegisterOptions{
-		Name: internal.ListenToTicksWorkflowName,
+	w.RegisterWorkflowWithOptions(wf.TicksSentryWorkflow, workflow.RegisterOptions{
+		Name: internal.TicksSentryWorkflowName,
 	})
 
 	// Register public workflows
