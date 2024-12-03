@@ -45,8 +45,9 @@ func (wf *workflows) TicksSentryWorkflow(
 		handleListenTicksSignals(ctx, listeners, registerSignalChannel, unregisterSignalChannel)
 
 		// Send event to all listeners
-		for _, ch := range listeners {
-			_ = ch.SendAsync(t)
+		keys := workflow.DeterministicKeys(listeners)
+		for _, k := range keys {
+			_ = listeners[k].SendAsync(t)
 		}
 	}
 
@@ -70,7 +71,8 @@ func (wf *workflows) sentryStartListeningActivity(
 	params internal.TicksSentryWorkflowParams,
 ) func() {
 	activityOptions := workflow.ActivityOptions{
-		StartToCloseTimeout: time.Hour * 24,
+		StartToCloseTimeout: 365 * 24 * time.Hour,
+		HeartbeatTimeout:    time.Second,
 	}
 	aCtx := workflow.WithActivityOptions(ctx, activityOptions)
 	aCtx, cancelActivity := workflow.WithCancel(aCtx)
