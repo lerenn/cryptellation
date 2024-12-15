@@ -41,6 +41,7 @@ type (
 // Exchanges is the interface for the exchanges activities.
 type Exchanges interface {
 	Register(w worker.Worker)
+	Name() string
 
 	GetExchangeActivity(
 		ctx context.Context,

@@ -2,28 +2,54 @@ package client
 
 import (
 	"context"
+	"fmt"
 
+	"github.com/google/uuid"
 	"github.com/lerenn/cryptellation/v1/api"
-	temporalclient "go.temporal.io/sdk/client"
+	temporalutils "github.com/lerenn/cryptellation/v1/pkg/temporal"
+	"go.temporal.io/sdk/worker"
+	"go.temporal.io/sdk/workflow"
 )
 
-// ListenToTicks listens to ticks.
 func (c client) ListenToTicks(
 	ctx context.Context,
-	registerParams api.RegisterForTicksListeningWorkflowParams,
-) (res api.RegisterForTicksListeningWorkflowResults, err error) {
-	// Execute register workflow
-	exec, err := c.temporal.ExecuteWorkflow(ctx,
-		temporalclient.StartWorkflowOptions{
-			TaskQueue: api.WorkerTaskQueueName,
-		},
-		api.RegisterForTicksListeningWorkflowName,
-		registerParams)
+	exchange, pair string,
+	callback func(ctx workflow.Context, params api.ListenToTicksCallbackWorkflowParams) error,
+) error {
+	// Create variables
+	tq := fmt.Sprintf("CryptellationTicksListen-%s", uuid.New().String())
+	workflowName := tq
+
+	// Create temporary worker
+	w := worker.New(c.Temporal(), tq, worker.Options{})
+	w.RegisterWorkflowWithOptions(callback, workflow.RegisterOptions{
+		Name: workflowName,
+	})
+
+	// Start worker
+	go func() {
+		if err := w.Run(nil); err != nil {
+			panic(err) // TODO: Handle error by returning it if there is an error
+		}
+	}()
+	defer w.Stop()
+
+	// Listen to ticks
+	_, err := c.Raw.ListenToTicks(ctx,
+		api.RegisterForTicksListeningWorkflowParams{
+			Exchange: exchange,
+			Pair:     pair,
+			Callback: temporalutils.CallbackWorkflow{
+				Name:          workflowName,
+				TaskQueueName: tq,
+			},
+		})
 	if err != nil {
-		return api.RegisterForTicksListeningWorkflowResults{}, err
+		return err
 	}
 
-	// Get result and return
-	err = exec.Get(ctx, &res)
-	return res, err
+	// Wait for interrupt
+	<-ctx.Done()
+
+	return nil
 }

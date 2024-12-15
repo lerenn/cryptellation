@@ -1,9 +1,8 @@
 package api
 
 import (
-	"time"
-
 	"github.com/lerenn/cryptellation/v1/pkg/models/tick"
+	"github.com/lerenn/cryptellation/v1/pkg/temporal"
 	"go.temporal.io/sdk/worker"
 )
 
@@ -14,20 +13,12 @@ const (
 )
 
 type (
-	// ListenToTicksCallbackWorkflow is the parameters of the callback workflow
-	// for RegisterForTicksListeningWorkflow.
-	ListenToTicksCallbackWorkflow struct {
-		Name             string
-		TaskQueueName    string
-		ExecutionTimeout time.Duration
-	}
-
 	// RegisterForTicksListeningWorkflowParams is the parameters of the
 	// RegisterForTicksListening workflow.
 	RegisterForTicksListeningWorkflowParams struct {
-		Exchange         string
-		Pair             string
-		CallbackWorkflow ListenToTicksCallbackWorkflow
+		Exchange string
+		Pair     string
+		Callback temporal.CallbackWorkflow
 	}
 
 	// ListenToTicksCallbackWorkflowParams is the parameters of the

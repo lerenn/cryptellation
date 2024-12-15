@@ -1,26 +1,28 @@
-package client
+package raw
 
 import (
 	"context"
 
 	"github.com/lerenn/cryptellation/v1/api"
-	"github.com/lerenn/cryptellation/v1/clients/go/raw"
 	temporalclient "go.temporal.io/sdk/client"
-	"go.temporal.io/sdk/workflow"
 )
 
-// Client is the client interface.
-type Client interface {
-	RawClient() raw.Raw
+// Raw is the interface for the raw client (direct access to params/result
+// from temporal).
+type Raw interface {
 	Temporal() temporalclient.Client
 	Close(ctx context.Context)
 
 	// Backtests
 
-	NewBacktest(
+	CreateBacktest(
 		ctx context.Context,
 		params api.CreateBacktestWorkflowParams,
-	) (Backtest, error)
+	) (api.CreateBacktestWorkflowResults, error)
+	RunBacktest(
+		ctx context.Context,
+		params api.RunBacktestWorkflowParams,
+	) (api.RunBacktestWorkflowResults, error)
 
 	// Candlesticks
 
@@ -48,7 +50,6 @@ type Client interface {
 
 	ListenToTicks(
 		ctx context.Context,
-		exchange, pair string,
-		callback func(ctx workflow.Context, params api.ListenToTicksCallbackWorkflowParams) error,
-	) error
+		registerParams api.RegisterForTicksListeningWorkflowParams,
+	) (res api.RegisterForTicksListeningWorkflowResults, err error)
 }
