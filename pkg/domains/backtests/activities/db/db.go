@@ -7,8 +7,11 @@ import (
 	"context"
 
 	"github.com/google/uuid"
+	"github.com/lerenn/cryptellation/v1/pkg/activities"
 	"github.com/lerenn/cryptellation/v1/pkg/models/backtest"
+	"go.temporal.io/sdk/temporal"
 	"go.temporal.io/sdk/worker"
+	"go.temporal.io/sdk/workflow"
 )
 
 // CreateBacktestActivityName is the name of the activity to create a backtest.
@@ -21,9 +24,7 @@ type (
 	}
 
 	// CreateBacktestActivityResults is the results of the CreateBacktestActivity activity.
-	CreateBacktestActivityResults struct {
-		ID uuid.UUID
-	}
+	CreateBacktestActivityResults struct{}
 )
 
 // ReadBacktestActivityName is the name of the activity to read a backtest.
@@ -104,4 +105,18 @@ type DB interface {
 		ctx context.Context,
 		params DeleteBacktestActivityParams,
 	) (DeleteBacktestActivityResults, error)
+}
+
+func DefaultActivityOptions() workflow.ActivityOptions {
+	return workflow.ActivityOptions{
+		RetryPolicy: &temporal.RetryPolicy{
+			NonRetryableErrorTypes: []string{
+				ErrNilID.Error(),
+				ErrRecordNotFound.Error(),
+				ErrNotImplemented.Error(),
+			},
+		},
+		StartToCloseTimeout:    activities.DBStartToCloseDefaultTimeout,
+		ScheduleToCloseTimeout: activities.DBStartToCloseDefaultTimeout,
+	}
 }

@@ -2,5 +2,8 @@ package activities
 
 import "time"
 
-// DBInteractionDefaultTimeout is the default timeout for DB interactions.
-const DBInteractionDefaultTimeout = time.Second * 10
+// DBStartToCloseDefaultTimeout is the default start-to-close timeout for DB activities.
+const DBStartToCloseDefaultTimeout = time.Second * 10
+
+// DBScheduleToCloseDefaultTimeout is the default schedule-to-close timeout for DB activities.
+const DBScheduleToCloseDefaultTimeout = time.Second * 10

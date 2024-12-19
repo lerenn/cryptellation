@@ -86,7 +86,7 @@ func (a *Activities) CreateBacktestActivity(
 ) (db.CreateBacktestActivityResults, error) {
 	// Check ID is not nil
 	if params.Backtest.ID == uuid.Nil {
-		return db.CreateBacktestActivityResults{}, ErrNilID
+		return db.CreateBacktestActivityResults{}, db.ErrNilID
 	}
 
 	// Create backtest
@@ -104,7 +104,7 @@ func (a *Activities) ReadBacktestActivity(
 
 	// Check ID is not nil
 	if params.ID == uuid.Nil {
-		return db.ReadBacktestActivityResults{}, ErrNilID
+		return db.ReadBacktestActivityResults{}, db.ErrNilID
 	}
 
 	// Get object from database
@@ -166,7 +166,7 @@ func (a *Activities) UpdateBacktestActivity(
 ) (db.UpdateBacktestActivityResults, error) {
 	// Check ID is not nil
 	if params.Backtest.ID == uuid.Nil {
-		return db.UpdateBacktestActivityResults{}, ErrNilID
+		return db.UpdateBacktestActivityResults{}, db.ErrNilID
 	}
 
 	// Update backtest
@@ -184,7 +184,7 @@ func (a *Activities) DeleteBacktestActivity(
 ) (db.DeleteBacktestActivityResults, error) {
 	// Check ID is not nil
 	if params.Backtest.ID == uuid.Nil {
-		return db.DeleteBacktestActivityResults{}, ErrNilID
+		return db.DeleteBacktestActivityResults{}, db.ErrNilID
 	}
 
 	// Delete backtest

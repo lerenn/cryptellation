@@ -7,7 +7,10 @@ import (
 	"context"
 	"errors"
 
+	"github.com/lerenn/cryptellation/v1/pkg/activities"
+	"go.temporal.io/sdk/temporal"
 	"go.temporal.io/sdk/worker"
+	"go.temporal.io/sdk/workflow"
 )
 
 var (
@@ -36,4 +39,14 @@ type Exchanges interface {
 	Register(w worker.Worker)
 
 	ListenSymbolActivity(ctx context.Context, params ListenSymbolParams) (ListenSymbolResults, error)
+}
+
+func DefaultActivityOptions() workflow.ActivityOptions {
+	return workflow.ActivityOptions{
+		RetryPolicy: &temporal.RetryPolicy{
+			NonRetryableErrorTypes: []string{},
+		},
+		StartToCloseTimeout:    activities.ExchangesStartToCloseDefaultTimeout,
+		ScheduleToCloseTimeout: activities.ExchangesScheduleToCloseDefaultTimeout,
+	}
 }

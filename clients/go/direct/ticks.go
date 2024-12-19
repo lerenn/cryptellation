@@ -1,4 +1,4 @@
-package client
+package direct
 
 import (
 	"context"
@@ -17,7 +17,7 @@ func (c client) ListenToTicks(
 	callback func(ctx workflow.Context, params api.ListenToTicksCallbackWorkflowParams) error,
 ) error {
 	// Create variables
-	tq := fmt.Sprintf("CryptellationTicksListen-%s", uuid.New().String())
+	tq := fmt.Sprintf("ListenTicks-%s", uuid.New().String())
 	workflowName := tq
 
 	// Create temporary worker
@@ -35,7 +35,7 @@ func (c client) ListenToTicks(
 	defer w.Stop()
 
 	// Listen to ticks
-	_, err := c.Raw.ListenToTicks(ctx,
+	_, err := c.Client.ListenToTicks(ctx,
 		api.RegisterForTicksListeningWorkflowParams{
 			Exchange: exchange,
 			Pair:     pair,

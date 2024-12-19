@@ -2,7 +2,6 @@ package exchanges
 
 import (
 	"github.com/lerenn/cryptellation/v1/api"
-	"github.com/lerenn/cryptellation/v1/pkg/activities"
 	exchangesactivity "github.com/lerenn/cryptellation/v1/pkg/domains/exchanges/activities/exchanges"
 	"go.temporal.io/sdk/workflow"
 )
@@ -14,9 +13,9 @@ func (wf *workflows) ListExchangesWorkflow(
 ) (api.ListExchangesWorkflowResults, error) {
 	// Get the list of exchanges from the services
 	var r exchangesactivity.ListExchangesActivityResults
-	err := workflow.ExecuteActivity(workflow.WithActivityOptions(ctx, workflow.ActivityOptions{
-		StartToCloseTimeout: activities.ExchangesInteractionDefaultTimeout,
-	}), wf.exchanges.ListExchangesActivity,
+	err := workflow.ExecuteActivity(
+		workflow.WithActivityOptions(ctx, exchangesactivity.DefaultActivityOptions()),
+		wf.exchanges.ListExchangesActivity,
 		exchangesactivity.ListExchangesActivityParams{}).Get(ctx, &r)
 	if err != nil {
 		return api.ListExchangesWorkflowResults{}, err

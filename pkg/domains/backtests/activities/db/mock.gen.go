@@ -8,8 +8,7 @@ import (
 	context "context"
 	reflect "reflect"
 
-	uuid "github.com/google/uuid"
-	backtest "github.com/lerenn/cryptellation/v1/pkg/models/backtest"
+	worker "go.temporal.io/sdk/worker"
 	gomock "go.uber.org/mock/gomock"
 )
 
@@ -36,74 +35,89 @@ func (m *MockDB) EXPECT() *MockDBMockRecorder {
 	return m.recorder
 }
 
-// CreateBacktest mocks base method.
-func (m *MockDB) CreateBacktest(ctx context.Context, bt backtest.Backtest) error {
+// CreateBacktestActivity mocks base method.
+func (m *MockDB) CreateBacktestActivity(ctx context.Context, params CreateBacktestActivityParams) (CreateBacktestActivityResults, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CreateBacktest", ctx, bt)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// CreateBacktest indicates an expected call of CreateBacktest.
-func (mr *MockDBMockRecorder) CreateBacktest(ctx, bt interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateBacktest", reflect.TypeOf((*MockDB)(nil).CreateBacktest), ctx, bt)
-}
-
-// DeleteBacktest mocks base method.
-func (m *MockDB) DeleteBacktest(ctx context.Context, bt backtest.Backtest) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "DeleteBacktest", ctx, bt)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// DeleteBacktest indicates an expected call of DeleteBacktest.
-func (mr *MockDBMockRecorder) DeleteBacktest(ctx, bt interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteBacktest", reflect.TypeOf((*MockDB)(nil).DeleteBacktest), ctx, bt)
-}
-
-// ListBacktests mocks base method.
-func (m *MockDB) ListBacktests(ctx context.Context) ([]backtest.Backtest, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ListBacktests", ctx)
-	ret0, _ := ret[0].([]backtest.Backtest)
+	ret := m.ctrl.Call(m, "CreateBacktestActivity", ctx, params)
+	ret0, _ := ret[0].(CreateBacktestActivityResults)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// ListBacktests indicates an expected call of ListBacktests.
-func (mr *MockDBMockRecorder) ListBacktests(ctx interface{}) *gomock.Call {
+// CreateBacktestActivity indicates an expected call of CreateBacktestActivity.
+func (mr *MockDBMockRecorder) CreateBacktestActivity(ctx, params interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListBacktests", reflect.TypeOf((*MockDB)(nil).ListBacktests), ctx)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateBacktestActivity", reflect.TypeOf((*MockDB)(nil).CreateBacktestActivity), ctx, params)
 }
 
-// ReadBacktest mocks base method.
-func (m *MockDB) ReadBacktest(ctx context.Context, id uuid.UUID) (backtest.Backtest, error) {
+// DeleteBacktestActivity mocks base method.
+func (m *MockDB) DeleteBacktestActivity(ctx context.Context, params DeleteBacktestActivityParams) (DeleteBacktestActivityResults, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ReadBacktest", ctx, id)
-	ret0, _ := ret[0].(backtest.Backtest)
+	ret := m.ctrl.Call(m, "DeleteBacktestActivity", ctx, params)
+	ret0, _ := ret[0].(DeleteBacktestActivityResults)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// ReadBacktest indicates an expected call of ReadBacktest.
-func (mr *MockDBMockRecorder) ReadBacktest(ctx, id interface{}) *gomock.Call {
+// DeleteBacktestActivity indicates an expected call of DeleteBacktestActivity.
+func (mr *MockDBMockRecorder) DeleteBacktestActivity(ctx, params interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ReadBacktest", reflect.TypeOf((*MockDB)(nil).ReadBacktest), ctx, id)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteBacktestActivity", reflect.TypeOf((*MockDB)(nil).DeleteBacktestActivity), ctx, params)
 }
 
-// UpdateBacktest mocks base method.
-func (m *MockDB) UpdateBacktest(ctx context.Context, bt backtest.Backtest) error {
+// ListBacktestsActivity mocks base method.
+func (m *MockDB) ListBacktestsActivity(ctx context.Context, params ListBacktestsActivityParams) (ListBacktestsActivityResults, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "UpdateBacktest", ctx, bt)
-	ret0, _ := ret[0].(error)
-	return ret0
+	ret := m.ctrl.Call(m, "ListBacktestsActivity", ctx, params)
+	ret0, _ := ret[0].(ListBacktestsActivityResults)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
-// UpdateBacktest indicates an expected call of UpdateBacktest.
-func (mr *MockDBMockRecorder) UpdateBacktest(ctx, bt interface{}) *gomock.Call {
+// ListBacktestsActivity indicates an expected call of ListBacktestsActivity.
+func (mr *MockDBMockRecorder) ListBacktestsActivity(ctx, params interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateBacktest", reflect.TypeOf((*MockDB)(nil).UpdateBacktest), ctx, bt)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListBacktestsActivity", reflect.TypeOf((*MockDB)(nil).ListBacktestsActivity), ctx, params)
+}
+
+// ReadBacktestActivity mocks base method.
+func (m *MockDB) ReadBacktestActivity(ctx context.Context, params ReadBacktestActivityParams) (ReadBacktestActivityResults, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ReadBacktestActivity", ctx, params)
+	ret0, _ := ret[0].(ReadBacktestActivityResults)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ReadBacktestActivity indicates an expected call of ReadBacktestActivity.
+func (mr *MockDBMockRecorder) ReadBacktestActivity(ctx, params interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ReadBacktestActivity", reflect.TypeOf((*MockDB)(nil).ReadBacktestActivity), ctx, params)
+}
+
+// Register mocks base method.
+func (m *MockDB) Register(w worker.Worker) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "Register", w)
+}
+
+// Register indicates an expected call of Register.
+func (mr *MockDBMockRecorder) Register(w interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Register", reflect.TypeOf((*MockDB)(nil).Register), w)
+}
+
+// UpdateBacktestActivity mocks base method.
+func (m *MockDB) UpdateBacktestActivity(ctx context.Context, params UpdateBacktestActivityParams) (UpdateBacktestActivityResults, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateBacktestActivity", ctx, params)
+	ret0, _ := ret[0].(UpdateBacktestActivityResults)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// UpdateBacktestActivity indicates an expected call of UpdateBacktestActivity.
+func (mr *MockDBMockRecorder) UpdateBacktestActivity(ctx, params interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateBacktestActivity", reflect.TypeOf((*MockDB)(nil).UpdateBacktestActivity), ctx, params)
 }

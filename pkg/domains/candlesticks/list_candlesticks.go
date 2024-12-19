@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"github.com/lerenn/cryptellation/v1/api"
-	"github.com/lerenn/cryptellation/v1/pkg/activities"
 	"github.com/lerenn/cryptellation/v1/pkg/domains/candlesticks/activities/db"
 	"github.com/lerenn/cryptellation/v1/pkg/domains/candlesticks/activities/exchanges"
 	"github.com/lerenn/cryptellation/v1/pkg/models/candlestick"
@@ -49,16 +48,16 @@ func (wf *workflows) ListCandlesticksWorkflow(
 
 	// Read candlesticks from database
 	var dbRes db.ReadCandlesticksActivityResults
-	err = workflow.ExecuteActivity(workflow.WithActivityOptions(ctx, workflow.ActivityOptions{
-		StartToCloseTimeout: activities.DBInteractionDefaultTimeout,
-	}), wf.db.ReadCandlesticksActivity, db.ReadCandlesticksActivityParams{
-		Exchange: params.Exchange,
-		Pair:     params.Pair,
-		Period:   params.Period,
-		Start:    *params.Start,
-		End:      *params.End,
-		Limit:    params.Limit,
-	}).Get(ctx, &dbRes)
+	err = workflow.ExecuteActivity(
+		workflow.WithActivityOptions(ctx, db.DefaultActivityOptions()),
+		wf.db.ReadCandlesticksActivity, db.ReadCandlesticksActivityParams{
+			Exchange: params.Exchange,
+			Pair:     params.Pair,
+			Period:   params.Period,
+			Start:    *params.Start,
+			End:      *params.End,
+			Limit:    params.Limit,
+		}).Get(ctx, &dbRes)
 	if err != nil {
 		return api.ListCandlesticksWorkflowResults{}, err
 	}
@@ -148,9 +147,10 @@ func (wf workflows) download(ctx workflow.Context, cl *candlestick.List, start, 
 	for {
 		// Download candlesticks
 		var exchangeRes exchanges.GetCandlesticksActivityResults
-		err := workflow.ExecuteActivity(workflow.WithActivityOptions(ctx, workflow.ActivityOptions{
-			StartToCloseTimeout: activities.ExchangesInteractionDefaultTimeout,
-		}), wf.exchanges.GetCandlesticksActivity, params).Get(ctx, &exchangeRes)
+		err := workflow.ExecuteActivity(
+			workflow.WithActivityOptions(ctx, exchanges.DefaultActivityOptions()),
+			wf.exchanges.GetCandlesticksActivity, params,
+		).Get(ctx, &exchangeRes)
 		if err != nil {
 			return err
 		}
@@ -243,13 +243,15 @@ func (wf workflows) upsert(ctx workflow.Context, cl *candlestick.List) error {
 
 	// Read candlesticks from database
 	var dbRes db.ReadCandlesticksActivityResults
-	err := workflow.ExecuteActivity(ctx, wf.db.ReadCandlesticksActivity, db.ReadCandlesticksActivityParams{
-		Exchange: cl.Metadata.Exchange,
-		Pair:     cl.Metadata.Pair,
-		Period:   cl.Metadata.Period,
-		Start:    tStart,
-		End:      tEnd,
-	}).Get(ctx, &dbRes)
+	err := workflow.ExecuteActivity(
+		workflow.WithActivityOptions(ctx, db.DefaultActivityOptions()),
+		wf.db.ReadCandlesticksActivity, db.ReadCandlesticksActivityParams{
+			Exchange: cl.Metadata.Exchange,
+			Pair:     cl.Metadata.Pair,
+			Period:   cl.Metadata.Period,
+			Start:    tStart,
+			End:      tEnd,
+		}).Get(ctx, &dbRes)
 	if err != nil {
 		return err
 	}
@@ -278,9 +280,11 @@ func (wf workflows) upsert(ctx workflow.Context, cl *candlestick.List) error {
 	// Insert candlesticks
 	var insertErr error
 	if csToInsert.Data.Len() > 0 {
-		err := workflow.ExecuteActivity(ctx, wf.db.CreateCandlesticksActivity, db.CreateCandlesticksActivityParams{
-			List: csToInsert,
-		}).Get(ctx, nil)
+		err := workflow.ExecuteActivity(
+			workflow.WithActivityOptions(ctx, db.DefaultActivityOptions()),
+			wf.db.CreateCandlesticksActivity, db.CreateCandlesticksActivityParams{
+				List: csToInsert,
+			}).Get(ctx, nil)
 		if err != nil {
 			return err
 		}
@@ -289,9 +293,11 @@ func (wf workflows) upsert(ctx workflow.Context, cl *candlestick.List) error {
 	// Update candlesticks
 	var updateErr error
 	if csToUpdate.Data.Len() > 0 {
-		err := workflow.ExecuteActivity(ctx, wf.db.UpdateCandlesticksActivity, db.UpdateCandlesticksActivityParams{
-			List: csToUpdate,
-		}).Get(ctx, nil)
+		err := workflow.ExecuteActivity(
+			workflow.WithActivityOptions(ctx, db.DefaultActivityOptions()),
+			wf.db.UpdateCandlesticksActivity, db.UpdateCandlesticksActivityParams{
+				List: csToUpdate,
+			}).Get(ctx, nil)
 		if err != nil {
 			return err
 		}

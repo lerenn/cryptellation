@@ -5,7 +5,6 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/lerenn/cryptellation/v1/api"
-	"github.com/lerenn/cryptellation/v1/pkg/activities"
 	"github.com/lerenn/cryptellation/v1/pkg/domains/backtests/activities/db"
 	"github.com/lerenn/cryptellation/v1/pkg/models/backtest"
 	"github.com/lerenn/cryptellation/v1/pkg/models/candlestick"
@@ -42,11 +41,11 @@ func (wf *workflows) CreateBacktestOrderWorkflow(
 	}
 
 	// Save backtest
-	if err := workflow.ExecuteActivity(workflow.WithActivityOptions(ctx, workflow.ActivityOptions{
-		StartToCloseTimeout: activities.DBInteractionDefaultTimeout,
-	}), db.UpdateBacktestActivityName, db.UpdateBacktestActivityParams{
-		Backtest: bt,
-	}).Get(ctx, nil); err != nil {
+	if err := workflow.ExecuteActivity(
+		workflow.WithActivityOptions(ctx, db.DefaultActivityOptions()),
+		db.UpdateBacktestActivityName, db.UpdateBacktestActivityParams{
+			Backtest: bt,
+		}).Get(ctx, nil); err != nil {
 		return api.CreateBacktestOrderWorkflowResults{}, fmt.Errorf("could not save backtest to service: %w", err)
 	}
 
@@ -59,11 +58,11 @@ func getBacktestAndCandlestick(
 ) (backtest.Backtest, candlestick.Candlestick, error) {
 	// Get backtest
 	var dbBtRes db.ReadBacktestActivityResults
-	if err := workflow.ExecuteActivity(workflow.WithActivityOptions(ctx, workflow.ActivityOptions{
-		StartToCloseTimeout: activities.DBInteractionDefaultTimeout,
-	}), db.ReadBacktestActivityName, db.ReadBacktestActivityParams{
-		ID: params.BacktestID,
-	}).Get(ctx, &dbBtRes); err != nil {
+	if err := workflow.ExecuteActivity(
+		workflow.WithActivityOptions(ctx, db.DefaultActivityOptions()),
+		db.ReadBacktestActivityName, db.ReadBacktestActivityParams{
+			ID: params.BacktestID,
+		}).Get(ctx, &dbBtRes); err != nil {
 		return backtest.Backtest{}, candlestick.Candlestick{}, fmt.Errorf("could not get backtest from service: %w", err)
 	}
 

@@ -7,9 +7,12 @@ import (
 	"context"
 	"time"
 
+	"github.com/lerenn/cryptellation/v1/pkg/activities"
 	"github.com/lerenn/cryptellation/v1/pkg/models/candlestick"
 	"github.com/lerenn/cryptellation/v1/pkg/models/period"
+	"go.temporal.io/sdk/temporal"
 	"go.temporal.io/sdk/worker"
+	"go.temporal.io/sdk/workflow"
 )
 
 // CreateCandlesticksActivityName is the name of the CreateCandlesticks activity.
@@ -94,4 +97,16 @@ type DB interface {
 		ctx context.Context,
 		params DeleteCandlesticksActivityParams,
 	) (DeleteCandlesticksActivityResults, error)
+}
+
+func DefaultActivityOptions() workflow.ActivityOptions {
+	return workflow.ActivityOptions{
+		RetryPolicy: &temporal.RetryPolicy{
+			NonRetryableErrorTypes: []string{
+				ErrNotFound.Error(),
+			},
+		},
+		StartToCloseTimeout:    activities.DBStartToCloseDefaultTimeout,
+		ScheduleToCloseTimeout: activities.DBStartToCloseDefaultTimeout,
+	}
 }

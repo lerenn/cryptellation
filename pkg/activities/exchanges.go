@@ -2,5 +2,8 @@ package activities
 
 import "time"
 
-// ExchangesInteractionDefaultTimeout is the default timeout for exchanges interactions.
-const ExchangesInteractionDefaultTimeout = time.Second * 10
+// ExchangesStartToCloseDefaultTimeout is the default start-to-close timeout for Exchanges activities.
+const ExchangesStartToCloseDefaultTimeout = time.Second * 10
+
+// ExchangesScheduleToCloseDefaultTimeout is the default schedule-to-close timeout for Exchanges activities.
+const ExchangesScheduleToCloseDefaultTimeout = time.Second * 10

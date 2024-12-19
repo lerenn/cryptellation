@@ -48,3 +48,24 @@ func (c raw) RunBacktest(
 
 	return res, err
 }
+
+func (c raw) SubscribeToBacktestPrice(
+	ctx context.Context,
+	params api.SubscribeToBacktestPriceWorkflowParams,
+) (api.SubscribeToBacktestPriceWorkflowResults, error) {
+	workflowOptions := temporalclient.StartWorkflowOptions{
+		TaskQueue: api.WorkerTaskQueueName,
+	}
+
+	// Execute workflow
+	exec, err := c.temporal.ExecuteWorkflow(ctx, workflowOptions, api.SubscribeToBacktestPriceWorkflowName, params)
+	if err != nil {
+		return api.SubscribeToBacktestPriceWorkflowResults{}, err
+	}
+
+	// Get result and return
+	var res api.SubscribeToBacktestPriceWorkflowResults
+	err = exec.Get(ctx, &res)
+
+	return res, err
+}

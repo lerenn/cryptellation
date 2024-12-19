@@ -4,30 +4,48 @@ import (
 	"context"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/lerenn/cryptellation/v1/api"
+	wfclient "github.com/lerenn/cryptellation/v1/clients/go/workflow"
 	"github.com/lerenn/cryptellation/v1/pkg/models/account"
 	"github.com/lerenn/cryptellation/v1/pkg/models/backtest"
+	"github.com/lerenn/cryptellation/v1/pkg/run"
 	"github.com/lerenn/cryptellation/v1/pkg/utils"
 	"go.temporal.io/sdk/workflow"
 )
 
 type testRobotCallbacks struct {
+	Suite            *EndToEndSuite
+	BacktestID       uuid.UUID
 	OnInitCalls      int
 	OnNewPricesCalls int
 	OnExitCalls      int
 }
 
-func (r *testRobotCallbacks) OnInit(_ workflow.Context, _ api.OnInitCallbackWorkflowParams) error {
+func (r *testRobotCallbacks) OnInit(ctx workflow.Context, params api.OnInitCallbackWorkflowParams) error {
+	checkBacktestRunContext(r.Suite, params.Run, r.BacktestID)
+
+	err := wfclient.SubscribeToPrice(ctx, wfclient.SubscribeToPriceParams{
+		Run:      params.Run,
+		Exchange: "binance",
+		Pair:     "BTC-USDT",
+	})
+	r.Suite.Require().NoError(err)
+
 	r.OnInitCalls++
-	return nil
+	return err
 }
 
-func (r *testRobotCallbacks) OnNewPrices(_ workflow.Context, _ api.OnNewPricesCallbackWorkflowParams) error {
+func (r *testRobotCallbacks) OnNewPrices(_ workflow.Context, params api.OnNewPricesCallbackWorkflowParams) error {
+	checkBacktestRunContext(r.Suite, params.Run, r.BacktestID)
+
 	r.OnNewPricesCalls++
 	return nil
 }
 
-func (r *testRobotCallbacks) OnExit(_ workflow.Context, _ api.OnExitCallbackWorkflowParams) error {
+func (r *testRobotCallbacks) OnExit(_ workflow.Context, params api.OnExitCallbackWorkflowParams) error {
+	checkBacktestRunContext(r.Suite, params.Run, r.BacktestID)
+
 	r.OnExitCalls++
 	return nil
 }
@@ -55,7 +73,10 @@ func (suite *EndToEndSuite) TestBacktestCallbacks() {
 
 	// WHEN running the backtest with a robot
 
-	r := &testRobotCallbacks{}
+	r := &testRobotCallbacks{
+		BacktestID: backtest.ID,
+		Suite:      suite,
+	}
 	err = backtest.Run(context.Background(), r)
 
 	// THEN no error is returned
@@ -66,4 +87,10 @@ func (suite *EndToEndSuite) TestBacktestCallbacks() {
 	suite.Require().Equal(1, r.OnInitCalls)
 	suite.Require().Equal(2, r.OnNewPricesCalls)
 	suite.Require().Equal(1, r.OnExitCalls)
+}
+
+func checkBacktestRunContext(suite *EndToEndSuite, ctx run.Context, backtestID uuid.UUID) {
+	suite.Require().Equal(backtestID, ctx.ID)
+	suite.Require().Equal(run.ModeBacktest, ctx.Mode)
+	suite.Require().NotEmpty(ctx.TaskQueue)
 }

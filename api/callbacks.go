@@ -2,6 +2,7 @@ package api
 
 import (
 	"github.com/lerenn/cryptellation/v1/pkg/models/tick"
+	"github.com/lerenn/cryptellation/v1/pkg/run"
 	temporalutils "github.com/lerenn/cryptellation/v1/pkg/temporal"
 )
 
@@ -14,14 +15,19 @@ type Callbacks struct {
 
 // OnInitCallbackWorkflowParams is the parameters of the
 // OnInitCallbackWorkflow callback workflow.
-type OnInitCallbackWorkflowParams struct{}
+type OnInitCallbackWorkflowParams struct {
+	Run run.Context
+}
 
 // OnNewPricesCallbackWorkflowParams is the parameters of the
 // OnNewPricesCallbackWorkflow callback workflow.
 type OnNewPricesCallbackWorkflowParams struct {
+	Run   run.Context
 	Ticks []tick.Tick
 }
 
 // OnExitCallbackWorkflowParams is the parameters of the
 // OnExitCallbackWorkflow callback workflow.
-type OnExitCallbackWorkflowParams struct{}
+type OnExitCallbackWorkflowParams struct {
+	Run run.Context
+}

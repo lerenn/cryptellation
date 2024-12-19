@@ -107,3 +107,18 @@ type (
 		Orders []order.Order
 	}
 )
+
+// SubscribeToBacktestPriceWorkflowName is the name of the workflow to subscribe to prices.
+const SubscribeToBacktestPriceWorkflowName = "SubscribeToBacktestPriceWorkflow"
+
+type (
+	// SubscribeToBacktestPriceWorkflowParams is the parameters of the SubscribeToBacktestPriceWorkflow workflow.
+	SubscribeToBacktestPriceWorkflowParams struct {
+		BacktestID uuid.UUID
+		Exchange   string
+		Pair       string
+	}
+
+	// SubscribeToBacktestPriceWorkflowResults is the results of the SubscribeToBacktestPriceWorkflow workflow.
+	SubscribeToBacktestPriceWorkflowResults struct{}
+)

@@ -55,6 +55,8 @@ func (wf *workflows) ticksSentryWorkflow(
 	var t tick.Tick
 	for len(listeners) > 0 {
 		// Get next tick
+		logger.Debug("Listening to next tick",
+			"listeners_count", listeners)
 		newTickReceivedSignalChannel.Receive(ctx, &t)
 
 		// Handle new signals
@@ -62,6 +64,9 @@ func (wf *workflows) ticksSentryWorkflow(
 		handleListenTicksSignals(ctx, listeners, registerSignalChannel, unregisterSignalChannel)
 
 		// Send event to all listeners
+		logger.Debug("Sending tick to listeners",
+			"tick", t,
+			"listeners_count", len(listeners))
 		keys := workflow.DeterministicKeys(listeners)
 		for _, k := range keys {
 			_ = listeners[k].SendAsync(t)
@@ -69,6 +74,7 @@ func (wf *workflows) ticksSentryWorkflow(
 	}
 
 	// Cancel listening and cleanup signals
+	logger.Debug("No more listeners, cancel listening")
 	cancelListening()
 
 	// Cleanup remaining signals
@@ -87,18 +93,23 @@ func (wf *workflows) sentryStartListeningActivity(
 	ctx workflow.Context,
 	params ticksSentryWorkflowParams,
 ) func() {
-	activityOptions := workflow.ActivityOptions{
-		StartToCloseTimeout: 365 * 24 * time.Hour,
-		HeartbeatTimeout:    time.Second,
-	}
-	aCtx := workflow.WithActivityOptions(ctx, activityOptions)
-	aCtx, cancelActivity := workflow.WithCancel(aCtx)
+	// Set activity options
+	// TODO: Improve this
+	activityOptions := exchanges.DefaultActivityOptions()
+	activityOptions.ScheduleToCloseTimeout = 365 * 24 * time.Hour
+	activityOptions.StartToCloseTimeout = 365 * 24 * time.Hour
+	activityOptions.HeartbeatTimeout = time.Second
+	ctx = workflow.WithActivityOptions(ctx, activityOptions)
+
+	// Execute activity with cancel
+	ctx, cancelActivity := workflow.WithCancel(ctx)
 	_ = workflow.ExecuteActivity(
-		aCtx, wf.exchanges.ListenSymbolActivity, exchanges.ListenSymbolParams{
+		ctx, wf.exchanges.ListenSymbolActivity, exchanges.ListenSymbolParams{
 			ParentWorkflowID: workflow.GetInfo(ctx).WorkflowExecution.ID,
 			Exchange:         params.Exchange,
 			Symbol:           params.Symbol,
 		})
+
 	return cancelActivity
 }
 
@@ -108,6 +119,8 @@ func handleListenTicksSignals(
 	registerSignalChannel, unregisterSignalChannel workflow.ReceiveChannel,
 ) {
 	logger := workflow.GetLogger(ctx)
+	logger.Debug("Handling signals",
+		"listeners_count", len(listeners))
 
 	// Handle register signals
 	var registerParams signals.RegisterToTicksListeningSignalParams
@@ -154,6 +167,7 @@ func sendToTickListenerRoutine(
 	// Return function that will send signal to new child workflow
 	return func(ctx workflow.Context) {
 		var t tick.Tick
+		logger := workflow.GetLogger(ctx)
 
 		ctx = workflow.WithChildOptions(ctx, opts)
 		for {
@@ -167,12 +181,22 @@ func sendToTickListenerRoutine(
 
 			// Only stop if time-out
 			var timeoutErr *temporal.TimeoutError
-			if err != nil && errors.As(err, &timeoutErr) {
-				break
+			if err != nil {
+				if errors.As(err, &timeoutErr) {
+					logger.Debug("Listener has timed out, exiting",
+						"callback", callback.Name)
+					break
+				}
+
+				logger.Error("Listener has errored, continuing",
+					"error", err,
+					"callback", callback.Name)
 			}
 		}
 
 		// Remove listener as it has been in error or stopped.
+		logger.Debug("Removing listener",
+			"callback", callback.Name)
 		delete(listeners, callback.Name)
 	}
 }

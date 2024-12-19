@@ -5,8 +5,8 @@ import (
 	"time"
 
 	"github.com/lerenn/cryptellation/v1/api"
-	"github.com/lerenn/cryptellation/v1/pkg/activities"
 	"github.com/lerenn/cryptellation/v1/pkg/domains/exchanges/activities/db"
+	"github.com/lerenn/cryptellation/v1/pkg/domains/exchanges/activities/exchanges"
 	exchangesactivity "github.com/lerenn/cryptellation/v1/pkg/domains/exchanges/activities/exchanges"
 	"github.com/lerenn/cryptellation/v1/pkg/models/exchange"
 	"go.temporal.io/sdk/workflow"
@@ -27,11 +27,11 @@ func (wf *workflows) GetExchangeWorkflow(
 
 	// Read exchanges from database
 	var dbRes db.ReadExchangesActivityResults
-	err := workflow.ExecuteActivity(workflow.WithActivityOptions(ctx, workflow.ActivityOptions{
-		StartToCloseTimeout: activities.DBInteractionDefaultTimeout,
-	}), wf.db.ReadExchangesActivity, db.ReadExchangesActivityParams{
-		Names: []string{params.Name},
-	}).Get(ctx, &dbRes)
+	err := workflow.ExecuteActivity(
+		workflow.WithActivityOptions(ctx, db.DefaultActivityOptions()),
+		wf.db.ReadExchangesActivity, db.ReadExchangesActivityParams{
+			Names: []string{params.Name},
+		}).Get(ctx, &dbRes)
 	if err != nil {
 		return api.GetExchangeWorkflowResults{}, fmt.Errorf("handling exchanges from db reading: %w", err)
 	}
@@ -45,30 +45,30 @@ func (wf *workflows) GetExchangeWorkflow(
 
 	// Get the exchange from the services
 	var r exchangesactivity.GetExchangeActivityResults
-	err = workflow.ExecuteActivity(workflow.WithActivityOptions(ctx, workflow.ActivityOptions{
-		StartToCloseTimeout: activities.ExchangesInteractionDefaultTimeout,
-	}), wf.exchanges.GetExchangeActivity, exchangesactivity.GetExchangeActivityParams{
-		Name: params.Name,
-	}).Get(ctx, &r)
+	err = workflow.ExecuteActivity(
+		workflow.WithActivityOptions(ctx, exchanges.DefaultActivityOptions()),
+		wf.exchanges.GetExchangeActivity, exchangesactivity.GetExchangeActivityParams{
+			Name: params.Name,
+		}).Get(ctx, &r)
 	if err != nil {
 		return api.GetExchangeWorkflowResults{}, err
 	}
 
 	// Save the exchange in the database
 	if len(dbRes.Exchanges) == 0 {
-		if err := workflow.ExecuteActivity(workflow.WithActivityOptions(ctx, workflow.ActivityOptions{
-			StartToCloseTimeout: activities.DBInteractionDefaultTimeout,
-		}), wf.db.CreateExchangesActivity, db.CreateExchangesActivityParams{
-			Exchanges: []exchange.Exchange{r.Exchange},
-		}).Get(ctx, nil); err != nil {
+		if err := workflow.ExecuteActivity(
+			workflow.WithActivityOptions(ctx, db.DefaultActivityOptions()),
+			wf.db.CreateExchangesActivity, db.CreateExchangesActivityParams{
+				Exchanges: []exchange.Exchange{r.Exchange},
+			}).Get(ctx, nil); err != nil {
 			return api.GetExchangeWorkflowResults{}, err
 		}
 	} else {
-		if err := workflow.ExecuteActivity(workflow.WithActivityOptions(ctx, workflow.ActivityOptions{
-			StartToCloseTimeout: activities.DBInteractionDefaultTimeout,
-		}), wf.db.UpdateExchangesActivity, db.UpdateExchangesActivityParams{
-			Exchanges: []exchange.Exchange{r.Exchange},
-		}).Get(ctx, nil); err != nil {
+		if err := workflow.ExecuteActivity(
+			workflow.WithActivityOptions(ctx, db.DefaultActivityOptions()),
+			wf.db.UpdateExchangesActivity, db.UpdateExchangesActivityParams{
+				Exchanges: []exchange.Exchange{r.Exchange},
+			}).Get(ctx, nil); err != nil {
 			return api.GetExchangeWorkflowResults{}, err
 		}
 	}
