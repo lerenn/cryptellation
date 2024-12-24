@@ -65,6 +65,20 @@ func (mr *MockExchangesMockRecorder) ListExchangesActivity(ctx, params interface
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListExchangesActivity", reflect.TypeOf((*MockExchanges)(nil).ListExchangesActivity), ctx, params)
 }
 
+// Name mocks base method.
+func (m *MockExchanges) Name() string {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Name")
+	ret0, _ := ret[0].(string)
+	return ret0
+}
+
+// Name indicates an expected call of Name.
+func (mr *MockExchangesMockRecorder) Name() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Name", reflect.TypeOf((*MockExchanges)(nil).Name))
+}
+
 // Register mocks base method.
 func (m *MockExchanges) Register(w worker.Worker) {
 	m.ctrl.T.Helper()

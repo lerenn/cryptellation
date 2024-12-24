@@ -6,8 +6,11 @@ package exchanges
 import (
 	"context"
 
+	"github.com/lerenn/cryptellation/v1/pkg/activities"
 	"github.com/lerenn/cryptellation/v1/pkg/models/exchange"
+	"go.temporal.io/sdk/temporal"
 	"go.temporal.io/sdk/worker"
+	"go.temporal.io/sdk/workflow"
 )
 
 // ListExchangesActivityName is the name of the ListExchanges activity.
@@ -41,6 +44,7 @@ type (
 // Exchanges is the interface for the exchanges activities.
 type Exchanges interface {
 	Register(w worker.Worker)
+	Name() string
 
 	GetExchangeActivity(
 		ctx context.Context,
@@ -51,4 +55,17 @@ type Exchanges interface {
 		ctx context.Context,
 		params ListExchangesActivityParams,
 	) (ListExchangesActivityResults, error)
+}
+
+// DefaultActivityOptions returns the default exchanges activities options.
+func DefaultActivityOptions() workflow.ActivityOptions {
+	return workflow.ActivityOptions{
+		RetryPolicy: &temporal.RetryPolicy{
+			NonRetryableErrorTypes: []string{
+				ErrInexistantExchange.Error(),
+			},
+		},
+		StartToCloseTimeout:    activities.ExchangesStartToCloseDefaultTimeout,
+		ScheduleToCloseTimeout: activities.ExchangesScheduleToCloseDefaultTimeout,
+	}
 }

@@ -6,8 +6,11 @@ package db
 import (
 	"context"
 
+	"github.com/lerenn/cryptellation/v1/pkg/activities"
 	"github.com/lerenn/cryptellation/v1/pkg/models/exchange"
+	"go.temporal.io/sdk/temporal"
 	"go.temporal.io/sdk/worker"
+	"go.temporal.io/sdk/workflow"
 )
 
 // CreateExchangesActivityName is the name of the CreateExchanges activity.
@@ -87,4 +90,17 @@ type DB interface {
 		ctx context.Context,
 		params DeleteExchangesActivityParams,
 	) (DeleteExchangesActivityResults, error)
+}
+
+// DefaultActivityOptions returns the default database activities options.
+func DefaultActivityOptions() workflow.ActivityOptions {
+	return workflow.ActivityOptions{
+		RetryPolicy: &temporal.RetryPolicy{
+			NonRetryableErrorTypes: []string{
+				ErrNotFound.Error(),
+			},
+		},
+		StartToCloseTimeout:    activities.DBStartToCloseDefaultTimeout,
+		ScheduleToCloseTimeout: activities.DBStartToCloseDefaultTimeout,
+	}
 }

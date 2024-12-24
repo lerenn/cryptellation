@@ -3,10 +3,8 @@ package main
 import (
 	"fmt"
 
-	"github.com/google/uuid"
 	"github.com/lerenn/cryptellation/v1/api"
 	"github.com/spf13/cobra"
-	"go.temporal.io/sdk/worker"
 	"go.temporal.io/sdk/workflow"
 )
 
@@ -26,48 +24,15 @@ var ticksListenCmd = &cobra.Command{
 	Aliases: []string{"l"},
 	Short:   "Listen to ticks",
 	RunE: func(cmd *cobra.Command, _ []string) error {
-		// Create temporary worker
-		tq := fmt.Sprintf("CryptellationCliTicksListen-%s", uuid.New().String())
-		w := worker.New(cryptellationClient.Temporal(), tq, worker.Options{})
-		w.RegisterWorkflowWithOptions(ticksListenCallbackWorkflow, workflow.RegisterOptions{
-			Name: tq,
-		})
-
-		// Start worker
-		irq := worker.InterruptCh()
-		go func() {
-			if err := w.Run(irq); err != nil {
-				panic(err)
-			}
-		}()
-
-		// Listen to ticks
-		_, err := cryptellationClient.ListenToTicks(cmd.Context(),
-			api.RegisterForTicksListeningWorkflowParams{
-				Exchange: ticksListenExchangeFlag,
-				Pair:     ticksListenPairFlag,
-				CallbackWorkflow: api.ListenToTicksCallbackWorkflow{
-					Name:          tq,
-					TaskQueueName: tq,
-				},
-			})
-		if err != nil {
-			return err
-		}
-
-		// Wait for interrupt
-		<-irq
-
-		// Stop worker
-		w.Stop()
-
-		return nil
+		return cryptellationClient.ListenToTicks(cmd.Context(),
+			ticksListenExchangeFlag,
+			ticksListenPairFlag,
+			func(_ workflow.Context, params api.ListenToTicksCallbackWorkflowParams) error {
+				fmt.Println(params.Tick.String())
+				return nil
+			},
+		)
 	},
-}
-
-func ticksListenCallbackWorkflow(_ workflow.Context, params api.ListenToTicksCallbackWorkflowParams) error {
-	fmt.Println(params.Tick.String())
-	return nil
 }
 
 func addTicksCommands() {

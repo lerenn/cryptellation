@@ -1,7 +1,6 @@
 package main
 
 import (
-	"context"
 	"fmt"
 	"time"
 
@@ -59,7 +58,7 @@ var serveCmd = &cobra.Command{
 		w.RegisterActivity(activities.NewActivities(temporalClient))
 
 		// Register workflows
-		if err := registerWorflowsAndActivities(cmd.Context(), w, temporalClient); err != nil {
+		if err := registerWorkflows(cmd.Context(), w, temporalClient); err != nil {
 			return err
 		}
 
@@ -74,26 +73,6 @@ var serveCmd = &cobra.Command{
 		// Run worker
 		return w.Run(worker.InterruptCh())
 	},
-}
-
-func registerWorflowsAndActivities(ctx context.Context, w worker.Worker, temporalClient client.Client) error {
-	// Register candlesticks workflows
-	if err := registerCandlesticksWorkflowsAndActivities(ctx, w); err != nil {
-		return err
-	}
-
-	// Register exchanges workflows
-	if err := registerExchangesWorkflowsAndActivities(ctx, w); err != nil {
-		return err
-	}
-
-	// Register the service information workflow
-	w.RegisterWorkflowWithOptions(ServiceInfo, workflow.RegisterOptions{
-		Name: api.ServiceInfoWorkflowName,
-	})
-
-	// Register the ticks workflows
-	return registerTicksWorkflowsAndActivities(w, temporalClient)
 }
 
 // ServiceInfo returns the service information.
