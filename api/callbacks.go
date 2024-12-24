@@ -16,7 +16,7 @@ type Callbacks struct {
 // OnInitCallbackWorkflowParams is the parameters of the
 // OnInitCallbackWorkflow callback workflow.
 type OnInitCallbackWorkflowParams struct {
-	Run run.Context
+	RunCtx run.Context
 }
 
 // OnNewPricesCallbackWorkflowParams is the parameters of the

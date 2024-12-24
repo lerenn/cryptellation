@@ -27,11 +27,11 @@ type testRobotCallbacks struct {
 }
 
 func (r *testRobotCallbacks) OnInit(ctx workflow.Context, params api.OnInitCallbackWorkflowParams) error {
-	checkBacktestRunContext(r.Suite, params.Run, r.BacktestID)
-	r.Suite.Require().WithinDuration(r.BacktestParams.BacktestParameters.StartTime, params.Run.Now, time.Second)
+	checkBacktestRunContext(r.Suite, params.RunCtx, r.BacktestID)
+	r.Suite.Require().WithinDuration(r.BacktestParams.BacktestParameters.StartTime, params.RunCtx.Now, time.Second)
 
 	err := r.Cryptellation.SubscribeToPrice(ctx, wfclient.SubscribeToPriceParams{
-		Run:      params.Run,
+		Run:      params.RunCtx,
 		Exchange: "binance",
 		Pair:     "BTC-USDT",
 	})

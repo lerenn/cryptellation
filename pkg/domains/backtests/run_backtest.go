@@ -106,7 +106,7 @@ func (wf *workflows) execOnInitBacktestCallback(
 	// Run a new child workflow
 	ctx = workflow.WithChildOptions(ctx, opts)
 	if err := workflow.ExecuteChildWorkflow(ctx, onInitCallback.Name, api.OnInitCallbackWorkflowParams{
-		Run: run.Context{
+		RunCtx: run.Context{
 			ID:        backtestID,
 			Mode:      run.ModeBacktest,
 			Now:       bt.Parameters.StartTime,
