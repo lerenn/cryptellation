@@ -2,6 +2,7 @@ package ticks
 
 import (
 	"github.com/lerenn/cryptellation/v1/api"
+	wfclient "github.com/lerenn/cryptellation/v1/clients/go/wfclient"
 	"github.com/lerenn/cryptellation/v1/pkg/domains/ticks/activities/exchanges"
 	"go.temporal.io/sdk/worker"
 	"go.temporal.io/sdk/workflow"
@@ -22,11 +23,12 @@ type Ticks interface {
 	) (api.UnregisterFromTicksListeningWorkflowResults, error)
 }
 
-// Check that the workflows implements the Ticks interface
+// Check that the workflows implements the Ticks interface.
 var _ Ticks = &workflows{}
 
 type workflows struct {
-	exchanges exchanges.Exchanges
+	exchanges     exchanges.Exchanges
+	cryptellation wfclient.Client
 }
 
 // New creates a new ticks workflows.
@@ -37,7 +39,8 @@ func New(exchanges exchanges.Exchanges) Ticks {
 	}
 
 	return &workflows{
-		exchanges: exchanges,
+		cryptellation: wfclient.NewClient(),
+		exchanges:     exchanges,
 	}
 }
 

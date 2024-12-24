@@ -7,7 +7,6 @@ import (
 	"github.com/lerenn/cryptellation/v1/api"
 	"github.com/lerenn/cryptellation/v1/pkg/domains/exchanges/activities/db"
 	"github.com/lerenn/cryptellation/v1/pkg/domains/exchanges/activities/exchanges"
-	exchangesactivity "github.com/lerenn/cryptellation/v1/pkg/domains/exchanges/activities/exchanges"
 	"github.com/lerenn/cryptellation/v1/pkg/models/exchange"
 	"go.temporal.io/sdk/workflow"
 )
@@ -44,10 +43,10 @@ func (wf *workflows) GetExchangeWorkflow(
 	}
 
 	// Get the exchange from the services
-	var r exchangesactivity.GetExchangeActivityResults
+	var r exchanges.GetExchangeActivityResults
 	err = workflow.ExecuteActivity(
 		workflow.WithActivityOptions(ctx, exchanges.DefaultActivityOptions()),
-		wf.exchanges.GetExchangeActivity, exchangesactivity.GetExchangeActivityParams{
+		wf.exchanges.GetExchangeActivity, exchanges.GetExchangeActivityParams{
 			Name: params.Name,
 		}).Get(ctx, &r)
 	if err != nil {

@@ -48,6 +48,7 @@ type Exchanges interface {
 	) (GetCandlesticksActivityResults, error)
 }
 
+// DefaultActivityOptions returns the default exchanges activities options.
 func DefaultActivityOptions() workflow.ActivityOptions {
 	return workflow.ActivityOptions{
 		RetryPolicy: &temporal.RetryPolicy{

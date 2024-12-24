@@ -23,7 +23,7 @@ type Exchanges interface {
 	) (api.ListExchangesWorkflowResults, error)
 }
 
-// Check that the workflows implements the Exchanges interface
+// Check that the workflows implements the Exchanges interface.
 var _ Exchanges = &workflows{}
 
 type workflows struct {

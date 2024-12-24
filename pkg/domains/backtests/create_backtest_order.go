@@ -27,7 +27,7 @@ func (wf *workflows) CreateBacktestOrderWorkflow(
 	}
 
 	// Read backtest and candlesticks
-	bt, cs, err := getBacktestAndCandlestick(ctx, params)
+	bt, cs, err := wf.getBacktestAndCandlestick(ctx, params)
 	if err != nil {
 		return api.CreateBacktestOrderWorkflowResults{}, fmt.Errorf("could not read backtest and candlesticks: %w", err)
 	}
@@ -52,7 +52,7 @@ func (wf *workflows) CreateBacktestOrderWorkflow(
 	return api.CreateBacktestOrderWorkflowResults{}, nil
 }
 
-func getBacktestAndCandlestick(
+func (wf *workflows) getBacktestAndCandlestick(
 	ctx workflow.Context,
 	params api.CreateBacktestOrderWorkflowParams,
 ) (backtest.Backtest, candlestick.Candlestick, error) {
@@ -67,24 +67,24 @@ func getBacktestAndCandlestick(
 	}
 
 	// Get candlestick for the time
-	var dbCsRes api.ListCandlesticksWorkflowResults
-	if err := workflow.ExecuteChildWorkflow(ctx, api.ListCandlesticksWorkflowName, api.ListCandlesticksWorkflowParams{
+	csRes, err := wf.cryptellation.ListCandlesticks(ctx, api.ListCandlesticksWorkflowParams{
 		Exchange: params.Order.Exchange,
 		Pair:     params.Order.Pair,
 		Period:   dbBtRes.Backtest.Parameters.PricePeriod,
 		Start:    &dbBtRes.Backtest.CurrentCandlestick.Time,
 		End:      &dbBtRes.Backtest.CurrentCandlestick.Time,
 		Limit:    0,
-	}).Get(ctx, &dbCsRes); err != nil {
+	}, nil)
+	if err != nil {
 		return backtest.Backtest{}, candlestick.Candlestick{},
 			fmt.Errorf("could not get candlesticks from service: %w", err)
 	}
 
 	// Check if we have a candlestick
-	_, cs, notEmpty := dbCsRes.List.Data.First()
+	_, cs, notEmpty := csRes.List.Data.First()
 	if !notEmpty {
 		return backtest.Backtest{}, candlestick.Candlestick{},
-			fmt.Errorf("%w: %d candlesticks retrieved", backtest.ErrNoDataForOrderValidation, dbCsRes.List.Data.Len())
+			fmt.Errorf("%w: %d candlesticks retrieved", backtest.ErrNoDataForOrderValidation, csRes.List.Data.Len())
 	}
 
 	return dbBtRes.Backtest, cs, nil

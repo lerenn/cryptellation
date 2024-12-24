@@ -18,27 +18,32 @@ func (wf *workflows) RunBacktestWorkflow(
 	ctx workflow.Context,
 	params api.RunBacktestWorkflowParams,
 ) (api.RunBacktestWorkflowResults, error) {
-	logger := workflow.GetLogger(ctx)
-
-	// Getting backtest
-	var dbRes db.ReadBacktestActivityResults
-	err := workflow.ExecuteActivity(
-		workflow.WithActivityOptions(ctx, db.DefaultActivityOptions()),
-		wf.db.ReadBacktestActivity, db.ReadBacktestActivityParams{
-			ID: params.BacktestID,
-		}).Get(ctx, &dbRes)
-	if err != nil {
-		return api.RunBacktestWorkflowResults{}, fmt.Errorf("reading backtest from db: %w", err)
-	}
-	bt := dbRes.Backtest
-
 	// Init the backtest from client side
-	bt, err = wf.execOnInitBacktestCallback(ctx, params.Callbacks.OnInitCallback, params.BacktestID)
+	bt, err := wf.execOnInitBacktestCallback(ctx, params.Callbacks.OnInitCallback, params.BacktestID)
 	if err != nil {
 		return api.RunBacktestWorkflowResults{}, fmt.Errorf("initializing backtest from client side: %w", err)
 	}
 
-	// Loop until backtest is finished
+	// Loop on backtest events
+	if err := wf.loopThroughBacktestEvents(ctx, bt, params.Callbacks); err != nil {
+		return api.RunBacktestWorkflowResults{}, fmt.Errorf("looping through backtest events: %w", err)
+	}
+
+	// Exit the backtest from client side
+	if err := execOnExitBacktestCallback(ctx, params.Callbacks.OnExitCallback, bt.ID); err != nil {
+		return api.RunBacktestWorkflowResults{}, fmt.Errorf("exit backtest from client side: %w", err)
+	}
+
+	return api.RunBacktestWorkflowResults{}, nil
+}
+
+func (wf *workflows) loopThroughBacktestEvents(
+	ctx workflow.Context,
+	bt backtest.Backtest,
+	callbacks api.Callbacks,
+) error {
+	logger := workflow.GetLogger(ctx)
+
 	for finished := false; !finished; {
 		logger.Debug("Looping over prices",
 			"backtest_id", bt.ID.String(),
@@ -47,7 +52,7 @@ func (wf *workflows) RunBacktestWorkflow(
 		// Get prices
 		prices, err := wf.readActualPrices(ctx, bt)
 		if err != nil {
-			return api.RunBacktestWorkflowResults{}, fmt.Errorf("cannot read actual prices: %w", err)
+			return fmt.Errorf("cannot read actual prices: %w", err)
 		}
 		if len(prices) == 0 {
 			logger.Warn("No price detected",
@@ -62,23 +67,18 @@ func (wf *workflows) RunBacktestWorkflow(
 		}
 
 		// Execute backtest with these prices
-		if err := execOnPriceBacktest(ctx, params.Callbacks.OnNewPricesCallback, prices, bt.ID); err != nil {
-			return api.RunBacktestWorkflowResults{}, fmt.Errorf("cannot execute backtest: %w", err)
+		if err := execOnPriceBacktest(ctx, callbacks.OnNewPricesCallback, prices, bt.ID); err != nil {
+			return fmt.Errorf("cannot execute backtest: %w", err)
 		}
 
 		// Advance backtest
 		finished, bt, err = wf.advanceBacktest(ctx, bt.ID)
 		if err != nil {
-			return api.RunBacktestWorkflowResults{}, fmt.Errorf("cannot advance backtest: %w", err)
+			return fmt.Errorf("cannot advance backtest: %w", err)
 		}
 	}
 
-	// Exit the backtest from client side
-	if err := execOnExitBacktestCallback(ctx, params.Callbacks.OnExitCallback, bt.ID); err != nil {
-		return api.RunBacktestWorkflowResults{}, fmt.Errorf("exit backtest from client side: %w", err)
-	}
-
-	return api.RunBacktestWorkflowResults{}, nil
+	return nil
 }
 
 func (wf *workflows) execOnInitBacktestCallback(
@@ -177,15 +177,15 @@ func (wf *workflows) readActualPrices(ctx workflow.Context, bt backtest.Backtest
 			"pair", sub.Pair)
 
 		// Get exchange info
-		var result api.ListCandlesticksWorkflowResults
-		if err := workflow.ExecuteChildWorkflow(ctx, api.ListCandlesticksWorkflowName, api.ListCandlesticksWorkflowParams{
+		result, err := wf.cryptellation.ListCandlesticks(ctx, api.ListCandlesticksWorkflowParams{
 			Exchange: sub.Exchange,
 			Pair:     sub.Pair,
 			Period:   bt.Parameters.PricePeriod,
 			Start:    &bt.CurrentCandlestick.Time,
 			End:      &bt.Parameters.EndTime,
 			Limit:    1,
-		}).Get(ctx, &result); err != nil {
+		}, nil)
+		if err != nil {
 			return nil, fmt.Errorf("could not get candlesticks from service: %w", err)
 		}
 

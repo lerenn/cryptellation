@@ -10,6 +10,7 @@ import (
 	"go.temporal.io/sdk/workflow"
 )
 
+// RegisterWorkflows registers a bot workflows to a worker.
 func RegisterWorkflows(w worker.Worker, taskQueue string, id uuid.UUID, bot Bot) api.Callbacks {
 	// Register OnInitCallback
 	onInitCallbackWorkflowName := fmt.Sprintf("OnInit-%s", id.String())

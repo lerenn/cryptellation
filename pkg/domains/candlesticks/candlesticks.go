@@ -32,7 +32,7 @@ type Candlesticks interface {
 	) (api.ListCandlesticksWorkflowResults, error)
 }
 
-// Check that the workflows implements the Candlesticks interface
+// Check that the workflows implements the Candlesticks interface.
 var _ Candlesticks = &workflows{}
 
 type workflows struct {

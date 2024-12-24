@@ -2,6 +2,7 @@ package backtests
 
 import (
 	"github.com/lerenn/cryptellation/v1/api"
+	wfclient "github.com/lerenn/cryptellation/v1/clients/go/wfclient"
 	"github.com/lerenn/cryptellation/v1/pkg/domains/backtests/activities/db"
 	"go.temporal.io/sdk/worker"
 	"go.temporal.io/sdk/workflow"
@@ -54,11 +55,12 @@ type Backtests interface {
 	) (api.GetBacktestOrdersWorkflowResults, error)
 }
 
-// Check that the workflows implements the Backtests interface
+// Check that the workflows implements the Backtests interface.
 var _ Backtests = &workflows{}
 
 type workflows struct {
-	db db.DB
+	db            db.DB
+	cryptellation wfclient.Client
 }
 
 // New creates a new backtests workflows.
@@ -68,7 +70,8 @@ func New(db db.DB) Backtests {
 	}
 
 	return &workflows{
-		db: db,
+		cryptellation: wfclient.NewClient(),
+		db:            db,
 	}
 }
 

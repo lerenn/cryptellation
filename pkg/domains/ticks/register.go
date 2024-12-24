@@ -40,14 +40,11 @@ func (wf *workflows) RegisterForTicksListeningWorkflow(
 }
 
 func (wf *workflows) checkPairAndExchange(ctx workflow.Context, pair string, exchange string) error {
-	childWorkflowOptions := workflow.ChildWorkflowOptions{}
-	ctx = workflow.WithChildOptions(ctx, childWorkflowOptions)
-
 	// Get exchange info
-	var result api.GetExchangeWorkflowResults
-	if err := workflow.ExecuteChildWorkflow(ctx, api.GetExchangeWorkflowName, api.GetExchangeWorkflowParams{
+	result, err := wf.cryptellation.GetExchange(ctx, api.GetExchangeWorkflowParams{
 		Name: exchange,
-	}).Get(ctx, &result); err != nil {
+	}, nil)
+	if err != nil {
 		return err
 	}
 

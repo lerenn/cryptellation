@@ -5,6 +5,7 @@ import (
 	"go.temporal.io/sdk/workflow"
 )
 
+// SubscribeToBacktestPrice subscribes to the backtest price.
 func SubscribeToBacktestPrice(
 	ctx workflow.Context,
 	params api.SubscribeToBacktestPriceWorkflowParams,

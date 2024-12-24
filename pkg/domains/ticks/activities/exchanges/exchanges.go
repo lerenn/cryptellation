@@ -41,6 +41,7 @@ type Exchanges interface {
 	ListenSymbolActivity(ctx context.Context, params ListenSymbolParams) (ListenSymbolResults, error)
 }
 
+// DefaultActivityOptions returns the default exchanges activities options.
 func DefaultActivityOptions() workflow.ActivityOptions {
 	return workflow.ActivityOptions{
 		RetryPolicy: &temporal.RetryPolicy{

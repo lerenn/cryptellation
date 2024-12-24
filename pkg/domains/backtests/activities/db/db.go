@@ -107,6 +107,7 @@ type DB interface {
 	) (DeleteBacktestActivityResults, error)
 }
 
+// DefaultActivityOptions returns the default database activities options.
 func DefaultActivityOptions() workflow.ActivityOptions {
 	return workflow.ActivityOptions{
 		RetryPolicy: &temporal.RetryPolicy{
