@@ -13,17 +13,12 @@ func ExecuteSignalWithStart(
 	ctx workflow.Context,
 	params SignalWithStartActivityParams,
 ) error {
-	activityOptions := workflow.ActivityOptions{
-		StartToCloseTimeout: 10 * time.Second,
-	}
-	ctx = workflow.WithActivityOptions(ctx, activityOptions)
-
-	var (
-		a   *Activities
-		res SignalWithStartActivityResults
-	)
+	var a *Activities
+	var res SignalWithStartActivityResults
 	return workflow.ExecuteActivity(
-		ctx,
+		workflow.WithActivityOptions(ctx, workflow.ActivityOptions{
+			StartToCloseTimeout: time.Second * 10,
+		}),
 		a.SignalWithStartActivity,
 		params).Get(ctx, &res)
 }

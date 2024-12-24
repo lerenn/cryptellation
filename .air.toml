@@ -3,4 +3,4 @@ root = "."
 [build]
   cmd = "go install -buildvcs=false ./cmd/*"
   full_bin = "worker serve"
-  include_dir = ["cmd/worker", "pkg"]
+  include_dir = ["clients/go", "cmd/worker", "pkg"]

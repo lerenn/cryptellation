@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	client "github.com/lerenn/cryptellation/v1/clients/go"
+	"github.com/lerenn/cryptellation/v1/clients/go/direct"
 	"github.com/stretchr/testify/suite"
 )
 
@@ -14,11 +14,11 @@ func TestEndToEndSuite(t *testing.T) {
 
 type EndToEndSuite struct {
 	suite.Suite
-	client client.Client
+	client direct.Client
 }
 
 func (suite *EndToEndSuite) SetupSuite() {
-	client, err := client.New()
+	client, err := direct.NewClient()
 	suite.Require().NoError(err)
 	suite.client = client
 }
