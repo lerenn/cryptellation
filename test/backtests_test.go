@@ -15,8 +15,11 @@ import (
 )
 
 type testRobotCallbacks struct {
-	Suite            *EndToEndSuite
-	BacktestID       uuid.UUID
+	Suite *EndToEndSuite // TODO: export results in test instead of panicking in the robot
+
+	BacktestID     uuid.UUID
+	BacktestParams api.CreateBacktestWorkflowParams
+
 	Cryptellation    wfclient.Client
 	OnInitCalls      int
 	OnNewPricesCalls int
@@ -25,6 +28,7 @@ type testRobotCallbacks struct {
 
 func (r *testRobotCallbacks) OnInit(ctx workflow.Context, params api.OnInitCallbackWorkflowParams) error {
 	checkBacktestRunContext(r.Suite, params.Run, r.BacktestID)
+	r.Suite.Require().WithinDuration(r.BacktestParams.BacktestParameters.StartTime, params.Run.Now, time.Second)
 
 	err := r.Cryptellation.SubscribeToPrice(ctx, wfclient.SubscribeToPriceParams{
 		Run:      params.Run,
@@ -46,6 +50,7 @@ func (r *testRobotCallbacks) OnNewPrices(_ workflow.Context, params api.OnNewPri
 
 func (r *testRobotCallbacks) OnExit(_ workflow.Context, params api.OnExitCallbackWorkflowParams) error {
 	checkBacktestRunContext(r.Suite, params.Run, r.BacktestID)
+	r.Suite.Require().WithinDuration(*r.BacktestParams.BacktestParameters.EndTime, params.Run.Now, time.Second)
 
 	r.OnExitCalls++
 	return nil
@@ -54,7 +59,7 @@ func (r *testRobotCallbacks) OnExit(_ workflow.Context, params api.OnExitCallbac
 func (suite *EndToEndSuite) TestBacktestCallbacks() {
 	// WHEN creating a new backtest
 
-	backtest, err := suite.client.NewBacktest(context.Background(), api.CreateBacktestWorkflowParams{
+	params := api.CreateBacktestWorkflowParams{
 		BacktestParameters: backtest.Parameters{
 			Accounts: map[string]account.Account{
 				"binance": {
@@ -66,7 +71,8 @@ func (suite *EndToEndSuite) TestBacktestCallbacks() {
 			StartTime: utils.Must(time.Parse(time.RFC3339, "2023-02-26T12:00:00Z")),
 			EndTime:   utils.ToReference(utils.Must(time.Parse(time.RFC3339, "2023-02-26T12:02:00Z"))),
 		},
-	})
+	}
+	backtest, err := suite.client.NewBacktest(context.Background(), params)
 
 	// THEN no error is returned
 
@@ -75,9 +81,10 @@ func (suite *EndToEndSuite) TestBacktestCallbacks() {
 	// WHEN running the backtest with a robot
 
 	r := &testRobotCallbacks{
-		BacktestID:    backtest.ID,
-		Suite:         suite,
-		Cryptellation: wfclient.NewClient(),
+		BacktestParams: params,
+		BacktestID:     backtest.ID,
+		Suite:          suite,
+		Cryptellation:  wfclient.NewClient(),
 	}
 	err = backtest.Run(context.Background(), r)
 

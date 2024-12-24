@@ -30,7 +30,7 @@ func (wf *workflows) RunBacktestWorkflow(
 	}
 
 	// Exit the backtest from client side
-	if err := execOnExitBacktestCallback(ctx, params.Callbacks.OnExitCallback, bt.ID); err != nil {
+	if err := wf.execOnExitBacktestCallback(ctx, params.Callbacks.OnExitCallback, bt.ID); err != nil {
 		return api.RunBacktestWorkflowResults{}, fmt.Errorf("exit backtest from client side: %w", err)
 	}
 
@@ -86,6 +86,12 @@ func (wf *workflows) execOnInitBacktestCallback(
 	onInitCallback temporalutils.CallbackWorkflow,
 	backtestID uuid.UUID,
 ) (backtest.Backtest, error) {
+	// Load backtest
+	bt, err := wf.readBacktestFromDB(ctx, backtestID)
+	if err != nil {
+		return backtest.Backtest{}, fmt.Errorf("load backtest from db: %w", err)
+	}
+
 	// Options
 	opts := workflow.ChildWorkflowOptions{
 		TaskQueue:                onInitCallback.TaskQueueName, // Execute in the client queue
@@ -99,46 +105,34 @@ func (wf *workflows) execOnInitBacktestCallback(
 
 	// Run a new child workflow
 	ctx = workflow.WithChildOptions(ctx, opts)
-	if err := workflow.ExecuteChildWorkflow(
-		ctx, onInitCallback.Name, api.OnInitCallbackWorkflowParams{
-			Run: run.Context{
-				ID:        backtestID,
-				Mode:      run.ModeBacktest,
-				TaskQueue: workflow.GetInfo(ctx).TaskQueueName,
-			},
+	if err := workflow.ExecuteChildWorkflow(ctx, onInitCallback.Name, api.OnInitCallbackWorkflowParams{
+		Run: run.Context{
+			ID:        backtestID,
+			Mode:      run.ModeBacktest,
+			Now:       bt.Parameters.StartTime,
+			TaskQueue: workflow.GetInfo(ctx).TaskQueueName,
 		},
-	).Get(ctx, nil); err != nil {
+	}).Get(ctx, nil); err != nil {
 		return backtest.Backtest{}, fmt.Errorf("starting new onInitCallback child workflow: %w", err)
 	}
 
 	// Reload backtest in case of modifications
-	var readRes db.ReadBacktestActivityResults
-	err := workflow.ExecuteActivity(
-		workflow.WithActivityOptions(ctx, db.DefaultActivityOptions()),
-		wf.db.ReadBacktestActivity, db.ReadBacktestActivityParams{
-			ID: backtestID,
-		}).Get(ctx, &readRes)
+	bt, err = wf.readBacktestFromDB(ctx, backtestID)
 	if err != nil {
-		return backtest.Backtest{}, fmt.Errorf("read backtest from db: %w", err)
+		return backtest.Backtest{}, fmt.Errorf("reload backtest from db: %w", err)
 	}
 
-	return readRes.Backtest, nil
+	return bt, nil
 }
 
 func (wf *workflows) advanceBacktest(ctx workflow.Context, id uuid.UUID) (bool, backtest.Backtest, error) {
 	logger := workflow.GetLogger(ctx)
 
 	// Read backtest
-	var readRes db.ReadBacktestActivityResults
-	err := workflow.ExecuteActivity(
-		workflow.WithActivityOptions(ctx, db.DefaultActivityOptions()),
-		wf.db.ReadBacktestActivity, db.ReadBacktestActivityParams{
-			ID: id,
-		}).Get(ctx, &readRes)
+	bt, err := wf.readBacktestFromDB(ctx, id)
 	if err != nil {
-		return false, backtest.Backtest{}, fmt.Errorf("read backtest from db: %w", err)
+		return false, backtest.Backtest{}, fmt.Errorf("load backtest from db: %w", err)
 	}
-	bt := readRes.Backtest
 
 	// Advance backtest
 	finished, err := bt.Advance()
@@ -237,6 +231,7 @@ func execOnPriceBacktest(
 			Run: run.Context{
 				ID:        backtestID,
 				Mode:      run.ModeBacktest,
+				Now:       prices[0].Time,
 				TaskQueue: workflow.GetInfo(ctx).TaskQueueName,
 			},
 			Ticks: prices,
@@ -248,11 +243,17 @@ func execOnPriceBacktest(
 	return nil
 }
 
-func execOnExitBacktestCallback(
+func (wf *workflows) execOnExitBacktestCallback(
 	ctx workflow.Context,
 	onExitCallback temporalutils.CallbackWorkflow,
 	backtestID uuid.UUID,
 ) error {
+	// Load backtest
+	bt, err := wf.readBacktestFromDB(ctx, backtestID)
+	if err != nil {
+		return fmt.Errorf("load backtest from db: %w", err)
+	}
+
 	// Options
 	opts := workflow.ChildWorkflowOptions{
 		TaskQueue:                onExitCallback.TaskQueueName, // Execute in the client queue
@@ -271,6 +272,7 @@ func execOnExitBacktestCallback(
 			Run: run.Context{
 				ID:        backtestID,
 				Mode:      run.ModeBacktest,
+				Now:       bt.Parameters.EndTime,
 				TaskQueue: workflow.GetInfo(ctx).TaskQueueName,
 			},
 		},

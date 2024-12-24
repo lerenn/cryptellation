@@ -15,16 +15,10 @@ func (wf *workflows) SubscribeToBacktestPriceWorkflow(
 	logger := workflow.GetLogger(ctx)
 
 	// Read backtest
-	var readRes db.ReadBacktestActivityResults
-	err := workflow.ExecuteActivity(
-		workflow.WithActivityOptions(ctx, db.DefaultActivityOptions()),
-		wf.db.ReadBacktestActivity, db.ReadBacktestActivityParams{
-			ID: params.BacktestID,
-		}).Get(ctx, &readRes)
+	bt, err := wf.readBacktestFromDB(ctx, params.BacktestID)
 	if err != nil {
 		return api.SubscribeToBacktestPriceWorkflowResults{}, fmt.Errorf("read backtest from db: %w", err)
 	}
-	bt := readRes.Backtest
 
 	// Add subscription
 	if _, err := bt.CreateTickSubscription(params.Exchange, params.Pair); err != nil {
