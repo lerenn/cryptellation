@@ -49,7 +49,7 @@ func (suite *BacktestSuite) TestIncrementPriceID() {
 }
 
 func (suite *BacktestSuite) TestBacktestCreateWithModeFullOHLC() {
-	payload := Parameters{
+	params := Parameters{
 		Accounts: map[string]account.Account{
 			"exchange": {
 				Balances: map[string]float64{
@@ -63,14 +63,14 @@ func (suite *BacktestSuite) TestBacktestCreateWithModeFullOHLC() {
 		PricePeriod: utils.ToReference(period.M1),
 	}
 
-	bt, err := New(payload)
+	bt, err := New(params)
 	suite.Require().NoError(err)
 	suite.Require().Equal(ModeIsFullOHLC, bt.Parameters.Mode)
-	suite.Require().Equal(candlestick.PriceIsOpen, bt.CurrentCandlestick.Price)
+	suite.Require().Equal(candlestick.PriceTypeIsOpen, bt.CurrentCandlestick.Price)
 }
 
 func (suite *BacktestSuite) TestBacktestCreateWithModeCloseOHLC() {
-	payload := Parameters{
+	params := Parameters{
 		Accounts: map[string]account.Account{
 			"exchange": {
 				Balances: map[string]float64{
@@ -84,10 +84,10 @@ func (suite *BacktestSuite) TestBacktestCreateWithModeCloseOHLC() {
 		PricePeriod: utils.ToReference(period.M1),
 	}
 
-	bt, err := New(payload)
+	bt, err := New(params)
 	suite.Require().NoError(err)
 	suite.Require().Equal(ModeIsCloseOHLC, bt.Parameters.Mode)
-	suite.Require().Equal(candlestick.PriceIsClose, bt.CurrentCandlestick.Price)
+	suite.Require().Equal(candlestick.PriceTypeIsClose, bt.CurrentCandlestick.Price)
 }
 
 func (suite *BacktestSuite) TestBacktestSetNewTimeWithFullOHLCMode() {
@@ -99,13 +99,13 @@ func (suite *BacktestSuite) TestBacktestSetNewTimeWithFullOHLCMode() {
 		},
 		CurrentCandlestick: CurrentCandlestick{
 			Time:  time.Unix(100, 0).UTC(),
-			Price: candlestick.PriceIsClose,
+			Price: candlestick.PriceTypeIsClose,
 		},
 	}
 
 	bt.SetCurrentTime(time.Unix(150, 0).UTC())
 	suite.Require().Equal(time.Unix(150, 0).UTC(), bt.CurrentCandlestick.Time)
-	suite.Require().Equal(candlestick.PriceIsOpen, bt.CurrentCandlestick.Price)
+	suite.Require().Equal(candlestick.PriceTypeIsOpen, bt.CurrentCandlestick.Price)
 }
 
 func (suite *BacktestSuite) TestBacktestSetNewTimeWithCloseOHLCMode() {
@@ -117,11 +117,11 @@ func (suite *BacktestSuite) TestBacktestSetNewTimeWithCloseOHLCMode() {
 		},
 		CurrentCandlestick: CurrentCandlestick{
 			Time:  time.Unix(100, 0).UTC(),
-			Price: candlestick.PriceIsClose,
+			Price: candlestick.PriceTypeIsClose,
 		},
 	}
 
 	bt.SetCurrentTime(time.Unix(150, 0).UTC())
 	suite.Require().Equal(time.Unix(150, 0).UTC(), bt.CurrentCandlestick.Time)
-	suite.Require().Equal(candlestick.PriceIsClose, bt.CurrentCandlestick.Price)
+	suite.Require().Equal(candlestick.PriceTypeIsClose, bt.CurrentCandlestick.Price)
 }

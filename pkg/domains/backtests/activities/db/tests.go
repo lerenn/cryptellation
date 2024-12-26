@@ -30,7 +30,7 @@ func (suite *BacktestSuite) TestCreateRead() {
 		},
 		CurrentCandlestick: backtest.CurrentCandlestick{
 			Time:  time.Unix(60, 0),
-			Price: candlestick.PriceIsLow,
+			Price: candlestick.PriceTypeIsLow,
 		},
 		Accounts: map[string]account.Account{
 			"exchange": {
@@ -68,7 +68,7 @@ func (suite *BacktestSuite) TestList() {
 		},
 		CurrentCandlestick: backtest.CurrentCandlestick{
 			Time:  time.Unix(60, 0),
-			Price: candlestick.PriceIsLow,
+			Price: candlestick.PriceTypeIsLow,
 		},
 		Accounts: map[string]account.Account{
 			"exchange": {
@@ -88,7 +88,7 @@ func (suite *BacktestSuite) TestList() {
 		},
 		CurrentCandlestick: backtest.CurrentCandlestick{
 			Time:  time.Unix(60, 0),
-			Price: candlestick.PriceIsLow,
+			Price: candlestick.PriceTypeIsLow,
 		},
 		Accounts: map[string]account.Account{
 			"exchange": {
@@ -128,7 +128,7 @@ func (suite *BacktestSuite) TestUpdate() {
 		},
 		CurrentCandlestick: backtest.CurrentCandlestick{
 			Time:  time.Unix(60, 0),
-			Price: candlestick.PriceIsLow,
+			Price: candlestick.PriceTypeIsLow,
 		},
 		Accounts: map[string]account.Account{
 			"exchange": {
@@ -152,7 +152,7 @@ func (suite *BacktestSuite) TestUpdate() {
 		},
 		CurrentCandlestick: backtest.CurrentCandlestick{
 			Time:  time.Unix(60, 0),
-			Price: candlestick.PriceIsClose,
+			Price: candlestick.PriceTypeIsClose,
 		},
 		Accounts: map[string]account.Account{
 			"exchange2": {
@@ -191,7 +191,7 @@ func (suite *BacktestSuite) TestDelete() {
 		},
 		CurrentCandlestick: backtest.CurrentCandlestick{
 			Time:  time.Unix(60, 0),
-			Price: candlestick.PriceIsLow,
+			Price: candlestick.PriceTypeIsLow,
 		},
 		Accounts: map[string]account.Account{
 			"exchange": {
@@ -227,7 +227,7 @@ func (suite *BacktestSuite) TestDeleteInexistant() {
 		},
 		CurrentCandlestick: backtest.CurrentCandlestick{
 			Time:  time.Unix(60, 0),
-			Price: candlestick.PriceIsLow,
+			Price: candlestick.PriceTypeIsLow,
 		},
 		Accounts: map[string]account.Account{
 			"exchange": {

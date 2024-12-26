@@ -31,15 +31,15 @@ func (cs Candlestick) Equal(b Candlestick) bool {
 }
 
 // Price is the price of the candlestick depending on the price type.
-func (cs Candlestick) Price(p Price) float64 {
+func (cs Candlestick) Price(p PriceType) float64 {
 	switch p {
-	case PriceIsOpen:
+	case PriceTypeIsOpen:
 		return cs.Open
-	case PriceIsHigh:
+	case PriceTypeIsHigh:
 		return cs.High
-	case PriceIsLow:
+	case PriceTypeIsLow:
 		return cs.Low
-	case PriceIsClose:
+	case PriceTypeIsClose:
 		fallthrough
 	default:
 		return cs.Close

@@ -74,22 +74,22 @@ func (suite *CandlestickSuite) TestCandlestickNotEqualTime() {
 func (suite *CandlestickSuite) TestCandlestickPrice() {
 	c := Candlestick{time.Unix(0, 0), 0, 1, 2, 3, 1000, false}
 
-	v := c.Price(PriceIsOpen)
+	v := c.Price(PriceTypeIsOpen)
 	if v != 0 {
 		suite.Require().FailNow("Wrong value:", v)
 	}
 
-	v = c.Price(PriceIsHigh)
+	v = c.Price(PriceTypeIsHigh)
 	if v != 1 {
 		suite.Require().FailNow("Wrong value:", v)
 	}
 
-	v = c.Price(PriceIsLow)
+	v = c.Price(PriceTypeIsLow)
 	if v != 2 {
 		suite.Require().FailNow("Wrong value:", v)
 	}
 
-	v = c.Price(PriceIsClose)
+	v = c.Price(PriceTypeIsClose)
 	if v != 3 {
 		suite.Require().FailNow("Wrong value:", v)
 	}
