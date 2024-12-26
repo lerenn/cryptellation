@@ -28,7 +28,7 @@ type Candlesticks interface {
 
 	ListCandlesticksWorkflow(
 		ctx workflow.Context,
-		payload api.ListCandlesticksWorkflowParams,
+		params api.ListCandlesticksWorkflowParams,
 	) (api.ListCandlesticksWorkflowResults, error)
 }
 

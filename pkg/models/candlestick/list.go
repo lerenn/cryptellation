@@ -48,10 +48,10 @@ func NewList(exchange, pair string, period period.Symbol) *List {
 	}
 }
 
-// NewListFrom creates a new list of candlesticks with the same metadata as the
+// NewListWithMetadata creates a new list of candlesticks with the same metadata as the
 // given list.
-func NewListFrom(l *List) *List {
-	return NewList(l.Metadata.Exchange, l.Metadata.Pair, l.Metadata.Period)
+func NewListWithMetadata(md ListMetadata) *List {
+	return NewList(md.Exchange, md.Pair, md.Period)
 }
 
 // FillMissing will add the 'filling' candlestick at each interval between
@@ -107,6 +107,12 @@ func (l *List) Merge(l2 *List, options *timeserie.MergeOptions) error {
 	default:
 		return l.Data.Merge(l2.Data, options)
 	}
+}
+
+// Last will return the last candlestick of the list.
+func (l List) Last() (Candlestick, bool) {
+	_, cs, err := l.Data.Last()
+	return cs, err
 }
 
 // Extract will extract a new list from the current list with the given time

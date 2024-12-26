@@ -31,7 +31,7 @@ var (
 // CurrentCandlestick represent the current price based on candlestick step.
 type CurrentCandlestick struct {
 	Time  time.Time
-	Price candlestick.Price
+	Price candlestick.PriceType
 }
 
 // Settings is the struct for the backtest settings.
@@ -94,7 +94,7 @@ func (params Parameters) Validate() error {
 
 	for exchange, a := range params.Accounts {
 		if exchange == "" {
-			return fmt.Errorf("error with exchange %q in new backtest payload: %w", exchange, ErrInvalidExchange)
+			return fmt.Errorf("error with exchange %q in new backtest params: %w", exchange, ErrInvalidExchange)
 		}
 
 		if err := a.Validate(); err != nil {
@@ -112,7 +112,7 @@ func defaultEndTime() *time.Time {
 
 // New creates a new backtest.
 func New(params Parameters) (Backtest, error) {
-	// Set default fields payload and validate it
+	// Set default fields params and validate it
 	if err := params.EmptyFieldsToDefault().Validate(); err != nil {
 		return Backtest{}, err
 	}
@@ -123,9 +123,9 @@ func New(params Parameters) (Backtest, error) {
 	}
 	switch *params.Mode {
 	case ModeIsCloseOHLC:
-		cc.Price = candlestick.PriceIsClose
+		cc.Price = candlestick.PriceTypeIsClose
 	case ModeIsFullOHLC:
-		cc.Price = candlestick.PriceIsOpen
+		cc.Price = candlestick.PriceTypeIsOpen
 	}
 
 	return Backtest{
@@ -178,16 +178,16 @@ func (bt *Backtest) advanceWithModeIsCloseOHLC() {
 
 func (bt *Backtest) advanceWithModeIsFullOHLC() {
 	switch bt.CurrentCandlestick.Price {
-	case candlestick.PriceIsOpen:
-		bt.CurrentCandlestick.Price = candlestick.PriceIsHigh
-	case candlestick.PriceIsHigh:
-		bt.CurrentCandlestick.Price = candlestick.PriceIsLow
-	case candlestick.PriceIsLow:
-		bt.CurrentCandlestick.Price = candlestick.PriceIsClose
-	case candlestick.PriceIsClose:
+	case candlestick.PriceTypeIsOpen:
+		bt.CurrentCandlestick.Price = candlestick.PriceTypeIsHigh
+	case candlestick.PriceTypeIsHigh:
+		bt.CurrentCandlestick.Price = candlestick.PriceTypeIsLow
+	case candlestick.PriceTypeIsLow:
+		bt.CurrentCandlestick.Price = candlestick.PriceTypeIsClose
+	case candlestick.PriceTypeIsClose:
 		bt.SetCurrentTime(bt.CurrentCandlestick.Time.Add(bt.Parameters.PricePeriod.Duration()))
 	default:
-		bt.CurrentCandlestick.Price = candlestick.PriceIsOpen
+		bt.CurrentCandlestick.Price = candlestick.PriceTypeIsOpen
 	}
 }
 
@@ -203,7 +203,7 @@ func (bt *Backtest) SetCurrentTime(ts time.Time) {
 
 	// Starting the time on open if mode is full OHLC
 	if bt.Parameters.Mode == ModeIsFullOHLC {
-		bt.CurrentCandlestick.Price = candlestick.PriceIsOpen
+		bt.CurrentCandlestick.Price = candlestick.PriceTypeIsOpen
 	}
 }
 

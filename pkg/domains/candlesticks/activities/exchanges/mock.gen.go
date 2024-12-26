@@ -36,18 +36,18 @@ func (m *MockExchanges) EXPECT() *MockExchangesMockRecorder {
 }
 
 // GetCandlesticksActivity mocks base method.
-func (m *MockExchanges) GetCandlesticksActivity(ctx context.Context, payload GetCandlesticksActivityParams) (GetCandlesticksActivityResults, error) {
+func (m *MockExchanges) GetCandlesticksActivity(ctx context.Context, params GetCandlesticksActivityParams) (GetCandlesticksActivityResults, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetCandlesticksActivity", ctx, payload)
+	ret := m.ctrl.Call(m, "GetCandlesticksActivity", ctx, params)
 	ret0, _ := ret[0].(GetCandlesticksActivityResults)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetCandlesticksActivity indicates an expected call of GetCandlesticksActivity.
-func (mr *MockExchangesMockRecorder) GetCandlesticksActivity(ctx, payload interface{}) *gomock.Call {
+func (mr *MockExchangesMockRecorder) GetCandlesticksActivity(ctx, params interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetCandlesticksActivity", reflect.TypeOf((*MockExchanges)(nil).GetCandlesticksActivity), ctx, payload)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetCandlesticksActivity", reflect.TypeOf((*MockExchanges)(nil).GetCandlesticksActivity), ctx, params)
 }
 
 // Name mocks base method.

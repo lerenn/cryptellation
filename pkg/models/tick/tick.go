@@ -20,7 +20,7 @@ type Tick struct {
 // FromCandlestick creates a Tick from a candlestick.
 func FromCandlestick(
 	exchange, pair string,
-	currentPriceType candlestick.Price,
+	currentPriceType candlestick.PriceType,
 	t time.Time,
 	cs candlestick.Candlestick,
 ) Tick {
