@@ -43,13 +43,10 @@ func TimeSerie(params TimeSerieParams) (*timeserie.TimeSerie[float64], error) {
 		}
 
 		// Calculate point
-		p, err := NewPoint(PointParameters{
+		p := NewPoint(PointParameters{
 			Candlesticks: candlesticks,
 			PriceType:    params.PriceType,
 		})
-		if err != nil {
-			return nil, err
-		}
 
 		// Add calculated point to timeserie
 		ts.Set(start, p.Price)

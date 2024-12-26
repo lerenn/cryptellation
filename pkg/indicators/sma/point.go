@@ -1,7 +1,7 @@
 package sma
 
 import (
-	"fmt"
+	"math"
 	"time"
 
 	"github.com/lerenn/cryptellation/v1/pkg/models/candlestick"
@@ -26,14 +26,23 @@ type Point struct {
 }
 
 // NewPoint creates a new point from the given parameters.
-func NewPoint(params PointParameters) (Point, error) {
+func NewPoint(params PointParameters) Point {
 	var total float64
+
+	// Generate point
+	p := Point{
+		Exchange:  params.Candlesticks.Metadata.Exchange,
+		Pair:      params.Candlesticks.Metadata.Pair,
+		Period:    params.Candlesticks.Metadata.Period,
+		PeriodNb:  params.Candlesticks.Data.Len(),
+		PriceType: params.PriceType,
+	}
 
 	// Get count of candlesticks
 	count := params.Candlesticks.Data.Len()
 
 	// Get total from the timeserie
-	if err := params.Candlesticks.Loop(func(cs candlestick.Candlestick) (bool, error) {
+	_ = params.Candlesticks.Loop(func(cs candlestick.Candlestick) (bool, error) {
 		price := cs.Price(params.PriceType)
 
 		// Reduce the count if the price is 0
@@ -45,26 +54,16 @@ func NewPoint(params PointParameters) (Point, error) {
 		total += price
 
 		return false, nil
-	}); err != nil {
-		return Point{}, err
-	}
+	})
 
 	// Get point time
 	last, ok := params.Candlesticks.Last()
-	if !ok {
-		return Point{}, fmt.Errorf("no last candlestick")
+	if ok {
+		p.Time = last.Time
+		p.Price = total / float64(count)
+	} else {
+		p.Price = math.NaN()
 	}
 
-	// Get average price
-	price := total / float64(count)
-
-	return Point{
-		Exchange:  params.Candlesticks.Metadata.Exchange,
-		Pair:      params.Candlesticks.Metadata.Pair,
-		Period:    params.Candlesticks.Metadata.Period,
-		PeriodNb:  params.Candlesticks.Data.Len(),
-		PriceType: params.PriceType,
-		Time:      last.Time,
-		Price:     price,
-	}, nil
+	return p
 }

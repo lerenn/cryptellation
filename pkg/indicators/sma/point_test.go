@@ -26,7 +26,7 @@ func (suite *PointSuite) TestPoint() {
 
 	csMissingPrice := candlestick.NewList("binance", "ETH-USDT", period.M1)
 	suite.Require().NoError(csMissingPrice.Set(candlestick.Candlestick{Time: time.Unix(0, 0), Close: 1000}))
-	suite.Require().NoError(csMissingPrice.Set(candlestick.Candlestick{Time: time.Unix(60, 0), Close: 1500}))
+	suite.Require().NoError(csMissingPrice.Set(candlestick.Candlestick{Time: time.Unix(60, 0), Close: 0}))
 	suite.Require().NoError(csMissingPrice.Set(candlestick.Candlestick{Time: time.Unix(120, 0), Close: 1250}))
 
 	cases := []struct {
@@ -60,9 +60,7 @@ func (suite *PointSuite) TestPoint() {
 	}
 
 	for i, c := range cases {
-		p, err := NewPoint(c.Params)
-		suite.Require().NoError(err, i)
-
+		p := NewPoint(c.Params)
 		if math.IsNaN(c.ExpectedOutput) {
 			suite.Require().True(math.IsNaN(p.Price), i)
 		} else {
