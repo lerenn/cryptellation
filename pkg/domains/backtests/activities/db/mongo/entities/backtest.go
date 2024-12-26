@@ -31,7 +31,7 @@ type Backtest struct {
 
 // ToModel converts the entity to a model.
 func (bt Backtest) ToModel() (backtest.Backtest, error) {
-	priceType := candlestick.Price(bt.CurrentPriceType)
+	priceType := candlestick.PriceType(bt.CurrentPriceType)
 	if err := priceType.Validate(); err != nil {
 		wrappedErr := fmt.Errorf("error when validating current price type, got %q: %w", bt.CurrentPriceType, err)
 		return backtest.Backtest{}, wrappedErr

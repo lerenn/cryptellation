@@ -11,12 +11,12 @@ func TestCandlestickPrices(t *testing.T) {
 	}
 
 	for _, vpt := range validPrices {
-		if err := Price(vpt).Validate(); err != nil {
+		if err := PriceType(vpt).Validate(); err != nil {
 			t.Error("Price should be valid: ", vpt)
 		}
 	}
 
-	if err := Price("unknown").Validate(); err == nil {
+	if err := PriceType("unknown").Validate(); err == nil {
 		t.Error("Price should not be valid: unknown")
 	}
 }

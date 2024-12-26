@@ -220,7 +220,7 @@ func validateCandlesticksParams(
 			params.End.Add(-params.Period.Duration() * MinimalRetrievedMissingCandlesticks))
 	}
 
-	// Round down payload start and end
+	// Round down params start and end
 	params.Start = utils.ToReference(params.Period.RoundTime(*params.Start))
 	params.End = utils.ToReference(params.Period.RoundTime(*params.End))
 
@@ -257,8 +257,8 @@ func (wf workflows) upsert(ctx workflow.Context, cl *candlestick.List) error {
 	}
 
 	// Loop over the candlesticks and separate between to insert or update
-	csToInsert := candlestick.NewListFrom(cl)
-	csToUpdate := candlestick.NewListFrom(cl)
+	csToInsert := candlestick.NewListWithMetadata(cl.Metadata)
+	csToUpdate := candlestick.NewListWithMetadata(cl.Metadata)
 	if err := cl.Loop(func(cs candlestick.Candlestick) (bool, error) {
 		rcs, exists := dbRes.List.Data.Get(cs.Time)
 		if !exists {

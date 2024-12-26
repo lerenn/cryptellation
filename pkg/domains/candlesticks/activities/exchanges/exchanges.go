@@ -44,7 +44,7 @@ type Exchanges interface {
 
 	GetCandlesticksActivity(
 		ctx context.Context,
-		payload GetCandlesticksActivityParams,
+		params GetCandlesticksActivityParams,
 	) (GetCandlesticksActivityResults, error)
 }
 

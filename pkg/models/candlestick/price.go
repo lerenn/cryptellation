@@ -7,36 +7,36 @@ var (
 	ErrInvalidPriceType = errors.New("invalid-price-type")
 )
 
-// Price is the type of price to use.
-type Price string
+// PriceType is the type of price to use.
+type PriceType string
 
 const (
-	// PriceIsOpen is the open price.
-	PriceIsOpen Price = "open"
-	// PriceIsHigh is the high price.
-	PriceIsHigh Price = "high"
-	// PriceIsLow is the low price.
-	PriceIsLow Price = "low"
-	// PriceIsClose is the close price.
-	PriceIsClose Price = "close"
+	// PriceTypeIsOpen is the open price.
+	PriceTypeIsOpen PriceType = "open"
+	// PriceTypeIsHigh is the high price.
+	PriceTypeIsHigh PriceType = "high"
+	// PriceTypeIsLow is the low price.
+	PriceTypeIsLow PriceType = "low"
+	// PriceTypeIsClose is the close price.
+	PriceTypeIsClose PriceType = "close"
 )
 
-// Prices is the list of all available prices.
-var Prices = []Price{
-	PriceIsOpen,
-	PriceIsHigh,
-	PriceIsLow,
-	PriceIsClose,
+// PriceTypes is the list of all available price types.
+var PriceTypes = []PriceType{
+	PriceTypeIsOpen,
+	PriceTypeIsHigh,
+	PriceTypeIsLow,
+	PriceTypeIsClose,
 }
 
 // String returns the string representation of the price type.
-func (pt Price) String() string {
+func (pt PriceType) String() string {
 	return string(pt)
 }
 
 // Validate checks if the price type is valid.
-func (pt Price) Validate() error {
-	for _, vpt := range Prices {
+func (pt PriceType) Validate() error {
+	for _, vpt := range PriceTypes {
 		if vpt.String() == pt.String() {
 			return nil
 		}

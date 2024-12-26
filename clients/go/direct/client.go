@@ -41,6 +41,13 @@ type Client interface {
 		params api.ListExchangesWorkflowParams,
 	) (res api.ListExchangesWorkflowResults, err error)
 
+	// Indicators
+
+	ListSMA(
+		ctx context.Context,
+		params api.ListSMAWorkflowParams,
+	) (res api.ListSMAWorkflowResults, err error)
+
 	// Service
 
 	Info(ctx context.Context) (api.ServiceInfoResults, error)
