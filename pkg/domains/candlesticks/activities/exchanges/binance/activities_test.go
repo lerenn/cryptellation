@@ -33,7 +33,7 @@ func (suite *BinanceSuite) TestGetCandlesticks() {
 	ts := utils.Must(time.Parse("2006/01/02 15:04:05", "2020/11/15 00:00:00"))
 	te := utils.Must(time.Parse("2006/01/02 15:04:05", "2020/11/15 00:05:00"))
 
-	res, err := suite.service.GetCandlesticksActivity(context.TODO(),
+	res, err := suite.service.GetCandlesticksActivity(context.Background(),
 		exchanges.GetCandlesticksActivityParams{
 			Pair:   p,
 			Period: period.M1,
@@ -69,7 +69,7 @@ func (suite *BinanceSuite) TestGetCandlesticksWithZeroLimit() {
 	te, err := time.Parse("2006/01/02 15:04:05", "2020/11/15 00:05:00")
 	suite.Require().NoError(err)
 
-	_, err = suite.service.GetCandlesticksActivity(context.TODO(),
+	_, err = suite.service.GetCandlesticksActivity(context.Background(),
 		exchanges.GetCandlesticksActivityParams{
 			Pair:   p,
 			Period: period.M1,

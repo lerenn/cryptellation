@@ -5,26 +5,27 @@ import (
 	"testing"
 
 	"github.com/lerenn/cryptellation/v1/pkg/config"
-	"github.com/lerenn/cryptellation/v1/pkg/domains/backtests/activities/db"
+	"github.com/lerenn/cryptellation/v1/pkg/domains/forwardtests/activities/db"
 	"github.com/stretchr/testify/suite"
 )
 
-func TestBacktestSuite(t *testing.T) {
-	suite.Run(t, new(BacktestSuite))
+func TestForwardTestSuite(t *testing.T) {
+	suite.Run(t, new(ForwardTestSuite))
 }
 
-type BacktestSuite struct {
-	db.BacktestSuite
+type ForwardTestSuite struct {
+	db.ForwardTestSuite
 }
 
-func (suite *BacktestSuite) SetupTest() {
+func (suite *ForwardTestSuite) SetupTest() {
 	db, err := New(
 		context.Background(),
 		config.LoadMongo(&config.Mongo{
-			Database: "cryptellation-backtests-integration-tests",
+			Database: "cryptellation-forwardtests-integration-tests",
 		}),
 	)
 	suite.Require().NoError(err)
 	suite.Require().NoError(db.Reset(context.Background()))
+
 	suite.DB = db
 }
