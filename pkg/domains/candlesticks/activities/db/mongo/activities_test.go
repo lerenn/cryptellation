@@ -25,7 +25,7 @@ func (suite *CandlesticksSuite) SetupTest() {
 				Database: "cryptellation-candlesticks-integration-tests",
 			}))
 	suite.Require().NoError(err)
-	suite.Require().NoError(db.Reset(context.TODO()))
+	suite.Require().NoError(db.Reset(context.Background()))
 
 	suite.DB = db
 }

@@ -4,7 +4,7 @@ import (
 	"errors"
 
 	"github.com/lerenn/cryptellation/v1/api"
-	"github.com/lerenn/cryptellation/v1/clients/go/wfclient/raw"
+	"github.com/lerenn/cryptellation/v1/clients/go/workflow/raw"
 	"github.com/lerenn/cryptellation/v1/pkg/run"
 	"go.temporal.io/sdk/workflow"
 )

@@ -2,7 +2,7 @@ package wfclient
 
 import (
 	"github.com/lerenn/cryptellation/v1/api"
-	"github.com/lerenn/cryptellation/v1/clients/go/wfclient/raw"
+	"github.com/lerenn/cryptellation/v1/clients/go/workflow/raw"
 	"go.temporal.io/sdk/workflow"
 )
 

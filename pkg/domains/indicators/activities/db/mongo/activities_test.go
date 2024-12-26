@@ -25,7 +25,7 @@ func (suite *SMASuite) SetupTest() {
 				Database: "cryptellation-indicators-integration-tests",
 			}))
 	suite.Require().NoError(err)
-	suite.Require().NoError(db.Reset(context.TODO()))
+	suite.Require().NoError(db.Reset(context.Background()))
 
 	suite.DB = db
 }

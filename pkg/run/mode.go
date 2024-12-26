@@ -17,7 +17,7 @@ type Mode string
 const (
 	// ModeBacktest is the backtest mode.
 	ModeBacktest Mode = "backtest"
-	// ModeForwardtest is the forward test mode.
+	// ModeForwardtest is the forwardtest mode.
 	ModeForwardtest Mode = "forwardtest"
 	// ModeLive is the live mode.
 	ModeLive Mode = "live"

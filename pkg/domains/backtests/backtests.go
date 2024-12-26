@@ -2,7 +2,7 @@ package backtests
 
 import (
 	"github.com/lerenn/cryptellation/v1/api"
-	wfclient "github.com/lerenn/cryptellation/v1/clients/go/wfclient"
+	wfclient "github.com/lerenn/cryptellation/v1/clients/go/workflow"
 	"github.com/lerenn/cryptellation/v1/pkg/domains/backtests/activities/db"
 	"go.temporal.io/sdk/worker"
 	"go.temporal.io/sdk/workflow"

@@ -10,8 +10,8 @@ import (
 	"go.temporal.io/sdk/workflow"
 )
 
-// ListSMA returns the SMA points for a given pair and exchange.
-func (wf *workflows) ListSMA(
+// ListSMAWorkflow returns the SMA points for a given pair and exchange.
+func (wf *workflows) ListSMAWorkflow(
 	ctx workflow.Context,
 	params api.ListSMAWorkflowParams,
 ) (api.ListSMAWorkflowResults, error) {

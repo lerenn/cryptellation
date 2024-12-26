@@ -25,7 +25,7 @@ func (suite *BinanceSuite) SetupTest() {
 }
 
 func (suite *BinanceSuite) TestExchangeInfos() {
-	r, err := suite.service.GetExchangeActivity(context.TODO(), exchanges.GetExchangeActivityParams{})
+	r, err := suite.service.GetExchangeActivity(context.Background(), exchanges.GetExchangeActivityParams{})
 	suite.NoError(err)
 
 	suite.Require().True(checkPairExistance(r.Exchange.Pairs, "ETH-USDC"))
@@ -48,7 +48,7 @@ func checkPairExistance(list []string, pair string) bool {
 }
 
 func (suite *BinanceSuite) TestExchangeNames() {
-	r, err := suite.service.ListExchangesActivity(context.TODO(), exchanges.ListExchangesActivityParams{})
+	r, err := suite.service.ListExchangesActivity(context.Background(), exchanges.ListExchangesActivityParams{})
 	suite.NoError(err)
 
 	suite.Require().Contains(r.List, "binance")
