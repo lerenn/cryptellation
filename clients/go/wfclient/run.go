@@ -4,7 +4,7 @@ import (
 	"errors"
 
 	"github.com/lerenn/cryptellation/v1/api"
-	"github.com/lerenn/cryptellation/v1/clients/go/workflow/raw"
+	"github.com/lerenn/cryptellation/v1/clients/go/wfclient/raw"
 	"github.com/lerenn/cryptellation/v1/pkg/run"
 	"go.temporal.io/sdk/workflow"
 )
@@ -36,7 +36,10 @@ func (c client) SubscribeToPrice(ctx workflow.Context, params SubscribeToPricePa
 			Pair:       params.Pair,
 		})
 		return err
-	case run.ModeForwardtest, run.ModeLive:
+	case run.ModeForwardtest:
+		// TODO
+		return ErrNotImplemented
+	case run.ModeLive:
 		return ErrNotImplemented
 	default:
 		return run.ErrInvalidMode

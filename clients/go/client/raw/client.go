@@ -24,6 +24,14 @@ type Client interface {
 		ctx context.Context,
 		params api.RunBacktestWorkflowParams,
 	) (api.RunBacktestWorkflowResults, error)
+	GetBacktest(
+		ctx context.Context,
+		params api.GetBacktestWorkflowParams,
+	) (api.GetBacktestWorkflowResults, error)
+	ListBacktests(
+		ctx context.Context,
+		params api.ListBacktestsWorkflowParams,
+	) (api.ListBacktestsWorkflowResults, error)
 	SubscribeToBacktestPrice(
 		ctx context.Context,
 		params api.SubscribeToBacktestPriceWorkflowParams,
