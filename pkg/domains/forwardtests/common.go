@@ -7,16 +7,16 @@ import (
 	"go.temporal.io/sdk/workflow"
 )
 
-func (wf *workflows) readForwardTestFromDB(ctx workflow.Context, id uuid.UUID) (forwardtest.ForwardTest, error) {
-	var readRes db.ReadForwardTestActivityResult
+func (wf *workflows) readForwardtestFromDB(ctx workflow.Context, id uuid.UUID) (forwardtest.Forwardtest, error) {
+	var readRes db.ReadForwardtestActivityResult
 	err := workflow.ExecuteActivity(
 		workflow.WithActivityOptions(ctx, db.DefaultActivityOptions()),
-		wf.db.ReadForwardTestActivity, db.ReadForwardTestActivityParams{
+		wf.db.ReadForwardtestActivity, db.ReadForwardtestActivityParams{
 			ID: id,
 		}).Get(ctx, &readRes)
 	if err != nil {
-		return forwardtest.ForwardTest{}, err
+		return forwardtest.Forwardtest{}, err
 	}
 
-	return readRes.ForwardTest, nil
+	return readRes.Forwardtest, nil
 }

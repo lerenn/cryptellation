@@ -7,18 +7,18 @@ import (
 	"go.temporal.io/sdk/workflow"
 )
 
-// ListForwardTestAccountsWorkflow lists the account of a forwardtest.
-func (wf *workflows) ListForwardTestAccountsWorkflow(
+// ListForwardtestAccountsWorkflow lists the account of a forwardtest.
+func (wf *workflows) ListForwardtestAccountsWorkflow(
 	ctx workflow.Context,
-	params api.ListForwardTestAccountsWorkflowParams,
-) (api.ListForwardTestAccountsWorkflowResults, error) {
-	ft, err := wf.readForwardTestFromDB(ctx, params.ForwardTestID)
+	params api.ListForwardtestAccountsWorkflowParams,
+) (api.ListForwardtestAccountsWorkflowResults, error) {
+	ft, err := wf.readForwardtestFromDB(ctx, params.ForwardtestID)
 	if err != nil {
-		return api.ListForwardTestAccountsWorkflowResults{},
+		return api.ListForwardtestAccountsWorkflowResults{},
 			fmt.Errorf("could not read forwardtest from db: %w", err)
 	}
 
-	return api.ListForwardTestAccountsWorkflowResults{
+	return api.ListForwardtestAccountsWorkflowResults{
 		Accounts: ft.Accounts,
 	}, nil
 }

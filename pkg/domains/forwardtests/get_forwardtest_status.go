@@ -21,15 +21,15 @@ const (
 	DefaultBalanceSymbol = "USDT"
 )
 
-// GetForwardTestStatusWorkflow is the workflow to get the forwardtest status.
-func (wf *workflows) GetForwardTestStatusWorkflow(
+// GetForwardtestStatusWorkflow is the workflow to get the forwardtest status.
+func (wf *workflows) GetForwardtestStatusWorkflow(
 	ctx workflow.Context,
-	params api.GetForwardTestStatusWorkflowParams,
-) (api.GetForwardTestStatusWorkflowResults, error) {
+	params api.GetForwardtestStatusWorkflowParams,
+) (api.GetForwardtestStatusWorkflowResults, error) {
 	// Read forwardtest from database
-	ft, err := wf.readForwardTestFromDB(ctx, params.ForwardTestID)
+	ft, err := wf.readForwardtestFromDB(ctx, params.ForwardtestID)
 	if err != nil {
-		return api.GetForwardTestStatusWorkflowResults{},
+		return api.GetForwardtestStatusWorkflowResults{},
 			fmt.Errorf("could not read forwardtest from db: %w", err)
 	}
 
@@ -53,13 +53,13 @@ func (wf *workflows) GetForwardTestStatusWorkflow(
 				Limit:    1,
 			}, nil)
 			if err != nil {
-				return api.GetForwardTestStatusWorkflowResults{},
+				return api.GetForwardtestStatusWorkflowResults{},
 					fmt.Errorf("could not get candlesticks from service: %w", err)
 			}
 
 			c, ok := csRes.List.Last()
 			if !ok {
-				return api.GetForwardTestStatusWorkflowResults{}, fmt.Errorf("%w: %s", ErrNoActualPrice, p)
+				return api.GetForwardtestStatusWorkflowResults{}, fmt.Errorf("%w: %s", ErrNoActualPrice, p)
 			}
 
 			// Calculate value
@@ -67,7 +67,7 @@ func (wf *workflows) GetForwardTestStatusWorkflow(
 		}
 	}
 
-	return api.GetForwardTestStatusWorkflowResults{
+	return api.GetForwardtestStatusWorkflowResults{
 		Status: forwardtest.Status{
 			Balance: total,
 		},

@@ -35,64 +35,64 @@ func (m *MockDB) EXPECT() *MockDBMockRecorder {
 	return m.recorder
 }
 
-// CreateForwardTestActivity mocks base method.
-func (m *MockDB) CreateForwardTestActivity(ctx context.Context, params CreateForwardTestActivityParams) (CreateForwardTestActivityResult, error) {
+// CreateForwardtestActivity mocks base method.
+func (m *MockDB) CreateForwardtestActivity(ctx context.Context, params CreateForwardtestActivityParams) (CreateForwardtestActivityResult, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CreateForwardTestActivity", ctx, params)
-	ret0, _ := ret[0].(CreateForwardTestActivityResult)
+	ret := m.ctrl.Call(m, "CreateForwardtestActivity", ctx, params)
+	ret0, _ := ret[0].(CreateForwardtestActivityResult)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// CreateForwardTestActivity indicates an expected call of CreateForwardTestActivity.
-func (mr *MockDBMockRecorder) CreateForwardTestActivity(ctx, params interface{}) *gomock.Call {
+// CreateForwardtestActivity indicates an expected call of CreateForwardtestActivity.
+func (mr *MockDBMockRecorder) CreateForwardtestActivity(ctx, params interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateForwardTestActivity", reflect.TypeOf((*MockDB)(nil).CreateForwardTestActivity), ctx, params)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateForwardtestActivity", reflect.TypeOf((*MockDB)(nil).CreateForwardtestActivity), ctx, params)
 }
 
-// DeleteForwardTestActivity mocks base method.
-func (m *MockDB) DeleteForwardTestActivity(ctx context.Context, params DeleteForwardTestActivityParams) (DeleteForwardTestActivityResult, error) {
+// DeleteForwardtestActivity mocks base method.
+func (m *MockDB) DeleteForwardtestActivity(ctx context.Context, params DeleteForwardtestActivityParams) (DeleteForwardtestActivityResult, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "DeleteForwardTestActivity", ctx, params)
-	ret0, _ := ret[0].(DeleteForwardTestActivityResult)
+	ret := m.ctrl.Call(m, "DeleteForwardtestActivity", ctx, params)
+	ret0, _ := ret[0].(DeleteForwardtestActivityResult)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// DeleteForwardTestActivity indicates an expected call of DeleteForwardTestActivity.
-func (mr *MockDBMockRecorder) DeleteForwardTestActivity(ctx, params interface{}) *gomock.Call {
+// DeleteForwardtestActivity indicates an expected call of DeleteForwardtestActivity.
+func (mr *MockDBMockRecorder) DeleteForwardtestActivity(ctx, params interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteForwardTestActivity", reflect.TypeOf((*MockDB)(nil).DeleteForwardTestActivity), ctx, params)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteForwardtestActivity", reflect.TypeOf((*MockDB)(nil).DeleteForwardtestActivity), ctx, params)
 }
 
-// ListForwardTestsActivity mocks base method.
-func (m *MockDB) ListForwardTestsActivity(ctx context.Context, params ListForwardTestsActivityParams) (ListForwardTestsActivityResult, error) {
+// ListForwardtestsActivity mocks base method.
+func (m *MockDB) ListForwardtestsActivity(ctx context.Context, params ListForwardtestsActivityParams) (ListForwardtestsActivityResult, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ListForwardTestsActivity", ctx, params)
-	ret0, _ := ret[0].(ListForwardTestsActivityResult)
+	ret := m.ctrl.Call(m, "ListForwardtestsActivity", ctx, params)
+	ret0, _ := ret[0].(ListForwardtestsActivityResult)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// ListForwardTestsActivity indicates an expected call of ListForwardTestsActivity.
-func (mr *MockDBMockRecorder) ListForwardTestsActivity(ctx, params interface{}) *gomock.Call {
+// ListForwardtestsActivity indicates an expected call of ListForwardtestsActivity.
+func (mr *MockDBMockRecorder) ListForwardtestsActivity(ctx, params interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListForwardTestsActivity", reflect.TypeOf((*MockDB)(nil).ListForwardTestsActivity), ctx, params)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListForwardtestsActivity", reflect.TypeOf((*MockDB)(nil).ListForwardtestsActivity), ctx, params)
 }
 
-// ReadForwardTestActivity mocks base method.
-func (m *MockDB) ReadForwardTestActivity(ctx context.Context, params ReadForwardTestActivityParams) (ReadForwardTestActivityResult, error) {
+// ReadForwardtestActivity mocks base method.
+func (m *MockDB) ReadForwardtestActivity(ctx context.Context, params ReadForwardtestActivityParams) (ReadForwardtestActivityResult, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ReadForwardTestActivity", ctx, params)
-	ret0, _ := ret[0].(ReadForwardTestActivityResult)
+	ret := m.ctrl.Call(m, "ReadForwardtestActivity", ctx, params)
+	ret0, _ := ret[0].(ReadForwardtestActivityResult)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// ReadForwardTestActivity indicates an expected call of ReadForwardTestActivity.
-func (mr *MockDBMockRecorder) ReadForwardTestActivity(ctx, params interface{}) *gomock.Call {
+// ReadForwardtestActivity indicates an expected call of ReadForwardtestActivity.
+func (mr *MockDBMockRecorder) ReadForwardtestActivity(ctx, params interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ReadForwardTestActivity", reflect.TypeOf((*MockDB)(nil).ReadForwardTestActivity), ctx, params)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ReadForwardtestActivity", reflect.TypeOf((*MockDB)(nil).ReadForwardtestActivity), ctx, params)
 }
 
 // Register mocks base method.
@@ -107,17 +107,17 @@ func (mr *MockDBMockRecorder) Register(w interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Register", reflect.TypeOf((*MockDB)(nil).Register), w)
 }
 
-// UpdateForwardTestActivity mocks base method.
-func (m *MockDB) UpdateForwardTestActivity(ctx context.Context, params UpdateForwardTestActivityParams) (UpdateForwardTestActivityResult, error) {
+// UpdateForwardtestActivity mocks base method.
+func (m *MockDB) UpdateForwardtestActivity(ctx context.Context, params UpdateForwardtestActivityParams) (UpdateForwardtestActivityResult, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "UpdateForwardTestActivity", ctx, params)
-	ret0, _ := ret[0].(UpdateForwardTestActivityResult)
+	ret := m.ctrl.Call(m, "UpdateForwardtestActivity", ctx, params)
+	ret0, _ := ret[0].(UpdateForwardtestActivityResult)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// UpdateForwardTestActivity indicates an expected call of UpdateForwardTestActivity.
-func (mr *MockDBMockRecorder) UpdateForwardTestActivity(ctx, params interface{}) *gomock.Call {
+// UpdateForwardtestActivity indicates an expected call of UpdateForwardtestActivity.
+func (mr *MockDBMockRecorder) UpdateForwardtestActivity(ctx, params interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateForwardTestActivity", reflect.TypeOf((*MockDB)(nil).UpdateForwardTestActivity), ctx, params)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateForwardtestActivity", reflect.TypeOf((*MockDB)(nil).UpdateForwardtestActivity), ctx, params)
 }

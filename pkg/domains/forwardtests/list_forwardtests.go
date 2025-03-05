@@ -6,28 +6,28 @@ import (
 	"go.temporal.io/sdk/workflow"
 )
 
-// ListForwardTestsWorkflow lists the forwardtests present in the system.
-func (wf *workflows) ListForwardTestsWorkflow(
+// ListForwardtestsWorkflow lists the forwardtests present in the system.
+func (wf *workflows) ListForwardtestsWorkflow(
 	ctx workflow.Context,
-	_ api.ListForwardTestsWorkflowParams,
-) (api.ListForwardTestsWorkflowResults, error) {
+	_ api.ListForwardtestsWorkflowParams,
+) (api.ListForwardtestsWorkflowResults, error) {
 	logger := workflow.GetLogger(ctx)
 	logger.Info("Listing forwardtests")
 
 	// List forwardtests
-	var res db.ListForwardTestsActivityResult
+	var res db.ListForwardtestsActivityResult
 	err := workflow.ExecuteActivity(
 		workflow.WithActivityOptions(ctx, db.DefaultActivityOptions()),
-		wf.db.ListForwardTestsActivity, db.ListForwardTestsActivityParams{}).Get(ctx, &res)
+		wf.db.ListForwardtestsActivity, db.ListForwardtestsActivityParams{}).Get(ctx, &res)
 	if err != nil {
 		logger.Error("Error listing forwardtests",
 			"error", err.Error())
-		return api.ListForwardTestsWorkflowResults{}, err
+		return api.ListForwardtestsWorkflowResults{}, err
 	}
 
 	logger.Info("Listed forwardtests",
-		"count", len(res.ForwardTests))
-	return api.ListForwardTestsWorkflowResults{
-		ForwardTests: res.ForwardTests,
+		"count", len(res.Forwardtests))
+	return api.ListForwardtestsWorkflowResults{
+		Forwardtests: res.Forwardtests,
 	}, nil
 }

@@ -8,45 +8,45 @@ import (
 	"go.temporal.io/sdk/workflow"
 )
 
-// ForwardTests is the interface for the forwardtests domain.
-type ForwardTests interface {
+// Forwardtests is the interface for the forwardtests domain.
+type Forwardtests interface {
 	Register(w worker.Worker)
 
-	CreateForwardTestWorkflow(
+	CreateForwardtestWorkflow(
 		ctx workflow.Context,
-		params api.CreateForwardTestWorkflowParams,
-	) (api.CreateForwardTestWorkflowResults, error)
+		params api.CreateForwardtestWorkflowParams,
+	) (api.CreateForwardtestWorkflowResults, error)
 
-	ListForwardTestsWorkflow(
+	ListForwardtestsWorkflow(
 		ctx workflow.Context,
-		params api.ListForwardTestsWorkflowParams,
-	) (api.ListForwardTestsWorkflowResults, error)
+		params api.ListForwardtestsWorkflowParams,
+	) (api.ListForwardtestsWorkflowResults, error)
 
-	CreateForwardTestOrderWorkflow(
+	CreateForwardtestOrderWorkflow(
 		ctx workflow.Context,
-		params api.CreateForwardTestOrderWorkflowParams,
-	) (api.CreateForwardTestOrderWorkflowResults, error)
+		params api.CreateForwardtestOrderWorkflowParams,
+	) (api.CreateForwardtestOrderWorkflowResults, error)
 
-	ListForwardTestAccountsWorkflow(
+	ListForwardtestAccountsWorkflow(
 		ctx workflow.Context,
-		params api.ListForwardTestAccountsWorkflowParams,
-	) (api.ListForwardTestAccountsWorkflowResults, error)
+		params api.ListForwardtestAccountsWorkflowParams,
+	) (api.ListForwardtestAccountsWorkflowResults, error)
 
-	GetForwardTestStatusWorkflow(
+	GetForwardtestStatusWorkflow(
 		ctx workflow.Context,
-		params api.GetForwardTestStatusWorkflowParams,
-	) (api.GetForwardTestStatusWorkflowResults, error)
+		params api.GetForwardtestStatusWorkflowParams,
+	) (api.GetForwardtestStatusWorkflowResults, error)
 }
 
-var _ ForwardTests = &workflows{}
+var _ Forwardtests = &workflows{}
 
 type workflows struct {
 	db            db.DB
 	cryptellation wfclient.Client
 }
 
-// New creates a new ForwardTests instance.
-func New(db db.DB) ForwardTests {
+// New creates a new Forwardtests instance.
+func New(db db.DB) Forwardtests {
 	if db == nil {
 		panic("nil db")
 	}
@@ -59,19 +59,19 @@ func New(db db.DB) ForwardTests {
 
 // Register registers the workflows to the worker.
 func (wf *workflows) Register(worker worker.Worker) {
-	worker.RegisterWorkflowWithOptions(wf.CreateForwardTestWorkflow, workflow.RegisterOptions{
-		Name: api.CreateForwardTestWorkflowName,
+	worker.RegisterWorkflowWithOptions(wf.CreateForwardtestWorkflow, workflow.RegisterOptions{
+		Name: api.CreateForwardtestWorkflowName,
 	})
-	worker.RegisterWorkflowWithOptions(wf.ListForwardTestsWorkflow, workflow.RegisterOptions{
-		Name: api.ListForwardTestsWorkflowName,
+	worker.RegisterWorkflowWithOptions(wf.ListForwardtestsWorkflow, workflow.RegisterOptions{
+		Name: api.ListForwardtestsWorkflowName,
 	})
-	worker.RegisterWorkflowWithOptions(wf.CreateForwardTestOrderWorkflow, workflow.RegisterOptions{
-		Name: api.CreateForwardTestOrderWorkflowName,
+	worker.RegisterWorkflowWithOptions(wf.CreateForwardtestOrderWorkflow, workflow.RegisterOptions{
+		Name: api.CreateForwardtestOrderWorkflowName,
 	})
-	worker.RegisterWorkflowWithOptions(wf.ListForwardTestAccountsWorkflow, workflow.RegisterOptions{
-		Name: api.ListForwardTestAccountsWorkflowName,
+	worker.RegisterWorkflowWithOptions(wf.ListForwardtestAccountsWorkflow, workflow.RegisterOptions{
+		Name: api.ListForwardtestAccountsWorkflowName,
 	})
-	worker.RegisterWorkflowWithOptions(wf.GetForwardTestStatusWorkflow, workflow.RegisterOptions{
-		Name: api.GetForwardTestStatusWorkflowName,
+	worker.RegisterWorkflowWithOptions(wf.GetForwardtestStatusWorkflow, workflow.RegisterOptions{
+		Name: api.GetForwardtestStatusWorkflowName,
 	})
 }

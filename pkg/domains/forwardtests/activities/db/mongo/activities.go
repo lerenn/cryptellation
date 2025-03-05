@@ -61,16 +61,16 @@ func (a *Activities) Reset(ctx context.Context) error {
 
 // Register registers the activities to the worker.
 func (a *Activities) Register(w worker.Worker) {
-	w.RegisterActivityWithOptions(a.CreateForwardTestActivity,
-		activity.RegisterOptions{Name: db.CreateForwardTestActivityName})
-	w.RegisterActivityWithOptions(a.ReadForwardTestActivity,
-		activity.RegisterOptions{Name: db.ReadForwardTestActivityName})
-	w.RegisterActivityWithOptions(a.ListForwardTestsActivity,
-		activity.RegisterOptions{Name: db.ListForwardTestsActivityName})
-	w.RegisterActivityWithOptions(a.UpdateForwardTestActivity,
-		activity.RegisterOptions{Name: db.UpdateForwardTestActivityName})
-	w.RegisterActivityWithOptions(a.DeleteForwardTestActivity,
-		activity.RegisterOptions{Name: db.DeleteForwardTestActivityName})
+	w.RegisterActivityWithOptions(a.CreateForwardtestActivity,
+		activity.RegisterOptions{Name: db.CreateForwardtestActivityName})
+	w.RegisterActivityWithOptions(a.ReadForwardtestActivity,
+		activity.RegisterOptions{Name: db.ReadForwardtestActivityName})
+	w.RegisterActivityWithOptions(a.ListForwardtestsActivity,
+		activity.RegisterOptions{Name: db.ListForwardtestsActivityName})
+	w.RegisterActivityWithOptions(a.UpdateForwardtestActivity,
+		activity.RegisterOptions{Name: db.UpdateForwardtestActivityName})
+	w.RegisterActivityWithOptions(a.DeleteForwardtestActivity,
+		activity.RegisterOptions{Name: db.DeleteForwardtestActivityName})
 }
 
 const (
@@ -78,32 +78,32 @@ const (
 	CollectionName = "forwardtests"
 )
 
-// CreateForwardTestActivity creates a new forwardtest in the database.
-func (a *Activities) CreateForwardTestActivity(
+// CreateForwardtestActivity creates a new forwardtest in the database.
+func (a *Activities) CreateForwardtestActivity(
 	ctx context.Context,
-	params db.CreateForwardTestActivityParams,
-) (db.CreateForwardTestActivityResult, error) {
+	params db.CreateForwardtestActivityParams,
+) (db.CreateForwardtestActivityResult, error) {
 	// Check ID is not nil
-	if params.ForwardTest.ID == uuid.Nil {
-		return db.CreateForwardTestActivityResult{}, db.ErrNilID
+	if params.Forwardtest.ID == uuid.Nil {
+		return db.CreateForwardtestActivityResult{}, db.ErrNilID
 	}
 
-	entity := entities.FromForwardTestModel(params.ForwardTest)
+	entity := entities.FromForwardtestModel(params.Forwardtest)
 
 	_, err := a.client.Collection(CollectionName).InsertOne(ctx, entity)
-	return db.CreateForwardTestActivityResult{}, err
+	return db.CreateForwardtestActivityResult{}, err
 }
 
-// ReadForwardTestActivity reads a forwardtest from the database.
-func (a *Activities) ReadForwardTestActivity(
+// ReadForwardtestActivity reads a forwardtest from the database.
+func (a *Activities) ReadForwardtestActivity(
 	ctx context.Context,
-	params db.ReadForwardTestActivityParams,
-) (db.ReadForwardTestActivityResult, error) {
-	var entity entities.ForwardTest
+	params db.ReadForwardtestActivityParams,
+) (db.ReadForwardtestActivityResult, error) {
+	var entity entities.Forwardtest
 
 	// Check ID is not nil
 	if params.ID == uuid.Nil {
-		return db.ReadForwardTestActivityResult{}, db.ErrNilID
+		return db.ReadForwardtestActivityResult{}, db.ErrNilID
 	}
 
 	// Get object from database
@@ -112,22 +112,22 @@ func (a *Activities) ReadForwardTestActivity(
 		FindOne(ctx, map[string]any{"_id": params.ID.String()}).
 		Decode(&entity)
 	if err != nil {
-		return db.ReadForwardTestActivityResult{}, err
+		return db.ReadForwardtestActivityResult{}, err
 	}
 
 	// Transform entity to model
 	ft, err := entity.ToModel()
-	return db.ReadForwardTestActivityResult{
-		ForwardTest: ft,
+	return db.ReadForwardtestActivityResult{
+		Forwardtest: ft,
 	}, err
 }
 
-// ListForwardTestsActivity lists all forwardtests from the database.
-func (a *Activities) ListForwardTestsActivity(
+// ListForwardtestsActivity lists all forwardtests from the database.
+func (a *Activities) ListForwardtestsActivity(
 	ctx context.Context,
-	_ db.ListForwardTestsActivityParams,
-) (db.ListForwardTestsActivityResult, error) {
-	var models []forwardtest.ForwardTest
+	_ db.ListForwardtestsActivityParams,
+) (db.ListForwardtestsActivityResult, error) {
+	var models []forwardtest.Forwardtest
 
 	findOptions := options.Find()
 	// Sort by `price` field descending
@@ -137,61 +137,61 @@ func (a *Activities) ListForwardTestsActivity(
 	cursor, err := a.client.Collection(CollectionName).
 		Find(ctx, bson.D{}, findOptions)
 	if err != nil {
-		return db.ListForwardTestsActivityResult{}, err
+		return db.ListForwardtestsActivityResult{}, err
 	}
 	defer cursor.Close(ctx)
 
 	// Transform entities to models
 	for cursor.Next(ctx) {
-		var entity entities.ForwardTest
+		var entity entities.Forwardtest
 		err := cursor.Decode(&entity)
 		if err != nil {
-			return db.ListForwardTestsActivityResult{}, err
+			return db.ListForwardtestsActivityResult{}, err
 		}
 
 		model, err := entity.ToModel()
 		if err != nil {
-			return db.ListForwardTestsActivityResult{}, err
+			return db.ListForwardtestsActivityResult{}, err
 		}
 
 		models = append(models, model)
 	}
 
-	return db.ListForwardTestsActivityResult{
-		ForwardTests: models,
+	return db.ListForwardtestsActivityResult{
+		Forwardtests: models,
 	}, nil
 }
 
-// UpdateForwardTestActivity updates a forwardtest in the database.
-func (a *Activities) UpdateForwardTestActivity(
+// UpdateForwardtestActivity updates a forwardtest in the database.
+func (a *Activities) UpdateForwardtestActivity(
 	ctx context.Context,
-	params db.UpdateForwardTestActivityParams,
-) (db.UpdateForwardTestActivityResult, error) {
+	params db.UpdateForwardtestActivityParams,
+) (db.UpdateForwardtestActivityResult, error) {
 	// Check ID is not nil
-	if params.ForwardTest.ID == uuid.Nil {
-		return db.UpdateForwardTestActivityResult{}, db.ErrNilID
+	if params.Forwardtest.ID == uuid.Nil {
+		return db.UpdateForwardtestActivityResult{}, db.ErrNilID
 	}
 
 	// Update backtest
-	entity := entities.FromForwardTestModel(params.ForwardTest)
+	entity := entities.FromForwardtestModel(params.Forwardtest)
 	_, err := a.client.
 		Collection(CollectionName).
-		ReplaceOne(ctx, map[string]any{"_id": params.ForwardTest.ID.String()}, entity)
-	return db.UpdateForwardTestActivityResult{}, err
+		ReplaceOne(ctx, map[string]any{"_id": params.Forwardtest.ID.String()}, entity)
+	return db.UpdateForwardtestActivityResult{}, err
 }
 
-// DeleteForwardTestActivity deletes a forwardtest from the database.
-func (a *Activities) DeleteForwardTestActivity(
+// DeleteForwardtestActivity deletes a forwardtest from the database.
+func (a *Activities) DeleteForwardtestActivity(
 	ctx context.Context,
-	params db.DeleteForwardTestActivityParams,
-) (db.DeleteForwardTestActivityResult, error) {
+	params db.DeleteForwardtestActivityParams,
+) (db.DeleteForwardtestActivityResult, error) {
 	// Check ID is not nil
 	if params.ID == uuid.Nil {
-		return db.DeleteForwardTestActivityResult{}, db.ErrNilID
+		return db.DeleteForwardtestActivityResult{}, db.ErrNilID
 	}
 
 	// Delete backtest
 	_, err := a.client.Collection(CollectionName).
 		DeleteOne(ctx, map[string]any{"_id": params.ID.String()})
-	return db.DeleteForwardTestActivityResult{}, err
+	return db.DeleteForwardtestActivityResult{}, err
 }

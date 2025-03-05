@@ -7,74 +7,74 @@ import (
 	"github.com/lerenn/cryptellation/v1/pkg/models/order"
 )
 
-// CreateForwardTestWorkflowName is the name of the CreateForwardTestWorkflow.
-const CreateForwardTestWorkflowName = "CreateForwardTestWorkflow"
+// CreateForwardtestWorkflowName is the name of the CreateForwardtestWorkflow.
+const CreateForwardtestWorkflowName = "CreateForwardtestWorkflow"
 
 type (
-	// CreateForwardTestWorkflowParams is the input for the CreateForwardTestWorkflow.
-	CreateForwardTestWorkflowParams struct {
+	// CreateForwardtestWorkflowParams is the input for the CreateForwardtestWorkflow.
+	CreateForwardtestWorkflowParams struct {
 		Accounts map[string]account.Account
 	}
 
-	// CreateForwardTestWorkflowResults is the output for the CreateForwardTestWorkflow.
-	CreateForwardTestWorkflowResults struct {
+	// CreateForwardtestWorkflowResults is the output for the CreateForwardtestWorkflow.
+	CreateForwardtestWorkflowResults struct {
 		ID uuid.UUID
 	}
 )
 
-// ListForwardTestsWorkflowName is the name of the ListForwardTestsWorkflow.
-const ListForwardTestsWorkflowName = "ListForwardTestsWorkflow"
+// ListForwardtestsWorkflowName is the name of the ListForwardtestsWorkflow.
+const ListForwardtestsWorkflowName = "ListForwardtestsWorkflow"
 
 type (
-	// ListForwardTestsWorkflowParams is the input for the ListForwardTestsWorkflow.
-	ListForwardTestsWorkflowParams struct{}
+	// ListForwardtestsWorkflowParams is the input for the ListForwardtestsWorkflow.
+	ListForwardtestsWorkflowParams struct{}
 
-	// ListForwardTestsWorkflowResults is the output for the ListForwardTestsWorkflow.
-	ListForwardTestsWorkflowResults struct {
-		ForwardTests []forwardtest.ForwardTest
+	// ListForwardtestsWorkflowResults is the output for the ListForwardtestsWorkflow.
+	ListForwardtestsWorkflowResults struct {
+		Forwardtests []forwardtest.Forwardtest
 	}
 )
 
-// CreateForwardTestOrderWorkflowName is the name of the CreateForwardTestOrderWorkflow.
-const CreateForwardTestOrderWorkflowName = "CreateForwardTestOrderWorkflow"
+// CreateForwardtestOrderWorkflowName is the name of the CreateForwardtestOrderWorkflow.
+const CreateForwardtestOrderWorkflowName = "CreateForwardtestOrderWorkflow"
 
 type (
-	// CreateForwardTestOrderWorkflowParams is the input for the CreateForwardTestOrderWorkflow.
-	CreateForwardTestOrderWorkflowParams struct {
-		ForwardTestID uuid.UUID
+	// CreateForwardtestOrderWorkflowParams is the input for the CreateForwardtestOrderWorkflow.
+	CreateForwardtestOrderWorkflowParams struct {
+		ForwardtestID uuid.UUID
 		Order         order.Order
 	}
 
-	// CreateForwardTestOrderWorkflowResults is the output for the CreateForwardTestOrderWorkflow.
-	CreateForwardTestOrderWorkflowResults struct{}
+	// CreateForwardtestOrderWorkflowResults is the output for the CreateForwardtestOrderWorkflow.
+	CreateForwardtestOrderWorkflowResults struct{}
 )
 
-// ListForwardTestAccountsWorkflowName is the name of the ListForwardTestAccountsWorkflow.
-const ListForwardTestAccountsWorkflowName = "ListForwardTestAccountsWorkflow"
+// ListForwardtestAccountsWorkflowName is the name of the ListForwardtestAccountsWorkflow.
+const ListForwardtestAccountsWorkflowName = "ListForwardtestAccountsWorkflow"
 
 type (
-	// ListForwardTestAccountsWorkflowParams is the input for the ListForwardTestAccountsWorkflow.
-	ListForwardTestAccountsWorkflowParams struct {
-		ForwardTestID uuid.UUID
+	// ListForwardtestAccountsWorkflowParams is the input for the ListForwardtestAccountsWorkflow.
+	ListForwardtestAccountsWorkflowParams struct {
+		ForwardtestID uuid.UUID
 	}
 
-	// ListForwardTestAccountsWorkflowResults is the output for the ListForwardTestAccountsWorkflow.
-	ListForwardTestAccountsWorkflowResults struct {
+	// ListForwardtestAccountsWorkflowResults is the output for the ListForwardtestAccountsWorkflow.
+	ListForwardtestAccountsWorkflowResults struct {
 		Accounts map[string]account.Account
 	}
 )
 
-// GetForwardTestStatusWorkflowName is the name of the GetForwardTestStatusWorkflow.
-const GetForwardTestStatusWorkflowName = "GetForwardTestStatusWorkflow"
+// GetForwardtestStatusWorkflowName is the name of the GetForwardtestStatusWorkflow.
+const GetForwardtestStatusWorkflowName = "GetForwardtestStatusWorkflow"
 
 type (
-	// GetForwardTestStatusWorkflowParams is the input for the GetForwardTestStatusWorkflow.
-	GetForwardTestStatusWorkflowParams struct {
-		ForwardTestID uuid.UUID
+	// GetForwardtestStatusWorkflowParams is the input for the GetForwardtestStatusWorkflow.
+	GetForwardtestStatusWorkflowParams struct {
+		ForwardtestID uuid.UUID
 	}
 
-	// GetForwardTestStatusWorkflowResults is the output for the GetForwardTestStatusWorkflow.
-	GetForwardTestStatusWorkflowResults struct {
+	// GetForwardtestStatusWorkflowResults is the output for the GetForwardtestStatusWorkflow.
+	GetForwardtestStatusWorkflowResults struct {
 		Status forwardtest.Status
 	}
 )

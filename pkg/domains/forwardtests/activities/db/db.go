@@ -14,97 +14,97 @@ import (
 	"go.temporal.io/sdk/workflow"
 )
 
-// CreateForwardTestActivityName is the name of the CreateForwardTestActivity.
-const CreateForwardTestActivityName = "CreateForwardTestActivity"
+// CreateForwardtestActivityName is the name of the CreateForwardtestActivity.
+const CreateForwardtestActivityName = "CreateForwardtestActivity"
 
 type (
-	// CreateForwardTestActivityParams is the parameters for the CreateForwardTestActivity.
-	CreateForwardTestActivityParams struct {
-		ForwardTest forwardtest.ForwardTest
+	// CreateForwardtestActivityParams is the parameters for the CreateForwardtestActivity.
+	CreateForwardtestActivityParams struct {
+		Forwardtest forwardtest.Forwardtest
 	}
 
-	// CreateForwardTestActivityResult is the result for the CreateForwardTestActivity.
-	CreateForwardTestActivityResult struct{}
+	// CreateForwardtestActivityResult is the result for the CreateForwardtestActivity.
+	CreateForwardtestActivityResult struct{}
 )
 
-// ReadForwardTestActivityName is the name of the ReadForwardTestActivity.
-const ReadForwardTestActivityName = "ReadForwardTestActivity"
+// ReadForwardtestActivityName is the name of the ReadForwardtestActivity.
+const ReadForwardtestActivityName = "ReadForwardtestActivity"
 
 type (
-	// ReadForwardTestActivityParams is the parameters for the ReadForwardTestActivity.
-	ReadForwardTestActivityParams struct {
+	// ReadForwardtestActivityParams is the parameters for the ReadForwardtestActivity.
+	ReadForwardtestActivityParams struct {
 		ID uuid.UUID
 	}
 
-	// ReadForwardTestActivityResult is the result for the ReadForwardTestActivity.
-	ReadForwardTestActivityResult struct {
-		ForwardTest forwardtest.ForwardTest
+	// ReadForwardtestActivityResult is the result for the ReadForwardtestActivity.
+	ReadForwardtestActivityResult struct {
+		Forwardtest forwardtest.Forwardtest
 	}
 )
 
-// ListForwardTestsActivityName is the name of the ListForwardTestsActivity.
-const ListForwardTestsActivityName = "ListForwardTestsActivity"
+// ListForwardtestsActivityName is the name of the ListForwardtestsActivity.
+const ListForwardtestsActivityName = "ListForwardtestsActivity"
 
 type (
-	// ListForwardTestsActivityParams is the parameters for the ListForwardTestsActivity.
-	ListForwardTestsActivityParams struct{}
+	// ListForwardtestsActivityParams is the parameters for the ListForwardtestsActivity.
+	ListForwardtestsActivityParams struct{}
 
-	// ListForwardTestsActivityResult is the result for the ListForwardTestsActivity.
-	ListForwardTestsActivityResult struct {
-		ForwardTests []forwardtest.ForwardTest
+	// ListForwardtestsActivityResult is the result for the ListForwardtestsActivity.
+	ListForwardtestsActivityResult struct {
+		Forwardtests []forwardtest.Forwardtest
 	}
 )
 
-// UpdateForwardTestActivityName is the name of the UpdateForwardTestActivity.
-const UpdateForwardTestActivityName = "UpdateForwardTestActivity"
+// UpdateForwardtestActivityName is the name of the UpdateForwardtestActivity.
+const UpdateForwardtestActivityName = "UpdateForwardtestActivity"
 
 type (
-	// UpdateForwardTestActivityParams is the parameters for the UpdateForwardTestActivity.
-	UpdateForwardTestActivityParams struct {
-		ForwardTest forwardtest.ForwardTest
+	// UpdateForwardtestActivityParams is the parameters for the UpdateForwardtestActivity.
+	UpdateForwardtestActivityParams struct {
+		Forwardtest forwardtest.Forwardtest
 	}
 
-	// UpdateForwardTestActivityResult is the result for the UpdateForwardTestActivity.
-	UpdateForwardTestActivityResult struct{}
+	// UpdateForwardtestActivityResult is the result for the UpdateForwardtestActivity.
+	UpdateForwardtestActivityResult struct{}
 )
 
-// DeleteForwardTestActivityName is the name of the DeleteForwardTestActivity.
-const DeleteForwardTestActivityName = "DeleteForwardTestActivity"
+// DeleteForwardtestActivityName is the name of the DeleteForwardtestActivity.
+const DeleteForwardtestActivityName = "DeleteForwardtestActivity"
 
 type (
-	// DeleteForwardTestActivityParams is the parameters for the DeleteForwardTestActivity.
-	DeleteForwardTestActivityParams struct {
+	// DeleteForwardtestActivityParams is the parameters for the DeleteForwardtestActivity.
+	DeleteForwardtestActivityParams struct {
 		ID uuid.UUID
 	}
 
-	// DeleteForwardTestActivityResult is the result for the DeleteForwardTestActivity.
-	DeleteForwardTestActivityResult struct{}
+	// DeleteForwardtestActivityResult is the result for the DeleteForwardtestActivity.
+	DeleteForwardtestActivityResult struct{}
 )
 
 // DB is the interface for the database activities.
 type DB interface {
 	Register(w worker.Worker)
 
-	CreateForwardTestActivity(
+	CreateForwardtestActivity(
 		ctx context.Context,
-		params CreateForwardTestActivityParams,
-	) (CreateForwardTestActivityResult, error)
-	ReadForwardTestActivity(
+		params CreateForwardtestActivityParams,
+	) (CreateForwardtestActivityResult, error)
+	ReadForwardtestActivity(
 		ctx context.Context,
-		params ReadForwardTestActivityParams,
-	) (ReadForwardTestActivityResult, error)
-	ListForwardTestsActivity(
+		params ReadForwardtestActivityParams,
+	) (ReadForwardtestActivityResult, error)
+	ListForwardtestsActivity(
 		ctx context.Context,
-		params ListForwardTestsActivityParams,
-	) (ListForwardTestsActivityResult, error)
-	UpdateForwardTestActivity(
+		params ListForwardtestsActivityParams,
+	) (ListForwardtestsActivityResult, error)
+	UpdateForwardtestActivity(
 		ctx context.Context,
-		params UpdateForwardTestActivityParams,
-	) (UpdateForwardTestActivityResult, error)
-	DeleteForwardTestActivity(
+		params UpdateForwardtestActivityParams,
+	) (UpdateForwardtestActivityResult, error)
+	DeleteForwardtestActivity(
 		ctx context.Context,
-		params DeleteForwardTestActivityParams,
-	) (DeleteForwardTestActivityResult, error)
+		params DeleteForwardtestActivityParams,
+	) (DeleteForwardtestActivityResult, error)
 }
 
 // DefaultActivityOptions returns the default database activities options.

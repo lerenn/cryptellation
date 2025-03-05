@@ -7,8 +7,8 @@ import (
 	"github.com/lerenn/cryptellation/v1/pkg/models/forwardtest"
 )
 
-// ForwardTest is the entity for a forwardtest.
-type ForwardTest struct {
+// Forwardtest is the entity for a forwardtest.
+type Forwardtest struct {
 	ID        string    `bson:"_id"`
 	UpdatedAt time.Time `bson:"updated_at"`
 
@@ -16,19 +16,19 @@ type ForwardTest struct {
 	Orders   []Order            `bson:"orders"`
 }
 
-// ToModel converts a ForwardTest entity to a ForwardTest model.
-func (ft ForwardTest) ToModel() (forwardtest.ForwardTest, error) {
+// ToModel converts a Forwardtest entity to a Forwardtest model.
+func (ft Forwardtest) ToModel() (forwardtest.Forwardtest, error) {
 	id, err := uuid.Parse(ft.ID)
 	if err != nil {
-		return forwardtest.ForwardTest{}, err
+		return forwardtest.Forwardtest{}, err
 	}
 
 	orders, err := ToOrderModels(ft.Orders)
 	if err != nil {
-		return forwardtest.ForwardTest{}, err
+		return forwardtest.Forwardtest{}, err
 	}
 
-	return forwardtest.ForwardTest{
+	return forwardtest.Forwardtest{
 		ID:        id,
 		UpdatedAt: ft.UpdatedAt,
 		Accounts:  ToAccountModels(ft.Accounts),
@@ -36,9 +36,9 @@ func (ft ForwardTest) ToModel() (forwardtest.ForwardTest, error) {
 	}, nil
 }
 
-// FromForwardTestModel converts a ForwardTest model to a ForwardTest entity.
-func FromForwardTestModel(ft forwardtest.ForwardTest) ForwardTest {
-	return ForwardTest{
+// FromForwardtestModel converts a Forwardtest model to a Forwardtest entity.
+func FromForwardtestModel(ft forwardtest.Forwardtest) Forwardtest {
+	return Forwardtest{
 		ID:        ft.ID.String(),
 		UpdatedAt: time.Now(),
 		Accounts:  FromAccountModels(ft.Accounts),

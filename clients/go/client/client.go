@@ -49,6 +49,17 @@ type Client interface {
 		params api.ListExchangesWorkflowParams,
 	) (res api.ListExchangesWorkflowResults, err error)
 
+	// Forwardtests
+
+	NewForwardtest(
+		ctx context.Context,
+		params api.CreateForwardtestWorkflowParams,
+	) (Forwardtest, error)
+	ListForwardtests(
+		ctx context.Context,
+		params api.ListForwardtestsWorkflowParams,
+	) ([]Forwardtest, error)
+
 	// Indicators
 
 	ListSMA(

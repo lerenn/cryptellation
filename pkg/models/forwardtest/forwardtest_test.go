@@ -9,15 +9,15 @@ import (
 	"github.com/stretchr/testify/suite"
 )
 
-func TestForwardTestSuite(t *testing.T) {
-	suite.Run(t, new(ForwardTestSuite))
+func TestForwardtestSuite(t *testing.T) {
+	suite.Run(t, new(ForwardtestSuite))
 }
 
-type ForwardTestSuite struct {
+type ForwardtestSuite struct {
 	suite.Suite
 }
 
-func (suite *ForwardTestSuite) TestGetAccountsSymbols() {
+func (suite *ForwardtestSuite) TestGetAccountsSymbols() {
 	cases := []struct {
 		Accounts map[string]account.Account
 		Expected []string
@@ -68,7 +68,7 @@ func (suite *ForwardTestSuite) TestGetAccountsSymbols() {
 
 	less := func(a, b string) bool { return a < b }
 	for _, c := range cases {
-		ft := ForwardTest{
+		ft := Forwardtest{
 			Accounts: c.Accounts,
 		}
 		suite.Require().True(cmp.Diff(c.Expected, ft.GetAccountsSymbols(), cmpopts.SortSlices(less)) == "")

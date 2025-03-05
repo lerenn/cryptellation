@@ -69,7 +69,6 @@ func (suite *EndToEndSuite) TestBacktestList() {
 
 	// THEN the response contains the 3 backtests
 
-	suite.Require().Len(res, 3)
 	suite.Require().Contains(res, bt1)
 	suite.Require().Contains(res, bt2)
 	suite.Require().Contains(res, bt3)

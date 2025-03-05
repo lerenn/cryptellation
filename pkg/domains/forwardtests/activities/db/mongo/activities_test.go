@@ -9,15 +9,15 @@ import (
 	"github.com/stretchr/testify/suite"
 )
 
-func TestForwardTestSuite(t *testing.T) {
-	suite.Run(t, new(ForwardTestSuite))
+func TestForwardtestSuite(t *testing.T) {
+	suite.Run(t, new(ForwardtestSuite))
 }
 
-type ForwardTestSuite struct {
-	db.ForwardTestSuite
+type ForwardtestSuite struct {
+	db.ForwardtestSuite
 }
 
-func (suite *ForwardTestSuite) SetupTest() {
+func (suite *ForwardtestSuite) SetupTest() {
 	db, err := New(
 		context.Background(),
 		config.LoadMongo(&config.Mongo{

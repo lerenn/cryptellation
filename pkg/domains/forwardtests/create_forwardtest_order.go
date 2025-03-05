@@ -10,11 +10,11 @@ import (
 	"go.temporal.io/sdk/workflow"
 )
 
-// CreateForwardTestOrderWorkflow creates a new forwardtest order and saves it to the database.
-func (wf *workflows) CreateForwardTestOrderWorkflow(
+// CreateForwardtestOrderWorkflow creates a new forwardtest order and saves it to the database.
+func (wf *workflows) CreateForwardtestOrderWorkflow(
 	ctx workflow.Context,
-	params api.CreateForwardTestOrderWorkflowParams,
-) (api.CreateForwardTestOrderWorkflowResults, error) {
+	params api.CreateForwardtestOrderWorkflowParams,
+) (api.CreateForwardtestOrderWorkflowResults, error) {
 	logger := workflow.GetLogger(ctx)
 
 	if params.Order.ID == uuid.Nil {
@@ -23,12 +23,12 @@ func (wf *workflows) CreateForwardTestOrderWorkflow(
 
 	logger.Debug("Creating order on forwardtest",
 		"order", params.Order,
-		"forwardtest_id", params.ForwardTestID.String())
+		"forwardtest_id", params.ForwardtestID.String())
 
 	// Read forwardtest from database
-	ft, err := wf.readForwardTestFromDB(ctx, params.ForwardTestID)
+	ft, err := wf.readForwardtestFromDB(ctx, params.ForwardtestID)
 	if err != nil {
-		return api.CreateForwardTestOrderWorkflowResults{},
+		return api.CreateForwardtestOrderWorkflowResults{},
 			fmt.Errorf("could not read forwardtest from db: %w", err)
 	}
 
@@ -43,31 +43,31 @@ func (wf *workflows) CreateForwardTestOrderWorkflow(
 		Limit:    1,
 	}, nil)
 	if err != nil {
-		return api.CreateForwardTestOrderWorkflowResults{},
+		return api.CreateForwardtestOrderWorkflowResults{},
 			fmt.Errorf("could not get candlesticks from service: %w", err)
 	}
 
 	cs, ok := csRes.List.First()
 	if !ok {
-		return api.CreateForwardTestOrderWorkflowResults{}, fmt.Errorf("no data for order validation")
+		return api.CreateForwardtestOrderWorkflowResults{}, fmt.Errorf("no data for order validation")
 	}
 
 	logger.Info("Adding order to forwardtest",
 		"order", params.Order,
-		"forwardtest", params.ForwardTestID.String())
+		"forwardtest", params.ForwardtestID.String())
 	if err := ft.AddOrder(params.Order, cs); err != nil {
-		return api.CreateForwardTestOrderWorkflowResults{}, err
+		return api.CreateForwardtestOrderWorkflowResults{}, err
 	}
 
 	// Save forwardtest to database
 	err = workflow.ExecuteActivity(
 		workflow.WithActivityOptions(ctx, db.DefaultActivityOptions()),
-		wf.db.UpdateForwardTestActivity, db.UpdateForwardTestActivityParams{
-			ForwardTest: ft,
+		wf.db.UpdateForwardtestActivity, db.UpdateForwardtestActivityParams{
+			Forwardtest: ft,
 		}).Get(ctx, nil)
 	if err != nil {
-		return api.CreateForwardTestOrderWorkflowResults{}, err
+		return api.CreateForwardtestOrderWorkflowResults{}, err
 	}
 
-	return api.CreateForwardTestOrderWorkflowResults{}, nil
+	return api.CreateForwardtestOrderWorkflowResults{}, nil
 }

@@ -19,21 +19,21 @@ var (
 	ErrInvalidExchange = errors.New("invalid exchange")
 )
 
-// ForwardTest is a forwardtest.
-type ForwardTest struct {
+// Forwardtest is a forwardtest.
+type Forwardtest struct {
 	ID        uuid.UUID
 	UpdatedAt time.Time
 	Accounts  map[string]account.Account
 	Orders    []order.Order
 }
 
-// NewForwardTestParams is the params for the New function.
-type NewForwardTestParams struct {
+// NewForwardtestParams is the params for the New function.
+type NewForwardtestParams struct {
 	Accounts map[string]account.Account
 }
 
 // Validate validates the NewParams.
-func (np NewForwardTestParams) Validate() error {
+func (np NewForwardtestParams) Validate() error {
 	if len(np.Accounts) == 0 {
 		return ErrEmptyAccounts
 	}
@@ -42,15 +42,15 @@ func (np NewForwardTestParams) Validate() error {
 }
 
 // New creates a new forwardtest.
-func New(params NewForwardTestParams) ForwardTest {
-	return ForwardTest{
+func New(params NewForwardtestParams) Forwardtest {
+	return Forwardtest{
 		ID:       uuid.New(),
 		Accounts: params.Accounts,
 	}
 }
 
 // AddOrder adds an order to the forwardtest.
-func (ft *ForwardTest) AddOrder(o order.Order, cs candlestick.Candlestick) error {
+func (ft *Forwardtest) AddOrder(o order.Order, cs candlestick.Candlestick) error {
 	// Get exchange account
 	exchangeAccount, ok := ft.Accounts[o.Exchange]
 	if !ok {
@@ -78,7 +78,7 @@ func (ft *ForwardTest) AddOrder(o order.Order, cs candlestick.Candlestick) error
 }
 
 // GetAccountsSymbols returns the list of symbols used in the accounts.
-func (ft ForwardTest) GetAccountsSymbols() []string {
+func (ft Forwardtest) GetAccountsSymbols() []string {
 	symbols := make(map[string]string, 0)
 
 	for _, account := range ft.Accounts {
