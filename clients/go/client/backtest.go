@@ -11,8 +11,7 @@ import (
 	"go.temporal.io/sdk/worker"
 )
 
-// Backtest is a local representation of a backtest running on the Cryptellation
-// API.
+// Backtest is a local representation of a backtest running on the Cryptellation API.
 type Backtest struct {
 	ID uuid.UUID
 

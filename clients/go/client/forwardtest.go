@@ -10,12 +10,14 @@ import (
 	"github.com/lerenn/cryptellation/v1/pkg/models/order"
 )
 
+// Forwardtest is a local representation of a forwardtest running on the Cryptellation API.
 type Forwardtest struct {
 	ID uuid.UUID
 
 	cryptellation client
 }
 
+// CreateOrder creates an order on the forwardtest.
 func (ft Forwardtest) CreateOrder(
 	ctx context.Context,
 	order order.Order,
@@ -26,6 +28,7 @@ func (ft Forwardtest) CreateOrder(
 	})
 }
 
+// ListAccounts lists the accounts of the forwardtest.
 func (ft Forwardtest) ListAccounts(
 	ctx context.Context,
 ) (map[string]account.Account, error) {
@@ -39,6 +42,7 @@ func (ft Forwardtest) ListAccounts(
 	return res.Accounts, nil
 }
 
+// GetStatus gets the status of the forwardtest.
 func (ft Forwardtest) GetStatus(
 	ctx context.Context,
 ) (forwardtest.Status, error) {
