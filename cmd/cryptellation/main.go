@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"os"
 
-	"github.com/lerenn/cryptellation/v1/clients/go/direct"
+	"github.com/lerenn/cryptellation/v1/clients/go/client"
 	"github.com/lerenn/cryptellation/v1/pkg/telemetry"
 	"github.com/lerenn/cryptellation/v1/pkg/telemetry/console"
 	"github.com/lerenn/cryptellation/v1/pkg/telemetry/otel"
@@ -15,7 +15,7 @@ import (
 
 var (
 	jsonOutput          bool
-	cryptellationClient direct.Client
+	cryptellationClient client.Client
 )
 
 // rootCmd is the CLI root command.
@@ -25,7 +25,7 @@ var rootCmd = &cobra.Command{
 	Short:   "cryptellation - a CLI to execute cryptellation temporal workflows",
 	PersistentPreRunE: func(_ *cobra.Command, _ []string) (err error) {
 		// Create cryptellation client
-		cryptellationClient, err = direct.NewClient()
+		cryptellationClient, err = client.NewClient()
 		return err
 	},
 	PersistentPostRun: func(cmd *cobra.Command, _ []string) {

@@ -15,13 +15,18 @@
 package main
 
 import (
+	"maps"
 	"runtime"
+	"slices"
 
-	"github.com/lerenn/cryptellation/pkg/docker"
 	"github.com/lerenn/cryptellation/v1/pkg/dagger/internal/dagger"
 )
 
 type Cryptellation struct{}
+
+func (m *Cryptellation) AvailablePlatforms() []string {
+	return slices.Collect(maps.Keys(GoRunnersInfo))
+}
 
 func (m *Cryptellation) Worker(
 	sourceDir *dagger.Directory,
@@ -35,9 +40,9 @@ func (m *Cryptellation) Worker(
 	}
 
 	// Set default runner info and override by argument
-	runnerInfo := docker.GoRunnersInfo["linux/amd64"]
+	runnerInfo := GoRunnersInfo["linux/amd64"]
 	if targetPlatform != "" {
-		info, ok := docker.GoRunnersInfo[targetPlatform]
+		info, ok := GoRunnersInfo[targetPlatform]
 		if ok {
 			runnerInfo = info
 		}
@@ -65,7 +70,7 @@ func (m *Cryptellation) WorkerWithDependencies(
 	c := m.Worker(sourceDir, runtime.GOOS+"/"+runtime.GOARCH)
 
 	return c.WithExposedPort(9000, dagger.ContainerWithExposedPortOpts{
-		Protocol:    dagger.Tcp,
+		Protocol:    dagger.NetworkProtocolTcp,
 		Description: "Healthcheck",
 	}).WithExec([]string{"worker", "serve"})
 }

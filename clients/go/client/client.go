@@ -1,10 +1,10 @@
-package direct
+package client
 
 import (
 	"context"
 
 	"github.com/lerenn/cryptellation/v1/api"
-	"github.com/lerenn/cryptellation/v1/clients/go/direct/raw"
+	"github.com/lerenn/cryptellation/v1/clients/go/client/raw"
 	"github.com/lerenn/cryptellation/v1/pkg/config"
 	temporalclient "go.temporal.io/sdk/client"
 	"go.temporal.io/sdk/workflow"
@@ -22,6 +22,14 @@ type Client interface {
 		ctx context.Context,
 		params api.CreateBacktestWorkflowParams,
 	) (Backtest, error)
+	GetBacktest(
+		ctx context.Context,
+		params api.GetBacktestWorkflowParams,
+	) (Backtest, error)
+	ListBacktests(
+		ctx context.Context,
+		params api.ListBacktestsWorkflowParams,
+	) ([]Backtest, error)
 
 	// Candlesticks
 
@@ -40,6 +48,17 @@ type Client interface {
 		ctx context.Context,
 		params api.ListExchangesWorkflowParams,
 	) (res api.ListExchangesWorkflowResults, err error)
+
+	// Forwardtests
+
+	NewForwardtest(
+		ctx context.Context,
+		params api.CreateForwardtestWorkflowParams,
+	) (Forwardtest, error)
+	ListForwardtests(
+		ctx context.Context,
+		params api.ListForwardtestsWorkflowParams,
+	) ([]Forwardtest, error)
 
 	// Indicators
 

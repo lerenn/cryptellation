@@ -2,7 +2,7 @@ package indicators
 
 import (
 	"github.com/lerenn/cryptellation/v1/api"
-	"github.com/lerenn/cryptellation/v1/clients/go/wfclient"
+	wfclient "github.com/lerenn/cryptellation/v1/clients/go/wfclient"
 	"github.com/lerenn/cryptellation/v1/pkg/domains/indicators/activities/db"
 	"go.temporal.io/sdk/worker"
 	"go.temporal.io/sdk/workflow"
@@ -12,7 +12,7 @@ import (
 type Indicators interface {
 	Register(w worker.Worker)
 
-	ListSMA(
+	ListSMAWorkflow(
 		ctx workflow.Context,
 		params api.ListSMAWorkflowParams,
 	) (api.ListSMAWorkflowResults, error)
@@ -40,8 +40,7 @@ func New(db db.DB) Indicators {
 
 // Register registers the workflows to the worker.
 func (wf *workflows) Register(worker worker.Worker) {
-	// Register the SMA workflow
-	worker.RegisterWorkflowWithOptions(wf.ListSMA, workflow.RegisterOptions{
+	worker.RegisterWorkflowWithOptions(wf.ListSMAWorkflow, workflow.RegisterOptions{
 		Name: api.ListSMAWorkflowName,
 	})
 }

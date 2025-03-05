@@ -15,6 +15,8 @@ import (
 	exchangesmongo "github.com/lerenn/cryptellation/v1/pkg/domains/exchanges/activities/db/mongo"
 	exchangesexchagg "github.com/lerenn/cryptellation/v1/pkg/domains/exchanges/activities/exchanges/aggregator"
 	exchangesbinance "github.com/lerenn/cryptellation/v1/pkg/domains/exchanges/activities/exchanges/binance"
+	"github.com/lerenn/cryptellation/v1/pkg/domains/forwardtests"
+	forwardtestsmongo "github.com/lerenn/cryptellation/v1/pkg/domains/forwardtests/activities/db/mongo"
 	"github.com/lerenn/cryptellation/v1/pkg/domains/indicators"
 	indicatorsmongo "github.com/lerenn/cryptellation/v1/pkg/domains/indicators/activities/db/mongo"
 	"github.com/lerenn/cryptellation/v1/pkg/domains/ticks"
@@ -38,6 +40,11 @@ func registerWorkflows(ctx context.Context, w worker.Worker, temporalClient clie
 
 	// Register exchanges workflows
 	if err := registerExchangesWorkflows(ctx, w); err != nil {
+		return err
+	}
+
+	// Register forwardtests workflows
+	if err := registerForwardtestsWorkflows(ctx, w); err != nil {
 		return err
 	}
 
@@ -115,6 +122,21 @@ func registerExchangesWorkflows(ctx context.Context, w worker.Worker) error {
 
 	// Create domain core
 	domain := exchanges.New(db, exchs)
+	domain.Register(w)
+
+	return nil
+}
+
+func registerForwardtestsWorkflows(ctx context.Context, w worker.Worker) error {
+	// Create database adapter
+	db, err := forwardtestsmongo.New(ctx, config.LoadMongo(nil))
+	if err != nil {
+		return err
+	}
+	db.Register(w)
+
+	// Create domain core
+	domain := forwardtests.New(db)
 	domain.Register(w)
 
 	return nil
