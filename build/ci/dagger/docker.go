@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/lerenn/cryptellation/pkg/docker"
 	"github.com/lerenn/cryptellation/v1/build/ci/dagger/internal/dagger"
 )
 
@@ -37,9 +36,15 @@ func publishWorkerDockerImage(
 	sourceDir *dagger.Directory,
 	tags []string,
 ) error {
+	// Get platforms availables
+	availablePlatforms, err := dag.Cryptellation().AvailablePlatforms(ctx)
+	if err != nil {
+		return err
+	}
+
 	// Get images for each platform
-	platformVariants := make([]*dagger.Container, 0, len(docker.GoRunnersInfo))
-	for targetPlatform := range docker.GoRunnersInfo {
+	platformVariants := make([]*dagger.Container, 0, len(availablePlatforms))
+	for _, targetPlatform := range availablePlatforms {
 		runner := dag.Cryptellation().Worker(sourceDir, dagger.CryptellationWorkerOpts{
 			TargetPlatform: targetPlatform,
 		})
