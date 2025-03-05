@@ -36,7 +36,10 @@ func (c client) SubscribeToPrice(ctx workflow.Context, params SubscribeToPricePa
 			Pair:       params.Pair,
 		})
 		return err
-	case run.ModeForwardtest, run.ModeLive:
+	case run.ModeForwardtest:
+		// TODO
+		return ErrNotImplemented
+	case run.ModeLive:
 		return ErrNotImplemented
 	default:
 		return run.ErrInvalidMode

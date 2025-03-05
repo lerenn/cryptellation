@@ -69,3 +69,45 @@ func (c raw) SubscribeToBacktestPrice(
 
 	return res, err
 }
+
+func (c raw) ListBacktests(
+	ctx context.Context,
+	params api.ListBacktestsWorkflowParams,
+) (api.ListBacktestsWorkflowResults, error) {
+	workflowOptions := temporalclient.StartWorkflowOptions{
+		TaskQueue: api.WorkerTaskQueueName,
+	}
+
+	// Execute workflow
+	exec, err := c.temporal.ExecuteWorkflow(ctx, workflowOptions, api.ListBacktestsWorkflowName, params)
+	if err != nil {
+		return api.ListBacktestsWorkflowResults{}, err
+	}
+
+	// Get result and return
+	var res api.ListBacktestsWorkflowResults
+	err = exec.Get(ctx, &res)
+
+	return res, err
+}
+
+func (c raw) GetBacktest(
+	ctx context.Context,
+	params api.GetBacktestWorkflowParams,
+) (api.GetBacktestWorkflowResults, error) {
+	workflowOptions := temporalclient.StartWorkflowOptions{
+		TaskQueue: api.WorkerTaskQueueName,
+	}
+
+	// Execute workflow
+	exec, err := c.temporal.ExecuteWorkflow(ctx, workflowOptions, api.GetBacktestWorkflowName, params)
+	if err != nil {
+		return api.GetBacktestWorkflowResults{}, err
+	}
+
+	// Get result and return
+	var res api.GetBacktestWorkflowResults
+	err = exec.Get(ctx, &res)
+
+	return res, err
+}

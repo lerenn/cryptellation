@@ -109,6 +109,12 @@ func (l *List) Merge(l2 *List, options *timeserie.MergeOptions) error {
 	}
 }
 
+// First will return the first candlestick of the list.
+func (l List) First() (Candlestick, bool) {
+	_, cs, err := l.Data.First()
+	return cs, err
+}
+
 // Last will return the last candlestick of the list.
 func (l List) Last() (Candlestick, bool) {
 	_, cs, err := l.Data.Last()

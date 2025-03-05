@@ -40,11 +40,11 @@ func (suite *BacktestSuite) TestCreateRead() {
 			},
 		},
 	}
-	_, err := suite.DB.CreateBacktestActivity(context.TODO(), CreateBacktestActivityParams{
+	_, err := suite.DB.CreateBacktestActivity(context.Background(), CreateBacktestActivityParams{
 		Backtest: bt,
 	})
 	suite.Require().NoError(err)
-	resp, err := suite.DB.ReadBacktestActivity(context.TODO(), ReadBacktestActivityParams{
+	resp, err := suite.DB.ReadBacktestActivity(context.Background(), ReadBacktestActivityParams{
 		ID: bt.ID,
 	})
 	suite.Require().NoError(err, bt.ID.String())
@@ -99,16 +99,16 @@ func (suite *BacktestSuite) TestList() {
 		},
 	}
 
-	_, err := suite.DB.CreateBacktestActivity(context.TODO(), CreateBacktestActivityParams{
+	_, err := suite.DB.CreateBacktestActivity(context.Background(), CreateBacktestActivityParams{
 		Backtest: bt1,
 	})
 	suite.Require().NoError(err)
-	_, err = suite.DB.CreateBacktestActivity(context.TODO(), CreateBacktestActivityParams{
+	_, err = suite.DB.CreateBacktestActivity(context.Background(), CreateBacktestActivityParams{
 		Backtest: bt2,
 	})
 	suite.Require().NoError(err)
 
-	resp, err := suite.DB.ListBacktestsActivity(context.TODO(), ListBacktestsActivityParams{})
+	resp, err := suite.DB.ListBacktestsActivity(context.Background(), ListBacktestsActivityParams{})
 	suite.Require().NoError(err)
 
 	suite.Require().Len(resp.Backtests, 2)
@@ -138,7 +138,7 @@ func (suite *BacktestSuite) TestUpdate() {
 			},
 		},
 	}
-	_, err := suite.DB.CreateBacktestActivity(context.TODO(), CreateBacktestActivityParams{
+	_, err := suite.DB.CreateBacktestActivity(context.Background(), CreateBacktestActivityParams{
 		Backtest: bt,
 	})
 	suite.Require().NoError(err)
@@ -163,11 +163,11 @@ func (suite *BacktestSuite) TestUpdate() {
 		},
 	}
 	// Should be changes here
-	_, err = suite.DB.UpdateBacktestActivity(context.TODO(), UpdateBacktestActivityParams{
+	_, err = suite.DB.UpdateBacktestActivity(context.Background(), UpdateBacktestActivityParams{
 		Backtest: bt2,
 	})
 	suite.Require().NoError(err)
-	resp, err := suite.DB.ReadBacktestActivity(context.TODO(), ReadBacktestActivityParams{
+	resp, err := suite.DB.ReadBacktestActivity(context.Background(), ReadBacktestActivityParams{
 		ID: bt.ID,
 	})
 	suite.Require().NoError(err)
@@ -201,15 +201,15 @@ func (suite *BacktestSuite) TestDelete() {
 			},
 		},
 	}
-	_, err := suite.DB.CreateBacktestActivity(context.TODO(), CreateBacktestActivityParams{
+	_, err := suite.DB.CreateBacktestActivity(context.Background(), CreateBacktestActivityParams{
 		Backtest: bt,
 	})
 	suite.Require().NoError(err)
-	_, err = suite.DB.DeleteBacktestActivity(context.TODO(), DeleteBacktestActivityParams{
+	_, err = suite.DB.DeleteBacktestActivity(context.Background(), DeleteBacktestActivityParams{
 		Backtest: bt,
 	})
 	suite.Require().NoError(err)
-	_, err = suite.DB.ReadBacktestActivity(context.TODO(), ReadBacktestActivityParams{
+	_, err = suite.DB.ReadBacktestActivity(context.Background(), ReadBacktestActivityParams{
 		ID: bt.ID,
 	})
 	suite.Error(err)
@@ -237,15 +237,15 @@ func (suite *BacktestSuite) TestDeleteInexistant() {
 			},
 		},
 	}
-	_, err := suite.DB.CreateBacktestActivity(context.TODO(), CreateBacktestActivityParams{
+	_, err := suite.DB.CreateBacktestActivity(context.Background(), CreateBacktestActivityParams{
 		Backtest: bt,
 	})
 	suite.Require().NoError(err)
-	_, err = suite.DB.DeleteBacktestActivity(context.TODO(), DeleteBacktestActivityParams{
+	_, err = suite.DB.DeleteBacktestActivity(context.Background(), DeleteBacktestActivityParams{
 		Backtest: bt,
 	})
 	suite.Require().NoError(err)
-	_, err = suite.DB.DeleteBacktestActivity(context.TODO(), DeleteBacktestActivityParams{
+	_, err = suite.DB.DeleteBacktestActivity(context.Background(), DeleteBacktestActivityParams{
 		Backtest: bt,
 	})
 	suite.Require().NoError(err)

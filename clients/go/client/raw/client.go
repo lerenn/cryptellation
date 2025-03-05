@@ -24,6 +24,14 @@ type Client interface {
 		ctx context.Context,
 		params api.RunBacktestWorkflowParams,
 	) (api.RunBacktestWorkflowResults, error)
+	GetBacktest(
+		ctx context.Context,
+		params api.GetBacktestWorkflowParams,
+	) (api.GetBacktestWorkflowResults, error)
+	ListBacktests(
+		ctx context.Context,
+		params api.ListBacktestsWorkflowParams,
+	) (api.ListBacktestsWorkflowResults, error)
 	SubscribeToBacktestPrice(
 		ctx context.Context,
 		params api.SubscribeToBacktestPriceWorkflowParams,
@@ -46,6 +54,29 @@ type Client interface {
 		ctx context.Context,
 		params api.ListExchangesWorkflowParams,
 	) (res api.ListExchangesWorkflowResults, err error)
+
+	// Forwardtests
+
+	CreateForwardtest(
+		ctx context.Context,
+		params api.CreateForwardtestWorkflowParams,
+	) (api.CreateForwardtestWorkflowResults, error)
+	GetForwardtestStatus(
+		ctx context.Context,
+		params api.GetForwardtestStatusWorkflowParams,
+	) (api.GetForwardtestStatusWorkflowResults, error)
+	ListForwardtests(
+		ctx context.Context,
+		params api.ListForwardtestsWorkflowParams,
+	) (api.ListForwardtestsWorkflowResults, error)
+	CreateForwardtestOrder(
+		ctx context.Context,
+		params api.CreateForwardtestOrderWorkflowParams,
+	) (api.CreateForwardtestOrderWorkflowResults, error)
+	ListForwardtestAccounts(
+		ctx context.Context,
+		params api.ListForwardtestAccountsWorkflowParams,
+	) (api.ListForwardtestAccountsWorkflowResults, error)
 
 	// Indicators
 

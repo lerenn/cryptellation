@@ -1,4 +1,4 @@
-package docker
+package main
 
 // RunnerInfo represents a Docker runner.
 type RunnerInfo struct {
