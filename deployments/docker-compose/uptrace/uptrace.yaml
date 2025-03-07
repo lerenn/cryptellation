@@ -22,7 +22,7 @@ ch:
 ## and so on.
 ##
 pg:
-  addr: uptrace-postgres:5432
+  addr: postgresql:5432
   user: uptrace
   password: uptrace
   database: uptrace

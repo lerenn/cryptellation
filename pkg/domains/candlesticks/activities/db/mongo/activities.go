@@ -176,7 +176,7 @@ func (a *Activities) UpdateCandlesticksActivity(
 		}
 
 		if res.ModifiedCount == 0 {
-			return db.UpdateCandlesticksActivityResults{}, ErrNoDocument
+			return db.UpdateCandlesticksActivityResults{}, db.ErrNotFound
 		}
 	}
 

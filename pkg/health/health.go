@@ -8,12 +8,8 @@ import (
 	"strconv"
 	"sync/atomic"
 
+	"github.com/lerenn/cryptellation/v1/pkg/config"
 	"github.com/lerenn/cryptellation/v1/pkg/telemetry"
-)
-
-const (
-	// HealthPortEnvVar is the environment variable to set the health port.
-	HealthPortEnvVar = "HEALTH_PORT"
 )
 
 // Health is a health checker.
@@ -31,14 +27,14 @@ func NewHealth(ctx context.Context) (*Health, error) {
 	var err error
 
 	// Use health port if set, otherwise default to 9000
-	healthPortEnv := os.Getenv(HealthPortEnvVar)
+	healthPortEnv := os.Getenv(config.EnvHealthPort)
 	if healthPortEnv != "" {
 		h.port, err = strconv.Atoi(healthPortEnv)
 		if err != nil {
 			return nil, fmt.Errorf("getting health port: %w", err)
 		}
 	} else {
-		telemetry.L(ctx).Warning("HEALTH_PORT not set, defaulting to 9000")
+		telemetry.L(ctx).Warning(fmt.Sprintf("%q not set, defaulting to 9000", config.EnvHealthPort))
 		h.port = 9000
 	}
 

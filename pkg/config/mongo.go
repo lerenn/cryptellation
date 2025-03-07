@@ -7,6 +7,13 @@ import (
 	"github.com/joho/godotenv"
 )
 
+const (
+	// EnvMongoConnectionString is the environment variable used to set the MongoDB connection string.
+	EnvMongoConnectionString = "MONGO_CONNECTION_STRING"
+	// EnvMongoDatabase is the environment variable used to set the MongoDB database name.
+	EnvMongoDatabase = "MONGO_DATABASE"
+)
+
 var (
 	// ErrInvalidMongoConfig is returned when the MongoDB configuration is invalid.
 	ErrInvalidMongoConfig = errors.New("invalid mongo config")
@@ -39,8 +46,8 @@ func (c *Mongo) overrideFromEnv() {
 	_ = godotenv.Load(".env")
 
 	// Overriding variables
-	overrideFromEnv(&c.ConnectionString, "MONGO_CONNECTION_STRING")
-	overrideFromEnv(&c.Database, "MONGO_DATABASE")
+	overrideFromEnv(&c.ConnectionString, EnvMongoConnectionString)
+	overrideFromEnv(&c.Database, EnvMongoDatabase)
 }
 
 // Validate checks if the configuration is valid.

@@ -8,6 +8,11 @@ import (
 	"github.com/joho/godotenv"
 )
 
+const (
+	EnvBinanceKey    = "CRYPTELLATION_BINANCE_API_KEY"
+	EnvBinanceSecret = "CRYPTELLATION_BINANCE_SECRET_KEY"
+)
+
 var (
 	// ErrInvalidBinance is returned when the Binance configuration is invalid.
 	ErrInvalidBinance = errors.New("invalid binance config")
@@ -57,8 +62,8 @@ func (c *Binance) overrideFromEnv(additionalEnvFilePaths ...string) {
 	_ = godotenv.Load(additionalEnvFilePaths...)
 
 	// Overriding variables
-	overrideFromEnv(&c.APIKey, "BINANCE_API_KEY")
-	overrideFromEnv(&c.SecretKey, "BINANCE_SECRET_KEY")
+	overrideFromEnv(&c.APIKey, EnvBinanceKey)
+	overrideFromEnv(&c.SecretKey, EnvBinanceSecret)
 }
 
 // Validate checks if the configuration is valid.

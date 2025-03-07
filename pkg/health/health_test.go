@@ -7,6 +7,7 @@ import (
 	"os"
 	"testing"
 
+	"github.com/lerenn/cryptellation/v1/pkg/config"
 	"github.com/stretchr/testify/suite"
 )
 
@@ -21,7 +22,7 @@ type HealthSuite struct {
 
 func (suite *HealthSuite) SetupTest() {
 	// Set env for health
-	os.Setenv(HealthPortEnvVar, "1234")
+	os.Setenv(config.EnvHealthPort, "1234")
 
 	// Create health
 	h, err := NewHealth(context.Background())

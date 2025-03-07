@@ -31,12 +31,12 @@ spec:
             port: {{ (((.Values.services).worker).health).port | default 9000 }}
         env:
         # Binance
-        - name: "BINANCE_API_KEY"
+        - name: "CRYPTELLATION_BINANCE_API_KEY"
           valueFrom:
             configMapKeyRef:
               key: binance.api_key
               name: cryptellation-credentials
-        - name: "BINANCE_SECRET_KEY"
+        - name: "CRYPTELLATION_BINANCE_SECRET_KEY"
           valueFrom:
             configMapKeyRef:
               key: binance.secret_key

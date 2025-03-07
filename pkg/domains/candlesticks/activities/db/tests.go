@@ -48,7 +48,7 @@ func (suite *CandlesticksSuite) TestCreate() {
 	cs, _ := list.Data.Get(t)
 	rcs, exists := res.List.Data.Get(t)
 	suite.True(exists)
-	suite.True(cs == rcs)
+	suite.True(cs == rcs, "cs: %v, rcs: %v", cs, rcs)
 }
 
 // TestCreateTwice tests the case where the candlesticks are created twice.
@@ -412,12 +412,12 @@ func (suite *CandlesticksSuite) TestUpdateInexistantTwice() {
 	_, err := suite.DB.UpdateCandlesticksActivity(context.Background(), UpdateCandlesticksActivityParams{
 		List: list,
 	})
-	suite.Require().Error(err)
+	suite.Require().ErrorIs(err, ErrNotFound)
 
 	_, err = suite.DB.UpdateCandlesticksActivity(context.Background(), UpdateCandlesticksActivityParams{
 		List: list,
 	})
-	suite.Require().Error(err)
+	suite.Require().ErrorIs(err, ErrNotFound)
 }
 
 // TestUpdateWithNoTime tests the case where the candlestick to update does
@@ -488,8 +488,8 @@ func (suite *CandlesticksSuite) TestDelete() {
 	suite.Require().Equal(list.Data.Len()-5, res.List.Data.Len())
 	suite.Require().NoError(res.List.Loop(func(cs candlestick.Candlestick) (bool, error) {
 		origCS, exists := list.Data.Get(cs.Time)
-		suite.Require().True(exists)
-		suite.Require().True(origCS.Equal(cs))
+		suite.Require().True(exists, cs.Time)
+		suite.Require().True(origCS.Equal(cs), "orig: %v, cs: %v", origCS, cs)
 		return false, nil
 	}))
 }
