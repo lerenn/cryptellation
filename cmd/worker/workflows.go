@@ -8,11 +8,11 @@ import (
 	"github.com/lerenn/cryptellation/v1/pkg/domains/backtests"
 	backtestsmongo "github.com/lerenn/cryptellation/v1/pkg/domains/backtests/activities/db/mongo"
 	"github.com/lerenn/cryptellation/v1/pkg/domains/candlesticks"
-	candlesticksmongo "github.com/lerenn/cryptellation/v1/pkg/domains/candlesticks/activities/db/mongo"
+	candlestickssql "github.com/lerenn/cryptellation/v1/pkg/domains/candlesticks/activities/db/sql"
 	candlesticksexchagg "github.com/lerenn/cryptellation/v1/pkg/domains/candlesticks/activities/exchanges/aggregator"
 	candlesticksbinance "github.com/lerenn/cryptellation/v1/pkg/domains/candlesticks/activities/exchanges/binance"
 	"github.com/lerenn/cryptellation/v1/pkg/domains/exchanges"
-	exchangesmongo "github.com/lerenn/cryptellation/v1/pkg/domains/exchanges/activities/db/mongo"
+	exchangessql "github.com/lerenn/cryptellation/v1/pkg/domains/exchanges/activities/db/sql"
 	exchangesexchagg "github.com/lerenn/cryptellation/v1/pkg/domains/exchanges/activities/exchanges/aggregator"
 	exchangesbinance "github.com/lerenn/cryptellation/v1/pkg/domains/exchanges/activities/exchanges/binance"
 	"github.com/lerenn/cryptellation/v1/pkg/domains/forwardtests"
@@ -79,7 +79,7 @@ func registerBacktestsWorkflows(ctx context.Context, w worker.Worker) error {
 
 func registerCandlesticksWorkflows(ctx context.Context, w worker.Worker) error {
 	// Create database adapter
-	db, err := candlesticksmongo.New(ctx, config.LoadMongo(nil))
+	db, err := candlestickssql.New(ctx, config.LoadPostGres(nil))
 	if err != nil {
 		return err
 	}
@@ -104,7 +104,7 @@ func registerCandlesticksWorkflows(ctx context.Context, w worker.Worker) error {
 
 func registerExchangesWorkflows(ctx context.Context, w worker.Worker) error {
 	// Create database adapter
-	db, err := exchangesmongo.New(ctx, config.LoadMongo(nil))
+	db, err := exchangessql.New(ctx, config.LoadPostGres(nil))
 	if err != nil {
 		return err
 	}
