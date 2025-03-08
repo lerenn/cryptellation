@@ -24,6 +24,7 @@ type Activities struct {
 	client activities.PostGres
 }
 
+// New creates a new activities.
 func New(ctx context.Context, c config.PostGres) (*Activities, error) {
 	// Create embedded database access
 	db, err := activities.NewPostGres(ctx, c)

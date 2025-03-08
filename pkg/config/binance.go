@@ -9,7 +9,9 @@ import (
 )
 
 const (
-	EnvBinanceKey    = "CRYPTELLATION_BINANCE_API_KEY"
+	// EnvBinanceKey is the environment variable that contains the Binance API key.
+	EnvBinanceKey = "CRYPTELLATION_BINANCE_API_KEY"
+	// EnvBinanceSecret is the environment variable that contains the Binance secret key.
 	EnvBinanceSecret = "CRYPTELLATION_BINANCE_SECRET_KEY"
 )
 

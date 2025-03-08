@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"strconv"
 
 	"github.com/lerenn/cryptellation/v1/configs/sql"
@@ -52,7 +51,7 @@ var rollbackCmd = &cobra.Command{
 	Short:   "Rollback the databas before a migration ID",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 {
-			return errors.New("missing migration ID")
+			return mig.Rollback(cmd.Context())
 		}
 
 		id, err := strconv.Atoi(args[0])

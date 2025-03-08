@@ -7,6 +7,7 @@ import (
 	"github.com/joho/godotenv"
 )
 
+// EnvPostgresDSN is the environment variable that contains the PostGres DSN.
 const EnvPostgresDSN = "POSTGRES_DSN"
 
 var (

@@ -10,6 +10,7 @@ import (
 	"github.com/lerenn/cryptellation/v1/pkg/models/period"
 )
 
+// CandlestickData is the entity for a candlestick data.
 type CandlestickData struct {
 	Open       float64 `json:"open"`
 	High       float64 `json:"high"`
@@ -59,9 +60,6 @@ func (c *Candlestick) FromModel(exchange, pair, period string, model candlestick
 
 	return nil
 }
-
-// ToMap will convert a candlestick entity to a map.
-// func (c Candlestick) ToMap() []map[string]interface{} {
 
 // ToModel will convert a candlestick entity to a candlestick model.
 func (c Candlestick) ToModel() (exchange, pair, period string, model candlestick.Candlestick, err error) {

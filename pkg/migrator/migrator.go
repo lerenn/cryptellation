@@ -16,19 +16,26 @@ import (
 
 const (
 	migrationTableName = "_migrations"
+
+	upMigrationKeyword   = "up"
+	downMigrationKeyword = "down"
 )
 
-type MigratorOptions struct {
+// Options represents the options for the migrator.
+type Options struct {
 	Log *log.Logger
 }
 
+// Migrator is a struct that contains all the methods to interact with the
+// migrations table in the database.
 type Migrator struct {
 	db         *sqlx.DB
 	migrations []Migration
 	logger     *log.Logger
 }
 
-func NewMigrator(ctx context.Context, db *sqlx.DB, migrations embed.FS, opts *MigratorOptions) (*Migrator, error) {
+// NewMigrator creates a new migrator.
+func NewMigrator(ctx context.Context, db *sqlx.DB, migrations embed.FS, opts *Options) (*Migrator, error) {
 	migs, err := loadMigrations(migrations)
 	if err != nil {
 		return nil, err
@@ -107,6 +114,7 @@ func setupMigrationTable(ctx context.Context, db *sqlx.DB) error {
 	return nil
 }
 
+// GetLastMigrationID returns the last migration ID.
 func (m *Migrator) GetLastMigrationID(ctx context.Context) (int, error) {
 	var id int
 	row := m.db.QueryRowContext(ctx, "SELECT id FROM "+migrationTableName+" ORDER BY id DESC LIMIT 1")
@@ -119,6 +127,7 @@ func (m *Migrator) GetLastMigrationID(ctx context.Context) (int, error) {
 	return id, nil
 }
 
+// MigrateTo will apply the migrations up to the specified ID.
 func (m *Migrator) MigrateTo(ctx context.Context, id int) error {
 	lastID, err := m.GetLastMigrationID(ctx)
 	if err != nil {
@@ -133,10 +142,12 @@ func (m *Migrator) MigrateTo(ctx context.Context, id int) error {
 	if err != nil {
 		return fmt.Errorf("failed to start transaction: %w", err)
 	}
-	defer tx.Rollback()
+	defer func() {
+		_ = tx.Rollback()
+	}()
 
 	for _, migration := range m.migrations {
-		if migration.ID <= lastID || migration.Direction == "down" {
+		if migration.ID <= lastID || migration.Direction == downMigrationKeyword {
 			continue
 		}
 
@@ -162,12 +173,13 @@ func (m *Migrator) applyMigration(ctx context.Context, tx *sql.Tx, migration Mig
 	}
 
 	var direction string
-	if migration.Direction == "down" {
+	switch migration.Direction {
+	case downMigrationKeyword:
 		if _, err := tx.ExecContext(ctx, "DELETE FROM "+migrationTableName+" WHERE id = $1", migration.ID); err != nil {
 			return fmt.Errorf("failed to delete migration record: %w", err)
 		}
 		direction = "---"
-	} else if migration.Direction == "up" {
+	case upMigrationKeyword:
 		_, err := tx.ExecContext(ctx,
 			"INSERT INTO "+migrationTableName+" (id, description, domain) VALUES ($1, $2, $3)",
 			migration.ID, migration.Description, migration.Domain)
@@ -175,7 +187,7 @@ func (m *Migrator) applyMigration(ctx context.Context, tx *sql.Tx, migration Mig
 			return fmt.Errorf("failed to insert migration record: %w", err)
 		}
 		direction = "+++"
-	} else {
+	default:
 		return errors.New("invalid migration direction")
 	}
 
@@ -183,6 +195,7 @@ func (m *Migrator) applyMigration(ctx context.Context, tx *sql.Tx, migration Mig
 	return nil
 }
 
+// MigrateToLatest will apply all the migrations that have not been applied yet.
 func (m *Migrator) MigrateToLatest(ctx context.Context) error {
 	lastID, err := m.GetLastMigrationID(ctx)
 	if err != nil {
@@ -193,10 +206,12 @@ func (m *Migrator) MigrateToLatest(ctx context.Context) error {
 	if err != nil {
 		return fmt.Errorf("failed to start transaction: %w", err)
 	}
-	defer tx.Rollback()
+	defer func() {
+		_ = tx.Rollback()
+	}()
 
 	for _, migration := range m.migrations {
-		if migration.ID <= lastID || migration.Direction == "down" {
+		if migration.ID <= lastID || migration.Direction == downMigrationKeyword {
 			continue
 		}
 
@@ -212,6 +227,7 @@ func (m *Migrator) MigrateToLatest(ctx context.Context) error {
 	return nil
 }
 
+// RollbackUntil will rollback the migrations until the specified ID.
 func (m *Migrator) RollbackUntil(ctx context.Context, id int) error {
 	lastID, err := m.GetLastMigrationID(ctx)
 	if err != nil {
@@ -227,11 +243,13 @@ func (m *Migrator) RollbackUntil(ctx context.Context, id int) error {
 	if err != nil {
 		return fmt.Errorf("failed to start transaction: %w", err)
 	}
-	defer tx.Rollback()
+	defer func() {
+		_ = tx.Rollback()
+	}()
 
 	for i := len(m.migrations) - 1; i >= 0; i-- {
 		migration := m.migrations[i]
-		if migration.ID > lastID || migration.Direction == "up" {
+		if migration.ID > lastID || migration.Direction == upMigrationKeyword {
 			continue
 		}
 
@@ -249,4 +267,18 @@ func (m *Migrator) RollbackUntil(ctx context.Context, id int) error {
 	}
 
 	return nil
+}
+
+// Rollback will rollback the last migration.
+func (m *Migrator) Rollback(ctx context.Context) error {
+	lastID, err := m.GetLastMigrationID(ctx)
+	if err != nil {
+		return err
+	}
+
+	if lastID == 0 {
+		return errors.New("no migrations to rollback")
+	}
+
+	return m.RollbackUntil(ctx, lastID-1)
 }
