@@ -3,7 +3,8 @@ package main
 import (
 	"strconv"
 
-	"github.com/lerenn/cryptellation/v1/configs/sql"
+	"github.com/lerenn/cryptellation/v1/configs/sql/down"
+	"github.com/lerenn/cryptellation/v1/configs/sql/up"
 	"github.com/lerenn/cryptellation/v1/pkg/migrator"
 	"github.com/spf13/cobra"
 )
@@ -21,8 +22,13 @@ var migrationsCmd = &cobra.Command{
 			return err
 		}
 
+		// Check if the migrator is already initialized
+		if mig != nil {
+			return nil
+		}
+
 		// Create a migrator client
-		mig, err = migrator.NewMigrator(cmd.Context(), db, sql.Migrations, nil)
+		mig, err = migrator.NewMigrator(cmd.Context(), db, up.Migrations, down.Migrations, nil)
 		return err
 	},
 }

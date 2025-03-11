@@ -7,11 +7,11 @@ import (
 	"errors"
 	"fmt"
 	"log"
-	"os"
 	"strconv"
 	"strings"
 
 	"github.com/jmoiron/sqlx"
+	"github.com/lerenn/cryptellation/v1/pkg/telemetry"
 )
 
 const (
@@ -29,31 +29,33 @@ type Options struct {
 // Migrator is a struct that contains all the methods to interact with the
 // migrations table in the database.
 type Migrator struct {
-	db         *sqlx.DB
-	migrations []Migration
-	logger     *log.Logger
+	db             *sqlx.DB
+	upMigrations   []Migration
+	downMigrations []Migration
 }
 
 // NewMigrator creates a new migrator.
-func NewMigrator(ctx context.Context, db *sqlx.DB, migrations embed.FS, opts *Options) (*Migrator, error) {
-	migs, err := loadMigrations(migrations)
+func NewMigrator(ctx context.Context, db *sqlx.DB, upMigrations, downMigrations embed.FS, opts *Options) (*Migrator, error) {
+	up, err := loadMigrations(upMigrations)
 	if err != nil {
 		return nil, err
 	}
+	telemetry.L(ctx).Infof("Loaded %d up migrations", len(up))
+
+	down, err := loadMigrations(downMigrations)
+	if err != nil {
+		return nil, err
+	}
+	telemetry.L(ctx).Infof("Loaded %d down migrations", len(down))
 
 	if err := setupMigrationTable(ctx, db); err != nil {
 		return nil, err
 	}
 
-	logger := log.New(os.Stdout, "", log.LstdFlags)
-	if opts != nil && opts.Log != nil {
-		logger = opts.Log
-	}
-
 	return &Migrator{
-		db:         db,
-		migrations: migs,
-		logger:     logger,
+		db:             db,
+		upMigrations:   up,
+		downMigrations: down,
 	}, nil
 }
 
@@ -71,7 +73,7 @@ func loadMigrations(migrationsDir embed.FS) ([]Migration, error) {
 
 		// Load migration
 		parts := strings.Split(entry.Name(), ".")
-		if len(parts) != 5 || parts[4] != "sql" {
+		if len(parts) != 3 || parts[2] != "sql" {
 			continue
 		}
 
@@ -90,8 +92,6 @@ func loadMigrations(migrationsDir embed.FS) ([]Migration, error) {
 		migrations = append(migrations, Migration{
 			ID:          id,
 			Description: parts[1],
-			Domain:      parts[2],
-			Direction:   parts[3],
 			SQL:         string(content),
 		})
 	}
@@ -104,7 +104,6 @@ func setupMigrationTable(ctx context.Context, db *sqlx.DB) error {
 		CREATE TABLE IF NOT EXISTS `+migrationTableName+` (
 			id BIGINT PRIMARY KEY,
 			description TEXT NOT NULL,
-			domain TEXT NOT NULL,
 			applied_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 		)
 	`); err != nil {
@@ -146,8 +145,8 @@ func (m *Migrator) MigrateTo(ctx context.Context, id int) error {
 		_ = tx.Rollback()
 	}()
 
-	for _, migration := range m.migrations {
-		if migration.ID <= lastID || migration.Direction == downMigrationKeyword {
+	for _, migration := range m.upMigrations {
+		if migration.ID <= lastID {
 			continue
 		}
 
@@ -155,7 +154,7 @@ func (m *Migrator) MigrateTo(ctx context.Context, id int) error {
 			break
 		}
 
-		if err := m.applyMigration(ctx, tx, migration); err != nil {
+		if err := m.applyMigration(ctx, tx, migration, upMigrationKeyword); err != nil {
 			return err
 		}
 	}
@@ -167,31 +166,31 @@ func (m *Migrator) MigrateTo(ctx context.Context, id int) error {
 	return nil
 }
 
-func (m *Migrator) applyMigration(ctx context.Context, tx *sql.Tx, migration Migration) error {
+func (m *Migrator) applyMigration(ctx context.Context, tx *sql.Tx, migration Migration, direction string) error {
 	if _, err := tx.ExecContext(ctx, migration.SQL); err != nil {
 		return fmt.Errorf("failed to apply migration %d: %w", migration.ID, err)
 	}
 
-	var direction string
-	switch migration.Direction {
+	var action string
+	switch direction {
 	case downMigrationKeyword:
 		if _, err := tx.ExecContext(ctx, "DELETE FROM "+migrationTableName+" WHERE id = $1", migration.ID); err != nil {
 			return fmt.Errorf("failed to delete migration record: %w", err)
 		}
-		direction = "---"
+		action = "Removed"
 	case upMigrationKeyword:
 		_, err := tx.ExecContext(ctx,
-			"INSERT INTO "+migrationTableName+" (id, description, domain) VALUES ($1, $2, $3)",
-			migration.ID, migration.Description, migration.Domain)
+			"INSERT INTO "+migrationTableName+" (id, description) VALUES ($1, $2)",
+			migration.ID, migration.Description)
 		if err != nil {
 			return fmt.Errorf("failed to insert migration record: %w", err)
 		}
-		direction = "+++"
+		action = "Applied"
 	default:
 		return errors.New("invalid migration direction")
 	}
 
-	m.logger.Printf("%s [%d] %-15s: %s\n", direction, migration.ID, migration.Domain, migration.Description)
+	telemetry.L(ctx).Infof("%s %d: %s", action, migration.ID, migration.Description)
 	return nil
 }
 
@@ -210,12 +209,12 @@ func (m *Migrator) MigrateToLatest(ctx context.Context) error {
 		_ = tx.Rollback()
 	}()
 
-	for _, migration := range m.migrations {
-		if migration.ID <= lastID || migration.Direction == downMigrationKeyword {
+	for _, migration := range m.upMigrations {
+		if migration.ID <= lastID {
 			continue
 		}
 
-		if err := m.applyMigration(ctx, tx, migration); err != nil {
+		if err := m.applyMigration(ctx, tx, migration, upMigrationKeyword); err != nil {
 			return err
 		}
 	}
@@ -247,9 +246,9 @@ func (m *Migrator) RollbackUntil(ctx context.Context, id int) error {
 		_ = tx.Rollback()
 	}()
 
-	for i := len(m.migrations) - 1; i >= 0; i-- {
-		migration := m.migrations[i]
-		if migration.ID > lastID || migration.Direction == upMigrationKeyword {
+	for i := len(m.downMigrations) - 1; i >= 0; i-- {
+		migration := m.downMigrations[i]
+		if migration.ID > lastID {
 			continue
 		}
 
@@ -257,7 +256,7 @@ func (m *Migrator) RollbackUntil(ctx context.Context, id int) error {
 			break
 		}
 
-		if err := m.applyMigration(ctx, tx, migration); err != nil {
+		if err := m.applyMigration(ctx, tx, migration, downMigrationKeyword); err != nil {
 			return err
 		}
 	}

@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"os"
+	"time"
 
 	"github.com/jmoiron/sqlx"
 	"github.com/lerenn/cryptellation/v1/pkg/config"
@@ -27,8 +28,16 @@ var rootCmd = &cobra.Command{
 	Short:   "database - a CLI to manage cryptellation database",
 	PersistentPreRunE: func(cmd *cobra.Command, _ []string) (err error) {
 		// Create a sqlx client
-		db, err = sqlx.ConnectContext(cmd.Context(), driverNameFlag, dsnFlag)
-		return err
+		for {
+			db, err = sqlx.ConnectContext(cmd.Context(), driverNameFlag, dsnFlag)
+			if err == nil {
+				return nil
+			}
+
+			telemetry.L(cmd.Context()).Errorf("database connection failed: %s", err.Error())
+			telemetry.L(cmd.Context()).Infof("retrying in 1 second...")
+			time.Sleep(time.Second)
+		}
 	},
 }
 

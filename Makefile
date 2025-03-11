@@ -8,9 +8,7 @@ PROJECT_ROOT_PATH  := .
 check: generate lint test ## Generate, lint and test the code
 
 .PHONY: clean 
-clean: local/down ## Clean the project
-	@$(DOCKER_COMPOSE_CMD) -f ./deployments/docker-compose/cryptellation.docker-compose.yaml rm
-	@$(DOCKER_COMPOSE_CMD) -f ./deployments/docker-compose/dependencies.docker-compose.yaml rm
+clean: worker/down ## Clean the project
 	@$(MAKE) -C deployments clean
 
 .PHONY: dagger/check-generation
@@ -57,7 +55,8 @@ worker/down: ## Start a cryptellation worker in local environment
 	@$(DOCKER_COMPOSE_CMD) -f ./deployments/docker-compose/worker.docker-compose.yaml down
 
 .PHONY: worker/up
-worker/up: ## Start a cryptellation worker in local environment
+worker/up: dependencies/up ## Start a cryptellation worker in local environment
+	@$(DOCKER_COMPOSE_CMD) -f ./deployments/docker-compose/worker.docker-compose.yaml run migrator
 	@$(DOCKER_COMPOSE_CMD) -f ./deployments/docker-compose/worker.docker-compose.yaml up -d
 
 .PHONY: test
