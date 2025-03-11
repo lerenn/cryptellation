@@ -18,7 +18,7 @@ import (
 	"github.com/lerenn/cryptellation/v1/pkg/domains/forwardtests"
 	forwardtestssql "github.com/lerenn/cryptellation/v1/pkg/domains/forwardtests/activities/db/sql"
 	"github.com/lerenn/cryptellation/v1/pkg/domains/indicators"
-	indicatorsmongo "github.com/lerenn/cryptellation/v1/pkg/domains/indicators/activities/db/mongo"
+	indicatorssql "github.com/lerenn/cryptellation/v1/pkg/domains/indicators/activities/db/sql"
 	"github.com/lerenn/cryptellation/v1/pkg/domains/ticks"
 	ticksexchagg "github.com/lerenn/cryptellation/v1/pkg/domains/ticks/activities/exchanges/aggregator"
 	ticksbinance "github.com/lerenn/cryptellation/v1/pkg/domains/ticks/activities/exchanges/binance"
@@ -144,7 +144,7 @@ func registerForwardtestsWorkflows(ctx context.Context, w worker.Worker) error {
 
 func registerIndicatorsWorkflows(ctx context.Context, w worker.Worker) error {
 	// Create database adapter
-	db, err := indicatorsmongo.New(ctx, config.LoadMongo(nil))
+	db, err := indicatorssql.New(ctx, config.LoadPostGres(nil))
 	if err != nil {
 		return err
 	}

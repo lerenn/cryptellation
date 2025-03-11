@@ -56,7 +56,6 @@ worker/down: ## Start a cryptellation worker in local environment
 
 .PHONY: worker/up
 worker/up: dependencies/up ## Start a cryptellation worker in local environment
-	@$(DOCKER_COMPOSE_CMD) -f ./deployments/docker-compose/worker.docker-compose.yaml run migrator
 	@$(DOCKER_COMPOSE_CMD) -f ./deployments/docker-compose/worker.docker-compose.yaml up -d
 
 .PHONY: test
