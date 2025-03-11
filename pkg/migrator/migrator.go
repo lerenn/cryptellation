@@ -6,7 +6,6 @@ import (
 	"embed"
 	"errors"
 	"fmt"
-	"log"
 	"strconv"
 	"strings"
 
@@ -23,7 +22,6 @@ const (
 
 // Options represents the options for the migrator.
 type Options struct {
-	Log *log.Logger
 }
 
 // Migrator is a struct that contains all the methods to interact with the
@@ -35,7 +33,12 @@ type Migrator struct {
 }
 
 // NewMigrator creates a new migrator.
-func NewMigrator(ctx context.Context, db *sqlx.DB, upMigrations, downMigrations embed.FS, opts *Options) (*Migrator, error) {
+func NewMigrator(
+	ctx context.Context,
+	db *sqlx.DB,
+	upMigrations, downMigrations embed.FS,
+	_ *Options,
+) (*Migrator, error) {
 	up, err := loadMigrations(upMigrations)
 	if err != nil {
 		return nil, err

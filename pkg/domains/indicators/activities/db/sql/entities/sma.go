@@ -86,11 +86,11 @@ func FromModelListToEntityList(
 	periodNb int,
 	priceType candlestick.PriceType,
 	ts *timeserie.TimeSerie[float64],
-) []SimpleMovingAverage {
+) ([]SimpleMovingAverage, error) {
 	entities := make([]SimpleMovingAverage, 0, ts.Len())
-	_ = ts.Loop(func(t time.Time, p float64) (bool, error) {
+	err := ts.Loop(func(t time.Time, p float64) (bool, error) {
 		point := SimpleMovingAverage{}
-		point.FromModel(sma.Point{
+		if err := point.FromModel(sma.Point{
 			Exchange:  exchange,
 			Pair:      pair,
 			Period:    period,
@@ -98,12 +98,15 @@ func FromModelListToEntityList(
 			PriceType: priceType,
 			Time:      t.UTC(),
 			Price:     p,
-		})
+		}); err != nil {
+			return false, err
+		}
+
 		entities = append(entities, point)
 		return false, nil
 	})
 
-	return entities
+	return entities, err
 }
 
 // FromEntityListToModelList converts a list of entities to a timeserie.

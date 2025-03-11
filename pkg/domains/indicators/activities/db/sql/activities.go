@@ -68,7 +68,12 @@ func (a *Activities) ReadSMAActivity(
 		ctx,
 		`SELECT *
 		FROM indicators_sma
-		WHERE exchange = $1 AND pair = $2 AND period = $3 AND period_number = $4 AND price_type = $5 AND time >= $6 AND time <= $7
+		WHERE exchange = $1 AND 
+			pair = $2 AND 
+			period = $3 AND 
+			period_number = $4 AND
+			price_type = $5 AND
+			time >= $6 AND time <= $7
 		ORDER BY time ASC`,
 		params.Exchange,
 		params.Pair,
@@ -115,16 +120,19 @@ func (a *Activities) UpsertSMAActivity(
 	params db.UpsertSMAActivityParams,
 ) (db.UpsertSMAActivityResults, error) {
 	// Create entities
-	ents := entities.FromModelListToEntityList(
+	ents, err := entities.FromModelListToEntityList(
 		params.Exchange,
 		params.Pair,
 		params.Period,
 		params.PeriodNumber,
 		params.PriceType,
 		params.TimeSerie)
+	if err != nil {
+		return db.UpsertSMAActivityResults{}, fmt.Errorf("from model list to entity list: %w", err)
+	}
 
 	// Bulk insert the SMA
-	_, err := a.client.DB.NamedExecContext(
+	_, err = a.client.DB.NamedExecContext(
 		ctx,
 		`INSERT INTO indicators_sma (exchange, pair, period, period_number, price_type, time, data)
 		VALUES (:exchange, :pair, :period, :period_number, :price_type, :time, :data)
