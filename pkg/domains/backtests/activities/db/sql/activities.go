@@ -146,7 +146,7 @@ func (a *Activities) ListBacktestsActivity(
 	}
 
 	// Convert the entities to models
-	models := make([]backtest.Backtest, 0)
+	models := make([]backtest.Backtest, 0, len(entities))
 	for _, e := range entities {
 		m, err := e.ToModel()
 		if err != nil {

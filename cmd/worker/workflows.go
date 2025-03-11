@@ -16,7 +16,7 @@ import (
 	exchangesexchagg "github.com/lerenn/cryptellation/v1/pkg/domains/exchanges/activities/exchanges/aggregator"
 	exchangesbinance "github.com/lerenn/cryptellation/v1/pkg/domains/exchanges/activities/exchanges/binance"
 	"github.com/lerenn/cryptellation/v1/pkg/domains/forwardtests"
-	forwardtestsmongo "github.com/lerenn/cryptellation/v1/pkg/domains/forwardtests/activities/db/mongo"
+	forwardtestssql "github.com/lerenn/cryptellation/v1/pkg/domains/forwardtests/activities/db/sql"
 	"github.com/lerenn/cryptellation/v1/pkg/domains/indicators"
 	indicatorsmongo "github.com/lerenn/cryptellation/v1/pkg/domains/indicators/activities/db/mongo"
 	"github.com/lerenn/cryptellation/v1/pkg/domains/ticks"
@@ -129,7 +129,7 @@ func registerExchangesWorkflows(ctx context.Context, w worker.Worker) error {
 
 func registerForwardtestsWorkflows(ctx context.Context, w worker.Worker) error {
 	// Create database adapter
-	db, err := forwardtestsmongo.New(ctx, config.LoadMongo(nil))
+	db, err := forwardtestssql.New(ctx, config.LoadPostGres(nil))
 	if err != nil {
 		return err
 	}
