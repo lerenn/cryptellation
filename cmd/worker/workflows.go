@@ -6,7 +6,7 @@ import (
 	"github.com/lerenn/cryptellation/v1/api"
 	"github.com/lerenn/cryptellation/v1/pkg/config"
 	"github.com/lerenn/cryptellation/v1/pkg/domains/backtests"
-	backtestsmongo "github.com/lerenn/cryptellation/v1/pkg/domains/backtests/activities/db/mongo"
+	backtestssql "github.com/lerenn/cryptellation/v1/pkg/domains/backtests/activities/db/sql"
 	"github.com/lerenn/cryptellation/v1/pkg/domains/candlesticks"
 	candlestickssql "github.com/lerenn/cryptellation/v1/pkg/domains/candlesticks/activities/db/sql"
 	candlesticksexchagg "github.com/lerenn/cryptellation/v1/pkg/domains/candlesticks/activities/exchanges/aggregator"
@@ -64,7 +64,7 @@ func registerWorkflows(ctx context.Context, w worker.Worker, temporalClient clie
 
 func registerBacktestsWorkflows(ctx context.Context, w worker.Worker) error {
 	// Create database adapter
-	db, err := backtestsmongo.New(ctx, config.LoadMongo(nil))
+	db, err := backtestssql.New(ctx, config.LoadPostGres(nil))
 	if err != nil {
 		return err
 	}

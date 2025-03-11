@@ -183,11 +183,11 @@ func (a *Activities) DeleteBacktestActivity(
 	params db.DeleteBacktestActivityParams,
 ) (db.DeleteBacktestActivityResults, error) {
 	// Check ID is not nil
-	if params.Backtest.ID == uuid.Nil {
+	if params.ID == uuid.Nil {
 		return db.DeleteBacktestActivityResults{}, db.ErrNilID
 	}
 
 	// Delete backtest
-	_, err := a.client.Collection(CollectionName).DeleteOne(ctx, map[string]any{"_id": params.Backtest.ID.String()})
+	_, err := a.client.Collection(CollectionName).DeleteOne(ctx, map[string]any{"_id": params.ID.String()})
 	return db.DeleteBacktestActivityResults{}, err
 }
