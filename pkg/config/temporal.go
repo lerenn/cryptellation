@@ -44,7 +44,7 @@ func (c Temporal) CreateTemporalClient() (temporalclient.Client, error) {
 }
 
 func (c *Temporal) setDefault() {
-	overrideString(&c.Address, "localhost:7233")
+	overrideString(&c.Address, "localhost:7001")
 }
 
 func (c *Temporal) overrideFromEnv() {

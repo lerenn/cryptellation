@@ -18,7 +18,7 @@ docker/build: ## Build the docker image
 .PHONY: docker/clean
 docker/clean: docker/env/down ## Clean the docker environment
 	@$(DOCKER_CMD) rmi $(DOCKER_IMAGE):devel || true
-	@$(DOCKER_COMPOSE_CMD) down --volumes --remove-orphans
+	@$(DOCKER_COMPOSE_CMD) --profile worker --profile migrator down --volumes --remove-orphans
 
 .PHONY: docker/env/down 
 docker/env/down: ## Stop the dependencies in local environment
