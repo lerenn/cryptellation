@@ -21,19 +21,14 @@ services:
   worker:
     image: cosmtrek/air
     depends_on:
-      - mongo
       - temporal
       - postgresql
-      - uptrace-otelcollector
     working_dir: /go/src/github.com/lerenn/cryptellation/v1
     environment:
       LOG_DEV_MODE: true
       LOG_LEVEL: DEBUG
       HEALTH_PORT: 9000
       SQL_DSN: "host=postgresql user=cryptellation password=cryptellation dbname=cryptellation sslmode=disable"
-      MONGO_CONNECTION_STRING: mongodb://mongo:27017
-      MONGO_DATABASE: cryptellation
-      OPENTELEMETRY_GRPC_ENDPOINT: uptrace-otelcollector:4317
       TEMPORAL_ADDRESS: temporal:7233
     env_file:
       - path: ../../.credentials.env

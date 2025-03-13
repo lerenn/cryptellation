@@ -1,14 +1,4 @@
 services:  
-
-  mongo:
-    image: mongo:7-jammy
-    ports:
-      - 127.0.0.1:27017:27017
-    expose:
-      - 27017
-    networks:
-      - cryptellation
-
   postgresql:
     image: postgres:17.4-alpine
     restart: always
@@ -54,41 +44,6 @@ services:
       - 8080:8080
     expose:
       - 8080
-    networks:
-      - cryptellation
-  
-  uptrace-otelcollector:
-    image: otel/opentelemetry-collector-contrib:0.110.0
-    depends_on:
-      - uptrace
-    volumes:
-      - ./uptrace/otel-collector.yaml:/etc/otelcol/config.yaml
-    expose:
-      - 4317
-      - 4318
-    networks:
-      - cryptellation
-  uptrace-clickhouse:
-    image: clickhouse/clickhouse-server:23.7
-    environment:
-      CLICKHOUSE_DB: uptrace
-    expose:
-      - 8123
-      - 9000
-    networks:
-      - cryptellation
-  uptrace:
-    image: uptrace/uptrace:1.6.2
-    ports:
-      - 4318:4318
-    depends_on:
-      - postgresql
-      - uptrace-clickhouse
-    volumes:
-      - ./uptrace/uptrace.yaml:/etc/uptrace/uptrace.yml
-    expose:
-      - 4317
-      - 4318
     networks:
       - cryptellation
 

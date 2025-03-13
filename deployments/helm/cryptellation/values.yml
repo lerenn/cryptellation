@@ -67,8 +67,6 @@ services:
       repository: lerenn/cryptellation
       tag: v{{ .Chart.AppVersion }}
       pullPolicy: Always
-    mongodb:
-      database: cryptellation
     health:
       port: 9000
 
