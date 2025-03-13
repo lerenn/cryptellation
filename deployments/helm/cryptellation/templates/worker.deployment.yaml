@@ -24,7 +24,7 @@ spec:
         command: ["database", "migrations", "migrate"]
         env:
         # SQL
-        - name: "POSTGRES_DSN"
+        - name: "SQL_DSN"
           valueFrom:
             configMapKeyRef:
               key: sql.dsn
@@ -60,7 +60,7 @@ spec:
               key:  worker.health.port
               name: cryptellation-config
         # SQL
-        - name: "POSTGRES_DSN"
+        - name: "SQL_DSN"
           valueFrom:
             configMapKeyRef:
               key: sql.dsn

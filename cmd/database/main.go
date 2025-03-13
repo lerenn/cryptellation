@@ -48,7 +48,7 @@ func main() {
 	console.Fallback(otel.NewTelemeter(context.Background(), "cryptellation"))
 
 	// Set flags
-	c := config.LoadPostGres(nil)
+	c := config.LoadSQL(nil)
 	rootCmd.PersistentFlags().StringVarP(&driverNameFlag, "driver", "d", "postgres", "Set the database driver name")
 	rootCmd.PersistentFlags().StringVarP(&dsnFlag, "dsn", "s", c.DSN, "Set the database data source name")
 

@@ -8,23 +8,23 @@ import (
 	_ "github.com/lib/pq" // PostGres driver
 )
 
-// PostGres is a struct that contains the PostGres connection.
-type PostGres struct {
+// SQL is a struct that contains the SQL connection.
+type SQL struct {
 	DB *sqlx.DB
 }
 
-// NewPostGres creates a new PostGres connection.
-func NewPostGres(ctx context.Context, c config.PostGres) (PostGres, error) {
+// NewSQL creates a new SQL connection.
+func NewSQL(ctx context.Context, c config.SQL) (SQL, error) {
 	if err := c.Validate(); err != nil {
-		return PostGres{}, err
+		return SQL{}, err
 	}
 
 	db, err := sqlx.ConnectContext(ctx, "postgres", c.DSN)
 	if err != nil {
-		return PostGres{}, err
+		return SQL{}, err
 	}
 
-	return PostGres{
+	return SQL{
 		DB: db,
 	}, nil
 }

@@ -11,7 +11,7 @@ services:
     environment:
       LOG_DEV_MODE: true
       LOG_LEVEL: DEBUG
-      POSTGRES_DSN: "host=postgresql user=cryptellation password=cryptellation dbname=cryptellation sslmode=disable"
+      SQL_DSN: "host=postgresql user=cryptellation password=cryptellation dbname=cryptellation sslmode=disable"
     volumes:
       - gocache:/go/pkg/mod
       - gobuild:/root/.cache/go-build
@@ -30,7 +30,7 @@ services:
       LOG_DEV_MODE: true
       LOG_LEVEL: DEBUG
       HEALTH_PORT: 9000
-      POSTGRES_DSN: "host=postgresql user=cryptellation password=cryptellation dbname=cryptellation sslmode=disable"
+      SQL_DSN: "host=postgresql user=cryptellation password=cryptellation dbname=cryptellation sslmode=disable"
       MONGO_CONNECTION_STRING: mongodb://mongo:27017
       MONGO_DATABASE: cryptellation
       OPENTELEMETRY_GRPC_ENDPOINT: uptrace-otelcollector:4317

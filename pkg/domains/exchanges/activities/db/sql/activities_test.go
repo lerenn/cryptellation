@@ -21,7 +21,7 @@ type ExchangesSuite struct {
 }
 
 func (suite *ExchangesSuite) SetupSuite() {
-	db, err := New(context.Background(), config.LoadPostGres(nil))
+	db, err := New(context.Background(), config.LoadSQL(nil))
 	suite.Require().NoError(err)
 
 	mig, err := migrator.NewMigrator(context.Background(), db.client.DB, up.Migrations, down.Migrations, nil)

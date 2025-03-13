@@ -7,21 +7,21 @@ import (
 	"github.com/joho/godotenv"
 )
 
-// EnvPostgresDSN is the environment variable that contains the PostGres DSN.
-const EnvPostgresDSN = "POSTGRES_DSN"
+// EnvSQLDSN is the environment variable that contains the PostGres DSN.
+const EnvSQLDSN = "SQL_DSN"
 
 var (
-	// ErrInvalidPostGresConfig is returned when the PostGresDB configuration is invalid.
+	// ErrInvalidPostGresConfig is returned when the SQL configuration is invalid.
 	ErrInvalidPostGresConfig = errors.New("invalid postgres config")
 )
 
-// PostGres represents the configuration for the PostGresDB database.
-type PostGres struct {
+// SQL represents the configuration for the SQL database.
+type SQL struct {
 	DSN string
 }
 
-// LoadPostGres loads the PostGresDB configuration from the environment variables.
-func LoadPostGres(defaultValues *PostGres) (c PostGres) {
+// LoadSQL loads the SQL configuration from the environment variables.
+func LoadSQL(defaultValues *SQL) (c SQL) {
 	if defaultValues != nil {
 		c = *defaultValues
 	}
@@ -32,20 +32,20 @@ func LoadPostGres(defaultValues *PostGres) (c PostGres) {
 	return c
 }
 
-func (c *PostGres) setDefault() {
+func (c *SQL) setDefault() {
 	overrideString(&c.DSN, "user=cryptellation password=cryptellation dbname=cryptellation sslmode=disable")
 }
 
-func (c *PostGres) overrideFromEnv() {
+func (c *SQL) overrideFromEnv() {
 	// Attempting to load from .env
 	_ = godotenv.Load(".env")
 
 	// Overriding variables
-	overrideFromEnv(&c.DSN, EnvPostgresDSN)
+	overrideFromEnv(&c.DSN, EnvSQLDSN)
 }
 
 // Validate checks if the configuration is valid.
-func (c PostGres) Validate() error {
+func (c SQL) Validate() error {
 	if c.DSN == "" {
 		return fmt.Errorf("reading DSN from env (%q): %w", c.DSN, ErrInvalidPostGresConfig)
 	}

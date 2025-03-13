@@ -64,7 +64,7 @@ func registerWorkflows(ctx context.Context, w worker.Worker, temporalClient clie
 
 func registerBacktestsWorkflows(ctx context.Context, w worker.Worker) error {
 	// Create database adapter
-	db, err := backtestssql.New(ctx, config.LoadPostGres(nil))
+	db, err := backtestssql.New(ctx, config.LoadSQL(nil))
 	if err != nil {
 		return err
 	}
@@ -79,7 +79,7 @@ func registerBacktestsWorkflows(ctx context.Context, w worker.Worker) error {
 
 func registerCandlesticksWorkflows(ctx context.Context, w worker.Worker) error {
 	// Create database adapter
-	db, err := candlestickssql.New(ctx, config.LoadPostGres(nil))
+	db, err := candlestickssql.New(ctx, config.LoadSQL(nil))
 	if err != nil {
 		return err
 	}
@@ -104,7 +104,7 @@ func registerCandlesticksWorkflows(ctx context.Context, w worker.Worker) error {
 
 func registerExchangesWorkflows(ctx context.Context, w worker.Worker) error {
 	// Create database adapter
-	db, err := exchangessql.New(ctx, config.LoadPostGres(nil))
+	db, err := exchangessql.New(ctx, config.LoadSQL(nil))
 	if err != nil {
 		return err
 	}
@@ -129,7 +129,7 @@ func registerExchangesWorkflows(ctx context.Context, w worker.Worker) error {
 
 func registerForwardtestsWorkflows(ctx context.Context, w worker.Worker) error {
 	// Create database adapter
-	db, err := forwardtestssql.New(ctx, config.LoadPostGres(nil))
+	db, err := forwardtestssql.New(ctx, config.LoadSQL(nil))
 	if err != nil {
 		return err
 	}
@@ -144,7 +144,7 @@ func registerForwardtestsWorkflows(ctx context.Context, w worker.Worker) error {
 
 func registerIndicatorsWorkflows(ctx context.Context, w worker.Worker) error {
 	// Create database adapter
-	db, err := indicatorssql.New(ctx, config.LoadPostGres(nil))
+	db, err := indicatorssql.New(ctx, config.LoadSQL(nil))
 	if err != nil {
 		return err
 	}

@@ -17,13 +17,13 @@ import (
 // Activities is a struct that contains all the methods to interact with the
 // activities table in the database.
 type Activities struct {
-	client activities.PostGres
+	client activities.SQL
 }
 
 // New creates new SQL activities.
-func New(ctx context.Context, c config.PostGres) (*Activities, error) {
+func New(ctx context.Context, c config.SQL) (*Activities, error) {
 	// Create embedded database access
-	db, err := activities.NewPostGres(ctx, c)
+	db, err := activities.NewSQL(ctx, c)
 	if err != nil {
 		return nil, err
 	}
