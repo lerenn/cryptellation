@@ -4,5 +4,5 @@ metadata:
     name: cryptellation-config
 data:
     # Worker
-    worker.mongodb.database: "{{ (((.Values.services).worker).mongodb).database | default "cryptellation" }}"
+    worker.sql.database: "{{ (((.Values.services).worker).sql).database | default "cryptellation" }}"
     worker.health.port: "{{ (((.Values.services).worker).health).port | default 9000 }}"

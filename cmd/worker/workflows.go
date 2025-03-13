@@ -6,19 +6,19 @@ import (
 	"github.com/lerenn/cryptellation/v1/api"
 	"github.com/lerenn/cryptellation/v1/pkg/config"
 	"github.com/lerenn/cryptellation/v1/pkg/domains/backtests"
-	backtestsmongo "github.com/lerenn/cryptellation/v1/pkg/domains/backtests/activities/db/mongo"
+	backtestssql "github.com/lerenn/cryptellation/v1/pkg/domains/backtests/activities/db/sql"
 	"github.com/lerenn/cryptellation/v1/pkg/domains/candlesticks"
-	candlesticksmongo "github.com/lerenn/cryptellation/v1/pkg/domains/candlesticks/activities/db/mongo"
+	candlestickssql "github.com/lerenn/cryptellation/v1/pkg/domains/candlesticks/activities/db/sql"
 	candlesticksexchagg "github.com/lerenn/cryptellation/v1/pkg/domains/candlesticks/activities/exchanges/aggregator"
 	candlesticksbinance "github.com/lerenn/cryptellation/v1/pkg/domains/candlesticks/activities/exchanges/binance"
 	"github.com/lerenn/cryptellation/v1/pkg/domains/exchanges"
-	exchangesmongo "github.com/lerenn/cryptellation/v1/pkg/domains/exchanges/activities/db/mongo"
+	exchangessql "github.com/lerenn/cryptellation/v1/pkg/domains/exchanges/activities/db/sql"
 	exchangesexchagg "github.com/lerenn/cryptellation/v1/pkg/domains/exchanges/activities/exchanges/aggregator"
 	exchangesbinance "github.com/lerenn/cryptellation/v1/pkg/domains/exchanges/activities/exchanges/binance"
 	"github.com/lerenn/cryptellation/v1/pkg/domains/forwardtests"
-	forwardtestsmongo "github.com/lerenn/cryptellation/v1/pkg/domains/forwardtests/activities/db/mongo"
+	forwardtestssql "github.com/lerenn/cryptellation/v1/pkg/domains/forwardtests/activities/db/sql"
 	"github.com/lerenn/cryptellation/v1/pkg/domains/indicators"
-	indicatorsmongo "github.com/lerenn/cryptellation/v1/pkg/domains/indicators/activities/db/mongo"
+	indicatorssql "github.com/lerenn/cryptellation/v1/pkg/domains/indicators/activities/db/sql"
 	"github.com/lerenn/cryptellation/v1/pkg/domains/ticks"
 	ticksexchagg "github.com/lerenn/cryptellation/v1/pkg/domains/ticks/activities/exchanges/aggregator"
 	ticksbinance "github.com/lerenn/cryptellation/v1/pkg/domains/ticks/activities/exchanges/binance"
@@ -64,7 +64,7 @@ func registerWorkflows(ctx context.Context, w worker.Worker, temporalClient clie
 
 func registerBacktestsWorkflows(ctx context.Context, w worker.Worker) error {
 	// Create database adapter
-	db, err := backtestsmongo.New(ctx, config.LoadMongo(nil))
+	db, err := backtestssql.New(ctx, config.LoadSQL(nil))
 	if err != nil {
 		return err
 	}
@@ -79,7 +79,7 @@ func registerBacktestsWorkflows(ctx context.Context, w worker.Worker) error {
 
 func registerCandlesticksWorkflows(ctx context.Context, w worker.Worker) error {
 	// Create database adapter
-	db, err := candlesticksmongo.New(ctx, config.LoadMongo(nil))
+	db, err := candlestickssql.New(ctx, config.LoadSQL(nil))
 	if err != nil {
 		return err
 	}
@@ -104,7 +104,7 @@ func registerCandlesticksWorkflows(ctx context.Context, w worker.Worker) error {
 
 func registerExchangesWorkflows(ctx context.Context, w worker.Worker) error {
 	// Create database adapter
-	db, err := exchangesmongo.New(ctx, config.LoadMongo(nil))
+	db, err := exchangessql.New(ctx, config.LoadSQL(nil))
 	if err != nil {
 		return err
 	}
@@ -129,7 +129,7 @@ func registerExchangesWorkflows(ctx context.Context, w worker.Worker) error {
 
 func registerForwardtestsWorkflows(ctx context.Context, w worker.Worker) error {
 	// Create database adapter
-	db, err := forwardtestsmongo.New(ctx, config.LoadMongo(nil))
+	db, err := forwardtestssql.New(ctx, config.LoadSQL(nil))
 	if err != nil {
 		return err
 	}
@@ -144,7 +144,7 @@ func registerForwardtestsWorkflows(ctx context.Context, w worker.Worker) error {
 
 func registerIndicatorsWorkflows(ctx context.Context, w worker.Worker) error {
 	// Create database adapter
-	db, err := indicatorsmongo.New(ctx, config.LoadMongo(nil))
+	db, err := indicatorssql.New(ctx, config.LoadSQL(nil))
 	if err != nil {
 		return err
 	}

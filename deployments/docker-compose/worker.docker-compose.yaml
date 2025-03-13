@@ -1,0 +1,46 @@
+include:
+  - ./dependencies.docker-compose.yaml
+
+services:
+  migrator:
+    depends_on:
+      - postgresql
+    image: golang:1.24-alpine
+    command: ["go", "run", "./cmd/database", "migrations", "migrate"]
+    working_dir: /go/src/github.com/lerenn/cryptellation/v1
+    environment:
+      LOG_DEV_MODE: true
+      LOG_LEVEL: DEBUG
+      SQL_DSN: "host=postgresql user=cryptellation password=cryptellation dbname=cryptellation sslmode=disable"
+    volumes:
+      - gocache:/go/pkg/mod
+      - gobuild:/root/.cache/go-build
+      - ../../:/go/src/github.com/lerenn/cryptellation/v1
+    networks:
+      - cryptellation
+  worker:
+    image: cosmtrek/air
+    depends_on:
+      - temporal
+      - postgresql
+    working_dir: /go/src/github.com/lerenn/cryptellation/v1
+    environment:
+      LOG_DEV_MODE: true
+      LOG_LEVEL: DEBUG
+      HEALTH_PORT: 9000
+      SQL_DSN: "host=postgresql user=cryptellation password=cryptellation dbname=cryptellation sslmode=disable"
+      TEMPORAL_ADDRESS: temporal:7233
+    env_file:
+      - path: ../../.credentials.env
+        required: true
+    command: ["-c", ".air.toml"]
+    volumes:
+      - gocache:/go/pkg/mod
+      - gobuild:/root/.cache/go-build
+      - ../../:/go/src/github.com/lerenn/cryptellation/v1
+    networks:
+      - cryptellation
+
+volumes:
+  gocache:
+  gobuild:

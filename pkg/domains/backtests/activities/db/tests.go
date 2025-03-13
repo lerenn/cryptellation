@@ -206,7 +206,7 @@ func (suite *BacktestSuite) TestDelete() {
 	})
 	suite.Require().NoError(err)
 	_, err = suite.DB.DeleteBacktestActivity(context.Background(), DeleteBacktestActivityParams{
-		Backtest: bt,
+		ID: bt.ID,
 	})
 	suite.Require().NoError(err)
 	_, err = suite.DB.ReadBacktestActivity(context.Background(), ReadBacktestActivityParams{
@@ -242,11 +242,11 @@ func (suite *BacktestSuite) TestDeleteInexistant() {
 	})
 	suite.Require().NoError(err)
 	_, err = suite.DB.DeleteBacktestActivity(context.Background(), DeleteBacktestActivityParams{
-		Backtest: bt,
+		ID: bt.ID,
 	})
 	suite.Require().NoError(err)
 	_, err = suite.DB.DeleteBacktestActivity(context.Background(), DeleteBacktestActivityParams{
-		Backtest: bt,
+		ID: bt.ID,
 	})
 	suite.Require().NoError(err)
 }

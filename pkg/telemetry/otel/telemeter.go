@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/lerenn/cryptellation/v1/pkg/config"
 	"github.com/lerenn/cryptellation/v1/pkg/telemetry"
 	"go.opentelemetry.io/otel/metric"
 	"go.opentelemetry.io/otel/trace"
@@ -23,7 +24,7 @@ type telemeter struct {
 // NewTelemeter creates a new telemeter based on OpenTelemetry.
 func NewTelemeter(ctx context.Context, serviceName string) (telemetry.Telemeter, error) {
 	// Get exporter URL
-	otelEndpoint := os.Getenv("OPENTELEMETRY_GRPC_ENDPOINT")
+	otelEndpoint := os.Getenv(config.EnvOpentelemetryGrpcEndpoint)
 
 	// Create Logs exporter
 	logs, err := newLogs(ctx, serviceName, otelEndpoint)

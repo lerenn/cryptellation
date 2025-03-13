@@ -1,0 +1,39 @@
+{{ if .Values.cockroachdb.enabled }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: "{{.Release.Name}}-cockroachdb-sql-init"
+  labels:
+    app.kubernetes.io/managed-by: {{.Release.Service | quote }}
+    app.kubernetes.io/instance: {{.Release.Name | quote }}
+    helm.sh/chart: "{{.Chart.Name}}-{{.Chart.Version}}"
+spec:
+  template:
+    metadata:
+      name: "{{.Release.Name}}-cockroachdb-sql-init"
+      labels:
+        app.kubernetes.io/managed-by: {{.Release.Service | quote }}
+        app.kubernetes.io/instance: {{.Release.Name | quote }}
+        helm.sh/chart: "{{.Chart.Name}}-{{.Chart.Version}}"
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: cockroachdb-init-temporal
+        image: "cockroachdb/cockroach"
+        command: ["/cockroach/cockroach.sh", "sql", "--insecure", "--host", "{{.Release.Name}}-cockroachdb-public", "-f", "/temporal.sql"]
+        volumeMounts:
+        - name: cockroachdb-initdb-config
+          mountPath: /temporal.sql
+          subPath: temporal.sql
+      - name: cockroachdb-init-cryptellation
+        image: "cockroachdb/cockroach"
+        command: ["/cockroach/cockroach.sh", "sql", "--insecure", "--host", "{{.Release.Name}}-cockroachdb-public", "-f", "/cryptellation.sql"]
+        volumeMounts:
+        - name: cockroachdb-initdb-config
+          mountPath: /cryptellation.sql
+          subPath: cryptellation.sql
+      volumes:
+      - name: cockroachdb-initdb-config
+        configMap:
+          name: cockroachdb-initdb-config
+{{ end }}

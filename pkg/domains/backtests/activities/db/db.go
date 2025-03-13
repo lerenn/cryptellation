@@ -74,7 +74,7 @@ const DeleteBacktestActivityName = "DeleteBacktestActivity"
 type (
 	// DeleteBacktestActivityParams is the parameters of the DeleteBacktestActivity activity.
 	DeleteBacktestActivityParams struct {
-		Backtest backtest.Backtest
+		ID uuid.UUID
 	}
 
 	// DeleteBacktestActivityResults is the results of the DeleteBacktestActivity activity.
@@ -113,7 +113,7 @@ func DefaultActivityOptions() workflow.ActivityOptions {
 		RetryPolicy: &temporal.RetryPolicy{
 			NonRetryableErrorTypes: []string{
 				ErrNilID.Error(),
-				ErrRecordNotFound.Error(),
+				ErrNotFound.Error(),
 				ErrNotImplemented.Error(),
 			},
 		},
