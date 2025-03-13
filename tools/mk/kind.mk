@@ -1,22 +1,15 @@
-KIND_CMD     := go run sigs.k8s.io/kind@v0.23.0
-HELM_CMD     := helm
-KUBECTL_CMD  := kubectl
-CLUSTER_NAME := cryptellation-cluster
+KIND_CMD      := go run sigs.k8s.io/kind@v0.23.0
+KIND_CFG_PATH := ./deployments/kind
+HELM_CMD      := helm
+KUBECTL_CMD   := kubectl
+CLUSTER_NAME  := cryptellation-cluster
 
-.DEFAULT_GOAL     := help
-
-.PHONY: clean 
-clean: kind/down ## Clean everything
-
-.PHONY: help
-help: ## Display this help message
-	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_\/-]+:.*?## / {printf "\033[34m%-30s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST) | \
-		sort | \
-		grep -v '#'
+.PHONY: kind/clean 
+kind/clean: kind/down ## Clean the kind cluster
 
 .PHONY: kind/up
 kind/up: ## Deploy kind cluster
-	@${KIND_CMD} create cluster --config ./kind.yaml --name ${CLUSTER_NAME}
+	@${KIND_CMD} create cluster --config $(KIND_CFG_PATH)/kind.yaml --name ${CLUSTER_NAME} || true
 
 .PHONY: kind/telemetry/up
 kind/telemetry/up: ## Deploy telemetry on kind cluster
@@ -24,10 +17,10 @@ kind/telemetry/up: ## Deploy telemetry on kind cluster
 	@$(HELM_CMD) repo add open-telemetry https://open-telemetry.github.io/opentelemetry-helm-charts
 	@$(HELM_CMD) repo add uptrace https://charts.uptrace.dev
 	@$(HELM_CMD) upgrade --install otel-collector open-telemetry/opentelemetry-collector \
-		-f ./uptrace/otel-collector.yaml \
+		-f $(KIND_CFG_PATH)/uptrace/otel-collector.yaml \
 		-n telemetry --create-namespace
 	@$(HELM_CMD) upgrade --install uptrace uptrace/uptrace \
-		-f ./uptrace/uptrace.yaml \
+		-f $(KIND_CFG_PATH)/uptrace/uptrace.yaml \
 		-n telemetry --create-namespace
 
 .PHONY: kind/telemetry/forward
@@ -41,22 +34,19 @@ kind/telemetry/down: ## Destroy telemetry on kind cluster
 	@$(KUBECTL_CMD) delete ns telemetry || true
 
 .PHONY: kind/cryptellation/load-images
-kind/cryptellation/load-images: ## Load images into kind cluster
-	@$(MAKE) -C ../build/package docker/build
+kind/cryptellation/load-images: docker/build ## Load images into kind cluster
 	@${KIND_CMD} load docker-image --name ${CLUSTER_NAME} \
 		lerenn/cryptellation:devel
 
 .PHONY: kind/cryptellation/deploy
-kind/cryptellation/deploy: kind/cryptellation/load-images ## Deploy cryptellation on kind cluster
-	@$(MAKE) -C ./helm deploy/local
+kind/cryptellation/deploy: kind/up kind/cryptellation/load-images helm/deploy/local ## Deploy cryptellation on kind cluster
 
 .PHONY: kind/cryptellation/forward
 kind/cryptellation/forward: ## Forward cryptellation on kind cluster
-	@kubectl port-forward service/cryptellation-nats 4222:4222
+	@kubectl port-forward service/cryptellation-temporal-frontend 7233:7233
 
 .PHONY: kind/cryptellation/delete
 kind/cryptellation/delete: ## Delete cryptellation on kind cluster
-	@$(MAKE) -C ./helm delete
 
 .PHONY: kind/down
 kind/down: ## Destroy kind cluster

@@ -259,8 +259,9 @@ func (g *Git) PublishNewCommit(
 	}
 
 	// Commit changes
+	commitMsg := fmt.Sprintf("%q", title)
 	g.container, err = g.container.
-		WithExec([]string{"git", "commit", "-m", title}).
+		WithExec([]string{"git", "commit", "-m", commitMsg}).
 		Sync(ctx)
 	if err != nil {
 		return err
