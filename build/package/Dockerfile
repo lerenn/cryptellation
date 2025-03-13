@@ -23,7 +23,7 @@ WORKDIR /go/src/github.com/lerenn/cryptellation
 # Build everything in cmd/
 RUN --mount=type=cache,target=/root/.cache/go-build \
     --mount=type=cache,target=/go/pkg/mod \
-    CGO_ENABLED=0 GOOS=${TARGETOS} GOARCH=${TARGETARCH} go install ./cmd/worker
+    CGO_ENABLED=0 GOOS=${TARGETOS} GOARCH=${TARGETARCH} go install ./cmd/*
 
 # Get final base image
 FROM --platform=${TARGETOS}/${TARGETARCH} ${TARGETBASEIMAGE}

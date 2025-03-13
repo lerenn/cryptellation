@@ -17,6 +17,18 @@ spec:
       labels:
         app: worker
     spec:
+      initContainers:
+      - name: sql-migrations
+        image: {{ ((.Values.services).worker).image.repository | default "lerenn/cryptellation" }}:{{ ((.Values.services).worker).image.tag | default (printf "v%s" .Chart.AppVersion) }}
+        imagePullPolicy: {{ ((.Values.services).worker).image.pullPolicy | default "Always" }}
+        command: ["database", "migrations", "migrate"]
+        env:
+        # SQL
+        - name: "POSTGRES_DSN"
+          valueFrom:
+            configMapKeyRef:
+              key: sql.dsn
+              name: cryptellation-credentials
       containers:
       - name: worker
         image: {{ ((.Values.services).worker).image.repository | default "lerenn/cryptellation" }}:{{ ((.Values.services).worker).image.tag | default (printf "v%s" .Chart.AppVersion) }}
@@ -47,17 +59,12 @@ spec:
             configMapKeyRef:
               key:  worker.health.port
               name: cryptellation-config
-        # MongoDB
-        - name: "MONGO_CONNECTION_STRING"
+        # SQL
+        - name: "POSTGRES_DSN"
           valueFrom:
             configMapKeyRef:
-              key: mongodb.connection_string
+              key: sql.dsn
               name: cryptellation-credentials
-        - name: "MONGO_DATABASE"
-          valueFrom:
-            configMapKeyRef:
-              key: worker.mongodb.database
-              name: cryptellation-config
         # Opentelemetry
         - name: "OPENTELEMETRY_GRPC_ENDPOINT"
           valueFrom:

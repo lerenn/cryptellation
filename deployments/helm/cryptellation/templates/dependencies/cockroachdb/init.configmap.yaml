@@ -1,0 +1,24 @@
+{{ if .Values.cockroachdb.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cockroachdb-initdb-config
+data:
+  temporal.sql: |
+    CREATE USER IF NOT EXISTS temporal;
+    ALTER USER temporal CREATEDB;
+    
+    CREATE DATABASE IF NOT EXISTS temporal;
+    GRANT ALL PRIVILEGES ON DATABASE temporal TO temporal;
+    USE temporal;
+    GRANT ALL ON SCHEMA public TO temporal;
+
+  cryptellation.sql: |
+    CREATE USER IF NOT EXISTS cryptellation;
+    ALTER USER cryptellation CREATEDB;
+
+    CREATE DATABASE IF NOT EXISTS cryptellation;
+    GRANT ALL PRIVILEGES ON DATABASE cryptellation TO cryptellation;
+    USE cryptellation;
+    GRANT ALL ON SCHEMA public TO cryptellation;
+{{ end }}
