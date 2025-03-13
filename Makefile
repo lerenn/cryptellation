@@ -15,6 +15,10 @@ clean: worker/down ## Clean the project
 dagger/check-generation: ## Run all checks for generated code through Dagger
 	@$(DAGGER_CMD) check-generation --source-dir=$(PROJECT_ROOT_PATH) stdout
 
+.PHONY: dagger/create-release
+dagger/create-release: ## Create a release through Dagger
+	@$(DAGGER_CMD) create-release --source-dir=$(PROJECT_ROOT_PATH) --ssh-private-key-file=file://~/.ssh/id_rsa
+
 .PHONY: dagger/develop
 dagger/develop: ## Run Dagger develop on all Dagger modules
 	@dagger develop -m ./pkg/dagger
@@ -27,7 +31,7 @@ dagger/lint: ## Run all linters through Dagger
 .PHONY: dagger/tests/unit
 dagger/tests/unit: ## Run all unit tests through Dagger
 	@$(DAGGER_CMD) unit-tests --source-dir=$(PROJECT_ROOT_PATH) stdout
-	
+
 .PHONY: generate
 generate: ## Generate the code
 	@go generate ./...
