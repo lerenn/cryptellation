@@ -1,0 +1,13 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Start docker env",
+            "type": "shell",
+            "command": "make",
+            "args": [
+                "docker/env/up"
+            ]
+        }
+    ]
+}

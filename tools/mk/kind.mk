@@ -43,7 +43,7 @@ kind/cryptellation/deploy: kind/up kind/cryptellation/load-images helm/deploy/lo
 
 .PHONY: kind/cryptellation/forward
 kind/cryptellation/forward: ## Forward cryptellation on kind cluster
-	@kubectl port-forward service/cryptellation-temporal-frontend 7233:7233
+	@kubectl port-forward service/cryptellation-temporal-frontend 7001:7233
 
 .PHONY: kind/cryptellation/delete
 kind/cryptellation/delete: ## Delete cryptellation on kind cluster
