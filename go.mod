@@ -1,6 +1,6 @@
 module github.com/lerenn/cryptellation/v1
 
-go 1.23.2
+go 1.23.6
 
 require (
 	github.com/adshao/go-binance/v2 v2.6.1
