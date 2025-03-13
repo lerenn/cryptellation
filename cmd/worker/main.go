@@ -13,9 +13,9 @@ import (
 
 // RootCmd is the worker root command.
 var RootCmd = &cobra.Command{
-	Use:     "worker",
+	Use:     os.Args[0],
 	Version: version.FullVersion(),
-	Short:   "worker - a worker executing cryptellation temporal workflows",
+	Short:   os.Args[0] + " - a worker executing cryptellation temporal workflows",
 }
 
 func main() {
