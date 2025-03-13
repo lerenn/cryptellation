@@ -136,8 +136,9 @@ func publishHelmChart(
 	// Commit changes
 	version := strings.TrimPrefix(pkgFileName, "cryptellation-")
 	version = strings.TrimSuffix(version, ".tgz")
+	commitMsg := fmt.Sprintf("%q", "add cryptellation helm chart "+version)
 	container, err = container.
-		WithExec([]string{"git", "commit", "-m", "add cryptellation helm chart " + version}).
+		WithExec([]string{"git", "commit", "-m", commitMsg}).
 		Sync(ctx)
 	if err != nil {
 		return err
