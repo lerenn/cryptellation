@@ -64,7 +64,7 @@ func (m *Cryptellation) Worker(
 func (m *Cryptellation) WorkerWithDependencies(
 	sourceDir *dagger.Directory,
 	secretsFile *dagger.Secret,
-	mongo *dagger.Service,
+	sql *dagger.Service,
 	nats *dagger.Service,
 ) *dagger.Container {
 	c := m.Worker(sourceDir, runtime.GOOS+"/"+runtime.GOARCH)

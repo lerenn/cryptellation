@@ -2,11 +2,46 @@
 # Dependencies
 ################################################################################
 
-mongodb:
+cockroachdb:
   enabled: true
-
+  tls:
+    enabled: false
 temporal:
   enabled: true
+  admintools:
+    enabled: false
+  server:
+    config:
+      persistence:
+        default:
+          driver: "sql"
+          sql:
+            driver: "postgres12"
+            host: "cryptellation-cockroachdb-public"
+            port: 26257
+            user: "temporal"
+            password: "nopasswordneeded"
+            database: "temporal"
+        visibility:
+          driver: "sql"
+          sql:
+            driver: "postgres12"
+            host: "cryptellation-cockroachdb-public"
+            port: 26257
+            user: "temporal"
+            password: "nopasswordneeded"
+            database: "temporal"
+      namespaces:
+        create: true
+    replicaCount: 1
+  cassandra:
+    enabled: false
+  elasticsearch:
+    enabled: false
+  prometheus:
+    enabled: false
+  grafana:
+    enabled: false
 
 ################################################################################
 # Credentials

@@ -1,0 +1,51 @@
+services:  
+  postgresql:
+    image: postgres:17.4-alpine
+    restart: always
+    shm_size: 128mb
+    ports:
+      - 5432:5432
+    expose:
+      - 5432
+    volumes:
+      - ./postgresql:/docker-entrypoint-initdb.d/
+    environment:
+      POSTGRES_PASSWORD: cryptellation
+    networks:
+      - cryptellation
+
+  temporal:
+    depends_on:
+      - postgresql
+    environment:
+      - DB=postgres12
+      - DB_PORT=5432
+      - POSTGRES_USER=temporal
+      - POSTGRES_PWD=temporal
+      - POSTGRES_SEEDS=postgresql
+      - DYNAMIC_CONFIG_FILE_PATH=config/dynamicconfig/development-sql.yaml
+    image: temporalio/auto-setup:1.25
+    ports:
+      - 7233:7233
+    expose:
+      - 7233
+    volumes:
+      - ./temporal:/etc/temporal/config/dynamicconfig
+    networks:
+      - cryptellation
+  temporal-ui:
+    depends_on:
+      - temporal
+    environment:
+      - TEMPORAL_ADDRESS=temporal:7233
+      - TEMPORAL_CORS_ORIGINS=http://localhost:3000
+    image: temporalio/ui:2.31.2
+    ports:
+      - 8080:8080
+    expose:
+      - 8080
+    networks:
+      - cryptellation
+
+networks:
+  cryptellation:

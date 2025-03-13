@@ -1,19 +1,39 @@
 # Specific section for dependencies
 
-mongodb:
+cockroachdb:
   enabled: true
-  image:
-    repository: zcube/bitnami-compat-mongodb
-    tag: latest
-  auth:
+  tls:
     enabled: false
 temporal:
   enabled: true
+  admintools:
+    enabled: false
   server:
+    config:
+      persistence:
+        default:
+          driver: "sql"
+          sql:
+            driver: "postgres12"
+            host: "cryptellation-cockroachdb-public"
+            port: 26257
+            user: "temporal"
+            password: "nopasswordneeded"
+            database: "temporal"
+        visibility:
+          driver: "sql"
+          sql:
+            driver: "postgres12"
+            host: "cryptellation-cockroachdb-public"
+            port: 26257
+            user: "temporal"
+            password: "nopasswordneeded"
+            database: "temporal"
+      namespaces:
+        create: true
     replicaCount: 1
   cassandra:
-    config:
-      cluster_size: 1
+    enabled: false
   elasticsearch:
     enabled: false
   prometheus:
@@ -27,18 +47,18 @@ credentials:
     binance:
       api_key:
       secret_key:
-  event_br"okers:
-    nats:
-      host: "{{ .Release.Name }}-nats.{{ .Release.Namespace }}.svc.cluster.local"
-      port: 4222
   datastores:
-    mongodb:
-      connection_string: "mongodb://{{ .Release.Name }}-mongodb.{{ .Release.Namespace }}.svc.cluster.local:27017"
+    sql:
+      database: cryptellation
+      host: "{{ .Release.Name }}-cockroachdb-public.{{ .Release.Namespace }}.svc.cluster.local"
+      port: 26257
+      user: cryptellation
+      password: cryptellation
   opentelemetry:
     grpc:
       endpoint:
   temporal:
-    address: "temporal.{{ .Release.Namespace }}.svc.cluster.local:7233"
+    address: "{{ .Release.Name }}-temporal-frontend.{{ .Release.Namespace }}.svc.cluster.local:7233"
 
 # Specific section for services
 services:
@@ -47,8 +67,6 @@ services:
       repository: lerenn/cryptellation
       tag: v{{ .Chart.AppVersion }}
       pullPolicy: Always
-    mongodb:
-      database: cryptellation
     health:
       port: 9000
 

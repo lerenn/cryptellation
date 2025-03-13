@@ -1,5 +1,5 @@
 DAGGER_CMD         := dagger call -m ./build/ci
-DOCKER_COMPOSE_CMD := docker compose -f ./deployments/docker-compose/cryptellation.docker-compose.yaml
+DOCKER_COMPOSE_CMD := docker compose -p cryptellation
 PROJECT_ROOT_PATH  := .
 
 .DEFAULT_GOAL     := help
@@ -8,8 +8,7 @@ PROJECT_ROOT_PATH  := .
 check: generate lint test ## Generate, lint and test the code
 
 .PHONY: clean 
-clean: local/down ## Clean the project
-	@$(DOCKER_COMPOSE_CMD) rm
+clean: worker/down ## Clean the project
 	@$(MAKE) -C deployments clean
 
 .PHONY: dagger/check-generation
@@ -43,17 +42,21 @@ help: ## Display this help message
 lint: ## Lint the code
 	@go run github.com/golangci/golangci-lint/cmd/golangci-lint@v1.62.0 run ./...
 
-.PHONY: local/down
-local/down: ## Stop the local environment
-	@$(DOCKER_COMPOSE_CMD) down
+.PHONY: dependencies/down 
+dependencies/down: ## Stop the dependencies in local environment
+	@$(DOCKER_COMPOSE_CMD) -f ./deployments/docker-compose/dependencies.docker-compose.yaml down
 
-.PHONY: local/pull
-local/pull: ## Pull the local environment images
-	@$(DOCKER_COMPOSE_CMD) pull
+.PHONY: dependencies/up
+dependencies/up: ## Start the dependencies in local environment
+	@$(DOCKER_COMPOSE_CMD) -f ./deployments/docker-compose/dependencies.docker-compose.yaml up -d
 
-.PHONY: local/up
-local/up: ## Start the local environment
-	@$(DOCKER_COMPOSE_CMD) up -d
+.PHONY: worker/down
+worker/down: ## Start a cryptellation worker in local environment
+	@$(DOCKER_COMPOSE_CMD) -f ./deployments/docker-compose/worker.docker-compose.yaml down
+
+.PHONY: worker/up
+worker/up: dependencies/up ## Start a cryptellation worker in local environment
+	@$(DOCKER_COMPOSE_CMD) -f ./deployments/docker-compose/worker.docker-compose.yaml up -d
 
 .PHONY: test
 test: test/unit test/integration test/end-to-end ## Launch all tests
@@ -63,9 +66,9 @@ test/unit: ## Launch unit tests
 	@go test $$(go list ./... | grep -v -e /activities -e /test)
 
 .PHONY: test/integration
-test/integration: local/up ## Launch integration tests
+test/integration: dependencies/up ## Launch integration tests
 	@go test $$(go list ./pkg/domains/... | grep /activities)
 
 .PHONY: test/end-to-end
-test/end-to-end: local/up ## Launch end-to-end tests
+test/end-to-end: worker/up ## Launch end-to-end tests
 	@go test ./test/...

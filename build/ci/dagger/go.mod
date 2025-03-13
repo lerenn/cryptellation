@@ -1,6 +1,6 @@
 module github.com/lerenn/cryptellation/v1/build/ci/dagger
 
-go 1.23.2
+go 1.23.6
 
 require (
 	github.com/99designs/gqlgen v0.17.66

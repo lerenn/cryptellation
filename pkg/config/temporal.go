@@ -9,9 +9,9 @@ import (
 )
 
 const (
-	// TemporalAddressEnvName is the name of the environment variable that
+	// EnvTemporalAddress is the name of the environment variable that
 	// contains the address of the temporal server.
-	TemporalAddressEnvName = "TEMPORAL_ADDRESS"
+	EnvTemporalAddress = "TEMPORAL_ADDRESS"
 )
 
 var (
@@ -52,7 +52,7 @@ func (c *Temporal) overrideFromEnv() {
 	_ = godotenv.Load(".env")
 
 	// Overriding variables
-	overrideFromEnv(&c.Address, TemporalAddressEnvName)
+	overrideFromEnv(&c.Address, EnvTemporalAddress)
 }
 
 // Validate checks if the configuration is valid.
@@ -60,7 +60,7 @@ func (c Temporal) Validate() error {
 	if c.Address == "" {
 		return fmt.Errorf(
 			"%w: reading address from env (%s=%q)",
-			ErrInvalidTemporalConfig, TemporalAddressEnvName, c.Address)
+			ErrInvalidTemporalConfig, EnvTemporalAddress, c.Address)
 	}
 
 	return nil

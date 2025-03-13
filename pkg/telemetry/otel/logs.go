@@ -8,6 +8,7 @@ import (
 	"github.com/agoda-com/opentelemetry-logs-go/exporters/otlp/otlplogs/otlplogsgrpc"
 	sdk "github.com/agoda-com/opentelemetry-logs-go/sdk/logs"
 	"github.com/agoda-com/otelzap"
+	"github.com/lerenn/cryptellation/v1/pkg/config"
 	"go.opentelemetry.io/otel/sdk/resource"
 	semconv "go.opentelemetry.io/otel/semconv/v1.12.0"
 	"go.uber.org/zap"
@@ -47,7 +48,7 @@ func newLogs(ctx context.Context, serviceName, url string) (logs, error) {
 	}
 
 	// Set console loggers
-	if os.Getenv("DEV_MODE") != "" {
+	if os.Getenv(config.EnvLogDevMode) != "" {
 		consoleEncoder := zapcore.NewConsoleEncoder(zap.NewDevelopmentEncoderConfig())
 		consoleDebugging := zapcore.Lock(os.Stdout)
 		consoleErrors := zapcore.Lock(os.Stderr)
@@ -79,7 +80,7 @@ func newLogs(ctx context.Context, serviceName, url string) (logs, error) {
 }
 
 func logLevelFromEnv() zapcore.Level {
-	envLogLevel := os.Getenv("LOG_LEVEL")
+	envLogLevel := os.Getenv(config.EnvLogLevel)
 	switch envLogLevel {
 	case "DEBUG":
 		return zapcore.DebugLevel
