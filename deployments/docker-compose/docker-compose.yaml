@@ -78,7 +78,7 @@ services:
       SQL_DSN: "host=postgresql user=cryptellation password=cryptellation dbname=cryptellation sslmode=disable"
       TEMPORAL_ADDRESS: temporal:7233
     env_file:
-      - path: .credentials.env
+      - path: ../../.credentials.env
         required: true
     command: ["-c", ".air.toml"]
     volumes:

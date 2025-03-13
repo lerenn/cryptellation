@@ -20,9 +20,9 @@ var (
 
 // rootCmd is the CLI root command.
 var rootCmd = &cobra.Command{
-	Use:     "cryptellation",
+	Use:     os.Args[0],
 	Version: version.FullVersion(),
-	Short:   "cryptellation - a CLI to execute cryptellation temporal workflows",
+	Short:   os.Args[0] + " - a CLI to execute cryptellation temporal workflows",
 	PersistentPreRunE: func(_ *cobra.Command, _ []string) (err error) {
 		// Create cryptellation client
 		cryptellationClient, err = client.NewClient()

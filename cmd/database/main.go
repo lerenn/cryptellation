@@ -23,9 +23,9 @@ var (
 )
 
 var rootCmd = &cobra.Command{
-	Use:     "database",
+	Use:     os.Args[0],
 	Version: version.FullVersion(),
-	Short:   "database - a CLI to manage cryptellation database",
+	Short:   os.Args[0] + " - a CLI to manage cryptellation database",
 	PersistentPreRunE: func(cmd *cobra.Command, _ []string) (err error) {
 		// Create a sqlx client
 		for {
