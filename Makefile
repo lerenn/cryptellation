@@ -28,6 +28,10 @@ dagger/develop: ## Run Dagger develop on all Dagger modules
 dagger/lint: ## Run all linters through Dagger
 	@$(DAGGER_CMD) linter --source-dir=$(PROJECT_ROOT_PATH) stdout
 
+.PHONY: dagger/publish-release
+dagger/publish-release: ## Publish a release through Dagger
+	@$(DAGGER_CMD) publish-release --source-dir=$(PROJECT_ROOT_PATH) --ssh-private-key-file=file://~/.ssh/id_rsa
+
 .PHONY: dagger/tests/unit
 dagger/tests/unit: ## Run all unit tests through Dagger
 	@$(DAGGER_CMD) unit-tests --source-dir=$(PROJECT_ROOT_PATH) stdout
