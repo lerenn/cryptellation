@@ -10,7 +10,7 @@
 
 # production
 /build/*
-!/build/.gitkeep
+!/build/gitkeep
 
 # misc
 .DS_Store
