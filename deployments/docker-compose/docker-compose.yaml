@@ -48,7 +48,6 @@ services:
       - cryptellation
 
   migrator:
-    profiles: ["migrator"]
     depends_on:
       - postgresql
     image: golang:1.24-alpine
@@ -62,6 +61,22 @@ services:
       - gocache:/go/pkg/mod
       - gobuild:/root/.cache/go-build
       - ../..:/go/src/github.com/lerenn/cryptellation/v1
+    networks:
+      - cryptellation
+  ui:
+    profiles: ["ui"]
+    image: node:alpine
+    depends_on:
+      - temporal
+    working_dir: /web/ui
+    command: ["sh", "-c", "npm install && npm start"]
+    volumes:
+      - node_modules:/web/ui/node_modules
+      - ../../web/ui:/web/ui
+    ports:
+      - 7003:3000
+    expose:
+      - 3000
     networks:
       - cryptellation
   worker:
@@ -91,6 +106,7 @@ services:
 volumes:
   gocache:
   gobuild:
+  node_modules:
 
 networks:
   cryptellation:
