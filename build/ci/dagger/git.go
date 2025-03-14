@@ -252,7 +252,7 @@ func (g *Git) PublishNewCommit(
 
 	// Add all changes
 	g.container, err = g.container.
-		WithExec([]string{"git", "add", "."}).
+		WithExec([]string{"git", "add", "-A"}).
 		Sync(ctx)
 	if err != nil {
 		return err

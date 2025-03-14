@@ -127,7 +127,7 @@ func publishHelmChart(
 
 	// Add all changes
 	container, err = container.
-		WithExec([]string{"git", "add", "."}).
+		WithExec([]string{"git", "add", "-A"}).
 		Sync(ctx)
 	if err != nil {
 		return err
