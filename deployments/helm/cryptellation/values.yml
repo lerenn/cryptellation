@@ -62,6 +62,13 @@ credentials:
 
 # Specific section for services
 services:
+  ui: 
+    image:
+      repository: lerenn/cryptellation
+      tag: v{{ .Chart.AppVersion }}
+      pullPolicy: Always
+    health:
+      port: 9000
   worker:
     image:
       repository: lerenn/cryptellation

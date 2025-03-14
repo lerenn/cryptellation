@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/name: {{ .Release.Name }}-ui
+  name: {{ .Release.Name }}-ui
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-ui
+  template:
+    metadata:
+      annotations:
+        {{if (.Values.debug).forceDeployment }}timestamp: {{ now | quote }}{{end}}
+      labels:
+        app: {{ .Release.Name }}-ui
+    spec:
+      containers:
+      - name: ui
+        image: {{ ((.Values.services).ui).image.repository | default "lerenn/cryptellation" }}:{{ ((.Values.services).ui).image.tag | default (printf "v%s" .Chart.AppVersion) }}
+        command: ["ui", "serve"]
+        imagePullPolicy: {{ ((.Values.services).ui).image.pullPolicy | default "Always" }}
+        ports:
+        - containerPort: 8080
+        livenessProbe:
+          httpGet:
+            path: /liveness
+            port: {{ (((.Values.services).ui).health).port | default 9000 }}
+        readinessProbe:
+          httpGet:
+            path: /readiness
+            port: {{ (((.Values.services).ui).health).port | default 9000 }}
+        env:
+        # Health
+        - name: "HEALTH_PORT"
+          valueFrom:
+            configMapKeyRef:
+              key:  ui.health.port
+              name: cryptellation-config
+        # Opentelemetry
+        - name: "OPENTELEMETRY_GRPC_ENDPOINT"
+          valueFrom:
+            configMapKeyRef:
+              key: opentelemetry.grpc.endpoint
+              name: cryptellation-credentials
+        # Temporal
+        - name: "TEMPORAL_ADDRESS"
+          valueFrom:
+            configMapKeyRef:
+              key: temporal.address
+              name: cryptellation-credentials
+        resources: {}
+status: {}

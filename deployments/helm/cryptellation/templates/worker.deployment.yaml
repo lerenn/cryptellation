@@ -2,20 +2,19 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: worker
-  name: worker
+    app.kubernetes.io/name: {{ .Release.Name }}-worker
+  name: {{ .Release.Name }}-worker
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: worker
-  strategy: {}
+      app: {{ .Release.Name }}-worker
   template:
     metadata:
       annotations:
         {{if (.Values.debug).forceDeployment }}timestamp: {{ now | quote }}{{end}}
       labels:
-        app: worker
+        app: {{ .Release.Name }}-worker
     spec:
       initContainers:
       - name: sql-migrations
