@@ -11,6 +11,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+//nolint:typecheck
 //go:embed build
 var staticFS embed.FS
 
