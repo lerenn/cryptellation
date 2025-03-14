@@ -1,7 +1,7 @@
-.PHONY: web/dashboard/start
-web/dashboard/start: ## Start the dashboard
-	@cd web/dashboard && npm start
+.PHONY: web/ui/start
+web/ui/start: ## Start the ui
+	@cd web/ui && npm start
 
-.PHONY: web/dashboard/build
-web/dashboard/build: ## Build the dashboard
-	@cd web/dashboard && npm run build
+.PHONY: web/ui/build
+web/ui/build: ## Build the ui
+	@cd web/ui && npm run build
