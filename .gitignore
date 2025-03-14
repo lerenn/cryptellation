@@ -7,3 +7,6 @@ tmp/
 # Ignore go specific files
 go.work
 go.work.sum
+
+# Ignore debug files
+__debug_bin*

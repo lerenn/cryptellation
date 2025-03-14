@@ -1,1 +1,3 @@
 .git/
+web/ui/build/
+web/ui/node_modules/
