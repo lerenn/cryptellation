@@ -252,16 +252,15 @@ func (g *Git) PublishNewCommit(
 
 	// Add all changes
 	g.container, err = g.container.
-		WithExec([]string{"git", "add", "."}).
+		WithExec([]string{"git", "add", "-A"}).
 		Sync(ctx)
 	if err != nil {
 		return err
 	}
 
 	// Commit changes
-	commitMsg := fmt.Sprintf("%q", title)
 	g.container, err = g.container.
-		WithExec([]string{"git", "commit", "-m", commitMsg}).
+		WithExec([]string{"git", "commit", "-m", title}).
 		Sync(ctx)
 	if err != nil {
 		return err
