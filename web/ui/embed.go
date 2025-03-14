@@ -43,7 +43,7 @@ func newStaticFileSystem() *staticFileSystem {
 	}
 }
 
-func (s *staticFileSystem) Exists(prefix string, path string) bool {
+func (s *staticFileSystem) Exists(_ string, path string) bool {
 	buildpath := fmt.Sprintf("build%s", path)
 
 	// support for folders
@@ -60,8 +60,7 @@ func (s *staticFileSystem) Exists(prefix string, path string) bool {
 	return err == nil
 }
 
-// ----------------------------------------------------------------------
-// fallbackFileSystem wraps a staticFileSystem and always serves /index.html
+// fallbackFileSystem wraps a staticFileSystem and always serves /index.html.
 type fallbackFileSystem struct {
 	staticFileSystem *staticFileSystem
 }
@@ -75,10 +74,10 @@ func newFallbackFileSystem(staticFileSystem *staticFileSystem) *fallbackFileSyst
 	}
 }
 
-func (f *fallbackFileSystem) Open(path string) (http.File, error) {
+func (f *fallbackFileSystem) Open(_ string) (http.File, error) {
 	return f.staticFileSystem.Open("/index.html")
 }
 
-func (f *fallbackFileSystem) Exists(prefix string, path string) bool {
+func (f *fallbackFileSystem) Exists(_ string, _ string) bool {
 	return true
 }
