@@ -63,7 +63,7 @@ var serveCmd = &cobra.Command{
 		}
 
 		// Mark as ready
-		// TODO: improve this
+		// TODO(#55): Improve this with a better way to mark as ready
 		go func() {
 			time.Sleep(time.Second * 3)
 			h.Ready(true)

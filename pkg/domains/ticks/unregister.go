@@ -10,6 +10,6 @@ func (wf *workflows) UnregisterFromTicksListeningWorkflow(
 	_ workflow.Context,
 	_ api.UnregisterFromTicksListeningWorkflowParams,
 ) (api.UnregisterFromTicksListeningWorkflowResults, error) {
-	// TODO
+	// TODO(#68): Implement UnregisterFromTicksListeningWorkflow
 	return api.UnregisterFromTicksListeningWorkflowResults{}, nil
 }

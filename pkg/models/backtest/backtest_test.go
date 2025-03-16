@@ -45,7 +45,7 @@ func (suite *BacktestSuite) TestMarshalUnMarshalBinary() {
 }
 
 func (suite *BacktestSuite) TestIncrementPriceID() {
-	// TODO
+	// TODO(#69): Implement TestIncrementPriceID
 }
 
 func (suite *BacktestSuite) TestBacktestCreateWithModeFullOHLC() {

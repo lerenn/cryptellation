@@ -28,5 +28,5 @@ func (suite *BinanceSuite) SetupTest() {
 }
 
 func (suite *BinanceSuite) TestTicks() {
-	// TODO
+	// TODO(#63): Implement this test
 }

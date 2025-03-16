@@ -11,6 +11,6 @@ func (c client) ListCandlesticks(
 	params api.ListCandlesticksWorkflowParams,
 	childWorkflowOptions *workflow.ChildWorkflowOptions,
 ) (result api.ListCandlesticksWorkflowResults, err error) {
-	// TODO: Implement caching
+	// TODO(#51): Implement caching
 	return raw.ListCandlesticks(ctx, params, childWorkflowOptions)
 }

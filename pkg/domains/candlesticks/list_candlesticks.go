@@ -22,7 +22,7 @@ const (
 )
 
 // ListCandlesticksWorkflow is the workflow that will list candlesticks.
-// TODO: Refactor this function
+// TODO(#59): Refactor this function to make it shorter.
 //
 //nolint:funlen
 func (wf *workflows) ListCandlesticksWorkflow(
@@ -227,7 +227,7 @@ func validateCandlesticksParams(
 	return params, nil
 }
 
-// TODO: Refactor this function
+// TODO(#60): Refactor this function to make it shorter.
 //
 //nolint:funlen,cyclop
 func (wf workflows) upsert(ctx workflow.Context, cl *candlestick.List) error {

@@ -163,7 +163,7 @@ func (wf *workflows) readActualPrices(ctx workflow.Context, bt backtest.Backtest
 		"backtest_id", bt.ID.String())
 
 	// Run for all prices subscriptions
-	// TODO: parallelize
+	// TODO(#56): parallelize the read for each subscription
 	prices := make([]tick.Tick, 0, len(bt.PricesSubscriptions))
 	for _, sub := range bt.PricesSubscriptions {
 		logger.Debug("Reading actual prices for subscription",

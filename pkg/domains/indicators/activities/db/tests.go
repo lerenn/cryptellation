@@ -17,7 +17,7 @@ type IndicatorsSuite struct {
 }
 
 // TestGetSMAActivity tests the GetSMAActivity activity.
-// TODO: Refactor this function
+// TODO(#61): Refactor this function to make it shorter.
 //
 //nolint:funlen
 func (suite *IndicatorsSuite) TestGetSMAActivity() {
@@ -92,7 +92,7 @@ func (suite *IndicatorsSuite) TestGetSMAActivity() {
 }
 
 // TestUpsertSMAActivity tests the UpsertSMAActivity activity.
-// TODO: Refactor this function
+// TODO(#62): Refactor this function to make it shorter.
 //
 //nolint:funlen
 func (suite *IndicatorsSuite) TestUpsertSMAActivity() {

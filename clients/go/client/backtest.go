@@ -20,6 +20,8 @@ type Backtest struct {
 
 // Run starts the backtest on Cryptellation API.
 func (bt *Backtest) Run(ctx context.Context, b client1.Bot) error {
+	// TODO(#49): get worker from parameters instead of creating a new one
+
 	// Create temporary worker
 	tq := fmt.Sprintf("%s-%s", run.ModeBacktest.String(), bt.ID.String())
 	w := worker.New(bt.cryptellation.Temporal(), tq, worker.Options{})
@@ -30,7 +32,7 @@ func (bt *Backtest) Run(ctx context.Context, b client1.Bot) error {
 	// Start worker
 	go func() {
 		if err := w.Run(nil); err != nil {
-			panic(err) // TODO: Handle error by returning it if there is an error
+			panic(err)
 		}
 	}()
 	defer w.Stop()

@@ -15,7 +15,7 @@ import (
 )
 
 type testRobotRun struct {
-	Suite *EndToEndSuite // TODO: export results in test instead of panicking in the robot
+	Suite *EndToEndSuite
 
 	BacktestID     uuid.UUID
 	BacktestParams api.CreateBacktestWorkflowParams
@@ -44,7 +44,7 @@ func (r *testRobotRun) OnInit(ctx workflow.Context, params api.OnInitCallbackWor
 func (r *testRobotRun) OnNewPrices(_ workflow.Context, params api.OnNewPricesCallbackWorkflowParams) error {
 	checkBacktestRunContext(r.Suite, params.Run, r.BacktestID)
 
-	// TODO: test order passing
+	// TODO(#72): test order passing in OnNewPrices
 
 	r.OnNewPricesCalls++
 	return nil

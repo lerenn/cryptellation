@@ -34,6 +34,13 @@ func (mod *CryptellationCi) Linter(sourceDir *dagger.Directory) *dagger.Containe
 	return c.WithExec([]string{"golangci-lint", "run", "--timeout", "10m"})
 }
 
+func (mod *CryptellationCi) CheckTODOs(
+	sourceDir *dagger.Directory,
+) *dagger.Container {
+	return mod.cryptellationGoCodeContainer(sourceDir).
+		WithExec([]string{"go", "run", "./tools/invtodos"})
+}
+
 func (mod *CryptellationCi) CheckGeneration(
 	sourceDir *dagger.Directory,
 ) *dagger.Container {

@@ -37,6 +37,20 @@ jobs:
           verb: call
           args: -m build/ci -s check-generation --source-dir=. stdout
 
+  check-todos:
+    name: Check TODOs have not been forgotten
+    if: |
+      !startsWith(github.event.head_commit.message, 'release:')
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dagger/dagger-for-github@8.0.0
+        with:
+          version: latest
+          verb: call
+          args: -m build/ci -s check-todos --source-dir=. stdout
+
   unit-tests:
     name: Run unit tests
     needs: ["lint", "check-generation"]

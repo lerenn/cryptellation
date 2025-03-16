@@ -44,5 +44,5 @@ func (suite *EndToEndSuite) TestListenToTicks() {
 	suite.Require().NoError(listenErr)
 
 	// AND the listener workflow is stopped
-	//TODO: check that the workflow is stopped
+	// TODO(#74): check that the ticks listening workflow is stopped
 }

@@ -1,11 +1,15 @@
 DAGGER_CMD         := dagger call -m ./build/ci
 
 .PHONY: dagger/check
-dagger/check: dagger/check-generation dagger/lint dagger/tests/unit ## Run all checks through Dagger
+dagger/check: dagger/check-generation dagger/check-todos dagger/lint dagger/tests/unit ## Run all checks through Dagger
 
 .PHONY: dagger/check-generation
 dagger/check-generation: ## Run all checks for generated code through Dagger
 	@$(DAGGER_CMD) check-generation --source-dir=. stdout
+
+.PHONY: dagger/check-todos
+dagger/check-todos: ## Run all checks for TODOs through Dagger
+	@$(DAGGER_CMD) check-todos --source-dir=. stdout
 
 .PHONY: dagger/create-release
 dagger/create-release: ## Create a release through Dagger
