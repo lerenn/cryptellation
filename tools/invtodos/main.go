@@ -21,7 +21,7 @@ var rootCmd = &cobra.Command{
 	Version:      version.FullVersion(),
 	SilenceUsage: true,
 	Short:        os.Args[0] + " - a CLI to check invalid todos",
-	RunE: func(cmd *cobra.Command, args []string) error {
+	RunE: func(cmd *cobra.Command, _ []string) error {
 		invalidLines, err := checkInvalidTodosOnDir(pathFlag)
 		if err != nil {
 			return err

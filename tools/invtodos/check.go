@@ -12,7 +12,7 @@ import (
 
 func checkInvalidTodosOnDir(path string) ([]string, error) {
 	invalidTodos := make([]string, 0)
-	err := filepath.Walk(path, func(path string, info os.FileInfo, err error) error {
+	err := filepath.Walk(path, func(path string, _ os.FileInfo, err error) error {
 		// Return if there is an error
 		if err != nil {
 			return err
