@@ -60,7 +60,7 @@ func (wf *workflows) ticksSentryWorkflow(
 		newTickReceivedSignalChannel.Receive(ctx, &t)
 
 		// Handle new signals
-		// TODO: make it async
+		// TODO(#64): make new ticks signal handling more asynchronous
 		handleListenTicksSignals(ctx, listeners, registerSignalChannel, unregisterSignalChannel)
 
 		// Send event to all listeners
@@ -78,9 +78,9 @@ func (wf *workflows) ticksSentryWorkflow(
 	cancelListening()
 
 	// Cleanup remaining signals
-	// TODO: clean up new ticks signals
-	// TODO: clean up unregister signals
-	// TODO: clean up register signals and trigger a new workflow if needed
+	// TODO(#65): clean up new ticks signals when quitting workflow
+	// TODO(#66): clean up unregister signals when quitting workflow
+	// TODO(#67): clean up register signals and trigger a new workflow if needed when quitting workflow
 
 	logger.Info("Stop listening to ticks",
 		"exchange", params.Exchange,
@@ -94,7 +94,6 @@ func (wf *workflows) sentryStartListeningActivity(
 	params ticksSentryWorkflowParams,
 ) func() {
 	// Set activity options
-	// TODO: Improve this
 	activityOptions := exchanges.DefaultActivityOptions()
 	activityOptions.ScheduleToCloseTimeout = 365 * 24 * time.Hour
 	activityOptions.StartToCloseTimeout = 365 * 24 * time.Hour

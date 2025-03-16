@@ -61,7 +61,7 @@ func MergeTimeRanges(tr1, tr2 []TimeRange) ([]TimeRange, error) {
 	), nil
 }
 
-// TODO(lerenn): Refactor this function
+// TODO(#71): Refactor this function
 //
 //nolint:funlen,gocognit,cyclop
 func mergeTimeRangesWithoutOrdering(tr1, tr2 []TimeRange) []TimeRange {
