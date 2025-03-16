@@ -11,6 +11,6 @@ func (c client) GetExchange(
 	params api.GetExchangeWorkflowParams,
 	childWorkflowOptions *workflow.ChildWorkflowOptions,
 ) (result api.GetExchangeWorkflowResults, err error) {
-	// TODO: Implement caching
+	// TODO(#52): Implement caching
 	return raw.GetExchange(ctx, params, childWorkflowOptions)
 }
