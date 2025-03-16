@@ -18,18 +18,18 @@ func checkInvalidTodosOnDir(path string) ([]string, error) {
 			return err
 		}
 
-		// Return if this is the path to the tool
-		if strings.HasPrefix(path, "tools/invtodos") {
+		switch {
+		case strings.HasPrefix(path, "tools/invtodos"):
+			// Return if this is the path to the tool
 			return nil
-		}
-
-		// Return if it is not a go file
-		if filepath.Ext(path) != ".go" {
+		case strings.Contains(path, "dagger/internal"):
+			// Return if this is a dagger internal file
 			return nil
-		}
-
-		// Return if it is a generated file
-		if strings.HasSuffix(path, ".gen.go") {
+		case filepath.Ext(path) != ".go":
+			// Return if it is not a go file
+			return nil
+		case strings.HasSuffix(path, ".gen.go"):
+			// Return if it is a generated file
 			return nil
 		}
 
@@ -68,34 +68,32 @@ func checkInvalidTodosOnFile(path string) ([]string, error) {
 		lineNumber++
 		line := scanner.Text()
 
-		// Check if line contains TODO
-		var invalid bool
-		if strings.Contains(line, "TODO") {
-			if ok := r.MatchString(line); !ok {
-				invalid = true
-			}
+		// Check if line contains commented TODO
+		if !strings.Contains(line, "TODO") {
+			continue
+		} else if ok := r.MatchString(line); ok {
+			continue
+		} else if !strings.Contains(line, "//") {
+			continue
 		}
 
-		// Check for invalid todos
-		if invalid {
-			// Get only the comment
-			parts := strings.Split(line, "//")
-			if len(parts) > 1 {
-				line = strings.Join(parts[1:], "//")
-				line = strings.TrimSpace(line)
-			}
-
-			// Get the file with the line number
-			l := path + ":" + strconv.Itoa(lineNumber)
-
-			// Shorten line
-			if len(line) > 20 {
-				line = line[:20] + "..."
-			}
-
-			description := fmt.Sprintf("%-70s %s", l, line)
-			invalidTodos = append(invalidTodos, description)
+		// Get only the comment
+		parts := strings.Split(line, "//")
+		if len(parts) > 1 {
+			line = strings.Join(parts[1:], "//")
+			line = strings.TrimSpace(line)
 		}
+
+		// Get the file with the line number
+		l := path + ":" + strconv.Itoa(lineNumber)
+
+		// Shorten line
+		if len(line) > 20 {
+			line = line[:20] + "..."
+		}
+
+		description := fmt.Sprintf("%-70s %s", l, line)
+		invalidTodos = append(invalidTodos, description)
 	}
 
 	return invalidTodos, nil
