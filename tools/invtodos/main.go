@@ -50,6 +50,7 @@ func main() {
 	// Execute command
 	if err := rootCmd.ExecuteContext(context.Background()); err != nil {
 		telemetry.L(context.Background()).Errorf("an error occurred: %s", err.Error())
+		errCode = 1
 	}
 
 	// Close telemetry
