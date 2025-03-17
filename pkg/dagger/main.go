@@ -53,7 +53,7 @@ func (m *Cryptellation) Worker(
 			{Name: "BUILDPLATFORM", Value: os + "/" + runtime.GOARCH},
 			{Name: "TARGETOS", Value: runnerInfo.OS},
 			{Name: "TARGETARCH", Value: runnerInfo.Arch},
-			{Name: "BUILDGOBASEIMAGE", Value: runnerInfo.BuildBaseImage},
+			{Name: "BUILDBASEIMAGE", Value: runnerInfo.BuildBaseImage},
 			{Name: "TARGETBASEIMAGE", Value: runnerInfo.TargetBaseImage},
 		},
 		Platform:   dagger.Platform(runnerInfo.OS + "/" + runnerInfo.Arch),

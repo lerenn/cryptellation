@@ -1,7 +1,7 @@
 package exchanges
 
 import (
-	"github.com/lerenn/cryptellation/v1/api"
+	api "github.com/lerenn/cryptellation/v1/api/worker/go"
 	"github.com/lerenn/cryptellation/v1/pkg/domains/exchanges/activities/db"
 	exchangesadapter "github.com/lerenn/cryptellation/v1/pkg/domains/exchanges/activities/exchanges"
 	"go.temporal.io/sdk/worker"

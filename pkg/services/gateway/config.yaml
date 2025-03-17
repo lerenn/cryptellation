@@ -1,0 +1,6 @@
+package: gateway
+output: server.gen.go
+generate:
+  gin-server: true
+  models: true
+  

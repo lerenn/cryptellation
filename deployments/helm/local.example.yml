@@ -61,6 +61,10 @@ credentials:
 ################################################################################
 
 services:
+  gateway:
+    image:
+      tag: devel
+      pullPolicy: Never
   worker:
     image:
       tag: devel

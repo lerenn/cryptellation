@@ -13,7 +13,7 @@ different cryptographic markets, featuring **backtesting**, **forward testing** 
 make docker/worker/up
 
 # Check that everything works
-go run ./cmd/cli info
+go run ./cmd/cryptellation info
 ```
 
 ## Serve the project with Kind
@@ -26,5 +26,5 @@ make kind/cryptellation/deploy
 make kind/cryptellation/port-forward
 
 # Check that everything works
-go run ./cmd/cli info
+go run ./cmd/cryptellation info
 ```

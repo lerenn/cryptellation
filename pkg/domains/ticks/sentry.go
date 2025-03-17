@@ -4,7 +4,7 @@ import (
 	"errors"
 	"time"
 
-	"github.com/lerenn/cryptellation/v1/api"
+	api "github.com/lerenn/cryptellation/v1/api/worker/go"
 	"github.com/lerenn/cryptellation/v1/pkg/domains/ticks/activities/exchanges"
 	"github.com/lerenn/cryptellation/v1/pkg/domains/ticks/internal/signals"
 	"github.com/lerenn/cryptellation/v1/pkg/models/tick"

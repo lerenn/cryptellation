@@ -1,7 +1,7 @@
 package forwardtests
 
 import (
-	"github.com/lerenn/cryptellation/v1/api"
+	api "github.com/lerenn/cryptellation/v1/api/worker/go"
 	"github.com/lerenn/cryptellation/v1/pkg/domains/forwardtests/activities/db"
 	"go.temporal.io/sdk/workflow"
 )

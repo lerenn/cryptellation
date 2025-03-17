@@ -4,16 +4,15 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/lerenn/cryptellation/v1/api"
+	api "github.com/lerenn/cryptellation/v1/api/worker/go"
 	"github.com/lerenn/cryptellation/v1/pkg/config"
 	"github.com/lerenn/cryptellation/v1/pkg/health"
+	"github.com/lerenn/cryptellation/v1/pkg/services/worker"
 	"github.com/lerenn/cryptellation/v1/pkg/telemetry"
 	"github.com/lerenn/cryptellation/v1/pkg/temporal/activities"
-	"github.com/lerenn/cryptellation/v1/pkg/version"
 	"github.com/spf13/cobra"
 	"go.temporal.io/sdk/client"
-	"go.temporal.io/sdk/worker"
-	"go.temporal.io/sdk/workflow"
+	temporalwk "go.temporal.io/sdk/worker"
 )
 
 var serveCmd = &cobra.Command{
@@ -52,13 +51,13 @@ var serveCmd = &cobra.Command{
 		defer temporalClient.Close()
 
 		// Create a worker
-		w := worker.New(temporalClient, api.WorkerTaskQueueName, worker.Options{})
+		w := temporalwk.New(temporalClient, api.WorkerTaskQueueName, temporalwk.Options{})
 
 		// Register common activities
 		w.RegisterActivity(activities.NewActivities(temporalClient))
 
 		// Register workflows
-		if err := registerWorkflows(cmd.Context(), w, temporalClient); err != nil {
+		if err := worker.RegisterWorkflows(cmd.Context(), w, temporalClient); err != nil {
 			return err
 		}
 
@@ -71,13 +70,6 @@ var serveCmd = &cobra.Command{
 		defer h.Ready(false)
 
 		// Run worker
-		return w.Run(worker.InterruptCh())
+		return w.Run(temporalwk.InterruptCh())
 	},
-}
-
-// ServiceInfo returns the service information.
-func ServiceInfo(_ workflow.Context, _ api.ServiceInfoParams) (api.ServiceInfoResults, error) {
-	return api.ServiceInfoResults{
-		Version: version.Version(),
-	}, nil
 }

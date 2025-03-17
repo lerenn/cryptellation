@@ -6,8 +6,8 @@ DOCKER_CFG_PATH     := ./build/package
 GIT_COMMIT_SHA      := $(shell git rev-parse HEAD)
 GIT_LAST_BRANCH_TAG := $(shell git describe --abbrev=0 --tags)
 
-.PHONY: docker/all/down
-docker/all/down: ## Stop the entire docker environment
+.PHONY: docker/down
+docker/down: ## Stop the entire docker environment
 	@$(DOCKER_COMPOSE_CMD) \
 		--profile worker --profile ui \
 		down --volumes --remove-orphans
@@ -15,7 +15,7 @@ docker/all/down: ## Stop the entire docker environment
 .PHONY: docker/all/up
 docker/all/up: ## Start a full docker environment
 	@$(DOCKER_COMPOSE_CMD) \
-		--profile worker --profile ui \
+		--profile gateway --profile ui --profile worker \
 		up -d
 
 .PHONY: docker/build
@@ -28,17 +28,17 @@ docker/build: ## Build the docker image
 		.
 
 .PHONY: docker/clean
-docker/clean: docker/all/down ## Clean the docker environment
+docker/clean: docker/down ## Clean the docker environment
 	@$(DOCKER_CMD) rmi $(DOCKER_IMAGE):devel || true
 	@$(DOCKER_CMD) buildx rm cryptellation || true
-
-.PHONY: docker/env/down 
-docker/env/down: ## Stop the dependencies in local environment
-	@$(DOCKER_COMPOSE_CMD) down
 
 .PHONY: docker/env/up
 docker/env/up: ## Start the dependencies in local environment
 	@$(DOCKER_COMPOSE_CMD) up -d
+
+.PHONY: docker/gateway/up
+docker/gateway/up: ## Start a cryptellation gateway in local environment
+	@$(DOCKER_COMPOSE_CMD) --profile gateway up -d
 
 .PHONY: docker/publish
 docker/publish: ## Publish the docker image
@@ -55,14 +55,6 @@ docker/publish: ## Publish the docker image
 .PHONY: docker/ui/up
 docker/ui/up: ## Start a cryptellation UI in local environment
 	@$(DOCKER_COMPOSE_CMD) --profile ui up -d
-
-.PHONY: docker/ui/down
-docker/ui/down: ## Stop a cryptellation UI in local environment
-	@$(DOCKER_COMPOSE_CMD) --profile ui down
-
-.PHONY: docker/worker/down
-docker/worker/down: ## Start a cryptellation worker in local environment
-	@$(DOCKER_COMPOSE_CMD) --profile worker down
 
 .PHONY: docker/worker/up
 docker/worker/up: ## Start a cryptellation worker in local environment

@@ -3,7 +3,7 @@ package test
 import (
 	"context"
 
-	"github.com/lerenn/cryptellation/v1/api"
+	api "github.com/lerenn/cryptellation/v1/api/worker/go"
 )
 
 func (suite *EndToEndSuite) TestListExchanges() {

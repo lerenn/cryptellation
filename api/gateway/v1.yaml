@@ -1,0 +1,24 @@
+openapi: "3.1.0"
+info:
+  # TODO: Make version automatic update
+  version: 1.10.0
+  title: Cryptellation API Gateway
+  description: Cryptellation API Gateway
+paths:
+  /info:
+    get:
+      responses:
+        '200':
+          description: System information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SystemInformation'
+components:
+  schemas:
+    SystemInformation:
+      type: object
+      properties:
+        version:
+          type: string
+          description: Version of the System
