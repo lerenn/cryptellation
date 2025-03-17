@@ -90,11 +90,10 @@ services:
     image: node:alpine
     depends_on:
       - gateway
-    working_dir: /web/ui
+    working_dir: /cryptellation/web/ui
     command: ["sh", "-c", "npm install && npm start"]
     volumes:
-      - node_modules:/web/ui/node_modules
-      - ../../web/ui:/web/ui
+      - ../../:/cryptellation
     ports:
       - 3000:3000
     expose:
@@ -102,7 +101,7 @@ services:
     networks:
       - cryptellation
   worker:
-    profiles: ["worker"]
+    profiles: ["gateway", "ui", "worker"]
     image: cosmtrek/air
     depends_on:
       - temporal
@@ -128,7 +127,6 @@ services:
 volumes:
   gocache:
   gobuild:
-  node_modules:
 
 networks:
   cryptellation:
