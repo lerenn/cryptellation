@@ -1,5 +1,6 @@
 
 import './App.css';
+import * as cryptellation from 'cryptellation';
 
 function App() {
   return (
@@ -10,5 +11,8 @@ function App() {
     </div>
   );
 }
+
+var client = new cryptellation.Client();
+console.log(client.info());
 
 export default App;
