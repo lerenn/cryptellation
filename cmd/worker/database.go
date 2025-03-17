@@ -27,7 +27,7 @@ var databaseCmd = &cobra.Command{
 	Use:     "database",
 	Aliases: []string{"i"},
 	Short:   "Manage database",
-	PersistentPreRunE: func(cmd *cobra.Command, args []string) (err error) {
+	PersistentPreRunE: func(cmd *cobra.Command, _ []string) (err error) {
 		// Create a sqlx client
 		for {
 			db, err = sqlx.ConnectContext(cmd.Context(), driverNameFlag, dsnFlag)

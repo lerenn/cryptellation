@@ -9,16 +9,19 @@ import (
 	"github.com/lerenn/cryptellation/v1/clients/temporal/go/client"
 )
 
+// Server is the gateway server.
 type Server struct {
 	client client.Client
 }
 
+// NewServer creates a new gateway server.
 func NewServer(client client.Client) *Server {
 	return &Server{
 		client: client,
 	}
 }
 
+// GetInfo is the handler for the GET /info endpoint.
 func (s *Server) GetInfo(c *gin.Context) {
 	info, err := s.client.Info(c.Request.Context())
 	if err != nil {

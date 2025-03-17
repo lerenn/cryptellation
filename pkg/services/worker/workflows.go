@@ -27,6 +27,7 @@ import (
 	"go.temporal.io/sdk/workflow"
 )
 
+// RegisterWorkflows registers all the workflows of the worker.
 func RegisterWorkflows(ctx context.Context, w worker.Worker, temporalClient client.Client) error {
 	// Register backtests workflows
 	if err := registerBacktestsWorkflows(ctx, w); err != nil {

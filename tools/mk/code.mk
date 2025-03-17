@@ -1,6 +1,10 @@
 .PHONY: code/check
 code/check: generate lint test ## Generate, lint and test the code
 
+.PHONY: code/check-todos
+code/check-todos: ## Check the todos in the code
+	@go run ./tools/invtodos .
+
 .PHONY: code/generate
 code/generate: ## Generate the code
 	@go generate ./...
