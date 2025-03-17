@@ -64,7 +64,7 @@ services:
     networks:
       - cryptellation
   gateway:
-    profiles: ["gateway"]
+    profiles: ["gateway", "ui"]
     image: cosmtrek/air
     depends_on:
       - temporal
@@ -89,7 +89,7 @@ services:
     profiles: ["ui"]
     image: node:alpine
     depends_on:
-      - temporal
+      - gateway
     working_dir: /web/ui
     command: ["sh", "-c", "npm install && npm start"]
     volumes:
