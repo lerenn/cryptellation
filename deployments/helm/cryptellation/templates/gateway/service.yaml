@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-gateway
+spec:
+  type: ClusterIP
+  selector:
+    app: {{ .Release.Name }}-gateway
+  ports:
+    - name: http
+      protocol: TCP
+      port: 8080

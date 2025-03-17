@@ -3,7 +3,7 @@ package indicators
 import (
 	"time"
 
-	"github.com/lerenn/cryptellation/v1/api"
+	api "github.com/lerenn/cryptellation/v1/api/worker/go"
 	"github.com/lerenn/cryptellation/v1/pkg/domains/indicators/activities/db"
 	"github.com/lerenn/cryptellation/v1/pkg/indicators/sma"
 	"github.com/lerenn/cryptellation/v1/pkg/utils"

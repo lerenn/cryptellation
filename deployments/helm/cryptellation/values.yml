@@ -62,7 +62,7 @@ credentials:
 
 # Specific section for services
 services:
-  ui: 
+  gateway: 
     image:
       repository: lerenn/cryptellation
       tag: v{{ .Chart.AppVersion }}

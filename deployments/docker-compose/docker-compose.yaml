@@ -51,7 +51,7 @@ services:
     depends_on:
       - postgresql
     image: golang:1.24-alpine
-    command: ["go", "run", "./cmd/database", "migrations", "migrate"]
+    command: ["go", "run", "./cmd/worker", "database", "migrate"]
     working_dir: /go/src/github.com/lerenn/cryptellation/v1
     environment:
       LOG_DEV_MODE: true
@@ -61,6 +61,28 @@ services:
       - gocache:/go/pkg/mod
       - gobuild:/root/.cache/go-build
       - ../..:/go/src/github.com/lerenn/cryptellation/v1
+    networks:
+      - cryptellation
+  gateway:
+    profiles: ["gateway"]
+    image: cosmtrek/air
+    depends_on:
+      - temporal
+    working_dir: /go/src/github.com/lerenn/cryptellation/v1
+    environment:
+      LOG_DEV_MODE: true
+      LOG_LEVEL: DEBUG
+      HEALTH_PORT: 9000
+      TEMPORAL_ADDRESS: temporal:7233
+    command: ["-c", "deployments/docker-compose/gateway/.air.toml"]
+    volumes:
+      - gocache:/go/pkg/mod
+      - gobuild:/root/.cache/go-build
+      - ../..:/go/src/github.com/lerenn/cryptellation/v1
+    ports:
+      - 7003:8080
+    expose:
+      - 8080
     networks:
       - cryptellation
   ui:
@@ -74,7 +96,7 @@ services:
       - node_modules:/web/ui/node_modules
       - ../../web/ui:/web/ui
     ports:
-      - 7003:3000
+      - 3000:3000
     expose:
       - 3000
     networks:
@@ -95,7 +117,7 @@ services:
     env_file:
       - path: ../../.credentials.env
         required: true
-    command: ["-c", ".air.toml"]
+    command: ["-c", "deployments/docker-compose/worker/.air.toml"]
     volumes:
       - gocache:/go/pkg/mod
       - gobuild:/root/.cache/go-build

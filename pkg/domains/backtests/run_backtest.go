@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/lerenn/cryptellation/v1/api"
+	api "github.com/lerenn/cryptellation/v1/api/worker/go"
 	"github.com/lerenn/cryptellation/v1/pkg/domains/backtests/activities/db"
 	"github.com/lerenn/cryptellation/v1/pkg/models/backtest"
 	"github.com/lerenn/cryptellation/v1/pkg/models/tick"

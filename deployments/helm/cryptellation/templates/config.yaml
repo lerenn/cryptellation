@@ -3,8 +3,8 @@ kind: ConfigMap
 metadata:
     name: cryptellation-config
 data:
-    # UI
-    ui.health.port: "{{ (((.Values.services).ui).health).port | default 9000 }}"
+    # Gateway
+    gateway.health.port: "{{ (((.Values.services).gateway).health).port | default 9000 }}"
 
     # Worker
     worker.sql.database: "{{ (((.Values.services).worker).sql).database | default "cryptellation" }}"

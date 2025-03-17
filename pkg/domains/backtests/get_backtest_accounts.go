@@ -3,7 +3,7 @@ package backtests
 import (
 	"fmt"
 
-	"github.com/lerenn/cryptellation/v1/api"
+	api "github.com/lerenn/cryptellation/v1/api/worker/go"
 	"go.temporal.io/sdk/workflow"
 )
 

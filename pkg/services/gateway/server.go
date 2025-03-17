@@ -1,0 +1,34 @@
+//go:generate go run github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen --config=config.yaml ../../../api/gateway/v1.yaml
+
+package gateway
+
+import (
+	"net/http"
+
+	"github.com/gin-gonic/gin"
+	"github.com/lerenn/cryptellation/v1/clients/temporal/go/client"
+)
+
+type Server struct {
+	client client.Client
+}
+
+func NewServer(client client.Client) *Server {
+	return &Server{
+		client: client,
+	}
+}
+
+func (s *Server) GetInfo(c *gin.Context) {
+	info, err := s.client.Info(c.Request.Context())
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, SystemInformation{
+		Version: &info.Version,
+	})
+}

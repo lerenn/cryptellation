@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/lerenn/cryptellation/v1/api"
+	api "github.com/lerenn/cryptellation/v1/api/worker/go"
 	"github.com/lerenn/cryptellation/v1/pkg/models/forwardtest"
 	"github.com/lerenn/cryptellation/v1/pkg/models/period"
 	"github.com/lerenn/cryptellation/v1/pkg/utils"

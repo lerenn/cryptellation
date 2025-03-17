@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/google/uuid"
-	"github.com/lerenn/cryptellation/v1/api"
+	api "github.com/lerenn/cryptellation/v1/api/worker/go"
 	"github.com/lerenn/cryptellation/v1/pkg/domains/forwardtests/activities/db"
 	"github.com/lerenn/cryptellation/v1/pkg/models/period"
 	"go.temporal.io/sdk/workflow"

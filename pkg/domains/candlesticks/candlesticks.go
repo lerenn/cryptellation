@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/lerenn/cryptellation/v1/api"
+	api "github.com/lerenn/cryptellation/v1/api/worker/go"
 	"github.com/lerenn/cryptellation/v1/pkg/domains/candlesticks/activities/db"
 	"github.com/lerenn/cryptellation/v1/pkg/domains/candlesticks/activities/exchanges"
 	"go.temporal.io/sdk/worker"

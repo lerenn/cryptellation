@@ -11,11 +11,11 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// RootCmd is the worker root command.
-var RootCmd = &cobra.Command{
-	Use:     os.Args[0],
+// rootCmd is the worker root command.
+var rootCmd = &cobra.Command{
+	Use:     "worker",
 	Version: version.FullVersion(),
-	Short:   os.Args[0] + " - a worker executing cryptellation temporal workflows",
+	Short:   "worker - a worker executing cryptellation temporal workflows",
 }
 
 func main() {
@@ -25,10 +25,11 @@ func main() {
 	console.Fallback(otel.NewTelemeter(context.Background(), "cryptellation-worker"))
 
 	// Set commands
-	RootCmd.AddCommand(serveCmd)
+	rootCmd.AddCommand(serveCmd)
+	addDatabaseCommands(rootCmd)
 
 	// Execute command
-	if err := RootCmd.Execute(); err != nil {
+	if err := rootCmd.Execute(); err != nil {
 		telemetry.L(context.Background()).Errorf("an error occurred: %s", err.Error())
 	}
 

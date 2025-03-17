@@ -1,0 +1,6 @@
+root = "."
+
+[build]
+  cmd = "go install -buildvcs=false ./cmd/*"
+  full_bin = "gateway serve"
+  include_dir = ["clients/go", "cmd/gateway", "pkg"]
