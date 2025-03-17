@@ -6,7 +6,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/lerenn/cryptellation/v1/clients/temporal/go/client"
+	"github.com/lerenn/cryptellation/v1/clients/worker/go/client"
 )
 
 // Server is the gateway server.

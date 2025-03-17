@@ -5,7 +5,7 @@ import (
 	"time"
 
 	api "github.com/lerenn/cryptellation/v1/api/worker/go"
-	"github.com/lerenn/cryptellation/v1/clients/temporal/go/client"
+	"github.com/lerenn/cryptellation/v1/clients/worker/go/client"
 	"github.com/lerenn/cryptellation/v1/pkg/models/period"
 	"github.com/spf13/cobra"
 )
