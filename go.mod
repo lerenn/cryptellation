@@ -6,6 +6,8 @@ require (
 	github.com/adshao/go-binance/v2 v2.6.1
 	github.com/agoda-com/opentelemetry-logs-go v0.5.1
 	github.com/agoda-com/otelzap v0.1.1
+	github.com/gin-gonic/contrib v0.0.0-20250113154928-93b827325fec
+	github.com/gin-gonic/gin v1.10.0
 	github.com/go-git/go-git/v5 v5.12.0
 	github.com/google/go-cmp v0.6.0
 	github.com/google/uuid v1.6.0
@@ -46,8 +48,6 @@ require (
 	github.com/facebookgo/clock v0.0.0-20150410010913-600d898af40a // indirect
 	github.com/gabriel-vasile/mimetype v1.4.3 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
-	github.com/gin-gonic/contrib v0.0.0-20250113154928-93b827325fec // indirect
-	github.com/gin-gonic/gin v1.10.0 // indirect
 	github.com/go-git/gcfg v1.5.1-0.20230307220236-3a3c6141e376 // indirect
 	github.com/go-git/go-billy/v5 v5.5.0 // indirect
 	github.com/go-logr/logr v1.4.2 // indirect
