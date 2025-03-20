@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/lerenn/cryptellation/v1/clients/worker/go/client"
+	"github.com/lerenn/cryptellation/v1/clients/go/client"
 	"github.com/lerenn/cryptellation/v1/pkg/telemetry"
 	"github.com/spf13/cobra"
 )

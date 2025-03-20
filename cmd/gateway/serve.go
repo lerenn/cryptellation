@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/lerenn/cryptellation/v1/clients/worker/go/client"
+	"github.com/lerenn/cryptellation/v1/clients/go/client"
 	"github.com/lerenn/cryptellation/v1/pkg/health"
 	"github.com/lerenn/cryptellation/v1/pkg/services/gateway"
 	"github.com/spf13/cobra"

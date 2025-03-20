@@ -6,7 +6,7 @@ import (
 
 	"github.com/google/uuid"
 	api "github.com/lerenn/cryptellation/v1/api/worker/go"
-	"github.com/lerenn/cryptellation/v1/clients/worker/go/wfclient"
+	"github.com/lerenn/cryptellation/v1/clients/go/wfclient"
 	"github.com/lerenn/cryptellation/v1/pkg/models/account"
 	"github.com/lerenn/cryptellation/v1/pkg/models/backtest"
 	"github.com/lerenn/cryptellation/v1/pkg/run"

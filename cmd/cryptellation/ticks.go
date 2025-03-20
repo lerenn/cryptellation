@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	api "github.com/lerenn/cryptellation/v1/api/worker/go"
-	"github.com/lerenn/cryptellation/v1/clients/worker/go/client"
+	"github.com/lerenn/cryptellation/v1/clients/go/client"
 	"github.com/spf13/cobra"
 	"go.temporal.io/sdk/workflow"
 )
