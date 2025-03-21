@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"os"
 
-	"github.com/lerenn/cryptellation/v1/clients/go/client"
+	"github.com/lerenn/cryptellation/v1/clients/go/worker/client"
 	"github.com/lerenn/cryptellation/v1/pkg/telemetry"
 	"github.com/lerenn/cryptellation/v1/pkg/telemetry/console"
 	"github.com/lerenn/cryptellation/v1/pkg/telemetry/otel"

@@ -23,7 +23,7 @@ code/test: code/test/unit code/test/integration code/test/end-to-end ## Launch a
 code/test/unit: go/test/unit ## Launch unit tests
 
 .PHONY: code/test/integration
-code/test/integration: docker/env/up go/test/integration ## Launch integration tests
+code/test/integration: go/test/integration ## Launch integration tests
 
 .PHONY: code/test/end-to-end
-code/test/end-to-end: docker/worker/up go/test/end-to-end ## Launch end-to-end tests
+code/test/end-to-end: go/test/end-to-end python/test/end-to-end ## Launch end-to-end tests

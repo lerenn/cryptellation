@@ -2,7 +2,7 @@ package ticks
 
 import (
 	api "github.com/lerenn/cryptellation/v1/api/worker/go"
-	"github.com/lerenn/cryptellation/v1/clients/go/wfclient"
+	"github.com/lerenn/cryptellation/v1/clients/go/worker/wfclient"
 	"github.com/lerenn/cryptellation/v1/pkg/domains/ticks/activities/exchanges"
 	"go.temporal.io/sdk/worker"
 	"go.temporal.io/sdk/workflow"
