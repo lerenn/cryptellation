@@ -4,7 +4,7 @@ include $(MK_TOOLS_PATH)/code/go.mk
 include $(MK_TOOLS_PATH)/code/python.mk
 
 .PHONY: code/check
-code/check: generate lint test ## Generate, lint and test the code
+code/check: code/generate code/lint code/test ## Generate, lint and test the code
 
 .PHONY: code/check-todos
 code/check-todos: ## Check the todos in the code
