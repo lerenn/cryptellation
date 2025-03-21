@@ -33,7 +33,7 @@ func LoadSQL(defaultValues *SQL) (c SQL) {
 }
 
 func (c *SQL) setDefault() {
-	overrideString(&c.DSN, "user=cryptellation password=cryptellation dbname=cryptellation sslmode=disable")
+	overrideString(&c.DSN, "user=cryptellation password=cryptellation port=7000 dbname=cryptellation sslmode=disable")
 }
 
 func (c *SQL) overrideFromEnv() {

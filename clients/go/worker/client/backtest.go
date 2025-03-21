@@ -6,7 +6,7 @@ import (
 
 	"github.com/google/uuid"
 	api "github.com/lerenn/cryptellation/v1/api/worker/go"
-	"github.com/lerenn/cryptellation/v1/clients/worker/go/bot"
+	"github.com/lerenn/cryptellation/v1/clients/go/worker/bot"
 	"github.com/lerenn/cryptellation/v1/pkg/run"
 	"go.temporal.io/sdk/worker"
 )
