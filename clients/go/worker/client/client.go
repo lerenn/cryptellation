@@ -4,7 +4,7 @@ import (
 	"context"
 
 	api "github.com/lerenn/cryptellation/v1/api/worker/go"
-	"github.com/lerenn/cryptellation/v1/clients/worker/go/client/raw"
+	"github.com/lerenn/cryptellation/v1/clients/go/worker/client/raw"
 	"github.com/lerenn/cryptellation/v1/pkg/config"
 	temporalclient "go.temporal.io/sdk/client"
 	"go.temporal.io/sdk/workflow"
