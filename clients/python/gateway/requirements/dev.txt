@@ -1,0 +1,2 @@
+-r common.txt
+openapi-python-client==0.24.1
