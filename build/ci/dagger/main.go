@@ -16,7 +16,6 @@ package main
 
 import (
 	"context"
-	"runtime"
 
 	"github.com/lerenn/cryptellation/v1/build/ci/dagger/internal/dagger"
 )
@@ -42,10 +41,19 @@ func (mod *CryptellationCi) CheckTODOs(
 }
 
 func (mod *CryptellationCi) CheckGeneration(
+	ctx context.Context,
 	sourceDir *dagger.Directory,
-) *dagger.Container {
-	return mod.cryptellationGoCodeContainer(sourceDir).
-		WithExec([]string{"sh", "/go/src/github.com/lerenn/cryptellation/scripts/check-generation.sh"})
+) []*dagger.Container {
+	return []*dagger.Container{
+		mod.cryptellationGoCodeContainer(sourceDir).
+			WithExec([]string{"sh", "-c",
+				"go generate ./... && " +
+					"sh scripts/check-generation.sh"}),
+		mod.cryptellationPythonCodeContainer(sourceDir).
+			WithExec([]string{"sh", "-c",
+				"pip install -Ur clients/python/gateway/requirements/dev.txt && " +
+					"sh scripts/check-generation.sh"}),
+	}
 }
 
 func (mod *CryptellationCi) UnitTests(sourceDir *dagger.Directory) *dagger.Container {
@@ -129,31 +137,4 @@ func (ci *CryptellationCi) PublishRelease(
 
 	// Publish Helm chart
 	return publishHelmChart(ctx, sourceDir, &repo, auth)
-}
-
-func (mod *CryptellationCi) cryptellationGoCodeContainer(
-	sourceDir *dagger.Directory,
-) *dagger.Container {
-	c := dag.Container().From("golang:" + goVersion() + "-alpine")
-	return mod.withGoCodeAndCacheAsWorkDirectory(c, sourceDir)
-}
-
-func (mod *CryptellationCi) withGoCodeAndCacheAsWorkDirectory(
-	c *dagger.Container,
-	sourceDir *dagger.Directory,
-) *dagger.Container {
-	return c.
-		// Add Go caches
-		WithMountedCache("/root/.cache/go-build", dag.CacheVolume("gobuild")).
-		WithMountedCache("/go/pkg/mod", dag.CacheVolume("gocache")).
-
-		// Add source code
-		WithMountedDirectory("/go/src/github.com/lerenn/cryptellation", sourceDir).
-
-		// Add workdir
-		WithWorkdir("/go/src/github.com/lerenn/cryptellation")
-}
-
-func goVersion() string {
-	return runtime.Version()[2:]
 }

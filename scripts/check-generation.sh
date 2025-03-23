@@ -10,9 +10,6 @@ if ! command -v git &> /dev/null; then
     apk add git > /dev/null
 fi
 
-# Execute golang code generation
-go generate ./...
-
 # Check that there is nothing to commit
 git diff --minimal --color=always --compact-summary --exit-code HEAD || FAILED=true
 if [[ $FAILED ]]; then

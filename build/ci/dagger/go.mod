@@ -3,7 +3,7 @@ module github.com/lerenn/cryptellation/v1/build/ci/dagger
 go 1.23.6
 
 require (
-	github.com/99designs/gqlgen v0.17.66
+	github.com/99designs/gqlgen v0.17.68
 	github.com/Khan/genqlient v0.8.0
 	github.com/google/go-github/v63 v63.0.0
 	github.com/vektah/gqlparser/v2 v2.5.23
