@@ -1,0 +1,10 @@
+.bottom-navbar {
+    --bs-navbar-padding-x: 6px !important;
+    --bs-navbar-padding-y: 1px !important;
+    background-color: rgb(80, 128, 160);
+}
+
+.bottom-navbar-info {
+    font-size: 0.7em;
+    color: white;
+}
