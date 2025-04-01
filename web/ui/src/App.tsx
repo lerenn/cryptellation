@@ -3,10 +3,12 @@ import './App.css';
 
 import { BottomNavBar } from './BottomNavBar';
 
-import * as cryptellation from 'cryptellation-gateway';
+import { Client } from 'cryptellation-gateway';
 
 function App() {
-  var client = new cryptellation.Client();
+  const client = new Client({
+    baseUrl: 'https://localhost:8080',
+  });
 
   return (
     <div>

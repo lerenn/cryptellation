@@ -80,7 +80,7 @@ services:
       - gobuild:/root/.cache/go-build
       - ../..:/go/src/github.com/lerenn/cryptellation/v1
     ports:
-      - 7003:8080
+      - 8080:8080
     expose:
       - 8080
     networks:
@@ -91,7 +91,7 @@ services:
     depends_on:
       - gateway
     working_dir: /cryptellation/web/ui
-    command: ["sh", "-c", "npm install && npm start"]
+    command: ["sh", "-c", "yarn install && yarn start"]
     volumes:
       - ../../:/cryptellation
     ports:

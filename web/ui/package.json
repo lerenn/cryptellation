@@ -10,11 +10,11 @@
     "@types/react": "^19.0.11",
     "@types/react-dom": "^19.0.4",
     "bootstrap": "^5.3.3",
-    "cryptellation-gateway": "file:../../clients/js/gateway",
+    "cryptellation-gateway": "../../clients/js/gateway",
     "react": "^19.0.0",
     "react-bootstrap": "^2.10.9",
     "react-dom": "^19.0.0",
-    "react-scripts": "5.0.1",
+    "react-scripts": "^5.0.1",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
