@@ -51,7 +51,7 @@ func (mod *CryptellationCi) CheckGeneration(
 					"sh scripts/check-generation.sh"}),
 		mod.cryptellationPythonCodeContainer(sourceDir).
 			WithExec([]string{"sh", "-c",
-				"pip install -Ur clients/python/gateway/requirements/dev.txt && " +
+				"pip install -Ur clients/python/gateway/requirements.dev.txt && " +
 					"sh scripts/check-generation.sh"}),
 	}
 }

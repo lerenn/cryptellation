@@ -15,7 +15,7 @@ type Candlestick struct {
 	Low        float64   `bson:"low"      json:"low,omitempty"`
 	Close      float64   `bson:"close"    json:"close,omitempty"`
 	Volume     float64   `bson:"volume"   json:"volume,omitempty"`
-	Uncomplete bool      `bson:"complete" json:"uncomplete,omitempty"`
+	Uncomplete bool      `bson:"uncomplete" json:"uncomplete,omitempty"`
 }
 
 // Equal checks equality between the candlesticks.

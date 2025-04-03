@@ -18,7 +18,7 @@ _python/gateway/dependencies: ## Install the dependencies
 	@if [ ! -d "$(PYTHON_GATEWAY_VENV_PATH)" ]; then \
 		python3 -m venv --prompt cryptellation $(PYTHON_GATEWAY_VENV_PATH) && \
 		. $(PYTHON_GATEWAY_VENV_PATH)/bin/activate && \
-		pip install -Ur $(PYTHON_GATEWAY_CLIENT_DIR)/requirements/dev.txt; \
+		pip install -Ur $(PYTHON_GATEWAY_CLIENT_DIR)/requirements.dev.txt; \
 	fi
 
 .PHONY: python/generate

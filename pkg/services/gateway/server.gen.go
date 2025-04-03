@@ -4,8 +4,36 @@
 package gateway
 
 import (
+	"fmt"
+	"net/http"
+
 	"github.com/gin-gonic/gin"
+	"github.com/oapi-codegen/runtime"
 )
+
+// Candlestick defines model for Candlestick.
+type Candlestick struct {
+	// Close Close price of the candlestick
+	Close float32 `json:"close"`
+
+	// High High price of the candlestick
+	High float32 `json:"high"`
+
+	// Low Low price of the candlestick
+	Low float32 `json:"low"`
+
+	// Open Open price of the candlestick
+	Open float32 `json:"open"`
+
+	// Time Open time of the candlestick
+	Time string `json:"time"`
+
+	// Uncomplete Indicates if the candlestick is uncomplete
+	Uncomplete *bool `json:"uncomplete,omitempty"`
+
+	// Volume Volume of the candlestick
+	Volume float32 `json:"volume"`
+}
 
 // SystemInformation defines model for SystemInformation.
 type SystemInformation struct {
@@ -13,8 +41,29 @@ type SystemInformation struct {
 	Version *string `json:"version,omitempty"`
 }
 
+// GetCandlesticksParams defines parameters for GetCandlesticks.
+type GetCandlesticksParams struct {
+	// Exchange The exchange from which to retrieve candlestick data
+	Exchange string `form:"exchange" json:"exchange"`
+
+	// Symbol The symbol for which to retrieve candlestick data
+	Symbol string `form:"symbol" json:"symbol"`
+
+	// Interval The interval for the candlestick data (e.g., 1m, 5m, 1h)
+	Interval string `form:"interval" json:"interval"`
+
+	// StartTime The start time for the candlestick data (in ISO format)
+	StartTime *string `form:"start_time,omitempty" json:"start_time,omitempty"`
+
+	// EndTime The end time for the candlestick data (in ISO format)
+	EndTime *string `form:"end_time,omitempty" json:"end_time,omitempty"`
+}
+
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
+	// Get candlestick data
+	// (GET /candlesticks)
+	GetCandlesticks(c *gin.Context, params GetCandlesticksParams)
 
 	// (GET /info)
 	GetInfo(c *gin.Context)
@@ -28,6 +77,85 @@ type ServerInterfaceWrapper struct {
 }
 
 type MiddlewareFunc func(c *gin.Context)
+
+// GetCandlesticks operation middleware
+func (siw *ServerInterfaceWrapper) GetCandlesticks(c *gin.Context) {
+
+	var err error
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params GetCandlesticksParams
+
+	// ------------- Required query parameter "exchange" -------------
+
+	if paramValue := c.Query("exchange"); paramValue != "" {
+
+	} else {
+		siw.ErrorHandler(c, fmt.Errorf("Query argument exchange is required, but not found"), http.StatusBadRequest)
+		return
+	}
+
+	err = runtime.BindQueryParameter("form", true, true, "exchange", c.Request.URL.Query(), &params.Exchange)
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter exchange: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	// ------------- Required query parameter "symbol" -------------
+
+	if paramValue := c.Query("symbol"); paramValue != "" {
+
+	} else {
+		siw.ErrorHandler(c, fmt.Errorf("Query argument symbol is required, but not found"), http.StatusBadRequest)
+		return
+	}
+
+	err = runtime.BindQueryParameter("form", true, true, "symbol", c.Request.URL.Query(), &params.Symbol)
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter symbol: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	// ------------- Required query parameter "interval" -------------
+
+	if paramValue := c.Query("interval"); paramValue != "" {
+
+	} else {
+		siw.ErrorHandler(c, fmt.Errorf("Query argument interval is required, but not found"), http.StatusBadRequest)
+		return
+	}
+
+	err = runtime.BindQueryParameter("form", true, true, "interval", c.Request.URL.Query(), &params.Interval)
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter interval: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	// ------------- Optional query parameter "start_time" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "start_time", c.Request.URL.Query(), &params.StartTime)
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter start_time: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	// ------------- Optional query parameter "end_time" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "end_time", c.Request.URL.Query(), &params.EndTime)
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter end_time: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.GetCandlesticks(c, params)
+}
 
 // GetInfo operation middleware
 func (siw *ServerInterfaceWrapper) GetInfo(c *gin.Context) {
@@ -69,5 +197,6 @@ func RegisterHandlersWithOptions(router gin.IRouter, si ServerInterface, options
 		ErrorHandler:       errorHandler,
 	}
 
+	router.GET(options.BaseURL+"/candlesticks", wrapper.GetCandlesticks)
 	router.GET(options.BaseURL+"/info", wrapper.GetInfo)
 }

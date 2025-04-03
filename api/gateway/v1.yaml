@@ -1,10 +1,54 @@
-openapi: "3.1.0"
+openapi: "3.0.0"
 info:
-  # TODO: Make version automatic update
+  # TODO(#85): Make version automatic update
   version: 1.10.0
   title: Cryptellation API Gateway
   description: Cryptellation API Gateway
 paths:
+  /candlesticks:
+    get:
+      summary: Get candlestick data
+      parameters:
+        - name: exchange
+          in: query
+          required: true
+          description: The exchange from which to retrieve candlestick data
+          schema:
+            type: string
+        - name: symbol
+          in: query
+          required: true
+          description: The symbol for which to retrieve candlestick data
+          schema:
+            type: string
+        - name: interval
+          in: query
+          required: true
+          description: The interval for the candlestick data (e.g., 1m, 5m, 1h)
+          schema:
+            type: string
+        - name: start_time
+          in: query
+          required: false
+          description: The start time for the candlestick data (in ISO format)
+          schema:
+            type: string
+        - name: end_time 
+          in: query
+          required: false
+          description: The end time for the candlestick data (in ISO format)
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response with candlestick data
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Candlestick'
+
   /info:
     get:
       responses:
@@ -16,6 +60,42 @@ paths:
                 $ref: '#/components/schemas/SystemInformation'
 components:
   schemas:
+    Candlestick:
+      type: object
+      required:
+        - time
+        - open
+        - high
+        - low
+        - close
+        - volume
+      properties:
+        time:
+          type: string
+          description: Open time of the candlestick
+        open:
+          type: number
+          format: float
+          description: Open price of the candlestick
+        high:
+          type: number
+          format: float
+          description: High price of the candlestick
+        low:
+          type: number
+          format: float
+          description: Low price of the candlestick
+        close:
+          type: number
+          format: float
+          description: Close price of the candlestick
+        volume:
+          type: number
+          format: float
+          description: Volume of the candlestick
+        uncomplete:
+          type: boolean
+          description: Indicates if the candlestick is uncomplete
     SystemInformation:
       type: object
       properties:
