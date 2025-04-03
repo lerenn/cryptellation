@@ -25,8 +25,9 @@ func checkInvalidTodosOnDir(path string) ([]string, error) {
 		case strings.Contains(path, "dagger/internal"):
 			// Return if this is a dagger internal file
 			return nil
-		case filepath.Ext(path) != ".go":
-			// Return if it is not a go file
+		case filepath.Ext(path) != ".go" &&
+			filepath.Ext(path) != ".yaml":
+			// Return if it is not: a go file, a yaml file
 			return nil
 		case strings.HasSuffix(path, ".gen.go"):
 			// Return if it is a generated file
@@ -73,7 +74,9 @@ func checkInvalidTodosOnFile(path string) ([]string, error) {
 			continue
 		} else if ok := r.MatchString(line); ok {
 			continue
-		} else if !strings.Contains(line, "//") {
+		} else if !strings.Contains(line, "//") &&
+			!strings.Contains(line, "/*") &&
+			!strings.Contains(line, "#") {
 			continue
 		}
 

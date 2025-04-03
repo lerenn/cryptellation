@@ -277,3 +277,13 @@ func (ts TimeSerie[T]) GetMissingRanges(start, end time.Time, interval time.Dura
 	missing := ts.GetMissingTimes(start, end, interval, limit)
 	return TimeRangesFromMissingTimes(interval, missing)
 }
+
+// ToList returns an ordered list of the TimeSerie.
+func (ts TimeSerie[T]) ToList() []T {
+	list := make([]T, 0, ts.Len())
+	_ = ts.Loop(func(_ time.Time, obj T) (bool, error) {
+		list = append(list, obj)
+		return false, nil
+	})
+	return list
+}

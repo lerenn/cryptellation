@@ -421,3 +421,18 @@ func (suite *TimeSerieSuite) TestGetMissingTimes() {
 	suite.Require().Len(missing, 1)
 	suite.Require().WithinDuration(time.Unix(0, 0), missing[0], time.Microsecond)
 }
+
+func (suite *TimeSerieSuite) TestToList() {
+	ts := New[int64]()
+	for i := int64(3); i >= 0; i-- {
+		ts.Set(time.Unix(60*i, 0), i)
+	}
+
+	list := ts.ToList()
+	suite.Require().Len(list, 4)
+
+	suite.Require().Equal(int64(0), list[0])
+	suite.Require().Equal(int64(1), list[1])
+	suite.Require().Equal(int64(2), list[2])
+	suite.Require().Equal(int64(3), list[3])
+}
