@@ -1,9 +1,27 @@
+import * as hey_api from '@hey-api/client-fetch';
+
+import * as types from './generated/types.gen';
+import * as sdk from './generated/sdk.gen';
+
 export class Client {
-    constructor() {
-        console.log('Client constructor');
+    private client : hey_api.Client;
+
+    constructor(options : hey_api.ClientOptions) {
+        this.client = hey_api.createClient(options);
     }
 
-    public async info() {
-        console.log('Server info');
+    async getInfo() : Promise<({
+        data: types.SystemInformation;
+        error: undefined;
+    } | {
+        data: undefined;
+        error: unknown;
+    }) & {
+        request: Request;
+        response: Response;
+    }>{
+        return sdk.getInfo({
+            client: this.client,
+        });
     }
 }

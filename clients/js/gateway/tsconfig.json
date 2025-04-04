@@ -3,6 +3,8 @@
         "module": "commonjs",
         "target": "es2015",
         "declaration": true,
+        "esModuleInterop": true,
+        "allowSyntheticDefaultImports": true,
         "outDir": "./dist"
     },
     "include": [
